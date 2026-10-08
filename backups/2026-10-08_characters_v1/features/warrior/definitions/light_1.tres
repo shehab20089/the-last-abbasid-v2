@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="AttackDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Cut"
+animation = &"attack_1"
+active_from = 2
+active_to = 3
+recovery_from = 4
+damage = 12.0
+poise_damage = 12.0
+stamina_damage = 14.0
+knockback = 150.0
+hit_stop = 0.075
+camera_shake = 1.8
+lunge_speed = 70.0
+lunge_from = 2
+lunge_to = 3
+stamina_cost = 11.0
+swing_cue = &"sword_swing"
+hit_cue = &"sword_hit"

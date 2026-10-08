@@ -1,0 +1,61 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/menu/menu_screen.gd" id="1_menu"]
+[ext_resource type="Theme" path="res://features/ui/ui_theme.tres" id="2_theme"]
+[ext_resource type="FontVariation" path="res://assets/fonts/abbasid_title.tres" id="3_title"]
+
+[node name="PauseMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_menu")
+back_action = &"resume"
+
+[node name="Shade" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.02, 0.015, 0.03, 0.62)
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 230.0
+offset_top = 100.0
+offset_right = 410.0
+offset_bottom = 250.0
+
+[node name="List" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Heading" type="Label" parent="Panel/List"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.86, 0.62, 1)
+theme_override_fonts/font = ExtResource("3_title")
+theme_override_font_sizes/font_size = 18
+text = "MENU_PAUSED"
+horizontal_alignment = 1
+
+[node name="Resume" type="Button" parent="Panel/List"]
+layout_mode = 2
+text = "MENU_RESUME"
+metadata/action = &"resume"
+
+[node name="Settings" type="Button" parent="Panel/List"]
+layout_mode = 2
+text = "MENU_SETTINGS"
+metadata/action = &"settings"
+
+[node name="Lamp" type="Button" parent="Panel/List"]
+layout_mode = 2
+text = "MENU_RETURN_LAMP"
+metadata/action = &"return_lamp"
+
+[node name="Title" type="Button" parent="Panel/List"]
+layout_mode = 2
+text = "MENU_QUIT_TITLE"
+metadata/action = &"quit_title"

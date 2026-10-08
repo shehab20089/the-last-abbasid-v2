@@ -1,0 +1,49 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/combat/combatant.gd" id="1_combatant"]
+[ext_resource type="SpriteFrames" path="res://assets/characters/warrior/warrior_frames.tres" id="2_frames"]
+[ext_resource type="Resource" path="res://assets/characters/warrior/warrior_hitboxes.tres" id="3_hitboxes"]
+[ext_resource type="Script" path="res://features/combat/hurtbox.gd" id="4_hurtbox"]
+[ext_resource type="Script" path="res://features/combat/hitbox.gd" id="5_hitbox"]
+[ext_resource type="Shader" path="res://features/combat/hit_flash.gdshader" id="6_flash"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_flash"]
+resource_local_to_scene = true
+shader = ExtResource("6_flash")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(16, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
+size = Vector2(20, 66)
+
+[node name="Dummy" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_combatant")
+team = 1
+hitboxes = ExtResource("3_hitboxes")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+material = SubResource("ShaderMaterial_flash")
+sprite_frames = ExtResource("2_frames")
+animation = &"idle"
+offset = Vector2(0, -44)
+
+[node name="Body" type="CollisionShape2D" parent="."]
+position = Vector2(0, -32)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 0
+script = ExtResource("4_hurtbox")
+
+[node name="Shape" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -34)
+shape = SubResource("RectangleShape2D_hurt")
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("5_hitbox")

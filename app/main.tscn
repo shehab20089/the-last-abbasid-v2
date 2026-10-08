@@ -1,0 +1,189 @@
+[gd_scene format=3]
+
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ambush_sting.wav" id="1_ambush_sting_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/arrow_hit.wav" id="2_arrow_hit_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/arrow_thunk.wav" id="3_arrow_thunk_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/body_drop.wav" id="4_body_drop_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/boss_fall.wav" id="5_boss_fall_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/boss_roar.wav" id="6_boss_roar_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/bow_release.wav" id="7_bow_release_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/checkpoint_rest.wav" id="8_checkpoint_rest_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_alert.wav" id="9_enemy_alert_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_death.wav" id="10_enemy_death_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_hurt.wav" id="11_enemy_hurt_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing.wav" id="12_enemy_swing_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing_heavy.wav" id="13_enemy_swing_heavy_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_tell.wav" id="14_enemy_tell_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_tell_dire.wav" id="15_enemy_tell_dire_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/finisher.wav" id="16_finisher_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/footstep.wav" id="17_footstep_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/gate_open.wav" id="18_gate_open_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/guard_break.wav" id="19_guard_break_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/heal.wav" id="20_heal_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/hero_death.wav" id="21_hero_death_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/hero_hurt.wav" id="22_hero_hurt_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/jump.wav" id="23_jump_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/lamp_light.wav" id="24_lamp_light_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/land.wav" id="25_land_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/manuscript.wav" id="26_manuscript_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/parry.wav" id="27_parry_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/pot_burst.wav" id="28_pot_burst_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/roll.wav" id="29_roll_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sever.wav" id="30_sever_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/shield_block.wav" id="31_shield_block_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/spear_thrust.wav" id="32_spear_thrust_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_heavy.wav" id="33_sword_heavy_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit.wav" id="34_sword_hit_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit_heavy.wav" id="35_sword_hit_heavy_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_swing.wav" id="36_sword_swing_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_thrust.wav" id="37_sword_thrust_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_back.wav" id="38_ui_back_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_move.wav" id="39_ui_move_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_select.wav" id="40_ui_select_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/music_boss.wav" id="41_music_boss_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/music_combat.wav" id="42_music_combat_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/music_ending.wav" id="43_music_ending_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/music_gate.wav" id="44_music_gate_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/music_market.wav" id="45_music_market_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/music_scholars.wav" id="46_music_scholars_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/music_streets.wav" id="47_music_streets_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/music_title.wav" id="48_music_title_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/amb_fire_wind.wav" id="49_amb_fire_wind_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/amb_river.wav" id="50_amb_river_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/amb_wind.wav" id="51_amb_wind_wav"]
+[ext_resource type="Script" path="res://app/main.gd" id="52_main_gd"]
+[ext_resource type="Script" path="res://features/menu/game_settings.gd" id="53_game_settings_gd"]
+[ext_resource type="Script" path="res://features/ui/input_glyphs.gd" id="54_input_glyphs_gd"]
+[ext_resource type="Script" path="res://shared/vfx/gore_director.gd" id="55_gore_director_gd"]
+[ext_resource type="SpriteFrames" path="res://assets/effects/effect_frames.tres" id="56_effect_frames_tres"]
+[ext_resource type="Texture2D" path="res://assets/effects/blood_drop.png" id="57_blood_drop_png"]
+[ext_resource type="Script" path="res://shared/vfx/vfx_director.gd" id="58_vfx_director_gd"]
+[ext_resource type="Script" path="res://features/presentation/game_camera.gd" id="59_game_camera_gd"]
+[ext_resource type="Texture2D" path="res://assets/effects/ash.png" id="60_ash_png"]
+[ext_resource type="Texture2D" path="res://assets/effects/ember.png" id="61_ember_png"]
+[ext_resource type="Script" path="res://shared/audio/sound_director.gd" id="62_sound_director_gd"]
+[ext_resource type="Script" path="res://shared/audio/music_director.gd" id="63_music_director_gd"]
+[ext_resource type="Script" path="res://features/presentation/hit_stop.gd" id="64_hit_stop_gd"]
+[ext_resource type="PackedScene" path="res://features/ui/hud.tscn" id="65_hud_tscn"]
+[ext_resource type="PackedScene" path="res://features/ui/dialogue_box.tscn" id="66_dialogue_box_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/title_screen.tscn" id="67_title_screen_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/pause_menu.tscn" id="68_pause_menu_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/settings_screen.tscn" id="69_settings_screen_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/game_over.tscn" id="70_game_over_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/chapter_complete.tscn" id="71_chapter_complete_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/manuscript_reader.tscn" id="72_manuscript_reader_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/story_card.tscn" id="73_story_card_tscn"]
+[ext_resource type="Shader" path="res://features/presentation/post_process.gdshader" id="74_post_process_gdshader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_post"]
+shader = ExtResource("74_post_process_gdshader")
+
+
+[node name="Main" type="Node"]
+script = ExtResource("52_main_gd")
+
+[node name="Settings" type="Node" parent="."]
+script = ExtResource("53_game_settings_gd")
+
+[node name="Glyphs" type="Node" parent="."]
+script = ExtResource("54_input_glyphs_gd")
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Gore" type="Node2D" parent="."]
+z_index = 4
+script = ExtResource("55_gore_director_gd")
+frames = ExtResource("56_effect_frames_tres")
+drop = ExtResource("57_blood_drop_png")
+
+[node name="Vfx" type="Node2D" parent="."]
+z_index = 5
+script = ExtResource("58_vfx_director_gd")
+frames = ExtResource("56_effect_frames_tres")
+
+[node name="Camera" type="Camera2D" parent="."]
+script = ExtResource("59_game_camera_gd")
+
+[node name="Ash" type="CPUParticles2D" parent="Camera"]
+position = Vector2(0, -200)
+amount = 46
+lifetime = 9.0
+preprocess = 9.0
+local_coords = false
+texture = ExtResource("60_ash_png")
+emission_shape = 3
+emission_rect_extents = Vector2(380, 8)
+direction = Vector2(0.25, 1)
+spread = 30.0
+gravity = Vector2(4, 8)
+initial_velocity_min = 8.0
+initial_velocity_max = 20.0
+color = Color(0.82, 0.78, 0.74, 0.8)
+
+[node name="Embers" type="CPUParticles2D" parent="Camera"]
+position = Vector2(0, 200)
+amount = 18
+lifetime = 6.0
+preprocess = 6.0
+local_coords = false
+texture = ExtResource("61_ember_png")
+emission_shape = 3
+emission_rect_extents = Vector2(380, 8)
+direction = Vector2(0.2, -1)
+spread = 25.0
+gravity = Vector2(6, -8)
+initial_velocity_min = 16.0
+initial_velocity_max = 34.0
+color = Color(1, 0.78, 0.45, 0.9)
+
+[node name="Post" type="CanvasLayer" parent="."]
+layer = 5
+
+[node name="Grade" type="ColorRect" parent="Post"]
+material = SubResource("ShaderMaterial_post")
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 2
+
+[node name="Sounds" type="Node" parent="."]
+script = ExtResource("62_sound_director_gd")
+cues = Dictionary[StringName, AudioStream]({&"ambush_sting": ExtResource("1_ambush_sting_wav"), &"arrow_hit": ExtResource("2_arrow_hit_wav"), &"arrow_thunk": ExtResource("3_arrow_thunk_wav"), &"body_drop": ExtResource("4_body_drop_wav"), &"boss_fall": ExtResource("5_boss_fall_wav"), &"boss_roar": ExtResource("6_boss_roar_wav"), &"bow_release": ExtResource("7_bow_release_wav"), &"checkpoint_rest": ExtResource("8_checkpoint_rest_wav"), &"enemy_alert": ExtResource("9_enemy_alert_wav"), &"enemy_death": ExtResource("10_enemy_death_wav"), &"enemy_hurt": ExtResource("11_enemy_hurt_wav"), &"enemy_swing": ExtResource("12_enemy_swing_wav"), &"enemy_swing_heavy": ExtResource("13_enemy_swing_heavy_wav"), &"enemy_tell": ExtResource("14_enemy_tell_wav"), &"enemy_tell_dire": ExtResource("15_enemy_tell_dire_wav"), &"finisher": ExtResource("16_finisher_wav"), &"footstep": ExtResource("17_footstep_wav"), &"gate_open": ExtResource("18_gate_open_wav"), &"guard_break": ExtResource("19_guard_break_wav"), &"heal": ExtResource("20_heal_wav"), &"hero_death": ExtResource("21_hero_death_wav"), &"hero_hurt": ExtResource("22_hero_hurt_wav"), &"jump": ExtResource("23_jump_wav"), &"lamp_light": ExtResource("24_lamp_light_wav"), &"land": ExtResource("25_land_wav"), &"manuscript": ExtResource("26_manuscript_wav"), &"parry": ExtResource("27_parry_wav"), &"pot_burst": ExtResource("28_pot_burst_wav"), &"roll": ExtResource("29_roll_wav"), &"sever": ExtResource("30_sever_wav"), &"shield_block": ExtResource("31_shield_block_wav"), &"spear_thrust": ExtResource("32_spear_thrust_wav"), &"sword_heavy": ExtResource("33_sword_heavy_wav"), &"sword_hit": ExtResource("34_sword_hit_wav"), &"sword_hit_heavy": ExtResource("35_sword_hit_heavy_wav"), &"sword_swing": ExtResource("36_sword_swing_wav"), &"sword_thrust": ExtResource("37_sword_thrust_wav"), &"ui_back": ExtResource("38_ui_back_wav"), &"ui_move": ExtResource("39_ui_move_wav"), &"ui_select": ExtResource("40_ui_select_wav")})
+interface_cues = Array[StringName]([&"ui_move", &"ui_select", &"ui_back"])
+
+[node name="Music" type="Node" parent="."]
+script = ExtResource("63_music_director_gd")
+tracks = Dictionary[StringName, AudioStream]({&"boss": ExtResource("41_music_boss_wav"), &"combat": ExtResource("42_music_combat_wav"), &"ending": ExtResource("43_music_ending_wav"), &"gate": ExtResource("44_music_gate_wav"), &"market": ExtResource("45_music_market_wav"), &"scholars": ExtResource("46_music_scholars_wav"), &"streets": ExtResource("47_music_streets_wav"), &"title": ExtResource("48_music_title_wav")})
+beds = Dictionary[StringName, AudioStream]({&"fire_wind": ExtResource("49_amb_fire_wind_wav"), &"river": ExtResource("50_amb_river_wav"), &"wind": ExtResource("51_amb_wind_wav")})
+
+[node name="HitStop" type="Node" parent="."]
+script = ExtResource("64_hit_stop_gd")
+
+[node name="Hud" parent="." instance=ExtResource("65_hud_tscn")]
+
+[node name="Dialogue" parent="." instance=ExtResource("66_dialogue_box_tscn")]
+
+[node name="Menus" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="Title" parent="Menus" instance=ExtResource("67_title_screen_tscn")]
+
+[node name="Pause" parent="Menus" instance=ExtResource("68_pause_menu_tscn")]
+
+[node name="Settings" parent="Menus" instance=ExtResource("69_settings_screen_tscn")]
+
+[node name="GameOver" parent="Menus" instance=ExtResource("70_game_over_tscn")]
+
+[node name="Complete" parent="Menus" instance=ExtResource("71_chapter_complete_tscn")]
+
+[node name="Reader" parent="Menus" instance=ExtResource("72_manuscript_reader_tscn")]
+
+[node name="Card" parent="Menus" instance=ExtResource("73_story_card_tscn")]
+
+[node name="Fade" type="CanvasLayer" parent="."]
+layer = 30
+
+[node name="Black" type="ColorRect" parent="Fade"]
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0)

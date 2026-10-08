@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="EnemyProfile" format=3]
+
+[ext_resource type="Script" path="res://features/enemies/enemy_profile.gd" id="1_script"]
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="2_attack"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/captain_slash_a.tres" id="3_a"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/captain_slash_b.tres" id="4_b"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/captain_slash_c.tres" id="5_c"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/captain_smash.tres" id="6_smash"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/captain_bash.tres" id="7_bash"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "BOSS_CAPTAIN"
+max_health = 420.0
+max_poise = 70.0
+walk_speed = 44.0
+run_speed = 120.0
+hurt_time = 0.25
+stagger_time = 1.4
+parried_time = 1.7
+armoured_body = true
+sight_range = 320.0
+hearing_range = 140.0
+sight_height = 120.0
+lose_range = 2000.0
+alert_time = 0.4
+preferred_range = 48.0
+min_range = 26.0
+attacks = Array[ExtResource("2_attack")]([ExtResource("3_a"), ExtResource("4_b"), ExtResource("5_c"), ExtResource("6_smash"), ExtResource("7_bash")])
+attack_ranges = PackedFloat32Array(66, 66, 74, 96, 170)
+attack_cooldown = Vector2(0.9, 1.5)
+block_chance = 0.5
+block_time = 0.8
+retreat_chance = 0.15
+patrol_distance = 0.0

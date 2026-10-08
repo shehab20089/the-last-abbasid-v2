@@ -1,0 +1,64 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/menu/result_screen.gd" id="1_result"]
+[ext_resource type="Theme" path="res://features/ui/ui_theme.tres" id="2_theme"]
+[ext_resource type="FontVariation" path="res://assets/fonts/abbasid_title.tres" id="3_title"]
+
+[node name="GameOver" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_result")
+back_action = &""
+
+[node name="Shade" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.06, 0.01, 0.01, 0.8)
+
+[node name="List" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 170.0
+offset_top = 110.0
+offset_right = 470.0
+offset_bottom = 290.0
+theme_override_constants/separation = 6
+
+[node name="Heading" type="Label" parent="List"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.86, 0.62, 1)
+theme_override_fonts/font = ExtResource("3_title")
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+
+[node name="Line" type="Label" parent="List"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Stats" type="Label" parent="List"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.71, 0.58, 1)
+horizontal_alignment = 1
+
+[node name="Gap" type="Control" parent="List"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="Rise" type="Button" parent="List"]
+layout_mode = 2
+text = "GAME_OVER_RISE"
+metadata/action = &"rise"
+
+[node name="Quit" type="Button" parent="List"]
+layout_mode = 2
+text = "MENU_QUIT_TITLE"
+metadata/action = &"quit_title"

@@ -1,0 +1,36 @@
+{
+ "sit": {
+  "name": "sit",
+  "frames": 6,
+  "width": 96,
+  "height": 128,
+  "fps": 6,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "file": "guard_sit.png"
+ },
+ "talk": {
+  "name": "talk",
+  "frames": 4,
+  "width": 96,
+  "height": 128,
+  "fps": 5,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null
+  ],
+  "file": "guard_talk.png"
+ }
+}

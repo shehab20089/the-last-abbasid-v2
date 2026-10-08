@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="FinisherDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/finisher_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Run Through"
+hero_animation = &"finish_impale"
+victim_animation = &"finished_impale"
+distance = 30.0
+cut_frames = PackedInt32Array()
+cuts = Array[StringName]([])
+burst_frames = PackedInt32Array(1, 2, 5)
+slow_from = 1
+slow_to = 4
+death_frame = 5

@@ -1,0 +1,205 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/menu/title_screen.gd" id="1_title"]
+[ext_resource type="Theme" path="res://features/ui/ui_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" path="res://assets/ui/title_art.png" id="3_art"]
+[ext_resource type="FontVariation" path="res://assets/fonts/abbasid_title.tres" id="6_title_font"]
+[ext_resource type="Texture2D" path="res://assets/effects/ash.png" id="7_ash"]
+[ext_resource type="Texture2D" path="res://assets/effects/ember.png" id="8_ember"]
+[ext_resource type="Texture2D" path="res://assets/ui/icon_objective.png" id="9_star"]
+
+[sub_resource type="SystemFont" id="SystemFont_arabic"]
+font_names = PackedStringArray("Tahoma", "Segoe UI", "Arial")
+antialiasing = 0
+hinting = 2
+
+[sub_resource type="Gradient" id="Gradient_shade"]
+offsets = PackedFloat32Array(0, 0.45, 0.62, 1)
+colors = PackedColorArray(0.02, 0.016, 0.03, 0.0, 0.02, 0.016, 0.03, 0.05, 0.02, 0.016, 0.03, 0.62, 0.02, 0.016, 0.03, 0.86)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_shade"]
+gradient = SubResource("Gradient_shade")
+width = 64
+height = 8
+
+[node name="TitleScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_title")
+back_action = &""
+
+[node name="Drift" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = -30.0
+offset_top = -17.0
+offset_right = 670.0
+offset_bottom = 377.0
+mouse_filter = 2
+
+[node name="Art" type="TextureRect" parent="Drift"]
+layout_mode = 0
+offset_right = 700.0
+offset_bottom = 394.0
+mouse_filter = 2
+texture = ExtResource("3_art")
+
+[node name="Shade" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_shade")
+expand_mode = 1
+
+[node name="Embers" type="CPUParticles2D" parent="."]
+position = Vector2(320, 372)
+amount = 26
+lifetime = 7.0
+preprocess = 7.0
+texture = ExtResource("8_ember")
+emission_shape = 3
+emission_rect_extents = Vector2(330, 4)
+direction = Vector2(0.2, -1)
+spread = 20.0
+gravity = Vector2(6, -4)
+initial_velocity_min = 14.0
+initial_velocity_max = 30.0
+color = Color(1, 0.8, 0.5, 0.9)
+
+[node name="Ash" type="CPUParticles2D" parent="."]
+position = Vector2(320, -8)
+amount = 40
+lifetime = 12.0
+preprocess = 12.0
+texture = ExtResource("7_ash")
+emission_shape = 3
+emission_rect_extents = Vector2(340, 4)
+direction = Vector2(0.3, 1)
+spread = 25.0
+gravity = Vector2(3, 6)
+initial_velocity_min = 8.0
+initial_velocity_max = 18.0
+color = Color(0.8, 0.76, 0.72, 0.75)
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+offset_left = 410.0
+offset_top = 54.0
+offset_right = 630.0
+offset_bottom = 84.0
+theme_override_colors/font_color = Color(0.95, 0.86, 0.62, 1)
+theme_override_colors/font_shadow_color = Color(0.1, 0.03, 0.02, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("6_title_font")
+theme_override_font_sizes/font_size = 18
+text = "GAME_TITLE"
+horizontal_alignment = 1
+
+[node name="Arabic" type="Label" parent="."]
+layout_mode = 0
+offset_left = 410.0
+offset_top = 84.0
+offset_right = 630.0
+offset_bottom = 110.0
+theme_override_colors/font_color = Color(0.85, 0.62, 0.36, 1)
+theme_override_fonts/font = SubResource("SystemFont_arabic")
+theme_override_font_sizes/font_size = 18
+text = "آخر العباسيين"
+horizontal_alignment = 1
+auto_translate_mode = 2
+
+[node name="StarLeft" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 448.0
+offset_top = 116.0
+offset_right = 459.0
+offset_bottom = 127.0
+mouse_filter = 2
+texture = ExtResource("9_star")
+
+[node name="Subtitle" type="Label" parent="."]
+layout_mode = 0
+offset_left = 410.0
+offset_top = 116.0
+offset_right = 630.0
+offset_bottom = 128.0
+theme_override_colors/font_color = Color(0.75, 0.68, 0.58, 1)
+text = "GAME_SUBTITLE"
+horizontal_alignment = 1
+
+[node name="StarRight" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 581.0
+offset_top = 116.0
+offset_right = 592.0
+offset_bottom = 127.0
+mouse_filter = 2
+texture = ExtResource("9_star")
+
+[node name="MainList" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 450.0
+offset_top = 168.0
+offset_right = 590.0
+offset_bottom = 278.0
+theme_override_constants/separation = 4
+
+[node name="Continue" type="Button" parent="MainList"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "MENU_CONTINUE"
+metadata/action = &"continue"
+
+[node name="NewGame" type="Button" parent="MainList"]
+layout_mode = 2
+text = "MENU_NEW_GAME"
+metadata/action = &"new_game"
+
+[node name="Settings" type="Button" parent="MainList"]
+layout_mode = 2
+text = "MENU_SETTINGS"
+metadata/action = &"settings"
+
+[node name="Quit" type="Button" parent="MainList"]
+layout_mode = 2
+text = "MENU_QUIT"
+metadata/action = &"quit"
+
+[node name="Confirm" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 400.0
+offset_top = 174.0
+offset_right = 640.0
+offset_bottom = 250.0
+theme_override_constants/separation = 8
+
+[node name="Question" type="Label" parent="Confirm"]
+layout_mode = 2
+text = "MENU_CONFIRM_NEW"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Choices" type="HBoxContainer" parent="Confirm"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="No" type="Button" parent="Confirm/Choices"]
+layout_mode = 2
+text = "MENU_NO"
+metadata/action = &"cancel_new"
+
+[node name="Yes" type="Button" parent="Confirm/Choices"]
+layout_mode = 2
+text = "MENU_YES"
+metadata/action = &"confirm_new"

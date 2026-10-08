@@ -1,0 +1,204 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/npcs/refugee_man/refugee_man_run.png" id="1_run"]
+[ext_resource type="Texture2D" path="res://assets/npcs/refugee_man/refugee_man_kneel.png" id="2_kneel"]
+[ext_resource type="Texture2D" path="res://assets/npcs/refugee_man/refugee_man_executed.png" id="3_executed"]
+[ext_resource type="Texture2D" path="res://assets/npcs/refugee_man/refugee_man_shot.png" id="4_shot"]
+
+[sub_resource type="AtlasTexture" id="run_0"]
+atlas = ExtResource("1_run")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="run_1"]
+atlas = ExtResource("1_run")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="run_2"]
+atlas = ExtResource("1_run")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="run_3"]
+atlas = ExtResource("1_run")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="run_4"]
+atlas = ExtResource("1_run")
+region = Rect2(384, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="run_5"]
+atlas = ExtResource("1_run")
+region = Rect2(480, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="run_6"]
+atlas = ExtResource("1_run")
+region = Rect2(576, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="run_7"]
+atlas = ExtResource("1_run")
+region = Rect2(672, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="kneel_0"]
+atlas = ExtResource("2_kneel")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="kneel_1"]
+atlas = ExtResource("2_kneel")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="kneel_2"]
+atlas = ExtResource("2_kneel")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="kneel_3"]
+atlas = ExtResource("2_kneel")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="executed_0"]
+atlas = ExtResource("3_executed")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="executed_1"]
+atlas = ExtResource("3_executed")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="executed_2"]
+atlas = ExtResource("3_executed")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="executed_3"]
+atlas = ExtResource("3_executed")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="executed_4"]
+atlas = ExtResource("3_executed")
+region = Rect2(512, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="executed_5"]
+atlas = ExtResource("3_executed")
+region = Rect2(640, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="executed_6"]
+atlas = ExtResource("3_executed")
+region = Rect2(768, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="shot_0"]
+atlas = ExtResource("4_shot")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="shot_1"]
+atlas = ExtResource("4_shot")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="shot_2"]
+atlas = ExtResource("4_shot")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="shot_3"]
+atlas = ExtResource("4_shot")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="shot_4"]
+atlas = ExtResource("4_shot")
+region = Rect2(512, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="shot_5"]
+atlas = ExtResource("4_shot")
+region = Rect2(640, 0, 128, 128)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("run_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("run_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("run_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("run_3")
+}, {
+"duration": 1.00,
+"texture": SubResource("run_4")
+}, {
+"duration": 1.00,
+"texture": SubResource("run_5")
+}, {
+"duration": 1.00,
+"texture": SubResource("run_6")
+}, {
+"duration": 1.00,
+"texture": SubResource("run_7")
+}],
+"loop": true,
+"name": &"run",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("kneel_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("kneel_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("kneel_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("kneel_3")
+}],
+"loop": true,
+"name": &"kneel",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("executed_0")
+}, {
+"duration": 1.40,
+"texture": SubResource("executed_1")
+}, {
+"duration": 1.60,
+"texture": SubResource("executed_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("executed_3")
+}, {
+"duration": 0.80,
+"texture": SubResource("executed_4")
+}, {
+"duration": 0.80,
+"texture": SubResource("executed_5")
+}, {
+"duration": 2.00,
+"texture": SubResource("executed_6")
+}],
+"loop": false,
+"name": &"executed",
+"speed": 9.0
+}, {
+"frames": [{
+"duration": 1.20,
+"texture": SubResource("shot_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("shot_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("shot_2")
+}, {
+"duration": 0.80,
+"texture": SubResource("shot_3")
+}, {
+"duration": 0.80,
+"texture": SubResource("shot_4")
+}, {
+"duration": 2.00,
+"texture": SubResource("shot_5")
+}],
+"loop": false,
+"name": &"shot",
+"speed": 10.0
+}]

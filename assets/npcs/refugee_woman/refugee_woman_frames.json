@@ -1,0 +1,123 @@
+{
+ "run": {
+  "name": "run",
+  "frames": 8,
+  "width": 96,
+  "height": 128,
+  "fps": 16,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": null,
+  "file": "refugee_woman_run.png"
+ },
+ "kneel": {
+  "name": "kneel",
+  "frames": 4,
+  "width": 96,
+  "height": 128,
+  "fps": 4,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": null,
+  "file": "refugee_woman_kneel.png"
+ },
+ "executed": {
+  "name": "executed",
+  "frames": 7,
+  "width": 128,
+  "height": 128,
+  "fps": 9,
+  "loop": false,
+  "durations": [
+   1,
+   1.4,
+   1.6,
+   1,
+   0.8,
+   0.8,
+   2
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": [
+   [
+    0.7,
+    -45.6
+   ],
+   [
+    4.4,
+    -44.5
+   ],
+   [
+    8.3,
+    -42.3
+   ],
+   [
+    17.2,
+    -33.1
+   ],
+   [
+    22.5,
+    -26.1
+   ],
+   [
+    25.2,
+    -14
+   ],
+   [
+    25.2,
+    -10.7
+   ]
+  ],
+  "file": "refugee_woman_executed.png"
+ },
+ "shot": {
+  "name": "shot",
+  "frames": 6,
+  "width": 128,
+  "height": 128,
+  "fps": 10,
+  "loop": false,
+  "durations": [
+   1.2,
+   1,
+   1,
+   0.8,
+   0.8,
+   2
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": null,
+  "file": "refugee_woman_shot.png"
+ }
+}

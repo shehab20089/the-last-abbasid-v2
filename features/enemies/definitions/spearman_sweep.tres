@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AttackDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Low Sweep"
+animation = &"sweep"
+active_from = 2
+active_to = 3
+recovery_from = 4
+telegraph_frame = 0
+damage = 13.0
+poise_damage = 12.0
+stamina_damage = 18.0
+low = true
+knockback = 110.0
+hit_stop = 0.07
+camera_shake = 1.8
+stamina_cost = 0.0
+swing_cue = &"enemy_swing"
+hit_cue = &"sword_hit"

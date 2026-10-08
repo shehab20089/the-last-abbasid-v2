@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="AttackDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Lunging Thrust"
+animation = &"attack_3"
+active_from = 2
+active_to = 4
+recovery_from = 5
+damage = 20.0
+poise_damage = 22.0
+stamina_damage = 22.0
+knockback = 250.0
+hit_stop = 0.11
+camera_shake = 3.0
+severs = Array[StringName]([&"arm", &"head", &"leg"])
+sever_chance = 1.0
+lunge_speed = 120.0
+lunge_from = 2
+lunge_to = 3
+stamina_cost = 14.0
+swing_cue = &"sword_thrust"
+hit_cue = &"sword_hit_heavy"
+impact_effect = &"hit_pierce"

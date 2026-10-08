@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="WarriorProfile" format=3]
+
+[ext_resource type="Script" path="res://features/warrior/warrior_profile.gd" id="1_script"]
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="1_attack"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/light_1.tres" id="2_l1"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/light_2.tres" id="3_l2"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/light_3.tres" id="4_l3"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/heavy.tres" id="5_heavy"]
+
+[resource]
+script = ExtResource("1_script")
+combo = Array[ExtResource("1_attack")]([ExtResource("2_l1"), ExtResource("3_l2"), ExtResource("4_l3")])
+heavy = ExtResource("5_heavy")

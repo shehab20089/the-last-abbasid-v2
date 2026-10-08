@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/warrior/thrown_knife.gd" id="1_knife"]
+[ext_resource type="Texture2D" path="res://assets/effects/throwing_knife.png" id="2_texture"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_blade"]
+size = Vector2(10, 4)
+
+[node name="ThrownKnife" type="Area2D"]
+collision_layer = 64
+collision_mask = 17
+script = ExtResource("1_knife")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_texture")
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_blade")

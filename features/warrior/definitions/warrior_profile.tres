@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="WarriorProfile" format=3]
+
+[ext_resource type="Script" path="res://features/warrior/warrior_profile.gd" id="1_script"]
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="1_attack"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/light_1.tres" id="2_l1"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/light_2.tres" id="3_l2"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/light_3.tres" id="4_l3"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/heavy.tres" id="5_heavy"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/air_slash.tres" id="6_air"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/plunge.tres" id="7_plunge"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/plunge_landing.tres" id="8_landing"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/bash.tres" id="9_bash"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/roll_cut.tres" id="10_roll_cut"]
+[ext_resource type="PackedScene" path="res://features/warrior/thrown_knife.tscn" id="11_knife"]
+
+[resource]
+script = ExtResource("1_script")
+combo = Array[ExtResource("1_attack")]([ExtResource("2_l1"), ExtResource("3_l2"), ExtResource("4_l3")])
+heavy = ExtResource("5_heavy")
+air_attack = ExtResource("6_air")
+plunge = ExtResource("7_plunge")
+plunge_landing = ExtResource("8_landing")
+bash = ExtResource("9_bash")
+roll_cut = ExtResource("10_roll_cut")
+knife_scene = ExtResource("11_knife")

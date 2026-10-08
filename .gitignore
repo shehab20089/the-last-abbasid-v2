@@ -1,0 +1,7 @@
+# Godot
+.godot/
+*.translation
+# Generated review images and test results
+captures/
+# Exported builds
+build/

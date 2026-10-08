@@ -1,0 +1,785 @@
+{
+ "idle": {
+  "name": "idle",
+  "frames": 8,
+  "width": 112,
+  "height": 128,
+  "fps": 7,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": null,
+  "file": "archer_idle.png"
+ },
+ "walk": {
+  "name": "walk",
+  "frames": 8,
+  "width": 112,
+  "height": 128,
+  "fps": 10,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": null,
+  "file": "archer_walk.png"
+ },
+ "run": {
+  "name": "run",
+  "frames": 8,
+  "width": 112,
+  "height": 128,
+  "fps": 13,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": null,
+  "file": "archer_run.png"
+ },
+ "alert": {
+  "name": "alert",
+  "frames": 3,
+  "width": 112,
+  "height": 128,
+  "fps": 8,
+  "loop": false,
+  "durations": [
+   1,
+   2,
+   1
+  ],
+  "blades": [
+   null,
+   null,
+   null
+  ],
+  "wounds": null,
+  "file": "archer_alert.png"
+ },
+ "shoot": {
+  "name": "shoot",
+  "frames": 7,
+  "width": 176,
+  "height": 128,
+  "fps": 9,
+  "loop": false,
+  "durations": [
+   1,
+   1.4,
+   1.2,
+   1.6,
+   0.6,
+   1.2,
+   1.2
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": null,
+  "file": "archer_shoot.png"
+ },
+ "hurt": {
+  "name": "hurt",
+  "frames": 5,
+  "width": 176,
+  "height": 128,
+  "fps": 12,
+  "loop": false,
+  "durations": [
+   1,
+   1.2,
+   0.8,
+   0.8,
+   1
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": null,
+  "file": "archer_hurt.png"
+ },
+ "death": {
+  "name": "death",
+  "frames": 12,
+  "width": 176,
+  "height": 128,
+  "fps": 10,
+  "loop": false,
+  "durations": [
+   1,
+   1,
+   1,
+   0.7,
+   0.7,
+   0.6,
+   0.6,
+   0.6,
+   0.8,
+   1,
+   1.2,
+   2
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": null,
+  "file": "archer_death.png"
+ },
+ "watch": {
+  "name": "watch",
+  "frames": 4,
+  "width": 112,
+  "height": 128,
+  "fps": 4,
+  "loop": true,
+  "durations": [
+   2,
+   1.2,
+   2.4,
+   2
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": null,
+  "file": "archer_watch.png"
+ },
+ "death_head": {
+  "name": "death_head",
+  "frames": 11,
+  "width": 176,
+  "height": 128,
+  "fps": 10,
+  "loop": false,
+  "durations": [
+   0.8,
+   1.4,
+   1.2,
+   0.6,
+   0.6,
+   1.4,
+   1.2,
+   0.8,
+   0.7,
+   1,
+   2.4
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": [
+   [
+    -6,
+    -63.9
+   ],
+   [
+    1.2,
+    -63.6
+   ],
+   [
+    1.7,
+    -62.3
+   ],
+   [
+    6.2,
+    -55.1
+   ],
+   [
+    6,
+    -50.8
+   ],
+   [
+    5.7,
+    -46.5
+   ],
+   [
+    9.9,
+    -44.2
+   ],
+   [
+    19.1,
+    -33.5
+   ],
+   [
+    24.6,
+    -27.1
+   ],
+   [
+    27.7,
+    -18.3
+   ],
+   [
+    27.7,
+    -17
+   ]
+  ],
+  "file": "archer_death_head.png"
+ },
+ "death_arm": {
+  "name": "death_arm",
+  "frames": 12,
+  "width": 176,
+  "height": 128,
+  "fps": 10,
+  "loop": false,
+  "durations": [
+   1,
+   1.4,
+   1.2,
+   0.7,
+   0.7,
+   0.6,
+   0.6,
+   0.6,
+   0.8,
+   1,
+   1.2,
+   2
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": [
+   [
+    -16.2,
+    -54.1
+   ],
+   [
+    -16.2,
+    -51.6
+   ],
+   [
+    -18.6,
+    -42.8
+   ],
+   [
+    -19,
+    -37.8
+   ],
+   [
+    -22.6,
+    -30.3
+   ],
+   [
+    -24.9,
+    -22.4
+   ],
+   [
+    -26.3,
+    -15
+   ],
+   [
+    -26.8,
+    -9.9
+   ],
+   [
+    -26.9,
+    -7
+   ],
+   [
+    -26.8,
+    -9.3
+   ],
+   [
+    -26.9,
+    -6.8
+   ],
+   [
+    -26.9,
+    -6.8
+   ]
+  ],
+  "file": "archer_death_arm.png"
+ },
+ "death_leg": {
+  "name": "death_leg",
+  "frames": 12,
+  "width": 176,
+  "height": 128,
+  "fps": 10,
+  "loop": false,
+  "durations": [
+   1,
+   1,
+   1,
+   0.7,
+   0.7,
+   0.6,
+   0.6,
+   0.6,
+   0.8,
+   1,
+   1.2,
+   2
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": [
+   [
+    -6.4,
+    -37.4
+   ],
+   [
+    -8.5,
+    -33
+   ],
+   [
+    -9.2,
+    -25
+   ],
+   [
+    -7.9,
+    -21
+   ],
+   [
+    -7.9,
+    -17
+   ],
+   [
+    -7.9,
+    -13
+   ],
+   [
+    -7.9,
+    -9.5
+   ],
+   [
+    -7.9,
+    -7.4
+   ],
+   [
+    -7.9,
+    -6.2
+   ],
+   [
+    -7.9,
+    -7.2
+   ],
+   [
+    -7.9,
+    -6
+   ],
+   [
+    -7.9,
+    -6
+   ]
+  ],
+  "file": "archer_death_leg.png"
+ },
+ "death_waist": {
+  "name": "death_waist",
+  "frames": 8,
+  "width": 176,
+  "height": 128,
+  "fps": 10,
+  "loop": false,
+  "durations": [
+   1.2,
+   1.6,
+   1,
+   0.9,
+   0.8,
+   0.7,
+   1,
+   2.4
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": [
+   [
+    -1.1,
+    -43.5
+   ],
+   [
+    -2,
+    -42.5
+   ],
+   [
+    -3,
+    -38.1
+   ],
+   [
+    -4.5,
+    -29.9
+   ],
+   [
+    -8.7,
+    -20.7
+   ],
+   [
+    -11.6,
+    -12.6
+   ],
+   [
+    -12.7,
+    -9.8
+   ],
+   [
+    -12.8,
+    -9.8
+   ]
+  ],
+  "file": "archer_death_waist.png"
+ },
+ "finished_behead": {
+  "name": "finished_behead",
+  "frames": 9,
+  "width": 176,
+  "height": 128,
+  "fps": 12,
+  "loop": false,
+  "durations": [
+   1.2,
+   1,
+   1.4,
+   2.4,
+   0.8,
+   1.4,
+   1.2,
+   1.2,
+   2.4
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": [
+   [
+    9.1,
+    -54.8
+   ],
+   [
+    14.5,
+    -46.7
+   ],
+   [
+    8.5,
+    -48.3
+   ],
+   [
+    0.6,
+    -47.9
+   ],
+   [
+    -3.5,
+    -48.6
+   ],
+   [
+    -0.2,
+    -47.7
+   ],
+   [
+    -14.7,
+    -43.6
+   ],
+   [
+    -26.1,
+    -27.2
+   ],
+   [
+    -29.4,
+    -16.6
+   ]
+  ],
+  "file": "archer_finished_behead.png"
+ },
+ "finished_impale": {
+  "name": "finished_impale",
+  "frames": 9,
+  "width": 176,
+  "height": 128,
+  "fps": 12,
+  "loop": false,
+  "durations": [
+   1.4,
+   0.8,
+   1.6,
+   2,
+   1.2,
+   1,
+   1,
+   1.2,
+   2.4
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": [
+   [
+    1.8,
+    -36.1
+   ],
+   [
+    4.6,
+    -38
+   ],
+   [
+    4.6,
+    -39
+   ],
+   [
+    5.6,
+    -43.5
+   ],
+   [
+    5.6,
+    -43.4
+   ],
+   [
+    -5.6,
+    -41.1
+   ],
+   [
+    -5.9,
+    -24
+   ],
+   [
+    -8.4,
+    -15.6
+   ],
+   [
+    -9.6,
+    -11.3
+   ]
+  ],
+  "file": "archer_finished_impale.png"
+ },
+ "finished_spin": {
+  "name": "finished_spin",
+  "frames": 8,
+  "width": 176,
+  "height": 128,
+  "fps": 14,
+  "loop": false,
+  "durations": [
+   1.4,
+   1,
+   1,
+   0.8,
+   1.6,
+   1.2,
+   1.2,
+   2.4
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": [
+   [
+    -1.5,
+    -38.5
+   ],
+   [
+    -0.9,
+    -38.1
+   ],
+   [
+    -1.8,
+    -38.3
+   ],
+   [
+    -1.1,
+    -43.5
+   ],
+   [
+    -2,
+    -42.5
+   ],
+   [
+    -4.5,
+    -29.9
+   ],
+   [
+    -11.6,
+    -12.6
+   ],
+   [
+    -12.8,
+    -9.8
+   ]
+  ],
+  "file": "archer_finished_spin.png"
+ },
+ "finished_disarm": {
+  "name": "finished_disarm",
+  "frames": 9,
+  "width": 176,
+  "height": 128,
+  "fps": 12,
+  "loop": false,
+  "durations": [
+   1.2,
+   0.8,
+   1.8,
+   1.6,
+   0.8,
+   1.2,
+   1,
+   1.2,
+   2.4
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": [
+   [
+    -1,
+    -51.7
+   ],
+   [
+    -13.2,
+    -54.8
+   ],
+   [
+    -11.4,
+    -55.4
+   ],
+   [
+    -15,
+    -55.6
+   ],
+   [
+    -11.4,
+    -61.7
+   ],
+   [
+    -11,
+    -59.9
+   ],
+   [
+    -21,
+    -35.7
+   ],
+   [
+    -26.4,
+    -18.3
+   ],
+   [
+    -27.6,
+    -8.8
+   ]
+  ],
+  "file": "archer_finished_disarm.png"
+ }
+}

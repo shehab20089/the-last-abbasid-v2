@@ -1,0 +1,121 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/npcs/salim/salim_kneel.png" id="1_kneel"]
+[ext_resource type="Texture2D" path="res://assets/npcs/salim/salim_stand.png" id="2_stand"]
+[ext_resource type="Texture2D" path="res://assets/npcs/salim/salim_talk.png" id="3_talk"]
+
+[sub_resource type="AtlasTexture" id="kneel_0"]
+atlas = ExtResource("1_kneel")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="kneel_1"]
+atlas = ExtResource("1_kneel")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="kneel_2"]
+atlas = ExtResource("1_kneel")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="kneel_3"]
+atlas = ExtResource("1_kneel")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="stand_0"]
+atlas = ExtResource("2_stand")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="stand_1"]
+atlas = ExtResource("2_stand")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="stand_2"]
+atlas = ExtResource("2_stand")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="stand_3"]
+atlas = ExtResource("2_stand")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="stand_4"]
+atlas = ExtResource("2_stand")
+region = Rect2(384, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="stand_5"]
+atlas = ExtResource("2_stand")
+region = Rect2(480, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="talk_0"]
+atlas = ExtResource("3_talk")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="talk_1"]
+atlas = ExtResource("3_talk")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="talk_2"]
+atlas = ExtResource("3_talk")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="talk_3"]
+atlas = ExtResource("3_talk")
+region = Rect2(288, 0, 96, 128)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("kneel_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("kneel_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("kneel_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("kneel_3")
+}],
+"loop": true,
+"name": &"kneel",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("stand_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("stand_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("stand_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("stand_3")
+}, {
+"duration": 1.00,
+"texture": SubResource("stand_4")
+}, {
+"duration": 1.00,
+"texture": SubResource("stand_5")
+}],
+"loop": true,
+"name": &"stand",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("talk_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("talk_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("talk_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("talk_3")
+}],
+"loop": true,
+"name": &"talk",
+"speed": 6.0
+}]

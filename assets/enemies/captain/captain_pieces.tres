@@ -1,0 +1,253 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_piece_head.png" id="1_tex"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_piece_leg.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_piece_upper.png" id="3_tex"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_piece_arm.png" id="4_tex"]
+
+[sub_resource type="AtlasTexture" id="head_0"]
+atlas = ExtResource("1_tex")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="head_1"]
+atlas = ExtResource("1_tex")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="head_2"]
+atlas = ExtResource("1_tex")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="head_3"]
+atlas = ExtResource("1_tex")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="head_4"]
+atlas = ExtResource("1_tex")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="head_5"]
+atlas = ExtResource("1_tex")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="head_6"]
+atlas = ExtResource("1_tex")
+region = Rect2(288, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="head_7"]
+atlas = ExtResource("1_tex")
+region = Rect2(336, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="leg_0"]
+atlas = ExtResource("2_tex")
+region = Rect2(0, 0, 56, 56)
+
+[sub_resource type="AtlasTexture" id="leg_1"]
+atlas = ExtResource("2_tex")
+region = Rect2(56, 0, 56, 56)
+
+[sub_resource type="AtlasTexture" id="leg_2"]
+atlas = ExtResource("2_tex")
+region = Rect2(112, 0, 56, 56)
+
+[sub_resource type="AtlasTexture" id="leg_3"]
+atlas = ExtResource("2_tex")
+region = Rect2(168, 0, 56, 56)
+
+[sub_resource type="AtlasTexture" id="leg_4"]
+atlas = ExtResource("2_tex")
+region = Rect2(224, 0, 56, 56)
+
+[sub_resource type="AtlasTexture" id="leg_5"]
+atlas = ExtResource("2_tex")
+region = Rect2(280, 0, 56, 56)
+
+[sub_resource type="AtlasTexture" id="leg_6"]
+atlas = ExtResource("2_tex")
+region = Rect2(336, 0, 56, 56)
+
+[sub_resource type="AtlasTexture" id="leg_7"]
+atlas = ExtResource("2_tex")
+region = Rect2(392, 0, 56, 56)
+
+[sub_resource type="AtlasTexture" id="upper_0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="upper_1"]
+atlas = ExtResource("3_tex")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="upper_2"]
+atlas = ExtResource("3_tex")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="upper_3"]
+atlas = ExtResource("3_tex")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="upper_4"]
+atlas = ExtResource("3_tex")
+region = Rect2(384, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="upper_5"]
+atlas = ExtResource("3_tex")
+region = Rect2(480, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="upper_6"]
+atlas = ExtResource("3_tex")
+region = Rect2(576, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="upper_7"]
+atlas = ExtResource("3_tex")
+region = Rect2(672, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="arm_0"]
+atlas = ExtResource("4_tex")
+region = Rect2(0, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="arm_1"]
+atlas = ExtResource("4_tex")
+region = Rect2(80, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="arm_2"]
+atlas = ExtResource("4_tex")
+region = Rect2(160, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="arm_3"]
+atlas = ExtResource("4_tex")
+region = Rect2(240, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="arm_4"]
+atlas = ExtResource("4_tex")
+region = Rect2(320, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="arm_5"]
+atlas = ExtResource("4_tex")
+region = Rect2(400, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="arm_6"]
+atlas = ExtResource("4_tex")
+region = Rect2(480, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="arm_7"]
+atlas = ExtResource("4_tex")
+region = Rect2(560, 0, 80, 80)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("head_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("head_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("head_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("head_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("head_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("head_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("head_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("head_7")
+}],
+"loop": true,
+"name": &"head",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("leg_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("leg_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("leg_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("leg_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("leg_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("leg_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("leg_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("leg_7")
+}],
+"loop": true,
+"name": &"leg",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("upper_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("upper_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("upper_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("upper_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("upper_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("upper_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("upper_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("upper_7")
+}],
+"loop": true,
+"name": &"upper",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("arm_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("arm_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("arm_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("arm_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("arm_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("arm_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("arm_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("arm_7")
+}],
+"loop": true,
+"name": &"arm",
+"speed": 14.0
+}]

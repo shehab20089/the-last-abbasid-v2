@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="EnemyProfile" format=3]
+
+[ext_resource type="Script" path="res://features/enemies/enemy_profile.gd" id="1_script"]
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="2_attack"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/swordsman_slash.tres" id="3_slash"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/swordsman_cut.tres" id="4_cut"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Mongol Swordsman"
+max_health = 60.0
+max_poise = 26.0
+walk_speed = 46.0
+run_speed = 104.0
+hurt_time = 0.3
+stagger_time = 1.0
+parried_time = 1.4
+sight_range = 230.0
+hearing_range = 70.0
+alert_time = 0.55
+preferred_range = 40.0
+min_range = 22.0
+attacks = Array[ExtResource("2_attack")]([ExtResource("3_slash"), ExtResource("4_cut")])
+attack_ranges = PackedFloat32Array(60, 44)
+attack_cooldown = Vector2(1.1, 1.8)
+block_chance = 0.35
+block_time = 0.85
+retreat_chance = 0.3
+patrol_distance = 56.0

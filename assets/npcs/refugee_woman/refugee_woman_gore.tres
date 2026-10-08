@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="GoreSet" format=3]
+
+[ext_resource type="Script" path="res://shared/vfx/gore_set.gd" id="1_script"]
+[ext_resource type="SpriteFrames" path="res://assets/npcs/refugee_woman/refugee_woman_pieces.tres" id="2_pieces"]
+
+[resource]
+script = ExtResource("1_script")
+pieces = ExtResource("2_pieces")
+piece_bottoms = {
+&"head": PackedFloat32Array(9, 9, 6, 7, 7, 8, 10, 12)
+}
+piece_origins = {
+&"head": Vector2(3.1, -65.8)
+}
+cut_pieces = {
+&"head": PackedStringArray("head")
+}
+wounds = {
+&"executed": PackedVector2Array(0.7, -45.6, 4.4, -44.5, 8.3, -42.3, 17.2, -33.1, 22.5, -26.1, 25.2, -14, 25.2, -10.7)
+}

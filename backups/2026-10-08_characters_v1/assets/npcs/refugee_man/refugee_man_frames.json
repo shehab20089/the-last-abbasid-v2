@@ -1,0 +1,38 @@
+{
+ "run": {
+  "name": "run",
+  "frames": 8,
+  "width": 96,
+  "height": 128,
+  "fps": 16,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "file": "refugee_man_run.png"
+ },
+ "kneel": {
+  "name": "kneel",
+  "frames": 4,
+  "width": 96,
+  "height": 128,
+  "fps": 4,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null
+  ],
+  "file": "refugee_man_kneel.png"
+ }
+}

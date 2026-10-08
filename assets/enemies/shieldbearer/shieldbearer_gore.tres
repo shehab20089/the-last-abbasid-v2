@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="GoreSet" format=3]
+
+[ext_resource type="Script" path="res://shared/vfx/gore_set.gd" id="1_script"]
+[ext_resource type="SpriteFrames" path="res://assets/enemies/shieldbearer/shieldbearer_pieces.tres" id="2_pieces"]
+
+[resource]
+script = ExtResource("1_script")
+pieces = ExtResource("2_pieces")
+piece_bottoms = {
+&"head": PackedFloat32Array(8, 7, 6, 9, 11, 8, 10, 10),
+&"leg": PackedFloat32Array(23, 19, 6, 18, 23, 20, 8, 18),
+&"upper": PackedFloat32Array(26, 33, 22, 26, 28, 21, 17, 13),
+&"arm": PackedFloat32Array(12, 17, 14, 14, 16, 12, 4, 4),
+&"spear": PackedFloat32Array(2, 19, 27, 19, 2, 18, 24, 18)
+}
+piece_origins = {
+&"head": Vector2(7.6, -66.2),
+&"leg": Vector2(-0.9, -21.6),
+&"upper": Vector2(1.6, -48.3),
+&"arm": Vector2(-2.8, -42.6),
+&"spear": Vector2(11.1, -59.3)
+}
+cut_pieces = {
+&"head": PackedStringArray("head"),
+&"arm": PackedStringArray("arm", "spear"),
+&"leg": PackedStringArray("leg"),
+&"waist": PackedStringArray("upper", "spear")
+}
+wounds = {
+&"death_head": PackedVector2Array(-6, -62.6, 1.3, -62.3, 1.8, -62.3, 6.3, -55, 6.1, -50.8, 5.8, -46.5, 10, -44.1, 19.1, -33.4, 24.7, -27, 27.7, -18.2, 27.7, -16.8),
+&"death_arm": PackedVector2Array(-16.2, -54.1, -16.2, -51.6, -18.6, -42.8, -19, -37.8, -22.6, -30.3, -24.9, -22.4, -26.3, -15, -26.8, -9.9, -26.9, -7, -26.8, -9.3, -26.9, -6.8, -26.9, -6.8),
+&"death_leg": PackedVector2Array(-6.4, -37.4, -8.5, -33, -9.2, -25, -7.9, -21, -7.9, -17, -7.9, -13, -7.9, -9.5, -7.9, -7.4, -7.9, -6.2, -7.9, -7.2, -7.9, -6, -7.9, -6),
+&"death_waist": PackedVector2Array(-1.1, -42.2, -2, -41.2, -3, -38.1, -4.5, -29.9, -8.7, -20.7, -11.6, -12.6, -12.7, -8.4, -12.8, -8),
+&"finished_behead": PackedVector2Array(9.1, -54.8, 14.5, -46.7, 8.5, -48.3, 0.6, -47.9, -3.5, -48.6, -0.2, -47.7, -14.7, -43.6, -26.1, -27.2, -29.4, -16.6),
+&"finished_impale": PackedVector2Array(1.8, -36.1, 4.6, -38, 4.6, -39, 5.6, -43.5, 5.6, -43.4, -5.6, -41.1, -5.9, -24, -8.4, -15.6, -9.6, -11.3),
+&"finished_spin": PackedVector2Array(-1.5, -38.5, -0.9, -38.1, -1.8, -38.3, -1.1, -42.2, -2, -41.2, -4.5, -29.9, -11.6, -12.6, -12.8, -8),
+&"finished_disarm": PackedVector2Array(-1, -51.7, -13.2, -54.8, -11.4, -55.4, -15, -55.6, -11.4, -61.7, -11, -59.9, -21, -35.7, -26.4, -18.3, -27.6, -8.8)
+}

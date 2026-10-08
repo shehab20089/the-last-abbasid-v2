@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/enemies/fire_pot.gd" id="1_pot"]
+[ext_resource type="Texture2D" path="res://assets/effects/fire_pot.png" id="2_texture"]
+[ext_resource type="PackedScene" path="res://features/enemies/burning_ground.tscn" id="3_fire"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pot"]
+radius = 4.0
+
+[node name="FirePot" type="Area2D"]
+collision_layer = 64
+collision_mask = 9
+script = ExtResource("1_pot")
+fire_scene = ExtResource("3_fire")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_texture")
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_pot")

@@ -1,0 +1,106 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/menu/settings_screen.gd" id="1_settings"]
+[ext_resource type="Theme" path="res://features/ui/ui_theme.tres" id="2_theme"]
+[ext_resource type="FontVariation" path="res://assets/fonts/abbasid_title.tres" id="3_title"]
+
+[node name="SettingsScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_settings")
+
+[node name="Shade" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.02, 0.015, 0.03, 0.78)
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 170.0
+offset_top = 62.0
+offset_right = 470.0
+offset_bottom = 300.0
+
+[node name="List" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Heading" type="Label" parent="Panel/List"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.86, 0.62, 1)
+theme_override_fonts/font = ExtResource("3_title")
+theme_override_font_sizes/font_size = 18
+text = "MENU_SETTINGS"
+horizontal_alignment = 1
+
+[node name="Rows" type="VBoxContainer" parent="Panel/List"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Master" type="Button" parent="Panel/List/Rows"]
+layout_mode = 2
+auto_translate_mode = 2
+alignment = 0
+metadata/setting = &"Master"
+metadata/label = "SETTINGS_MASTER"
+
+[node name="Music" type="Button" parent="Panel/List/Rows"]
+layout_mode = 2
+auto_translate_mode = 2
+alignment = 0
+metadata/setting = &"Music"
+metadata/label = "SETTINGS_MUSIC"
+
+[node name="Effects" type="Button" parent="Panel/List/Rows"]
+layout_mode = 2
+auto_translate_mode = 2
+alignment = 0
+metadata/setting = &"Effects"
+metadata/label = "SETTINGS_EFFECTS"
+
+[node name="Ambience" type="Button" parent="Panel/List/Rows"]
+layout_mode = 2
+auto_translate_mode = 2
+alignment = 0
+metadata/setting = &"Ambience"
+metadata/label = "SETTINGS_AMBIENCE"
+
+[node name="Fullscreen" type="Button" parent="Panel/List/Rows"]
+layout_mode = 2
+auto_translate_mode = 2
+alignment = 0
+metadata/setting = &"fullscreen"
+metadata/label = "SETTINGS_FULLSCREEN"
+
+[node name="Shake" type="Button" parent="Panel/List/Rows"]
+layout_mode = 2
+auto_translate_mode = 2
+alignment = 0
+metadata/setting = &"shake"
+metadata/label = "SETTINGS_SHAKE"
+
+[node name="Gore" type="Button" parent="Panel/List/Rows"]
+layout_mode = 2
+auto_translate_mode = 2
+alignment = 0
+metadata/setting = &"gore"
+metadata/label = "SETTINGS_GORE"
+
+[node name="Language" type="Button" parent="Panel/List/Rows"]
+layout_mode = 2
+auto_translate_mode = 2
+alignment = 0
+metadata/setting = &"language"
+metadata/label = "SETTINGS_LANGUAGE"
+
+[node name="Back" type="Button" parent="Panel/List"]
+layout_mode = 2
+text = "MENU_BACK"
+metadata/action = &"back"

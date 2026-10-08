@@ -1,0 +1,320 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/ui/hud.gd" id="1_hud"]
+[ext_resource type="Theme" path="res://features/ui/ui_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" path="res://assets/ui/hud_health_under.png" id="3_hu"]
+[ext_resource type="Texture2D" path="res://assets/ui/hud_health_fill.png" id="4_hf"]
+[ext_resource type="Texture2D" path="res://assets/ui/hud_health_frame.png" id="5_hframe"]
+[ext_resource type="Texture2D" path="res://assets/ui/hud_health_trail.png" id="6_ht"]
+[ext_resource type="Texture2D" path="res://assets/ui/hud_stamina_under.png" id="7_su"]
+[ext_resource type="Texture2D" path="res://assets/ui/hud_stamina_fill.png" id="8_sf"]
+[ext_resource type="Texture2D" path="res://assets/ui/hud_stamina_frame.png" id="9_sframe"]
+[ext_resource type="Texture2D" path="res://assets/ui/icon_remedy.png" id="10_remedy"]
+[ext_resource type="Texture2D" path="res://assets/ui/icon_remedy_empty.png" id="11_remedy_empty"]
+[ext_resource type="Texture2D" path="res://assets/ui/icon_manuscript.png" id="12_manuscript"]
+[ext_resource type="Texture2D" path="res://assets/ui/icon_objective.png" id="13_objective"]
+[ext_resource type="Texture2D" path="res://assets/ui/hud_boss_under.png" id="14_bu"]
+[ext_resource type="Texture2D" path="res://assets/ui/hud_boss_fill.png" id="15_bf"]
+[ext_resource type="Texture2D" path="res://assets/ui/hud_boss_frame.png" id="16_bframe"]
+[ext_resource type="FontVariation" path="res://assets/fonts/abbasid_title.tres" id="17_title"]
+[ext_resource type="Texture2D" path="res://assets/ui/hud_cap_9.png" id="18_cap9"]
+[ext_resource type="Texture2D" path="res://assets/ui/hud_cap_6.png" id="19_cap6"]
+[ext_resource type="Texture2D" path="res://assets/ui/hud_medallion.png" id="20_medallion"]
+
+[node name="Hud" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_hud")
+remedy_full = ExtResource("10_remedy")
+remedy_empty = ExtResource("11_remedy_empty")
+
+[node name="Vitals" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 140.0
+offset_bottom = 40.0
+mouse_filter = 2
+theme = ExtResource("2_theme")
+
+[node name="HealthTrail" type="TextureProgressBar" parent="Vitals"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 24.0
+offset_top = 6.0
+offset_right = 128.0
+offset_bottom = 15.0
+mouse_filter = 2
+value = 100.0
+texture_under = ExtResource("3_hu")
+texture_progress = ExtResource("6_ht")
+
+[node name="Health" type="TextureProgressBar" parent="Vitals"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 24.0
+offset_top = 6.0
+offset_right = 128.0
+offset_bottom = 15.0
+mouse_filter = 2
+value = 100.0
+texture_over = ExtResource("5_hframe")
+texture_progress = ExtResource("4_hf")
+
+[node name="HealthCap" type="TextureRect" parent="Vitals"]
+layout_mode = 0
+offset_left = 127.0
+offset_top = 5.0
+offset_right = 137.0
+offset_bottom = 16.0
+mouse_filter = 2
+texture = ExtResource("18_cap9")
+
+[node name="Stamina" type="TextureProgressBar" parent="Vitals"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 24.0
+offset_top = 17.0
+offset_right = 104.0
+offset_bottom = 23.0
+mouse_filter = 2
+value = 100.0
+texture_under = ExtResource("7_su")
+texture_over = ExtResource("9_sframe")
+texture_progress = ExtResource("8_sf")
+
+[node name="StaminaCap" type="TextureRect" parent="Vitals"]
+layout_mode = 0
+offset_left = 103.0
+offset_top = 16.0
+offset_right = 110.0
+offset_bottom = 24.0
+mouse_filter = 2
+texture = ExtResource("19_cap6")
+
+[node name="Medallion" type="TextureRect" parent="Vitals"]
+layout_mode = 0
+offset_right = 30.0
+offset_bottom = 30.0
+mouse_filter = 2
+texture = ExtResource("20_medallion")
+
+[node name="Remedies" type="HBoxContainer" parent="Vitals"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 32.0
+offset_top = 26.0
+offset_right = 72.0
+offset_bottom = 40.0
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="Phial0" type="TextureRect" parent="Vitals/Remedies"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("10_remedy")
+
+[node name="Phial1" type="TextureRect" parent="Vitals/Remedies"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("10_remedy")
+
+[node name="Phial2" type="TextureRect" parent="Vitals/Remedies"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("10_remedy")
+
+[node name="Phial3" type="TextureRect" parent="Vitals/Remedies"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("10_remedy")
+
+[node name="ManuscriptIcon" type="TextureRect" parent="Vitals"]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 28.0
+offset_right = 94.0
+offset_bottom = 38.0
+mouse_filter = 2
+texture = ExtResource("12_manuscript")
+
+[node name="Manuscripts" type="Label" parent="Vitals"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 97.0
+offset_top = 27.0
+offset_right = 140.0
+offset_bottom = 39.0
+text = "0/10"
+[node name="ObjectiveBox" type="HBoxContainer" parent="."]
+unique_name_in_owner = true
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -330.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 22.0
+grow_horizontal = 0
+mouse_filter = 2
+theme = ExtResource("2_theme")
+alignment = 2
+
+[node name="Icon" type="TextureRect" parent="ObjectiveBox"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("13_objective")
+stretch_mode = 3
+
+[node name="Objective" type="Label" parent="ObjectiveBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.82, 0.55, 1)
+text = "Objective"
+
+[node name="Notice" type="Label" parent="."]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 54.0
+offset_right = 200.0
+offset_bottom = 66.0
+mouse_filter = 2
+theme = ExtResource("2_theme")
+theme_override_colors/font_color = Color(1, 0.88, 0.62, 1)
+horizontal_alignment = 1
+
+[node name="Hint" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -62.0
+offset_right = 150.0
+offset_bottom = -34.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme = ExtResource("2_theme")
+
+[node name="HintLabel" type="Label" parent="Hint"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Prompt" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -90.0
+offset_top = -30.0
+offset_right = 90.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme = ExtResource("2_theme")
+
+[node name="PromptLabel" type="Label" parent="Prompt"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.93, 0.74, 1)
+horizontal_alignment = 1
+
+[node name="Boss" type="Control" parent="."]
+unique_name_in_owner = true
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -120.0
+offset_top = -32.0
+offset_right = 120.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme = ExtResource("2_theme")
+
+[node name="BossName" type="Label" parent="Boss"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 240.0
+offset_bottom = 10.0
+theme_override_colors/font_color = Color(0.93, 0.82, 0.55, 1)
+horizontal_alignment = 1
+
+[node name="BossBar" type="TextureProgressBar" parent="Boss"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 11.0
+offset_right = 240.0
+offset_bottom = 20.0
+mouse_filter = 2
+value = 100.0
+texture_under = ExtResource("14_bu")
+texture_over = ExtResource("16_bframe")
+texture_progress = ExtResource("15_bf")
+
+[node name="Location" type="Label" parent="."]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -240.0
+offset_top = 92.0
+offset_right = 240.0
+offset_bottom = 116.0
+grow_horizontal = 2
+mouse_filter = 2
+theme = ExtResource("2_theme")
+theme_override_colors/font_color = Color(0.95, 0.86, 0.62, 1)
+theme_override_colors/font_shadow_color = Color(0.08, 0.03, 0.02, 1)
+theme_override_fonts/font = ExtResource("17_title")
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+
+[node name="LocationRule" type="ColorRect" parent="Location"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -70.0
+offset_top = 2.0
+offset_right = 70.0
+offset_bottom = 3.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(0.85, 0.62, 0.36, 0.8)
+
+[node name="BossCapRight" type="TextureRect" parent="Boss"]
+layout_mode = 0
+offset_left = 239.0
+offset_top = 10.0
+offset_right = 249.0
+offset_bottom = 21.0
+mouse_filter = 2
+texture = ExtResource("18_cap9")
+
+[node name="BossCapLeft" type="TextureRect" parent="Boss"]
+layout_mode = 0
+offset_left = -9.0
+offset_top = 10.0
+offset_right = 1.0
+offset_bottom = 21.0
+mouse_filter = 2
+texture = ExtResource("18_cap9")
+flip_h = true

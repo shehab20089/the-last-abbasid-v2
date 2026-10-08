@@ -1,0 +1,73 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/npcs/guard/guard_sit.png" id="1_sit"]
+[ext_resource type="Texture2D" path="res://assets/npcs/guard/guard_talk.png" id="2_talk"]
+
+[sub_resource type="AtlasTexture" id="sit_0"]
+atlas = ExtResource("1_sit")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="sit_1"]
+atlas = ExtResource("1_sit")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="sit_2"]
+atlas = ExtResource("1_sit")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="sit_3"]
+atlas = ExtResource("1_sit")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="talk_0"]
+atlas = ExtResource("2_talk")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="talk_1"]
+atlas = ExtResource("2_talk")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="talk_2"]
+atlas = ExtResource("2_talk")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="talk_3"]
+atlas = ExtResource("2_talk")
+region = Rect2(288, 0, 96, 128)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("sit_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("sit_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("sit_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("sit_3")
+}],
+"loop": true,
+"name": &"sit",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("talk_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("talk_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("talk_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("talk_3")
+}],
+"loop": true,
+"name": &"talk",
+"speed": 5.0
+}]

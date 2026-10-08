@@ -1,0 +1,42 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/enemies/burning_ground.gd" id="1_fire"]
+[ext_resource type="SpriteFrames" path="res://assets/effects/effect_frames.tres" id="2_frames"]
+[ext_resource type="Texture2D" path="res://assets/effects/light_soft.png" id="3_light"]
+[ext_resource type="Script" path="res://features/levels/fire_light.gd" id="4_flicker"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fire"]
+size = Vector2(44, 18)
+
+[node name="BurningGround" type="Area2D"]
+collision_layer = 0
+collision_mask = 8
+monitorable = false
+script = ExtResource("1_fire")
+
+[node name="Flames" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_frames")
+animation = &"fire_small"
+autoplay = "fire_small"
+offset = Vector2(-11, -14)
+
+[node name="FlamesB" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_frames")
+animation = &"fire_small"
+autoplay = "fire_small"
+frame_progress = 0.5
+offset = Vector2(10, -13)
+flip_h = true
+
+[node name="Light" type="PointLight2D" parent="."]
+position = Vector2(0, -12)
+color = Color(1, 0.58, 0.26, 1)
+energy = 0.9
+texture = ExtResource("3_light")
+texture_scale = 1.6
+script = ExtResource("4_flicker")
+base_energy = 0.9
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+position = Vector2(0, -9)
+shape = SubResource("RectangleShape2D_fire")

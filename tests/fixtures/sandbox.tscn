@@ -1,0 +1,60 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://features/warrior/warrior.tscn" id="1_warrior"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
+size = Vector2(1200, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ledge"]
+size = Vector2(200, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(96, 8)
+
+[node name="Sandbox" type="Node2D"]
+
+[node name="Ground" type="StaticBody2D" parent="."]
+position = Vector2(400, 20)
+
+[node name="Shape" type="CollisionShape2D" parent="Ground"]
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Look" type="ColorRect" parent="Ground"]
+offset_left = -600.0
+offset_top = -20.0
+offset_right = 600.0
+offset_bottom = 20.0
+color = Color(0.3, 0.24, 0.2, 1)
+
+[node name="Ledge" type="StaticBody2D" parent="."]
+position = Vector2(-300, -60)
+
+[node name="Shape" type="CollisionShape2D" parent="Ledge"]
+shape = SubResource("RectangleShape2D_ledge")
+
+[node name="Look" type="ColorRect" parent="Ledge"]
+offset_left = -100.0
+offset_top = -20.0
+offset_right = 100.0
+offset_bottom = 20.0
+color = Color(0.3, 0.24, 0.2, 1)
+
+[node name="Platform" type="StaticBody2D" parent="."]
+position = Vector2(560, -56)
+
+[node name="Shape" type="CollisionShape2D" parent="Platform"]
+shape = SubResource("RectangleShape2D_platform")
+one_way_collision = true
+
+[node name="Look" type="ColorRect" parent="Platform"]
+offset_left = -48.0
+offset_top = -4.0
+offset_right = 48.0
+offset_bottom = 4.0
+color = Color(0.4, 0.3, 0.2, 1)
+
+[node name="Warrior" parent="." instance=ExtResource("1_warrior")]
+position = Vector2(100, 0)
+
+[node name="Camera" type="Camera2D" parent="Warrior"]
+position = Vector2(0, -60)

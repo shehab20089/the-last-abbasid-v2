@@ -1,0 +1,51 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/lamp_niche.png" id="1_tex"]
+
+[sub_resource type="AtlasTexture" id="dark_0"]
+atlas = ExtResource("1_tex")
+region = Rect2(0, 0, 40, 64)
+
+[sub_resource type="AtlasTexture" id="lit_0"]
+atlas = ExtResource("1_tex")
+region = Rect2(40, 0, 40, 64)
+
+[sub_resource type="AtlasTexture" id="lit_1"]
+atlas = ExtResource("1_tex")
+region = Rect2(80, 0, 40, 64)
+
+[sub_resource type="AtlasTexture" id="lit_2"]
+atlas = ExtResource("1_tex")
+region = Rect2(120, 0, 40, 64)
+
+[sub_resource type="AtlasTexture" id="lit_3"]
+atlas = ExtResource("1_tex")
+region = Rect2(160, 0, 40, 64)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("dark_0")
+}],
+"loop": true,
+"name": &"dark",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("lit_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("lit_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("lit_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("lit_3")
+}],
+"loop": true,
+"name": &"lit",
+"speed": 8.0
+}]

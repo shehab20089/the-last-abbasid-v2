@@ -1,0 +1,1493 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/levels/level.gd" id="1_level_gd"]
+[ext_resource type="Texture2D" path="res://assets/environments/scholars/distant.png" id="2_distant_png"]
+[ext_resource type="Texture2D" path="res://assets/effects/smoke_drift.png" id="3_smoke_drift_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/scholars/backdrop_0.png" id="4_backdrop_0_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/scholars/backdrop_1.png" id="5_backdrop_1_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/scholars/backdrop_2.png" id="6_backdrop_2_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/scholars/backdrop_3.png" id="7_backdrop_3_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/scholars/backdrop_4.png" id="8_backdrop_4_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/scholars/backdrop_5.png" id="9_backdrop_5_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/scholars/backdrop_6.png" id="10_backdrop_6_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/scholars/backdrop_7.png" id="11_backdrop_7_png"]
+[ext_resource type="Texture2D" path="res://assets/effects/haze_drift.png" id="12_haze_drift_png"]
+[ext_resource type="SpriteFrames" path="res://assets/effects/effect_frames.tres" id="13_effect_frames_tres"]
+[ext_resource type="Texture2D" path="res://assets/effects/light_soft.png" id="14_light_soft_png"]
+[ext_resource type="Script" path="res://features/levels/fire_light.gd" id="15_fire_light_gd"]
+[ext_resource type="Texture2D" path="res://assets/effects/smoke_medium.png" id="16_smoke_medium_png"]
+[ext_resource type="Texture2D" path="res://assets/effects/ember.png" id="17_ember_png"]
+[ext_resource type="Texture2D" path="res://assets/effects/smoke_small.png" id="18_smoke_small_png"]
+[ext_resource type="TileSet" path="res://assets/environments/market/market_tileset.tres" id="19_market_tileset_tres"]
+[ext_resource type="Texture2D" path="res://assets/environments/scholars/props/facade_tower_0.png" id="20_facade_tower_0_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/scholars/props/facade_tower_297.png" id="21_facade_tower_297_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/pages.png" id="22_pages_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/lectern.png" id="23_lectern_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/scroll_rack.png" id="24_scroll_rack_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/cypress.png" id="25_cypress_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/fountain.png" id="26_fountain_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/jars.png" id="27_jars_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/shelf_fallen.png" id="28_shelf_fallen_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/book_pile.png" id="29_book_pile_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/ink_spill.png" id="30_ink_spill_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/armillary.png" id="31_armillary_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/rubble.png" id="32_rubble_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/book_pyre.png" id="33_book_pyre_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/chest_looted.png" id="34_chest_looted_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/corpse_scholar.png" id="35_corpse_scholar_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/corpse_man_front.png" id="36_corpse_man_front_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/corpse_woman_back.png" id="37_corpse_woman_back_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/corpse_headless.png" id="38_corpse_headless_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/corpse_man_arrows.png" id="39_corpse_man_arrows_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/corpse_woman_front.png" id="40_corpse_woman_front_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/corpse_man_back.png" id="41_corpse_man_back_png"]
+[ext_resource type="PackedScene" path="res://features/levels/checkpoint.tscn" id="42_checkpoint_tscn"]
+[ext_resource type="PackedScene" path="res://features/levels/manuscript.tscn" id="43_manuscript_tscn"]
+[ext_resource type="SpriteFrames" path="res://assets/npcs/copyist/copyist_frames.tres" id="44_copyist_frames_tres"]
+[ext_resource type="PackedScene" path="res://features/levels/npc.tscn" id="45_npc_tscn"]
+[ext_resource type="SpriteFrames" path="res://assets/npcs/librarian/librarian_frames.tres" id="46_librarian_frames_tres"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/garden_door.png" id="47_garden_door_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/garden_door_open.png" id="48_garden_door_open_png"]
+[ext_resource type="PackedScene" path="res://features/levels/level_exit.tscn" id="49_level_exit_tscn"]
+[ext_resource type="SpriteFrames" path="res://assets/npcs/refugee_man/refugee_man_frames.tres" id="50_refugee_man_frames_tres"]
+[ext_resource type="Script" path="res://features/levels/captive.gd" id="51_captive_gd"]
+[ext_resource type="Resource" path="res://assets/npcs/refugee_man/refugee_man_gore.tres" id="52_refugee_man_gore_tres"]
+[ext_resource type="SpriteFrames" path="res://assets/npcs/refugee_woman/refugee_woman_frames.tres" id="53_refugee_woman_frames_tres"]
+[ext_resource type="Resource" path="res://assets/npcs/refugee_woman/refugee_woman_gore.tres" id="54_refugee_woman_gore_tres"]
+[ext_resource type="PackedScene" path="res://features/enemies/swordsman.tscn" id="55_swordsman_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/spearman.tscn" id="56_spearman_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/archer.tscn" id="57_archer_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/engineer.tscn" id="58_engineer_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/shieldbearer.tscn" id="59_shieldbearer_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/veteran.tscn" id="60_veteran_tscn"]
+[ext_resource type="Script" path="res://features/levels/story_trigger.gd" id="61_story_trigger_gd"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/fg_rubble.png" id="62_fg_rubble_png"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_1"]
+blend_mode = 1
+
+[sub_resource type="Curve" id="Curve_2"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 1.6), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_3"]
+offsets = PackedFloat32Array(0, 0.2, 1)
+colors = PackedColorArray(0.9, 0.55, 0.3, 0, 0.55, 0.5, 0.5, 0.75, 0.3, 0.28, 0.32, 0)
+
+[sub_resource type="Gradient" id="Gradient_4"]
+offsets = PackedFloat32Array(0, 0.15, 0.7, 1)
+colors = PackedColorArray(1, 0.95, 0.6, 0, 1, 0.8, 0.4, 1, 1, 0.45, 0.15, 0.85, 0.6, 0.15, 0.05, 0)
+
+[sub_resource type="Curve" id="Curve_5"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 1.6), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_6"]
+offsets = PackedFloat32Array(0, 0.2, 1)
+colors = PackedColorArray(0.9, 0.55, 0.3, 0, 0.55, 0.5, 0.5, 0.75, 0.3, 0.28, 0.32, 0)
+
+[sub_resource type="Gradient" id="Gradient_7"]
+offsets = PackedFloat32Array(0, 0.15, 0.7, 1)
+colors = PackedColorArray(1, 0.95, 0.6, 0, 1, 0.8, 0.4, 1, 1, 0.45, 0.15, 0.85, 0.6, 0.15, 0.05, 0)
+
+[sub_resource type="Curve" id="Curve_8"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 1.6), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_9"]
+offsets = PackedFloat32Array(0, 0.2, 1)
+colors = PackedColorArray(0.9, 0.55, 0.3, 0, 0.55, 0.5, 0.5, 0.75, 0.3, 0.28, 0.32, 0)
+
+[sub_resource type="Gradient" id="Gradient_10"]
+offsets = PackedFloat32Array(0, 0.15, 0.7, 1)
+colors = PackedColorArray(1, 0.95, 0.6, 0, 1, 0.8, 0.4, 1, 1, 0.45, 0.15, 0.85, 0.6, 0.15, 0.05, 0)
+
+[sub_resource type="Curve" id="Curve_11"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 1.6), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_12"]
+offsets = PackedFloat32Array(0, 0.2, 1)
+colors = PackedColorArray(0.9, 0.55, 0.3, 0, 0.55, 0.5, 0.5, 0.75, 0.3, 0.28, 0.32, 0)
+
+[sub_resource type="Gradient" id="Gradient_13"]
+offsets = PackedFloat32Array(0, 0.15, 0.7, 1)
+colors = PackedColorArray(1, 0.95, 0.6, 0, 1, 0.8, 0.4, 1, 1, 0.45, 0.15, 0.85, 0.6, 0.15, 0.05, 0)
+
+[sub_resource type="Curve" id="Curve_14"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 1.6), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_15"]
+offsets = PackedFloat32Array(0, 0.2, 1)
+colors = PackedColorArray(0.9, 0.55, 0.3, 0, 0.55, 0.5, 0.5, 0.75, 0.3, 0.28, 0.32, 0)
+
+[sub_resource type="Gradient" id="Gradient_16"]
+offsets = PackedFloat32Array(0, 0.15, 0.7, 1)
+colors = PackedColorArray(1, 0.95, 0.6, 0, 1, 0.8, 0.4, 1, 1, 0.45, 0.15, 0.85, 0.6, 0.15, 0.05, 0)
+
+[sub_resource type="Curve" id="Curve_17"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 1.6), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_18"]
+offsets = PackedFloat32Array(0, 0.2, 1)
+colors = PackedColorArray(0.9, 0.55, 0.3, 0, 0.55, 0.5, 0.5, 0.75, 0.3, 0.28, 0.32, 0)
+
+[sub_resource type="Gradient" id="Gradient_19"]
+offsets = PackedFloat32Array(0, 0.15, 0.7, 1)
+colors = PackedColorArray(1, 0.95, 0.6, 0, 1, 0.8, 0.4, 1, 1, 0.45, 0.15, 0.85, 0.6, 0.15, 0.05, 0)
+
+[sub_resource type="Curve" id="Curve_20"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 1.6), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_21"]
+offsets = PackedFloat32Array(0, 0.2, 1)
+colors = PackedColorArray(0.9, 0.55, 0.3, 0, 0.55, 0.5, 0.5, 0.75, 0.3, 0.28, 0.32, 0)
+
+[sub_resource type="Gradient" id="Gradient_22"]
+offsets = PackedFloat32Array(0, 0.15, 0.7, 1)
+colors = PackedColorArray(1, 0.95, 0.6, 0, 1, 0.8, 0.4, 1, 1, 0.45, 0.15, 0.85, 0.6, 0.15, 0.05, 0)
+
+[sub_resource type="Curve" id="Curve_23"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 1.6), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_24"]
+offsets = PackedFloat32Array(0, 0.2, 1)
+colors = PackedColorArray(0.9, 0.55, 0.3, 0, 0.55, 0.5, 0.5, 0.75, 0.3, 0.28, 0.32, 0)
+
+[sub_resource type="Gradient" id="Gradient_25"]
+offsets = PackedFloat32Array(0, 0.15, 0.7, 1)
+colors = PackedColorArray(1, 0.95, 0.6, 0, 1, 0.8, 0.4, 1, 1, 0.45, 0.15, 0.85, 0.6, 0.15, 0.05, 0)
+
+[sub_resource type="Curve" id="Curve_26"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 1.6), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_27"]
+offsets = PackedFloat32Array(0, 0.2, 1)
+colors = PackedColorArray(0.9, 0.55, 0.3, 0, 0.55, 0.5, 0.5, 0.75, 0.3, 0.28, 0.32, 0)
+
+[sub_resource type="Gradient" id="Gradient_28"]
+offsets = PackedFloat32Array(0, 0.15, 0.7, 1)
+colors = PackedColorArray(1, 0.95, 0.6, 0, 1, 0.8, 0.4, 1, 1, 0.45, 0.15, 0.85, 0.6, 0.15, 0.05, 0)
+
+[sub_resource type="Curve" id="Curve_29"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 1.6), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_30"]
+offsets = PackedFloat32Array(0, 0.2, 1)
+colors = PackedColorArray(0.9, 0.55, 0.3, 0, 0.55, 0.5, 0.5, 0.75, 0.3, 0.28, 0.32, 0)
+
+[sub_resource type="Gradient" id="Gradient_31"]
+offsets = PackedFloat32Array(0, 0.15, 0.7, 1)
+colors = PackedColorArray(1, 0.95, 0.6, 0, 1, 0.8, 0.4, 1, 1, 0.45, 0.15, 0.85, 0.6, 0.15, 0.05, 0)
+
+[sub_resource type="Curve" id="Curve_32"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 1.6), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_33"]
+offsets = PackedFloat32Array(0, 0.2, 1)
+colors = PackedColorArray(0.9, 0.55, 0.3, 0, 0.55, 0.5, 0.5, 0.75, 0.3, 0.28, 0.32, 0)
+
+[sub_resource type="Gradient" id="Gradient_34"]
+offsets = PackedFloat32Array(0, 0.15, 0.7, 1)
+colors = PackedColorArray(1, 0.95, 0.6, 0, 1, 0.8, 0.4, 1, 1, 0.45, 0.15, 0.85, 0.6, 0.15, 0.05, 0)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_35"]
+size = Vector2(32, 320)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_36"]
+size = Vector2(48, 320)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_37"]
+size = Vector2(48, 320)
+
+[node name="ScholarsQuarter" type="Node2D"]
+script = ExtResource("1_level_gd")
+level_id = &"scholars_quarter"
+title_key = "LEVEL_SCHOLARS_QUARTER"
+bounds = Rect2(0, 0, 4800, 512)
+music = &"scholars"
+ambience = &"river"
+next_level = "res://features/levels/last_gate/last_gate.tscn"
+exit_card = &"scholars_end"
+exit_title = "LEVEL_LAST_GATE"
+objectives = PackedStringArray("codex|OBJ_LAST_GATE", "library_cleared|OBJ_SPEAK_LIBRARIAN", "library|OBJ_SAVE_LIBRARY", "|OBJ_FIND_LIBRARIAN")
+known_techniques = PackedStringArray("bash", "knives")
+
+[node name="Distant" type="Parallax2D" parent="."]
+scroll_scale = Vector2(0.06, 0)
+modulate = Color(1.250, 1.220, 1.064, 1)
+
+[node name="Image" type="Sprite2D" parent="Distant"]
+texture = ExtResource("2_distant_png")
+centered = false
+
+[node name="Smoke" type="Parallax2D" parent="."]
+scroll_scale = Vector2(0.4, 0.25)
+repeat_size = Vector2(512, 0)
+repeat_times = 4
+autoscroll = Vector2(-7, 0)
+
+[node name="Band" type="Sprite2D" parent="Smoke"]
+texture = ExtResource("3_smoke_drift_png")
+centered = false
+position = Vector2(0, 48)
+
+[node name="Backdrop" type="Node2D" parent="."]
+
+[node name="Chunk0" type="Sprite2D" parent="Backdrop"]
+texture = ExtResource("4_backdrop_0_png")
+centered = false
+position = Vector2(0, 88)
+
+[node name="Chunk1" type="Sprite2D" parent="Backdrop"]
+texture = ExtResource("5_backdrop_1_png")
+centered = false
+position = Vector2(600, 88)
+
+[node name="Chunk2" type="Sprite2D" parent="Backdrop"]
+texture = ExtResource("6_backdrop_2_png")
+centered = false
+position = Vector2(1200, 88)
+
+[node name="Chunk3" type="Sprite2D" parent="Backdrop"]
+texture = ExtResource("7_backdrop_3_png")
+centered = false
+position = Vector2(1800, 88)
+
+[node name="Chunk4" type="Sprite2D" parent="Backdrop"]
+texture = ExtResource("8_backdrop_4_png")
+centered = false
+position = Vector2(2400, 88)
+
+[node name="Chunk5" type="Sprite2D" parent="Backdrop"]
+texture = ExtResource("9_backdrop_5_png")
+centered = false
+position = Vector2(3000, 88)
+
+[node name="Chunk6" type="Sprite2D" parent="Backdrop"]
+texture = ExtResource("10_backdrop_6_png")
+centered = false
+position = Vector2(3600, 88)
+
+[node name="Chunk7" type="Sprite2D" parent="Backdrop"]
+texture = ExtResource("11_backdrop_7_png")
+centered = false
+position = Vector2(4200, 88)
+
+[node name="Haze" type="Parallax2D" parent="."]
+scroll_scale = Vector2(1, 1)
+repeat_size = Vector2(512, 0)
+repeat_times = 12
+autoscroll = Vector2(-13, 0)
+
+[node name="Band" type="Sprite2D" parent="Haze"]
+texture = ExtResource("12_haze_drift_png")
+centered = false
+position = Vector2(0, 344)
+
+[node name="Fires" type="Node2D" parent="."]
+
+[node name="Fire0" type="AnimatedSprite2D" parent="Fires"]
+position = Vector2(200, 448)
+sprite_frames = ExtResource("13_effect_frames_tres")
+animation = &"fire_medium"
+autoplay = "fire_medium"
+offset = Vector2(0, -25)
+frame_progress = 0
+
+[node name="Light" type="PointLight2D" parent="Fires/Fire0"]
+position = Vector2(0, -20.8)
+color = Color(1, 0.58, 0.26, 1)
+energy = 0.95
+texture = ExtResource("14_light_soft_png")
+texture_scale = 2.70
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.95
+
+[node name="Smoke" type="CPUParticles2D" parent="Fires/Fire0"]
+position = Vector2(0, -41.6)
+amount = 6
+lifetime = 4
+preprocess = 4
+texture = ExtResource("16_smoke_medium_png")
+emission_shape = 1
+emission_sphere_radius = 7.8
+direction = Vector2(0.15, -1)
+spread = 12
+gravity = Vector2(4, -6)
+initial_velocity_min = 14
+initial_velocity_max = 24
+scale_amount_min = 0.6
+scale_amount_max = 1
+scale_amount_curve = SubResource("Curve_2")
+color_ramp = SubResource("Gradient_3")
+
+[node name="Embers" type="CPUParticles2D" parent="Fires/Fire0"]
+position = Vector2(0, -28.6)
+amount = 7
+lifetime = 2.6
+preprocess = 2.6
+explosiveness = 0
+material = SubResource("CanvasItemMaterial_1")
+texture = ExtResource("17_ember_png")
+emission_shape = 3
+emission_rect_extents = Vector2(9.36, 10.4)
+direction = Vector2(0.1, -1)
+spread = 28
+gravity = Vector2(10, -16)
+initial_velocity_min = 18
+initial_velocity_max = 46
+angular_velocity_min = -90
+angular_velocity_max = 90
+scale_amount_min = 0.5
+scale_amount_max = 1
+color_ramp = SubResource("Gradient_4")
+
+[node name="Fire1" type="AnimatedSprite2D" parent="Fires"]
+position = Vector2(712, 448)
+sprite_frames = ExtResource("13_effect_frames_tres")
+animation = &"fire_small"
+autoplay = "fire_small"
+offset = Vector2(0, -14)
+frame_progress = 0.37
+
+[node name="Light" type="PointLight2D" parent="Fires/Fire1"]
+position = Vector2(0, -12)
+color = Color(1, 0.58, 0.26, 1)
+energy = 0.80
+texture = ExtResource("14_light_soft_png")
+texture_scale = 1.70
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.80
+
+[node name="Smoke" type="CPUParticles2D" parent="Fires/Fire1"]
+position = Vector2(0, -24)
+amount = 6
+lifetime = 4
+preprocess = 4
+texture = ExtResource("18_smoke_small_png")
+emission_shape = 1
+emission_sphere_radius = 4.5
+direction = Vector2(0.15, -1)
+spread = 12
+gravity = Vector2(4, -6)
+initial_velocity_min = 14
+initial_velocity_max = 24
+scale_amount_min = 0.6
+scale_amount_max = 1
+scale_amount_curve = SubResource("Curve_5")
+color_ramp = SubResource("Gradient_6")
+
+[node name="Embers" type="CPUParticles2D" parent="Fires/Fire1"]
+position = Vector2(0, -16.5)
+amount = 4
+lifetime = 2.6
+preprocess = 2.6
+explosiveness = 0
+material = SubResource("CanvasItemMaterial_1")
+texture = ExtResource("17_ember_png")
+emission_shape = 3
+emission_rect_extents = Vector2(5.4, 6)
+direction = Vector2(0.1, -1)
+spread = 28
+gravity = Vector2(10, -16)
+initial_velocity_min = 18
+initial_velocity_max = 46
+angular_velocity_min = -90
+angular_velocity_max = 90
+scale_amount_min = 0.5
+scale_amount_max = 1
+color_ramp = SubResource("Gradient_7")
+
+[node name="Fire2" type="AnimatedSprite2D" parent="Fires"]
+position = Vector2(1560, 448)
+sprite_frames = ExtResource("13_effect_frames_tres")
+animation = &"fire_large"
+autoplay = "fire_large"
+offset = Vector2(0, -47)
+frame_progress = 0.74
+
+[node name="Light" type="PointLight2D" parent="Fires/Fire2"]
+position = Vector2(0, -38.4)
+color = Color(1, 0.58, 0.26, 1)
+energy = 1.15
+texture = ExtResource("14_light_soft_png")
+texture_scale = 4.00
+script = ExtResource("15_fire_light_gd")
+base_energy = 1.15
+
+[node name="Smoke" type="CPUParticles2D" parent="Fires/Fire2"]
+position = Vector2(0, -76.8)
+amount = 10
+lifetime = 4
+preprocess = 4
+texture = ExtResource("16_smoke_medium_png")
+emission_shape = 1
+emission_sphere_radius = 14.4
+direction = Vector2(0.15, -1)
+spread = 12
+gravity = Vector2(4, -6)
+initial_velocity_min = 14
+initial_velocity_max = 24
+scale_amount_min = 0.6
+scale_amount_max = 1
+scale_amount_curve = SubResource("Curve_8")
+color_ramp = SubResource("Gradient_9")
+
+[node name="Embers" type="CPUParticles2D" parent="Fires/Fire2"]
+position = Vector2(0, -52.8)
+amount = 12
+lifetime = 2.6
+preprocess = 2.6
+explosiveness = 0
+material = SubResource("CanvasItemMaterial_1")
+texture = ExtResource("17_ember_png")
+emission_shape = 3
+emission_rect_extents = Vector2(17.28, 19.2)
+direction = Vector2(0.1, -1)
+spread = 28
+gravity = Vector2(10, -16)
+initial_velocity_min = 18
+initial_velocity_max = 46
+angular_velocity_min = -90
+angular_velocity_max = 90
+scale_amount_min = 0.5
+scale_amount_max = 1
+color_ramp = SubResource("Gradient_10")
+
+[node name="Fire3" type="AnimatedSprite2D" parent="Fires"]
+position = Vector2(1992, 448)
+sprite_frames = ExtResource("13_effect_frames_tres")
+animation = &"fire_medium"
+autoplay = "fire_medium"
+offset = Vector2(0, -25)
+frame_progress = 0.10999999999999988
+
+[node name="Light" type="PointLight2D" parent="Fires/Fire3"]
+position = Vector2(0, -20.8)
+color = Color(1, 0.58, 0.26, 1)
+energy = 0.95
+texture = ExtResource("14_light_soft_png")
+texture_scale = 2.70
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.95
+
+[node name="Smoke" type="CPUParticles2D" parent="Fires/Fire3"]
+position = Vector2(0, -41.6)
+amount = 6
+lifetime = 4
+preprocess = 4
+texture = ExtResource("16_smoke_medium_png")
+emission_shape = 1
+emission_sphere_radius = 7.8
+direction = Vector2(0.15, -1)
+spread = 12
+gravity = Vector2(4, -6)
+initial_velocity_min = 14
+initial_velocity_max = 24
+scale_amount_min = 0.6
+scale_amount_max = 1
+scale_amount_curve = SubResource("Curve_11")
+color_ramp = SubResource("Gradient_12")
+
+[node name="Embers" type="CPUParticles2D" parent="Fires/Fire3"]
+position = Vector2(0, -28.6)
+amount = 7
+lifetime = 2.6
+preprocess = 2.6
+explosiveness = 0
+material = SubResource("CanvasItemMaterial_1")
+texture = ExtResource("17_ember_png")
+emission_shape = 3
+emission_rect_extents = Vector2(9.36, 10.4)
+direction = Vector2(0.1, -1)
+spread = 28
+gravity = Vector2(10, -16)
+initial_velocity_min = 18
+initial_velocity_max = 46
+angular_velocity_min = -90
+angular_velocity_max = 90
+scale_amount_min = 0.5
+scale_amount_max = 1
+color_ramp = SubResource("Gradient_13")
+
+[node name="Fire4" type="AnimatedSprite2D" parent="Fires"]
+position = Vector2(310, 448)
+sprite_frames = ExtResource("13_effect_frames_tres")
+animation = &"fire_medium"
+autoplay = "fire_medium"
+offset = Vector2(0, -25)
+frame_progress = 0.48
+
+[node name="Light" type="PointLight2D" parent="Fires/Fire4"]
+position = Vector2(0, -20.8)
+color = Color(1, 0.58, 0.26, 1)
+energy = 0.95
+texture = ExtResource("14_light_soft_png")
+texture_scale = 2.70
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.95
+
+[node name="Smoke" type="CPUParticles2D" parent="Fires/Fire4"]
+position = Vector2(0, -41.6)
+amount = 6
+lifetime = 4
+preprocess = 4
+texture = ExtResource("16_smoke_medium_png")
+emission_shape = 1
+emission_sphere_radius = 7.8
+direction = Vector2(0.15, -1)
+spread = 12
+gravity = Vector2(4, -6)
+initial_velocity_min = 14
+initial_velocity_max = 24
+scale_amount_min = 0.6
+scale_amount_max = 1
+scale_amount_curve = SubResource("Curve_14")
+color_ramp = SubResource("Gradient_15")
+
+[node name="Embers" type="CPUParticles2D" parent="Fires/Fire4"]
+position = Vector2(0, -28.6)
+amount = 7
+lifetime = 2.6
+preprocess = 2.6
+explosiveness = 0
+material = SubResource("CanvasItemMaterial_1")
+texture = ExtResource("17_ember_png")
+emission_shape = 3
+emission_rect_extents = Vector2(9.36, 10.4)
+direction = Vector2(0.1, -1)
+spread = 28
+gravity = Vector2(10, -16)
+initial_velocity_min = 18
+initial_velocity_max = 46
+angular_velocity_min = -90
+angular_velocity_max = 90
+scale_amount_min = 0.5
+scale_amount_max = 1
+color_ramp = SubResource("Gradient_16")
+
+[node name="Fire5" type="AnimatedSprite2D" parent="Fires"]
+position = Vector2(2248, 448)
+sprite_frames = ExtResource("13_effect_frames_tres")
+animation = &"fire_large"
+autoplay = "fire_large"
+offset = Vector2(0, -47)
+frame_progress = 0.8500000000000001
+
+[node name="Light" type="PointLight2D" parent="Fires/Fire5"]
+position = Vector2(0, -38.4)
+color = Color(1, 0.58, 0.26, 1)
+energy = 1.15
+texture = ExtResource("14_light_soft_png")
+texture_scale = 4.00
+script = ExtResource("15_fire_light_gd")
+base_energy = 1.15
+
+[node name="Smoke" type="CPUParticles2D" parent="Fires/Fire5"]
+position = Vector2(0, -76.8)
+amount = 10
+lifetime = 4
+preprocess = 4
+texture = ExtResource("16_smoke_medium_png")
+emission_shape = 1
+emission_sphere_radius = 14.4
+direction = Vector2(0.15, -1)
+spread = 12
+gravity = Vector2(4, -6)
+initial_velocity_min = 14
+initial_velocity_max = 24
+scale_amount_min = 0.6
+scale_amount_max = 1
+scale_amount_curve = SubResource("Curve_17")
+color_ramp = SubResource("Gradient_18")
+
+[node name="Embers" type="CPUParticles2D" parent="Fires/Fire5"]
+position = Vector2(0, -52.8)
+amount = 12
+lifetime = 2.6
+preprocess = 2.6
+explosiveness = 0
+material = SubResource("CanvasItemMaterial_1")
+texture = ExtResource("17_ember_png")
+emission_shape = 3
+emission_rect_extents = Vector2(17.28, 19.2)
+direction = Vector2(0.1, -1)
+spread = 28
+gravity = Vector2(10, -16)
+initial_velocity_min = 18
+initial_velocity_max = 46
+angular_velocity_min = -90
+angular_velocity_max = 90
+scale_amount_min = 0.5
+scale_amount_max = 1
+color_ramp = SubResource("Gradient_19")
+
+[node name="Fire6" type="AnimatedSprite2D" parent="Fires"]
+position = Vector2(2664, 448)
+sprite_frames = ExtResource("13_effect_frames_tres")
+animation = &"fire_small"
+autoplay = "fire_small"
+offset = Vector2(0, -14)
+frame_progress = 0.21999999999999975
+
+[node name="Light" type="PointLight2D" parent="Fires/Fire6"]
+position = Vector2(0, -12)
+color = Color(1, 0.58, 0.26, 1)
+energy = 0.80
+texture = ExtResource("14_light_soft_png")
+texture_scale = 1.70
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.80
+
+[node name="Smoke" type="CPUParticles2D" parent="Fires/Fire6"]
+position = Vector2(0, -24)
+amount = 6
+lifetime = 4
+preprocess = 4
+texture = ExtResource("18_smoke_small_png")
+emission_shape = 1
+emission_sphere_radius = 4.5
+direction = Vector2(0.15, -1)
+spread = 12
+gravity = Vector2(4, -6)
+initial_velocity_min = 14
+initial_velocity_max = 24
+scale_amount_min = 0.6
+scale_amount_max = 1
+scale_amount_curve = SubResource("Curve_20")
+color_ramp = SubResource("Gradient_21")
+
+[node name="Embers" type="CPUParticles2D" parent="Fires/Fire6"]
+position = Vector2(0, -16.5)
+amount = 4
+lifetime = 2.6
+preprocess = 2.6
+explosiveness = 0
+material = SubResource("CanvasItemMaterial_1")
+texture = ExtResource("17_ember_png")
+emission_shape = 3
+emission_rect_extents = Vector2(5.4, 6)
+direction = Vector2(0.1, -1)
+spread = 28
+gravity = Vector2(10, -16)
+initial_velocity_min = 18
+initial_velocity_max = 46
+angular_velocity_min = -90
+angular_velocity_max = 90
+scale_amount_min = 0.5
+scale_amount_max = 1
+color_ramp = SubResource("Gradient_22")
+
+[node name="Fire7" type="AnimatedSprite2D" parent="Fires"]
+position = Vector2(3208, 448)
+sprite_frames = ExtResource("13_effect_frames_tres")
+animation = &"fire_medium"
+autoplay = "fire_medium"
+offset = Vector2(0, -25)
+frame_progress = 0.5899999999999999
+
+[node name="Light" type="PointLight2D" parent="Fires/Fire7"]
+position = Vector2(0, -20.8)
+color = Color(1, 0.58, 0.26, 1)
+energy = 0.95
+texture = ExtResource("14_light_soft_png")
+texture_scale = 2.70
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.95
+
+[node name="Smoke" type="CPUParticles2D" parent="Fires/Fire7"]
+position = Vector2(0, -41.6)
+amount = 6
+lifetime = 4
+preprocess = 4
+texture = ExtResource("16_smoke_medium_png")
+emission_shape = 1
+emission_sphere_radius = 7.8
+direction = Vector2(0.15, -1)
+spread = 12
+gravity = Vector2(4, -6)
+initial_velocity_min = 14
+initial_velocity_max = 24
+scale_amount_min = 0.6
+scale_amount_max = 1
+scale_amount_curve = SubResource("Curve_23")
+color_ramp = SubResource("Gradient_24")
+
+[node name="Embers" type="CPUParticles2D" parent="Fires/Fire7"]
+position = Vector2(0, -28.6)
+amount = 7
+lifetime = 2.6
+preprocess = 2.6
+explosiveness = 0
+material = SubResource("CanvasItemMaterial_1")
+texture = ExtResource("17_ember_png")
+emission_shape = 3
+emission_rect_extents = Vector2(9.36, 10.4)
+direction = Vector2(0.1, -1)
+spread = 28
+gravity = Vector2(10, -16)
+initial_velocity_min = 18
+initial_velocity_max = 46
+angular_velocity_min = -90
+angular_velocity_max = 90
+scale_amount_min = 0.5
+scale_amount_max = 1
+color_ramp = SubResource("Gradient_25")
+
+[node name="Fire8" type="AnimatedSprite2D" parent="Fires"]
+position = Vector2(3592, 448)
+sprite_frames = ExtResource("13_effect_frames_tres")
+animation = &"fire_large"
+autoplay = "fire_large"
+offset = Vector2(0, -47)
+frame_progress = 0.96
+
+[node name="Light" type="PointLight2D" parent="Fires/Fire8"]
+position = Vector2(0, -38.4)
+color = Color(1, 0.58, 0.26, 1)
+energy = 1.15
+texture = ExtResource("14_light_soft_png")
+texture_scale = 4.00
+script = ExtResource("15_fire_light_gd")
+base_energy = 1.15
+
+[node name="Smoke" type="CPUParticles2D" parent="Fires/Fire8"]
+position = Vector2(0, -76.8)
+amount = 10
+lifetime = 4
+preprocess = 4
+texture = ExtResource("16_smoke_medium_png")
+emission_shape = 1
+emission_sphere_radius = 14.4
+direction = Vector2(0.15, -1)
+spread = 12
+gravity = Vector2(4, -6)
+initial_velocity_min = 14
+initial_velocity_max = 24
+scale_amount_min = 0.6
+scale_amount_max = 1
+scale_amount_curve = SubResource("Curve_26")
+color_ramp = SubResource("Gradient_27")
+
+[node name="Embers" type="CPUParticles2D" parent="Fires/Fire8"]
+position = Vector2(0, -52.8)
+amount = 12
+lifetime = 2.6
+preprocess = 2.6
+explosiveness = 0
+material = SubResource("CanvasItemMaterial_1")
+texture = ExtResource("17_ember_png")
+emission_shape = 3
+emission_rect_extents = Vector2(17.28, 19.2)
+direction = Vector2(0.1, -1)
+spread = 28
+gravity = Vector2(10, -16)
+initial_velocity_min = 18
+initial_velocity_max = 46
+angular_velocity_min = -90
+angular_velocity_max = 90
+scale_amount_min = 0.5
+scale_amount_max = 1
+color_ramp = SubResource("Gradient_28")
+
+[node name="Fire9" type="AnimatedSprite2D" parent="Fires"]
+position = Vector2(4152, 448)
+sprite_frames = ExtResource("13_effect_frames_tres")
+animation = &"fire_small"
+autoplay = "fire_small"
+offset = Vector2(0, -14)
+frame_progress = 0.33000000000000007
+
+[node name="Light" type="PointLight2D" parent="Fires/Fire9"]
+position = Vector2(0, -12)
+color = Color(1, 0.58, 0.26, 1)
+energy = 0.80
+texture = ExtResource("14_light_soft_png")
+texture_scale = 1.70
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.80
+
+[node name="Smoke" type="CPUParticles2D" parent="Fires/Fire9"]
+position = Vector2(0, -24)
+amount = 6
+lifetime = 4
+preprocess = 4
+texture = ExtResource("18_smoke_small_png")
+emission_shape = 1
+emission_sphere_radius = 4.5
+direction = Vector2(0.15, -1)
+spread = 12
+gravity = Vector2(4, -6)
+initial_velocity_min = 14
+initial_velocity_max = 24
+scale_amount_min = 0.6
+scale_amount_max = 1
+scale_amount_curve = SubResource("Curve_29")
+color_ramp = SubResource("Gradient_30")
+
+[node name="Embers" type="CPUParticles2D" parent="Fires/Fire9"]
+position = Vector2(0, -16.5)
+amount = 4
+lifetime = 2.6
+preprocess = 2.6
+explosiveness = 0
+material = SubResource("CanvasItemMaterial_1")
+texture = ExtResource("17_ember_png")
+emission_shape = 3
+emission_rect_extents = Vector2(5.4, 6)
+direction = Vector2(0.1, -1)
+spread = 28
+gravity = Vector2(10, -16)
+initial_velocity_min = 18
+initial_velocity_max = 46
+angular_velocity_min = -90
+angular_velocity_max = 90
+scale_amount_min = 0.5
+scale_amount_max = 1
+color_ramp = SubResource("Gradient_31")
+
+[node name="Fire10" type="AnimatedSprite2D" parent="Fires"]
+position = Vector2(4424, 448)
+sprite_frames = ExtResource("13_effect_frames_tres")
+animation = &"fire_medium"
+autoplay = "fire_medium"
+offset = Vector2(0, -25)
+frame_progress = 0.7000000000000002
+
+[node name="Light" type="PointLight2D" parent="Fires/Fire10"]
+position = Vector2(0, -20.8)
+color = Color(1, 0.58, 0.26, 1)
+energy = 0.95
+texture = ExtResource("14_light_soft_png")
+texture_scale = 2.70
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.95
+
+[node name="Smoke" type="CPUParticles2D" parent="Fires/Fire10"]
+position = Vector2(0, -41.6)
+amount = 6
+lifetime = 4
+preprocess = 4
+texture = ExtResource("16_smoke_medium_png")
+emission_shape = 1
+emission_sphere_radius = 7.8
+direction = Vector2(0.15, -1)
+spread = 12
+gravity = Vector2(4, -6)
+initial_velocity_min = 14
+initial_velocity_max = 24
+scale_amount_min = 0.6
+scale_amount_max = 1
+scale_amount_curve = SubResource("Curve_32")
+color_ramp = SubResource("Gradient_33")
+
+[node name="Embers" type="CPUParticles2D" parent="Fires/Fire10"]
+position = Vector2(0, -28.6)
+amount = 7
+lifetime = 2.6
+preprocess = 2.6
+explosiveness = 0
+material = SubResource("CanvasItemMaterial_1")
+texture = ExtResource("17_ember_png")
+emission_shape = 3
+emission_rect_extents = Vector2(9.36, 10.4)
+direction = Vector2(0.1, -1)
+spread = 28
+gravity = Vector2(10, -16)
+initial_velocity_min = 18
+initial_velocity_max = 46
+angular_velocity_min = -90
+angular_velocity_max = 90
+scale_amount_min = 0.5
+scale_amount_max = 1
+color_ramp = SubResource("Gradient_34")
+
+[node name="Tiles" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray(0, 0, 0, 0, 4, 0, 0, 0, 3, 0, 5, 0, 0, 0, 1, 0, 4, 0, 0, 0, 4, 0, 5, 0, 0, 0, 2, 0, 4, 0, 0, 0, 3, 0, 5, 0, 0, 0, 41, 1, 4, 0, 0, 0, 4, 0, 5, 0, 0, 0, 42, 1, 4, 0, 0, 0, 3, 0, 5, 0, 0, 0, 43, 1, 4, 0, 0, 0, 4, 0, 5, 0, 0, 0, 0, 0, 5, 0, 0, 0, 1, 0, 5, 0, 0, 0, 1, 0, 5, 0, 0, 0, 2, 0, 5, 0, 0, 0, 2, 0, 5, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 5, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 5, 0, 0, 0, 0, 0, 5, 0, 0, 0, 43, 1, 5, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 5, 0, 0, 0, 1, 0, 6, 0, 0, 0, 1, 0, 5, 0, 0, 0, 2, 0, 6, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 6, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 6, 0, 0, 0, 1, 0, 5, 0, 0, 0, 43, 1, 6, 0, 0, 0, 2, 0, 5, 0, 0, 0, 0, 0, 7, 0, 0, 0, 2, 0, 5, 0, 0, 0, 1, 0, 7, 0, 0, 0, 0, 0, 5, 0, 0, 0, 2, 0, 7, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 7, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 7, 0, 0, 0, 2, 0, 5, 0, 0, 0, 43, 1, 7, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 8, 0, 0, 0, 1, 0, 5, 0, 0, 0, 1, 0, 8, 0, 0, 0, 0, 0, 5, 0, 0, 0, 2, 0, 8, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 8, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 8, 0, 0, 0, 0, 0, 5, 0, 0, 0, 43, 1, 8, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 5, 0, 0, 0, 1, 0, 9, 0, 0, 0, 1, 0, 5, 0, 0, 0, 2, 0, 9, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 9, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 9, 0, 0, 0, 0, 0, 5, 0, 0, 0, 43, 1, 9, 0, 0, 0, 1, 0, 5, 0, 0, 0, 0, 0, 10, 0, 0, 0, 2, 0, 5, 0, 0, 0, 1, 0, 10, 0, 0, 0, 0, 0, 5, 0, 0, 0, 2, 0, 10, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 10, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 10, 0, 0, 0, 2, 0, 5, 0, 0, 0, 43, 1, 10, 0, 0, 0, 1, 0, 5, 0, 0, 0, 0, 0, 11, 0, 0, 0, 1, 0, 5, 0, 0, 0, 1, 0, 11, 0, 0, 0, 2, 0, 5, 0, 0, 0, 2, 0, 11, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 11, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 11, 0, 0, 0, 2, 0, 5, 0, 0, 0, 43, 1, 11, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 5, 0, 0, 0, 1, 0, 12, 0, 0, 0, 2, 0, 5, 0, 0, 0, 2, 0, 12, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 12, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 12, 0, 0, 0, 1, 0, 5, 0, 0, 0, 43, 1, 12, 0, 0, 0, 1, 0, 5, 0, 0, 0, 0, 0, 13, 0, 0, 0, 2, 0, 5, 0, 0, 0, 1, 0, 13, 0, 0, 0, 2, 0, 5, 0, 0, 0, 2, 0, 13, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 13, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 13, 0, 0, 0, 1, 0, 5, 0, 0, 0, 43, 1, 13, 0, 0, 0, 2, 0, 5, 0, 0, 0, 0, 0, 14, 0, 0, 0, 1, 0, 5, 0, 0, 0, 1, 0, 14, 0, 0, 0, 0, 0, 5, 0, 0, 0, 2, 0, 14, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 14, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 14, 0, 0, 0, 1, 0, 5, 0, 0, 0, 43, 1, 14, 0, 0, 0, 2, 0, 5, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 5, 0, 0, 0, 1, 0, 15, 0, 0, 0, 1, 0, 5, 0, 0, 0, 2, 0, 15, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 15, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 15, 0, 0, 0, 1, 0, 5, 0, 0, 0, 43, 1, 15, 0, 0, 0, 1, 0, 5, 0, 0, 0, 0, 0, 16, 0, 0, 0, 2, 0, 5, 0, 0, 0, 1, 0, 16, 0, 0, 0, 1, 0, 5, 0, 0, 0, 2, 0, 16, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 16, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 16, 0, 0, 0, 2, 0, 5, 0, 0, 0, 43, 1, 16, 0, 0, 0, 1, 0, 5, 0, 0, 0, 0, 0, 17, 0, 0, 0, 1, 0, 5, 0, 0, 0, 1, 0, 17, 0, 0, 0, 1, 0, 5, 0, 0, 0, 2, 0, 17, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 17, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 17, 0, 0, 0, 1, 0, 5, 0, 0, 0, 43, 1, 17, 0, 0, 0, 2, 0, 5, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 5, 0, 0, 0, 1, 0, 18, 0, 0, 0, 2, 0, 5, 0, 0, 0, 2, 0, 18, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 18, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 18, 0, 0, 0, 1, 0, 5, 0, 0, 0, 43, 1, 18, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 19, 0, 0, 0, 2, 0, 5, 0, 0, 0, 1, 0, 19, 0, 0, 0, 1, 0, 5, 0, 0, 0, 2, 0, 19, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 19, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 19, 0, 0, 0, 0, 0, 5, 0, 0, 0, 43, 1, 19, 0, 0, 0, 1, 0, 5, 0, 0, 0, 0, 0, 20, 0, 0, 0, 1, 0, 5, 0, 0, 0, 1, 0, 20, 0, 0, 0, 0, 0, 5, 0, 0, 0, 2, 0, 20, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 20, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 20, 0, 0, 0, 0, 0, 5, 0, 0, 0, 43, 1, 20, 0, 0, 0, 2, 0, 5, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 5, 0, 0, 0, 1, 0, 21, 0, 0, 0, 0, 0, 5, 0, 0, 0, 2, 0, 21, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 21, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 21, 0, 0, 0, 1, 0, 5, 0, 0, 0, 43, 1, 21, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 22, 0, 0, 0, 2, 0, 5, 0, 0, 0, 1, 0, 22, 0, 0, 0, 1, 0, 5, 0, 0, 0, 2, 0, 22, 0, 0, 0, 6, 0, 5, 0, 0, 0, 102, 0, 22, 0, 0, 0, 0, 0, 4, 0, 0, 0, 103, 0, 22, 0, 0, 0, 2, 0, 4, 0, 0, 0, 104, 0, 22, 0, 0, 0, 1, 0, 4, 0, 0, 0, 105, 0, 22, 0, 0, 0, 2, 0, 4, 0, 0, 0, 106, 0, 22, 0, 0, 0, 1, 0, 4, 0, 0, 0, 107, 0, 22, 0, 0, 0, 2, 0, 4, 0, 0, 0, 108, 0, 22, 0, 0, 0, 1, 0, 4, 0, 0, 0, 109, 0, 22, 0, 0, 0, 2, 0, 4, 0, 0, 0, 110, 0, 22, 0, 0, 0, 1, 0, 4, 0, 0, 0, 111, 0, 22, 0, 0, 0, 2, 0, 4, 0, 0, 0, 112, 0, 22, 0, 0, 0, 1, 0, 4, 0, 0, 0, 113, 0, 22, 0, 0, 0, 2, 0, 4, 0, 0, 0, 114, 0, 22, 0, 0, 0, 1, 0, 4, 0, 0, 0, 115, 0, 22, 0, 0, 0, 2, 0, 4, 0, 0, 0, 116, 0, 22, 0, 0, 0, 1, 0, 4, 0, 0, 0, 117, 0, 22, 0, 0, 0, 2, 0, 4, 0, 0, 0, 118, 0, 22, 0, 0, 0, 1, 0, 4, 0, 0, 0, 119, 0, 22, 0, 0, 0, 2, 0, 4, 0, 0, 0, 120, 0, 22, 0, 0, 0, 1, 0, 4, 0, 0, 0, 121, 0, 22, 0, 0, 0, 2, 0, 4, 0, 0, 0, 122, 0, 22, 0, 0, 0, 3, 0, 4, 0, 0, 0, 228, 0, 22, 0, 0, 0, 0, 0, 4, 0, 0, 0, 229, 0, 22, 0, 0, 0, 2, 0, 4, 0, 0, 0, 230, 0, 22, 0, 0, 0, 1, 0, 4, 0, 0, 0, 231, 0, 22, 0, 0, 0, 2, 0, 4, 0, 0, 0, 232, 0, 22, 0, 0, 0, 1, 0, 4, 0, 0, 0, 233, 0, 22, 0, 0, 0, 2, 0, 4, 0, 0, 0, 234, 0, 22, 0, 0, 0, 1, 0, 4, 0, 0, 0, 235, 0, 22, 0, 0, 0, 2, 0, 4, 0, 0, 0, 236, 0, 22, 0, 0, 0, 1, 0, 4, 0, 0, 0, 237, 0, 22, 0, 0, 0, 2, 0, 4, 0, 0, 0, 238, 0, 22, 0, 0, 0, 3, 0, 4, 0, 0, 0, 41, 1, 22, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 22, 0, 0, 0, 1, 0, 5, 0, 0, 0, 43, 1, 22, 0, 0, 0, 1, 0, 5, 0, 0, 0, 0, 0, 23, 0, 0, 0, 1, 0, 5, 0, 0, 0, 1, 0, 23, 0, 0, 0, 2, 0, 5, 0, 0, 0, 2, 0, 23, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 23, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 23, 0, 0, 0, 2, 0, 5, 0, 0, 0, 43, 1, 23, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 5, 0, 0, 0, 1, 0, 24, 0, 0, 0, 2, 0, 5, 0, 0, 0, 2, 0, 24, 0, 0, 0, 6, 0, 5, 0, 0, 0, 41, 1, 24, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 24, 0, 0, 0, 0, 0, 5, 0, 0, 0, 43, 1, 24, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 25, 0, 0, 0, 2, 0, 5, 0, 0, 0, 1, 0, 25, 0, 0, 0, 2, 0, 5, 0, 0, 0, 2, 0, 25, 0, 0, 0, 6, 0, 5, 0, 0, 0, 70, 0, 25, 0, 0, 0, 2, 0, 3, 0, 0, 0, 71, 0, 25, 0, 0, 0, 0, 0, 3, 0, 0, 0, 72, 0, 25, 0, 0, 0, 1, 0, 3, 0, 0, 0, 73, 0, 25, 0, 0, 0, 0, 0, 3, 0, 0, 0, 74, 0, 25, 0, 0, 0, 1, 0, 3, 0, 0, 0, 75, 0, 25, 0, 0, 0, 0, 0, 3, 0, 0, 0, 76, 0, 25, 0, 0, 0, 1, 0, 3, 0, 0, 0, 77, 0, 25, 0, 0, 0, 0, 0, 3, 0, 0, 0, 78, 0, 25, 0, 0, 0, 3, 0, 3, 0, 0, 0, 100, 0, 25, 0, 0, 0, 3, 0, 2, 0, 0, 0, 101, 0, 25, 0, 0, 0, 2, 0, 2, 0, 0, 0, 190, 0, 25, 0, 0, 0, 2, 0, 3, 0, 0, 0, 191, 0, 25, 0, 0, 0, 0, 0, 3, 0, 0, 0, 192, 0, 25, 0, 0, 0, 1, 0, 3, 0, 0, 0, 193, 0, 25, 0, 0, 0, 0, 0, 3, 0, 0, 0, 194, 0, 25, 0, 0, 0, 1, 0, 3, 0, 0, 0, 195, 0, 25, 0, 0, 0, 0, 0, 3, 0, 0, 0, 196, 0, 25, 0, 0, 0, 1, 0, 3, 0, 0, 0, 197, 0, 25, 0, 0, 0, 3, 0, 3, 0, 0, 0, 226, 0, 25, 0, 0, 0, 3, 0, 2, 0, 0, 0, 227, 0, 25, 0, 0, 0, 2, 0, 2, 0, 0, 0, 246, 0, 25, 0, 0, 0, 2, 0, 3, 0, 0, 0, 247, 0, 25, 0, 0, 0, 0, 0, 3, 0, 0, 0, 248, 0, 25, 0, 0, 0, 1, 0, 3, 0, 0, 0, 249, 0, 25, 0, 0, 0, 0, 0, 3, 0, 0, 0, 250, 0, 25, 0, 0, 0, 1, 0, 3, 0, 0, 0, 251, 0, 25, 0, 0, 0, 0, 0, 3, 0, 0, 0, 252, 0, 25, 0, 0, 0, 1, 0, 3, 0, 0, 0, 253, 0, 25, 0, 0, 0, 0, 0, 3, 0, 0, 0, 254, 0, 25, 0, 0, 0, 1, 0, 3, 0, 0, 0, 255, 0, 25, 0, 0, 0, 3, 0, 3, 0, 0, 0, 41, 1, 25, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 25, 0, 0, 0, 2, 0, 5, 0, 0, 0, 43, 1, 25, 0, 0, 0, 2, 0, 5, 0, 0, 0, 0, 0, 26, 0, 0, 0, 1, 0, 5, 0, 0, 0, 1, 0, 26, 0, 0, 0, 0, 0, 5, 0, 0, 0, 2, 0, 26, 0, 0, 0, 6, 0, 5, 0, 0, 0, 70, 0, 26, 0, 0, 0, 6, 0, 3, 0, 0, 0, 71, 0, 26, 0, 0, 0, 5, 0, 3, 0, 0, 0, 72, 0, 26, 0, 0, 0, 4, 0, 3, 0, 0, 0, 73, 0, 26, 0, 0, 0, 5, 0, 3, 0, 0, 0, 74, 0, 26, 0, 0, 0, 4, 0, 3, 0, 0, 0, 75, 0, 26, 0, 0, 0, 5, 0, 3, 0, 0, 0, 76, 0, 26, 0, 0, 0, 4, 0, 3, 0, 0, 0, 77, 0, 26, 0, 0, 0, 5, 0, 3, 0, 0, 0, 78, 0, 26, 0, 0, 0, 7, 0, 3, 0, 0, 0, 100, 0, 26, 0, 0, 0, 2, 0, 2, 0, 0, 0, 101, 0, 26, 0, 0, 0, 3, 0, 2, 0, 0, 0, 134, 0, 26, 0, 0, 0, 2, 0, 2, 0, 0, 0, 135, 0, 26, 0, 0, 0, 3, 0, 2, 0, 0, 0, 176, 0, 26, 0, 0, 0, 2, 0, 2, 0, 0, 0, 177, 0, 26, 0, 0, 0, 3, 0, 2, 0, 0, 0, 190, 0, 26, 0, 0, 0, 6, 0, 3, 0, 0, 0, 191, 0, 26, 0, 0, 0, 5, 0, 3, 0, 0, 0, 192, 0, 26, 0, 0, 0, 4, 0, 3, 0, 0, 0, 193, 0, 26, 0, 0, 0, 5, 0, 3, 0, 0, 0, 194, 0, 26, 0, 0, 0, 4, 0, 3, 0, 0, 0, 195, 0, 26, 0, 0, 0, 5, 0, 3, 0, 0, 0, 196, 0, 26, 0, 0, 0, 4, 0, 3, 0, 0, 0, 197, 0, 26, 0, 0, 0, 7, 0, 3, 0, 0, 0, 226, 0, 26, 0, 0, 0, 2, 0, 2, 0, 0, 0, 227, 0, 26, 0, 0, 0, 3, 0, 2, 0, 0, 0, 246, 0, 26, 0, 0, 0, 6, 0, 3, 0, 0, 0, 247, 0, 26, 0, 0, 0, 5, 0, 3, 0, 0, 0, 248, 0, 26, 0, 0, 0, 4, 0, 3, 0, 0, 0, 249, 0, 26, 0, 0, 0, 5, 0, 3, 0, 0, 0, 250, 0, 26, 0, 0, 0, 4, 0, 3, 0, 0, 0, 251, 0, 26, 0, 0, 0, 5, 0, 3, 0, 0, 0, 252, 0, 26, 0, 0, 0, 4, 0, 3, 0, 0, 0, 253, 0, 26, 0, 0, 0, 5, 0, 3, 0, 0, 0, 254, 0, 26, 0, 0, 0, 4, 0, 3, 0, 0, 0, 255, 0, 26, 0, 0, 0, 7, 0, 3, 0, 0, 0, 41, 1, 26, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 26, 0, 0, 0, 0, 0, 5, 0, 0, 0, 43, 1, 26, 0, 0, 0, 1, 0, 5, 0, 0, 0, 0, 0, 27, 0, 0, 0, 0, 0, 5, 0, 0, 0, 1, 0, 27, 0, 0, 0, 2, 0, 5, 0, 0, 0, 2, 0, 27, 0, 0, 0, 6, 0, 5, 0, 0, 0, 52, 0, 27, 0, 0, 0, 2, 0, 3, 0, 0, 0, 53, 0, 27, 0, 0, 0, 3, 0, 3, 0, 0, 0, 70, 0, 27, 0, 0, 0, 6, 0, 3, 0, 0, 0, 71, 0, 27, 0, 0, 0, 4, 0, 3, 0, 0, 0, 72, 0, 27, 0, 0, 0, 5, 0, 3, 0, 0, 0, 73, 0, 27, 0, 0, 0, 4, 0, 3, 0, 0, 0, 74, 0, 27, 0, 0, 0, 5, 0, 3, 0, 0, 0, 75, 0, 27, 0, 0, 0, 4, 0, 3, 0, 0, 0, 76, 0, 27, 0, 0, 0, 5, 0, 3, 0, 0, 0, 77, 0, 27, 0, 0, 0, 4, 0, 3, 0, 0, 0, 78, 0, 27, 0, 0, 0, 7, 0, 3, 0, 0, 0, 100, 0, 27, 0, 0, 0, 3, 0, 2, 0, 0, 0, 101, 0, 27, 0, 0, 0, 2, 0, 2, 0, 0, 0, 134, 0, 27, 0, 0, 0, 3, 0, 2, 0, 0, 0, 135, 0, 27, 0, 0, 0, 2, 0, 2, 0, 0, 0, 176, 0, 27, 0, 0, 0, 3, 0, 2, 0, 0, 0, 177, 0, 27, 0, 0, 0, 2, 0, 2, 0, 0, 0, 190, 0, 27, 0, 0, 0, 6, 0, 3, 0, 0, 0, 191, 0, 27, 0, 0, 0, 4, 0, 3, 0, 0, 0, 192, 0, 27, 0, 0, 0, 5, 0, 3, 0, 0, 0, 193, 0, 27, 0, 0, 0, 4, 0, 3, 0, 0, 0, 194, 0, 27, 0, 0, 0, 5, 0, 3, 0, 0, 0, 195, 0, 27, 0, 0, 0, 4, 0, 3, 0, 0, 0, 196, 0, 27, 0, 0, 0, 5, 0, 3, 0, 0, 0, 197, 0, 27, 0, 0, 0, 7, 0, 3, 0, 0, 0, 226, 0, 27, 0, 0, 0, 3, 0, 2, 0, 0, 0, 227, 0, 27, 0, 0, 0, 2, 0, 2, 0, 0, 0, 246, 0, 27, 0, 0, 0, 6, 0, 3, 0, 0, 0, 247, 0, 27, 0, 0, 0, 4, 0, 3, 0, 0, 0, 248, 0, 27, 0, 0, 0, 5, 0, 3, 0, 0, 0, 249, 0, 27, 0, 0, 0, 4, 0, 3, 0, 0, 0, 250, 0, 27, 0, 0, 0, 5, 0, 3, 0, 0, 0, 251, 0, 27, 0, 0, 0, 4, 0, 3, 0, 0, 0, 252, 0, 27, 0, 0, 0, 5, 0, 3, 0, 0, 0, 253, 0, 27, 0, 0, 0, 4, 0, 3, 0, 0, 0, 254, 0, 27, 0, 0, 0, 5, 0, 3, 0, 0, 0, 255, 0, 27, 0, 0, 0, 7, 0, 3, 0, 0, 0, 41, 1, 27, 0, 0, 0, 5, 0, 5, 0, 0, 0, 42, 1, 27, 0, 0, 0, 1, 0, 5, 0, 0, 0, 43, 1, 27, 0, 0, 0, 1, 0, 5, 0, 0, 0, 0, 0, 28, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 28, 0, 0, 0, 1, 0, 1, 0, 0, 0, 2, 0, 28, 0, 0, 0, 2, 0, 1, 0, 0, 0, 3, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 4, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 6, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 7, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 8, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 10, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 11, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 12, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 14, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 15, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 16, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 18, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 19, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 20, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 22, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 23, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 24, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 26, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 27, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 28, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 30, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 31, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 32, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 34, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 35, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 36, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 38, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 39, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 40, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 42, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 43, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 44, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 46, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 47, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 48, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 49, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 50, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 51, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 52, 0, 28, 0, 0, 0, 0, 0, 1, 0, 0, 0, 53, 0, 28, 0, 0, 0, 1, 0, 1, 0, 0, 0, 54, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 55, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 56, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 57, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 58, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 59, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 60, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 61, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 62, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 63, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 64, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 66, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 67, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 68, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 69, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 70, 0, 28, 0, 0, 0, 2, 0, 1, 0, 0, 0, 71, 0, 28, 0, 0, 0, 3, 0, 1, 0, 0, 0, 72, 0, 28, 0, 0, 0, 0, 0, 1, 0, 0, 0, 73, 0, 28, 0, 0, 0, 1, 0, 1, 0, 0, 0, 74, 0, 28, 0, 0, 0, 2, 0, 1, 0, 0, 0, 75, 0, 28, 0, 0, 0, 3, 0, 1, 0, 0, 0, 76, 0, 28, 0, 0, 0, 0, 0, 1, 0, 0, 0, 77, 0, 28, 0, 0, 0, 1, 0, 1, 0, 0, 0, 78, 0, 28, 0, 0, 0, 2, 0, 1, 0, 0, 0, 79, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 80, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 82, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 83, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 84, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 85, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 86, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 87, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 88, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 89, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 90, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 91, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 92, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 94, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 95, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 96, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 97, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 98, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 99, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 100, 0, 28, 0, 0, 0, 0, 0, 1, 0, 0, 0, 101, 0, 28, 0, 0, 0, 1, 0, 1, 0, 0, 0, 102, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 103, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 104, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 105, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 106, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 107, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 108, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 109, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 110, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 111, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 112, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 113, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 114, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 115, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 116, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 117, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 118, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 119, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 120, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 121, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 122, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 123, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 124, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 125, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 126, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 127, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 128, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 130, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 131, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 132, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 133, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 134, 0, 28, 0, 0, 0, 2, 0, 1, 0, 0, 0, 135, 0, 28, 0, 0, 0, 3, 0, 1, 0, 0, 0, 136, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 137, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 138, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 139, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 140, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 141, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 142, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 143, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 144, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 145, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 146, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 147, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 148, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 149, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 150, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 151, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 152, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 153, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 154, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 155, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 156, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 157, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 158, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 159, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 160, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 161, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 162, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 163, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 164, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 165, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 166, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 167, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 168, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 169, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 170, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 171, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 172, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 173, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 174, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 175, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 176, 0, 28, 0, 0, 0, 0, 0, 1, 0, 0, 0, 177, 0, 28, 0, 0, 0, 1, 0, 1, 0, 0, 0, 178, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 179, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 180, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 181, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 182, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 183, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 184, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 185, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 186, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 187, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 188, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 189, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 190, 0, 28, 0, 0, 0, 2, 0, 1, 0, 0, 0, 191, 0, 28, 0, 0, 0, 3, 0, 1, 0, 0, 0, 192, 0, 28, 0, 0, 0, 0, 0, 1, 0, 0, 0, 193, 0, 28, 0, 0, 0, 1, 0, 1, 0, 0, 0, 194, 0, 28, 0, 0, 0, 2, 0, 1, 0, 0, 0, 195, 0, 28, 0, 0, 0, 3, 0, 1, 0, 0, 0, 196, 0, 28, 0, 0, 0, 0, 0, 1, 0, 0, 0, 197, 0, 28, 0, 0, 0, 1, 0, 1, 0, 0, 0, 198, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 199, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 200, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 201, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 202, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 203, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 204, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 205, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 206, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 207, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 208, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 209, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 210, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 211, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 212, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 213, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 214, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 215, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 216, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 217, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 218, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 219, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 220, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 221, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 222, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 223, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 224, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 225, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 226, 0, 28, 0, 0, 0, 2, 0, 1, 0, 0, 0, 227, 0, 28, 0, 0, 0, 3, 0, 1, 0, 0, 0, 228, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 229, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 230, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 231, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 232, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 233, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 234, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 235, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 236, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 237, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 238, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 239, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 240, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 241, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 242, 0, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 243, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 244, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 245, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 246, 0, 28, 0, 0, 0, 2, 0, 1, 0, 0, 0, 247, 0, 28, 0, 0, 0, 3, 0, 1, 0, 0, 0, 248, 0, 28, 0, 0, 0, 0, 0, 1, 0, 0, 0, 249, 0, 28, 0, 0, 0, 1, 0, 1, 0, 0, 0, 250, 0, 28, 0, 0, 0, 2, 0, 1, 0, 0, 0, 251, 0, 28, 0, 0, 0, 3, 0, 1, 0, 0, 0, 252, 0, 28, 0, 0, 0, 0, 0, 1, 0, 0, 0, 253, 0, 28, 0, 0, 0, 1, 0, 1, 0, 0, 0, 254, 0, 28, 0, 0, 0, 2, 0, 1, 0, 0, 0, 255, 0, 28, 0, 0, 0, 3, 0, 1, 0, 0, 0, 0, 1, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 1, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 3, 1, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 4, 1, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 1, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 6, 1, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 7, 1, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 8, 1, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 1, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 10, 1, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 11, 1, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 12, 1, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 1, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 14, 1, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 15, 1, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 16, 1, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 1, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 18, 1, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 19, 1, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 20, 1, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 1, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 22, 1, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 23, 1, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 24, 1, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 1, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 26, 1, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 27, 1, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 28, 1, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 1, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 30, 1, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 31, 1, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 32, 1, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 1, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 34, 1, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 35, 1, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 36, 1, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37, 1, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 38, 1, 28, 0, 0, 0, 2, 0, 0, 0, 0, 0, 39, 1, 28, 0, 0, 0, 3, 0, 0, 0, 0, 0, 40, 1, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 1, 28, 0, 0, 0, 1, 0, 1, 0, 0, 0, 42, 1, 28, 0, 0, 0, 2, 0, 1, 0, 0, 0, 43, 1, 28, 0, 0, 0, 3, 0, 1, 0, 0, 0, 0, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 1, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 2, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 3, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 4, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 5, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 6, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 7, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 8, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 9, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 10, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 11, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 12, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 13, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 14, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 15, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 16, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 17, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 18, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 19, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 20, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 21, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 22, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 23, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 24, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 25, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 26, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 27, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 28, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 29, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 30, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 31, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 32, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 33, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 34, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 35, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 36, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 37, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 38, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 39, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 40, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 41, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 42, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 43, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 44, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 45, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 46, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 47, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 48, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 49, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 50, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 51, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 52, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 53, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 54, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 55, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 56, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 57, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 58, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 59, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 60, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 61, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 62, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 63, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 64, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 65, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 66, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 67, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 68, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 69, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 70, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 71, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 72, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 73, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 74, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 75, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 76, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 77, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 78, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 79, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 80, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 81, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 82, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 83, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 84, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 85, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 86, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 87, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 88, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 89, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 90, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 91, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 92, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 93, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 94, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 95, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 96, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 97, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 98, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 99, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 100, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 101, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 102, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 103, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 104, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 105, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 106, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 107, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 108, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 109, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 110, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 111, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 112, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 113, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 114, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 115, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 116, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 117, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 118, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 119, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 120, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 121, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 122, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 123, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 124, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 125, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 126, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 127, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 128, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 129, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 130, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 131, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 132, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 133, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 134, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 135, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 136, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 137, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 138, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 139, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 140, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 141, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 142, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 143, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 144, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 145, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 146, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 147, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 148, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 149, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 150, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 151, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 152, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 153, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 154, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 155, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 156, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 157, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 158, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 159, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 160, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 161, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 162, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 163, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 164, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 165, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 166, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 167, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 168, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 169, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 170, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 171, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 172, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 173, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 174, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 175, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 176, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 177, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 178, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 179, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 180, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 181, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 182, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 183, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 184, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 185, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 186, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 187, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 188, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 189, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 190, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 191, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 192, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 193, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 194, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 195, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 196, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 197, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 198, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 199, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 200, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 201, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 202, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 203, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 204, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 205, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 206, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 207, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 208, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 209, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 210, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 211, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 212, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 213, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 214, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 215, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 216, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 217, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 218, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 219, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 220, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 221, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 222, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 223, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 224, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 225, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 226, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 227, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 228, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 229, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 230, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 231, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 232, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 233, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 234, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 235, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 236, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 237, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 238, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 239, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 240, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 241, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 242, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 243, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 244, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 245, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 246, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 247, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 248, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 249, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 250, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 251, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 252, 0, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 253, 0, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 254, 0, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 255, 0, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 1, 1, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 2, 1, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 3, 1, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 4, 1, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 5, 1, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 6, 1, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 7, 1, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 8, 1, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 9, 1, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 10, 1, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 11, 1, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 12, 1, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 13, 1, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 14, 1, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 15, 1, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 16, 1, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 17, 1, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 18, 1, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 19, 1, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 20, 1, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 21, 1, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 22, 1, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 23, 1, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 24, 1, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 25, 1, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 26, 1, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 27, 1, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 28, 1, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 29, 1, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 30, 1, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 31, 1, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 32, 1, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 33, 1, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 34, 1, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 35, 1, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 36, 1, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 37, 1, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 38, 1, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 39, 1, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 40, 1, 29, 0, 0, 0, 3, 0, 1, 0, 0, 0, 41, 1, 29, 0, 0, 0, 2, 0, 1, 0, 0, 0, 42, 1, 29, 0, 0, 0, 1, 0, 1, 0, 0, 0, 43, 1, 29, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 2, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 3, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 4, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 5, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 6, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 7, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 8, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 9, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 10, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 11, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 12, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 13, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 14, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 15, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 16, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 17, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 18, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 19, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 20, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 21, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 22, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 23, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 24, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 25, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 26, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 27, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 28, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 29, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 30, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 31, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 32, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 33, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 34, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 35, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 36, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 37, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 38, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 39, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 40, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 41, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 42, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 43, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 44, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 45, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 46, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 47, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 48, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 49, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 50, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 51, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 52, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 53, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 54, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 55, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 56, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 57, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 58, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 59, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 60, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 61, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 62, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 63, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 64, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 65, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 66, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 67, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 68, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 69, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 70, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 71, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 72, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 73, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 74, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 75, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 76, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 77, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 78, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 79, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 80, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 81, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 82, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 83, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 84, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 85, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 86, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 87, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 88, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 89, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 90, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 91, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 92, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 93, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 94, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 95, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 96, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 97, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 98, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 99, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 100, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 101, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 102, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 103, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 104, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 105, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 106, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 107, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 108, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 109, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 110, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 111, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 112, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 113, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 114, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 115, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 116, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 117, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 118, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 119, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 120, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 121, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 122, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 123, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 124, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 125, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 126, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 127, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 128, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 129, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 130, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 131, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 132, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 133, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 134, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 135, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 136, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 137, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 138, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 139, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 140, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 141, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 142, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 143, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 144, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 145, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 146, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 147, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 148, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 149, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 150, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 151, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 152, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 153, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 154, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 155, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 156, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 157, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 158, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 159, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 160, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 161, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 162, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 163, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 164, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 165, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 166, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 167, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 168, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 169, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 170, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 171, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 172, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 173, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 174, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 175, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 176, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 177, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 178, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 179, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 180, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 181, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 182, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 183, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 184, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 185, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 186, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 187, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 188, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 189, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 190, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 191, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 192, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 193, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 194, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 195, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 196, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 197, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 198, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 199, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 200, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 201, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 202, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 203, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 204, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 205, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 206, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 207, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 208, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 209, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 210, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 211, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 212, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 213, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 214, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 215, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 216, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 217, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 218, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 219, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 220, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 221, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 222, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 223, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 224, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 225, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 226, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 227, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 228, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 229, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 230, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 231, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 232, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 233, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 234, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 235, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 236, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 237, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 238, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 239, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 240, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 241, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 242, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 243, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 244, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 245, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 246, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 247, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 248, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 249, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 250, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 251, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 252, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 253, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 254, 0, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 255, 0, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 2, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 3, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 4, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 5, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 6, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 7, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 8, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 9, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 10, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 11, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 12, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 13, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 14, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 15, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 16, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 17, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 18, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 19, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 20, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 21, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 22, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 23, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 24, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 25, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 26, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 27, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 28, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 29, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 30, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 31, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 32, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 33, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 34, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 35, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 36, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 37, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 38, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 39, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 40, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 41, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 42, 1, 30, 0, 0, 0, 0, 0, 2, 0, 0, 0, 43, 1, 30, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 1, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 4, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 5, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 6, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 7, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 8, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 9, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 10, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 11, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 12, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 13, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 14, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 15, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 16, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 17, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 18, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 19, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 20, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 21, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 22, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 23, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 24, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 25, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 26, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 27, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 28, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 29, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 30, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 31, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 32, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 33, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 34, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 35, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 36, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 37, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 38, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 39, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 40, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 41, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 42, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 43, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 44, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 45, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 46, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 47, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 48, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 49, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 50, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 51, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 52, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 53, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 54, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 55, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 56, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 57, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 58, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 59, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 60, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 61, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 62, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 63, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 64, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 65, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 66, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 67, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 68, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 69, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 70, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 71, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 72, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 73, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 74, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 75, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 76, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 77, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 78, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 79, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 80, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 81, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 82, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 83, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 84, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 85, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 86, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 87, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 88, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 89, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 90, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 91, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 92, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 93, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 94, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 95, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 96, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 97, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 98, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 99, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 100, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 101, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 102, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 103, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 104, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 105, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 106, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 107, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 108, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 109, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 110, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 111, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 112, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 113, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 114, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 115, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 116, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 117, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 118, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 119, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 120, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 121, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 122, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 123, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 124, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 125, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 126, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 127, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 128, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 129, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 130, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 131, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 132, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 133, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 134, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 135, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 136, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 137, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 138, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 139, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 140, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 141, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 142, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 143, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 144, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 145, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 146, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 147, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 148, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 149, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 150, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 151, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 152, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 153, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 154, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 155, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 156, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 157, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 158, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 159, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 160, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 161, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 162, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 163, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 164, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 165, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 166, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 167, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 168, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 169, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 170, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 171, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 172, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 173, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 174, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 175, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 176, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 177, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 178, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 179, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 180, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 181, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 182, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 183, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 184, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 185, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 186, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 187, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 188, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 189, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 190, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 191, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 192, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 193, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 194, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 195, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 196, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 197, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 198, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 199, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 200, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 201, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 202, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 203, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 204, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 205, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 206, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 207, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 208, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 209, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 210, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 211, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 212, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 213, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 214, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 215, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 216, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 217, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 218, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 219, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 220, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 221, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 222, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 223, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 224, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 225, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 226, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 227, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 228, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 229, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 230, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 231, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 232, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 233, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 234, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 235, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 236, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 237, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 238, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 239, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 240, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 241, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 242, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 243, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 244, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 245, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 246, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 247, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 248, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 249, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 250, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 251, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 252, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 253, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 254, 0, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 255, 0, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 1, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 3, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 4, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 5, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 6, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 7, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 8, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 9, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 10, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 11, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 12, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 13, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 14, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 15, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 16, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 17, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 18, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 19, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 20, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 21, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 22, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 23, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 24, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 25, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 26, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 27, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 28, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 29, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 30, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 31, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 32, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 33, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 34, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 35, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 36, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 37, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 38, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 39, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 40, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 41, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0, 42, 1, 31, 0, 0, 0, 1, 0, 2, 0, 0, 0, 43, 1, 31, 0, 0, 0, 0, 0, 2, 0, 0, 0)
+tile_set = ExtResource("19_market_tileset_tres")
+
+[node name="Facades" type="Node2D" parent="."]
+
+[node name="Facade_tower_0" type="Sprite2D" parent="Facades"]
+texture = ExtResource("20_facade_tower_0_png")
+centered = false
+position = Vector2(0, 64)
+
+[node name="Facade_tower_297" type="Sprite2D" parent="Facades"]
+texture = ExtResource("21_facade_tower_297_png")
+centered = false
+position = Vector2(4752, 64)
+
+[node name="Props" type="Node2D" parent="."]
+
+[node name="pages_0" type="Sprite2D" parent="Props"]
+texture = ExtResource("22_pages_png")
+position = Vector2(144, 449)
+offset = Vector2(0, -3)
+flip_h = false
+
+[node name="lectern_1" type="Sprite2D" parent="Props"]
+texture = ExtResource("23_lectern_png")
+position = Vector2(496, 449)
+offset = Vector2(0, -12)
+flip_h = false
+
+[node name="scroll_rack_2" type="Sprite2D" parent="Props"]
+texture = ExtResource("24_scroll_rack_png")
+position = Vector2(576, 449)
+offset = Vector2(0, -20)
+flip_h = false
+
+[node name="cypress_3" type="Sprite2D" parent="Props"]
+texture = ExtResource("25_cypress_png")
+position = Vector2(736, 449)
+offset = Vector2(0, -60)
+flip_h = false
+
+[node name="fountain_4" type="Sprite2D" parent="Props"]
+texture = ExtResource("26_fountain_png")
+position = Vector2(960, 449)
+offset = Vector2(0, -17)
+flip_h = false
+
+[node name="cypress_5" type="Sprite2D" parent="Props"]
+texture = ExtResource("25_cypress_png")
+position = Vector2(1056, 449)
+offset = Vector2(0, -60)
+flip_h = false
+
+[node name="jars_6" type="Sprite2D" parent="Props"]
+texture = ExtResource("27_jars_png")
+position = Vector2(1280, 449)
+offset = Vector2(0, -15)
+flip_h = false
+
+[node name="shelf_fallen_7" type="Sprite2D" parent="Props"]
+texture = ExtResource("28_shelf_fallen_png")
+position = Vector2(1505.6, 449)
+offset = Vector2(0, -11)
+flip_h = false
+
+[node name="book_pile_8" type="Sprite2D" parent="Props"]
+texture = ExtResource("29_book_pile_png")
+position = Vector2(1576, 449)
+offset = Vector2(0, -11)
+flip_h = false
+
+[node name="ink_spill_9" type="Sprite2D" parent="Props"]
+texture = ExtResource("30_ink_spill_png")
+position = Vector2(1696, 449)
+offset = Vector2(0, -3)
+flip_h = false
+
+[node name="lectern_10" type="Sprite2D" parent="Props"]
+texture = ExtResource("23_lectern_png")
+position = Vector2(1760, 449)
+offset = Vector2(0, -12)
+flip_h = false
+
+[node name="pages_11" type="Sprite2D" parent="Props"]
+texture = ExtResource("22_pages_png")
+position = Vector2(1888, 449)
+offset = Vector2(0, -3)
+flip_h = false
+
+[node name="scroll_rack_12" type="Sprite2D" parent="Props"]
+texture = ExtResource("24_scroll_rack_png")
+position = Vector2(2016, 449)
+offset = Vector2(0, -20)
+flip_h = false
+
+[node name="armillary_13" type="Sprite2D" parent="Props"]
+texture = ExtResource("31_armillary_png")
+position = Vector2(2256, 449)
+offset = Vector2(0, -20)
+flip_h = false
+
+[node name="shelf_fallen_14" type="Sprite2D" parent="Props"]
+texture = ExtResource("28_shelf_fallen_png")
+position = Vector2(2368, 449)
+offset = Vector2(0, -11)
+flip_h = true
+
+[node name="pages_15" type="Sprite2D" parent="Props"]
+texture = ExtResource("22_pages_png")
+position = Vector2(2496, 449)
+offset = Vector2(0, -3)
+flip_h = false
+
+[node name="book_pile_16" type="Sprite2D" parent="Props"]
+texture = ExtResource("29_book_pile_png")
+position = Vector2(2624, 449)
+offset = Vector2(0, -11)
+flip_h = false
+
+[node name="pages_17" type="Sprite2D" parent="Props"]
+texture = ExtResource("22_pages_png")
+position = Vector2(2688, 449)
+offset = Vector2(0, -3)
+flip_h = false
+
+[node name="rubble_18" type="Sprite2D" parent="Props"]
+texture = ExtResource("32_rubble_png")
+position = Vector2(3008, 449)
+offset = Vector2(0, -9)
+flip_h = false
+
+[node name="pages_19" type="Sprite2D" parent="Props"]
+texture = ExtResource("22_pages_png")
+position = Vector2(3248, 449)
+offset = Vector2(0, -3)
+flip_h = false
+
+[node name="lectern_20" type="Sprite2D" parent="Props"]
+texture = ExtResource("23_lectern_png")
+position = Vector2(3344, 449)
+offset = Vector2(0, -12)
+flip_h = false
+
+[node name="book_pile_21" type="Sprite2D" parent="Props"]
+texture = ExtResource("29_book_pile_png")
+position = Vector2(3432, 449)
+offset = Vector2(0, -11)
+flip_h = false
+
+[node name="book_pyre_22" type="Sprite2D" parent="Props"]
+texture = ExtResource("33_book_pyre_png")
+position = Vector2(304, 449)
+offset = Vector2(0, -15)
+flip_h = false
+
+[node name="chest_looted_23" type="Sprite2D" parent="Props"]
+texture = ExtResource("34_chest_looted_png")
+position = Vector2(3737.6, 449)
+offset = Vector2(0, -17)
+flip_h = false
+
+[node name="corpse_scholar_24" type="Sprite2D" parent="Props"]
+texture = ExtResource("35_corpse_scholar_png")
+position = Vector2(448, 449)
+offset = Vector2(0, -14)
+flip_h = false
+
+[node name="corpse_man_front_25" type="Sprite2D" parent="Props"]
+texture = ExtResource("36_corpse_man_front_png")
+position = Vector2(760, 449)
+offset = Vector2(0, -11.5)
+flip_h = false
+
+[node name="corpse_scholar_26" type="Sprite2D" parent="Props"]
+texture = ExtResource("35_corpse_scholar_png")
+position = Vector2(1032, 449)
+offset = Vector2(0, -14)
+flip_h = false
+
+[node name="corpse_scholar_27" type="Sprite2D" parent="Props"]
+texture = ExtResource("35_corpse_scholar_png")
+position = Vector2(1624, 449)
+offset = Vector2(0, -14)
+flip_h = false
+
+[node name="corpse_woman_back_28" type="Sprite2D" parent="Props"]
+texture = ExtResource("37_corpse_woman_back_png")
+position = Vector2(2408, 449)
+offset = Vector2(0, -12.5)
+flip_h = false
+
+[node name="corpse_scholar_29" type="Sprite2D" parent="Props"]
+texture = ExtResource("35_corpse_scholar_png")
+position = Vector2(3288, 449)
+offset = Vector2(0, -14)
+flip_h = false
+
+[node name="corpse_headless_30" type="Sprite2D" parent="Props"]
+texture = ExtResource("38_corpse_headless_png")
+position = Vector2(3472, 449)
+offset = Vector2(0, -13.5)
+flip_h = false
+
+[node name="corpse_man_arrows_31" type="Sprite2D" parent="Props"]
+texture = ExtResource("39_corpse_man_arrows_png")
+position = Vector2(3888, 449)
+offset = Vector2(0, -16.5)
+flip_h = false
+
+[node name="corpse_woman_front_32" type="Sprite2D" parent="Props"]
+texture = ExtResource("40_corpse_woman_front_png")
+position = Vector2(4256, 449)
+offset = Vector2(0, -11)
+flip_h = false
+
+[node name="corpse_scholar_33" type="Sprite2D" parent="Props"]
+texture = ExtResource("35_corpse_scholar_png")
+position = Vector2(4552, 449)
+offset = Vector2(0, -14)
+flip_h = false
+
+[node name="corpse_scholar_34" type="Sprite2D" parent="Props"]
+texture = ExtResource("35_corpse_scholar_png")
+position = Vector2(2076, 449)
+offset = Vector2(0, -14)
+flip_h = false
+
+[node name="corpse_man_back_35" type="Sprite2D" parent="Props"]
+texture = ExtResource("41_corpse_man_back_png")
+position = Vector2(2748, 449)
+offset = Vector2(0, -13)
+flip_h = false
+
+[node name="ink_spill_36" type="Sprite2D" parent="Props"]
+texture = ExtResource("30_ink_spill_png")
+position = Vector2(3552, 449)
+offset = Vector2(0, -3)
+flip_h = false
+
+[node name="scroll_rack_37" type="Sprite2D" parent="Props"]
+texture = ExtResource("24_scroll_rack_png")
+position = Vector2(3728, 353)
+offset = Vector2(0, -20)
+flip_h = false
+
+[node name="shelf_fallen_38" type="Sprite2D" parent="Props"]
+texture = ExtResource("28_shelf_fallen_png")
+position = Vector2(3872, 449)
+offset = Vector2(0, -11)
+flip_h = false
+
+[node name="pages_39" type="Sprite2D" parent="Props"]
+texture = ExtResource("22_pages_png")
+position = Vector2(4032, 401)
+offset = Vector2(0, -3)
+flip_h = false
+
+[node name="cypress_40" type="Sprite2D" parent="Props"]
+texture = ExtResource("25_cypress_png")
+position = Vector2(4288, 449)
+offset = Vector2(0, -60)
+flip_h = false
+
+[node name="jars_41" type="Sprite2D" parent="Props"]
+texture = ExtResource("27_jars_png")
+position = Vector2(4384, 449)
+offset = Vector2(0, -15)
+flip_h = false
+
+[node name="cypress_42" type="Sprite2D" parent="Props"]
+texture = ExtResource("25_cypress_png")
+position = Vector2(4576, 449)
+offset = Vector2(0, -60)
+flip_h = false
+
+[node name="Interactables" type="Node2D" parent="."]
+
+[node name="courtyard_lamp" parent="Interactables" instance=ExtResource("42_checkpoint_tscn")]
+position = Vector2(1352, 448)
+checkpoint_id = &"courtyard_lamp"
+
+[node name="river_lamp" parent="Interactables" instance=ExtResource("42_checkpoint_tscn")]
+position = Vector2(2568, 448)
+checkpoint_id = &"river_lamp"
+
+[node name="hall_lamp" parent="Interactables" instance=ExtResource("42_checkpoint_tscn")]
+position = Vector2(3528, 448)
+checkpoint_id = &"hall_lamp"
+
+[node name="astronomy" parent="Interactables" instance=ExtResource("43_manuscript_tscn")]
+position = Vector2(1928, 352)
+manuscript_id = &"astronomy"
+teaches = &""
+
+[node name="furusiyya_plunge" parent="Interactables" instance=ExtResource("43_manuscript_tscn")]
+position = Vector2(1656, 352)
+manuscript_id = &"furusiyya_plunge"
+teaches = &"plunge"
+
+[node name="poem" parent="Interactables" instance=ExtResource("43_manuscript_tscn")]
+position = Vector2(3320, 448)
+manuscript_id = &"poem"
+teaches = &""
+
+[node name="algebra" parent="Interactables" instance=ExtResource("43_manuscript_tscn")]
+position = Vector2(3784, 352)
+manuscript_id = &"algebra"
+teaches = &""
+
+[node name="copyist" parent="Interactables" instance=ExtResource("45_npc_tscn")]
+position = Vector2(648, 448)
+npc_id = &"copyist"
+dialogue = &"copyist"
+requires = &""
+gives_flag = &""
+gives_notice = ""
+teaches = &""
+idle_animation = &"crouch"
+talk_animation = &"talk"
+waiting_animation = &""
+face = 1.0
+frames = ExtResource("44_copyist_frames_tres")
+
+[node name="librarian" parent="Interactables" instance=ExtResource("45_npc_tscn")]
+position = Vector2(2344, 448)
+npc_id = &"librarian"
+dialogue = &"librarian"
+requires = &"library_cleared"
+gives_flag = &"codex"
+gives_notice = "NOTICE_CODEX"
+teaches = &""
+idle_animation = &"idle"
+talk_animation = &"talk"
+waiting_animation = &""
+face = -1.0
+frames = ExtResource("46_librarian_frames_tres")
+
+[node name="GardenDoor" parent="Interactables" instance=ExtResource("49_level_exit_tscn")]
+position = Vector2(4672, 448)
+requires = &"codex"
+open_prompt = "PROMPT_OPEN_GARDEN_DOOR"
+locked_prompt = "PROMPT_GARDEN_DOOR"
+locked_line = "GATE_LOCKED_3"
+closed_texture = ExtResource("47_garden_door_png")
+open_texture = ExtResource("48_garden_door_open_png")
+
+[node name="People" type="Node2D" parent="."]
+
+[node name="fountain_captive" type="AnimatedSprite2D" parent="People"]
+position = Vector2(904, 448)
+sprite_frames = ExtResource("50_refugee_man_frames_tres")
+animation = &"kneel"
+flip_h = false
+script = ExtResource("51_captive_gd")
+freed_by = &""
+run_direction = -1.0
+captive_id = &"fountain_captive"
+thanks = "SAVED_4"
+gore_set = ExtResource("52_refugee_man_gore_tres")
+
+[node name="river_captive" type="AnimatedSprite2D" parent="People"]
+position = Vector2(2968, 448)
+sprite_frames = ExtResource("53_refugee_woman_frames_tres")
+animation = &"kneel"
+flip_h = false
+script = ExtResource("51_captive_gd")
+freed_by = &""
+run_direction = -1.0
+captive_id = &"river_captive"
+thanks = "SAVED_5"
+gore_set = ExtResource("54_refugee_woman_gore_tres")
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="swordsman_0" parent="Enemies" instance=ExtResource("55_swordsman_tscn")]
+position = Vector2(270, 448)
+start_facing = 1.0
+metadata/patrol = 0.0
+metadata/activity = &"burn"
+
+[node name="spearman_1" parent="Enemies" instance=ExtResource("56_spearman_tscn")]
+position = Vector2(344, 448)
+start_facing = -1.0
+metadata/patrol = 0.0
+metadata/activity = &"chat"
+
+[node name="swordsman_2" parent="Enemies" instance=ExtResource("55_swordsman_tscn")]
+position = Vector2(872, 448)
+start_facing = 1.0
+metadata/patrol = 0.0
+metadata/activity = &"execute"
+metadata/victim = &"fountain_captive"
+metadata/delay = 3.50
+
+[node name="archer_3" parent="Enemies" instance=ExtResource("57_archer_tscn")]
+position = Vector2(1224, 400)
+start_facing = -1.0
+metadata/activity = &"watch"
+
+[node name="swordsman_4" parent="Enemies" instance=ExtResource("55_swordsman_tscn")]
+position = Vector2(1480, 448)
+start_facing = 1.0
+metadata/patrol = 0.0
+metadata/activity = &"loot"
+
+[node name="swordsman_5" parent="Enemies" instance=ExtResource("55_swordsman_tscn")]
+position = Vector2(1800, 448)
+start_facing = -1.0
+metadata/group = &"library"
+metadata/dormant = true
+metadata/activity = &"loot"
+
+[node name="archer_6" parent="Enemies" instance=ExtResource("57_archer_tscn")]
+position = Vector2(1880, 352)
+start_facing = -1.0
+metadata/group = &"library"
+metadata/dormant = true
+metadata/activity = &"watch"
+
+[node name="spearman_7" parent="Enemies" instance=ExtResource("56_spearman_tscn")]
+position = Vector2(2056, 448)
+start_facing = 1.0
+metadata/group = &"library"
+metadata/dormant = true
+metadata/activity = &"stab"
+
+[node name="swordsman_8" parent="Enemies" instance=ExtResource("55_swordsman_tscn")]
+position = Vector2(2312, 448)
+start_facing = 1.0
+metadata/group = &"library"
+metadata/dormant = true
+metadata/activity = &"menace"
+
+[node name="spearman_9" parent="Enemies" instance=ExtResource("56_spearman_tscn")]
+position = Vector2(2728, 448)
+start_facing = 1.0
+metadata/patrol = 0.0
+metadata/activity = &"stab"
+
+[node name="swordsman_10" parent="Enemies" instance=ExtResource("55_swordsman_tscn")]
+position = Vector2(2936, 448)
+start_facing = 1.0
+metadata/patrol = 0.0
+metadata/activity = &"execute"
+metadata/victim = &"river_captive"
+metadata/delay = 3.00
+
+[node name="engineer_11" parent="Enemies" instance=ExtResource("58_engineer_tscn")]
+position = Vector2(3128, 400)
+start_facing = -1.0
+
+[node name="swordsman_12" parent="Enemies" instance=ExtResource("55_swordsman_tscn")]
+position = Vector2(3720, 448)
+start_facing = 1.0
+metadata/patrol = 0.0
+metadata/activity = &"loot"
+
+[node name="engineer_13" parent="Enemies" instance=ExtResource("58_engineer_tscn")]
+position = Vector2(3784, 352)
+start_facing = -1.0
+
+[node name="shieldbearer_14" parent="Enemies" instance=ExtResource("59_shieldbearer_tscn")]
+position = Vector2(4136, 448)
+start_facing = -1.0
+metadata/patrol = 20.0
+
+[node name="veteran_15" parent="Enemies" instance=ExtResource("60_veteran_tscn")]
+position = Vector2(4488, 448)
+start_facing = -1.0
+metadata/patrol = 24.0
+
+[node name="Triggers" type="Node2D" parent="."]
+
+[node name="library" type="Area2D" parent="Triggers"]
+position = Vector2(1648, 288)
+script = ExtResource("61_story_trigger_gd")
+trigger_id = "library"
+hint = ""
+event = &"ambush"
+group = &"library"
+line = "LIBRARY_1"
+speaker = ""
+
+[node name="Shape" type="CollisionShape2D" parent="Triggers/library"]
+shape = SubResource("RectangleShape2D_35")
+
+[node name="river" type="Area2D" parent="Triggers"]
+position = Vector2(2488, 288)
+script = ExtResource("61_story_trigger_gd")
+trigger_id = "river"
+hint = ""
+event = &""
+group = &""
+line = "RIVER_1"
+speaker = ""
+
+[node name="Shape" type="CollisionShape2D" parent="Triggers/river"]
+shape = SubResource("RectangleShape2D_36")
+
+[node name="hint_engineer" type="Area2D" parent="Triggers"]
+position = Vector2(2776, 288)
+script = ExtResource("61_story_trigger_gd")
+trigger_id = "hint_engineer"
+hint = "HINT_ENGINEER"
+event = &""
+group = &""
+line = ""
+speaker = ""
+
+[node name="Shape" type="CollisionShape2D" parent="Triggers/hint_engineer"]
+shape = SubResource("RectangleShape2D_37")
+
+[node name="PlayerStart" type="Marker2D" parent="."]
+position = Vector2(88, 448)
+
+[node name="Foreground" type="Parallax2D" parent="."]
+scroll_scale = Vector2(1.25, 1)
+
+[node name="Rubble0" type="Sprite2D" parent="Foreground"]
+texture = ExtResource("62_fg_rubble_png")
+centered = false
+position = Vector2(120, 472)
+flip_h = false
+
+[node name="Rubble1" type="Sprite2D" parent="Foreground"]
+texture = ExtResource("62_fg_rubble_png")
+centered = false
+position = Vector2(640, 472)
+flip_h = true
+
+[node name="Rubble2" type="Sprite2D" parent="Foreground"]
+texture = ExtResource("62_fg_rubble_png")
+centered = false
+position = Vector2(1297, 472)
+flip_h = false
+
+[node name="Rubble3" type="Sprite2D" parent="Foreground"]
+texture = ExtResource("62_fg_rubble_png")
+centered = false
+position = Vector2(1831, 472)
+flip_h = true
+
+[node name="Rubble4" type="Sprite2D" parent="Foreground"]
+texture = ExtResource("62_fg_rubble_png")
+centered = false
+position = Vector2(2502, 472)
+flip_h = false
+
+[node name="Rubble5" type="Sprite2D" parent="Foreground"]
+texture = ExtResource("62_fg_rubble_png")
+centered = false
+position = Vector2(3050, 472)
+flip_h = true
+
+[node name="Rubble6" type="Sprite2D" parent="Foreground"]
+texture = ExtResource("62_fg_rubble_png")
+centered = false
+position = Vector2(3735, 472)
+flip_h = false
+
+[node name="Rubble7" type="Sprite2D" parent="Foreground"]
+texture = ExtResource("62_fg_rubble_png")
+centered = false
+position = Vector2(4297, 472)
+flip_h = true
+
+[node name="Rubble8" type="Sprite2D" parent="Foreground"]
+texture = ExtResource("62_fg_rubble_png")
+centered = false
+position = Vector2(4996, 472)
+flip_h = false
+
+[node name="Rubble9" type="Sprite2D" parent="Foreground"]
+texture = ExtResource("62_fg_rubble_png")
+centered = false
+position = Vector2(5572, 472)
+flip_h = true
+
+[node name="Night" type="CanvasModulate" parent="."]
+color = Color(0.8, 0.82, 0.94, 1)

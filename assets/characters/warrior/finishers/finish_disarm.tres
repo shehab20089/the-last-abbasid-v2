@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="FinisherDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/finisher_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Disarm"
+hero_animation = &"finish_disarm"
+victim_animation = &"finished_disarm"
+distance = 34.0
+cut_frames = PackedInt32Array(1, 4)
+cuts = Array[StringName]([&"arm", &"head"])
+burst_frames = PackedInt32Array()
+slow_from = 4
+slow_to = 6
+death_frame = 4

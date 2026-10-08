@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="FinisherDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/finisher_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Headsman"
+hero_animation = &"finish_behead"
+victim_animation = &"finished_behead"
+distance = 36.0
+cut_frames = PackedInt32Array(4)
+cuts = Array[StringName]([&"head"])
+burst_frames = PackedInt32Array()
+slow_from = 3
+slow_to = 6
+death_frame = 4

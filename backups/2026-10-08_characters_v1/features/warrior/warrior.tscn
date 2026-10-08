@@ -1,0 +1,75 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/warrior/warrior.gd" id="1_warrior"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/warrior_profile.tres" id="2_profile"]
+[ext_resource type="Resource" path="res://assets/characters/warrior/warrior_hitboxes.tres" id="3_hitboxes"]
+[ext_resource type="SpriteFrames" path="res://assets/characters/warrior/warrior_frames.tres" id="4_frames"]
+[ext_resource type="Shader" path="res://features/combat/hit_flash.gdshader" id="5_flash"]
+[ext_resource type="Script" path="res://features/combat/hurtbox.gd" id="6_hurtbox"]
+[ext_resource type="Script" path="res://features/combat/hitbox.gd" id="7_hitbox"]
+[ext_resource type="Script" path="res://features/warrior/warrior_input.gd" id="8_input"]
+[ext_resource type="Script" path="res://features/warrior/warrior_animator.gd" id="9_animator"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_flash"]
+resource_local_to_scene = true
+shader = ExtResource("5_flash")
+shader_parameter/flash = 0.0
+shader_parameter/ghost = 0.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(16, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
+size = Vector2(20, 66)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sense"]
+size = Vector2(44, 64)
+
+[node name="Warrior" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 1
+floor_snap_length = 6.0
+safe_margin = 0.5
+script = ExtResource("1_warrior")
+profile = ExtResource("2_profile")
+max_poise = 40.0
+hitboxes = ExtResource("3_hitboxes")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+material = SubResource("ShaderMaterial_flash")
+sprite_frames = ExtResource("4_frames")
+animation = &"idle"
+offset = Vector2(0, -60)
+
+[node name="Body" type="CollisionShape2D" parent="."]
+position = Vector2(0, -32)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("6_hurtbox")
+
+[node name="Shape" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -34)
+shape = SubResource("RectangleShape2D_hurt")
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 16
+script = ExtResource("7_hitbox")
+
+[node name="InteractionSensor" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 128
+monitorable = false
+
+[node name="Shape" type="CollisionShape2D" parent="InteractionSensor"]
+position = Vector2(0, -32)
+shape = SubResource("RectangleShape2D_sense")
+
+[node name="Input" type="Node" parent="."]
+script = ExtResource("8_input")
+
+[node name="Animator" type="Node" parent="."]
+script = ExtResource("9_animator")

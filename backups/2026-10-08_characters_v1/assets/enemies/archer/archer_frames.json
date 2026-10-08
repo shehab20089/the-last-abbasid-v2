@@ -1,0 +1,160 @@
+{
+ "idle": {
+  "name": "idle",
+  "frames": 8,
+  "width": 112,
+  "height": 128,
+  "fps": 7,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "file": "archer_idle.png"
+ },
+ "walk": {
+  "name": "walk",
+  "frames": 8,
+  "width": 112,
+  "height": 128,
+  "fps": 10,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "file": "archer_walk.png"
+ },
+ "run": {
+  "name": "run",
+  "frames": 8,
+  "width": 112,
+  "height": 128,
+  "fps": 13,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "file": "archer_run.png"
+ },
+ "alert": {
+  "name": "alert",
+  "frames": 3,
+  "width": 112,
+  "height": 128,
+  "fps": 8,
+  "loop": false,
+  "durations": [
+   1,
+   2,
+   1
+  ],
+  "blades": [
+   null,
+   null,
+   null
+  ],
+  "file": "archer_alert.png"
+ },
+ "shoot": {
+  "name": "shoot",
+  "frames": 7,
+  "width": 176,
+  "height": 128,
+  "fps": 9,
+  "loop": false,
+  "durations": [
+   1,
+   1.4,
+   1.2,
+   1.6,
+   0.6,
+   1.2,
+   1.2
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "file": "archer_shoot.png"
+ },
+ "hurt": {
+  "name": "hurt",
+  "frames": 4,
+  "width": 176,
+  "height": 128,
+  "fps": 12,
+  "loop": false,
+  "durations": [
+   1,
+   1.2,
+   1,
+   1
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null
+  ],
+  "file": "archer_hurt.png"
+ },
+ "death": {
+  "name": "death",
+  "frames": 9,
+  "width": 176,
+  "height": 128,
+  "fps": 10,
+  "loop": false,
+  "durations": [
+   1,
+   1,
+   1,
+   1,
+   0.8,
+   0.8,
+   1,
+   1.2,
+   2
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "file": "archer_death.png"
+ }
+}

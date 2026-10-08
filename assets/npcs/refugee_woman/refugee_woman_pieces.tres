@@ -1,0 +1,67 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/npcs/refugee_woman/refugee_woman_piece_head.png" id="1_tex"]
+
+[sub_resource type="AtlasTexture" id="head_0"]
+atlas = ExtResource("1_tex")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="head_1"]
+atlas = ExtResource("1_tex")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="head_2"]
+atlas = ExtResource("1_tex")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="head_3"]
+atlas = ExtResource("1_tex")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="head_4"]
+atlas = ExtResource("1_tex")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="head_5"]
+atlas = ExtResource("1_tex")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="head_6"]
+atlas = ExtResource("1_tex")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="head_7"]
+atlas = ExtResource("1_tex")
+region = Rect2(224, 0, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("head_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("head_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("head_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("head_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("head_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("head_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("head_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("head_7")
+}],
+"loop": true,
+"name": &"head",
+"speed": 14.0
+}]

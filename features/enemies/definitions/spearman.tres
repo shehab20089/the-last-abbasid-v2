@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="EnemyProfile" format=3]
+
+[ext_resource type="Script" path="res://features/enemies/enemy_profile.gd" id="1_script"]
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="2_attack"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/spearman_thrust.tres" id="3_thrust"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/spearman_sweep.tres" id="4_sweep"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Mongol Spearman"
+max_health = 70.0
+max_poise = 30.0
+walk_speed = 42.0
+run_speed = 96.0
+hurt_time = 0.32
+stagger_time = 1.1
+parried_time = 1.5
+sight_range = 240.0
+hearing_range = 70.0
+alert_time = 0.6
+preferred_range = 68.0
+min_range = 42.0
+attacks = Array[ExtResource("2_attack")]([ExtResource("3_thrust"), ExtResource("4_sweep")])
+attack_ranges = PackedFloat32Array(86, 50)
+attack_cooldown = Vector2(1.4, 2.2)
+block_chance = 0.0
+retreat_chance = 0.35
+retreat_time = 0.6
+patrol_distance = 40.0
