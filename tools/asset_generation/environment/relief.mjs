@@ -7,7 +7,7 @@
 // it and is shut out of what lies behind a projection; recesses dark where they are deep and close under a rim.
 // What burns or glows (fire, a lit window) keeps its own colour. The colours of the paint are the surfaces'
 // own; the light is multiplied into them.
-import { P, hex, mix } from "./env_lib.mjs";
+import { P, fbm, hex, mix } from "./env_lib.mjs";
 
 export class Relief {
   constructor(width, height) {
@@ -49,11 +49,11 @@ export class Relief {
 }
 
 /** A colour as linear light (0..1 per channel). */
-const linear = (rgb) => rgb.slice(0, 3).map((v) => (v / 255) ** 2.2);
-const display = (lin) => lin.map((v) => Math.round(255 * Math.min(1, Math.max(0, v)) ** (1 / 2.2)));
+export const linear = (rgb) => rgb.slice(0, 3).map((v) => (v / 255) ** 2.2);
+export const display = (lin) => lin.map((v) => Math.round(255 * Math.min(1, Math.max(0, v)) ** (1 / 2.2)));
 
 /** The colours that are themselves light (fire, embers, a lit window's glow): never darkened. */
-function emissiveSet() {
+export function emissiveSet() {
   const set = new Set();
   for (const ramp of [P.fire, P.glow]) {
     for (const rgb of ramp) set.add((rgb[0] << 16) | (rgb[1] << 8) | rgb[2]);
@@ -67,7 +67,8 @@ function emissiveSet() {
  * - `lights`: warm lights standing in the street: { x, y, z (how far before the wall), radius, color, strength }.
  * - `key`: the hour's low sun, if it has one: { dir (toward it), color, strength, steps }: it rakes along the street,
  *   lighting the faces turned to it and laying long shadows from whatever stands out (a tower across the wall).
- * - `haze`: how much the highest storeys sink into the night's tint (0 at the street, `haze.top` at the top).
+ * - `haze`: how much the highest storeys sink into the night's tint (0 at the street, `haze.top` at the top); or, given
+ *   `haze.veil` (a function of the canvas row), that much on each row (a facade or the ground, placed in the street).
  */
 export function lightRelief(c, relief, { ambient, lights = [], key = null, haze = { tint: P.night[1], top: 0.3, street: 0.1 } }) {
   const W = c.width;
@@ -85,11 +86,7 @@ export function lightRelief(c, relief, { ambient, lights = [], key = null, haze 
   // turned up (the top of a cornice, a sill, a coping) and leaves those turned down (their undersides) to the
   // little that is everywhere.
   const SKY = { dx: -0.28, dy: -1, rise: 0.85, steps: 22 };
-  const skyDir = (() => {
-    const v = [-0.25, -1, 0.7];
-    const len = Math.hypot(v[0], v[1], v[2]);
-    return v.map((x) => x / len);
-  })();
+  const skyDir = SKY_DIR;
   for (let y = 0; y < H; y++) {
     for (let x = 0; x < W; x++) {
       if (!solid(x, y)) continue;
@@ -161,19 +158,22 @@ export function lightRelief(c, relief, { ambient, lights = [], key = null, haze 
   }
 
   // The street's lights: each lights the faces turned toward it, falling off with distance, and is shut out of
-  // what lies behind a projection on its way.
+  // what lies behind a projection on its way. A fire's light (`flame`) climbs the wall further than it spreads
+  // along it, and the smoke breaks its edge, so it lies on a flat wall as firelight does, not as a disc.
   for (const l of lightList) {
+    const tall = l.flame ? 1 / 0.72 : 1;
     const x0 = Math.max(0, Math.floor(l.x - l.radius));
     const x1 = Math.min(W - 1, Math.ceil(l.x + l.radius));
-    const y0 = Math.max(0, Math.floor(l.y - l.radius));
-    const y1 = Math.min(H - 1, Math.ceil(l.y + l.radius));
+    const y0 = Math.max(0, Math.floor(l.y - l.radius * tall));
+    const y1 = Math.min(H - 1, Math.ceil(l.y + l.radius * tall));
     for (let y = y0; y <= y1; y++) {
       for (let x = x0; x <= x1; x++) {
         if (!solid(x, y)) continue;
         const dx = l.x - (x + 0.5);
         const dy = l.y - (y + 0.5);
+        const reach = Math.hypot(dx, dy / tall);
+        if (reach > l.radius) continue;
         const flat = Math.hypot(dx, dy);
-        if (flat > l.radius) continue;
         const d = at(x, y);
         const dz = l.z - d;
         const dist = Math.hypot(flat, dz);
@@ -198,7 +198,8 @@ export function lightRelief(c, relief, { ambient, lights = [], key = null, haze 
             if (vis <= 0.12) break;
           }
         }
-        const fall = Math.pow(1 - flat / l.radius, 1.35);
+        let fall = Math.pow(1 - reach / l.radius, 1.35);
+        if (l.flame) fall *= 0.78 + 0.44 * fbm((x + l.x * 3) * 0.022, y * 0.03, { seed: 41, octaves: 3 });
         const k = lambert * vis * fall;
         const i = (y * W + x) * 3;
         light[i] += l.lin[0] * k;
@@ -211,8 +212,7 @@ export function lightRelief(c, relief, { ambient, lights = [], key = null, haze 
   // The light multiplied into the paint; the highest storeys sink into the night. What burns keeps its colour.
   const tint = linear(haze.tint);
   for (let y = 0; y < H; y++) {
-    const t = y / H;
-    const veil = haze.top + (haze.street - haze.top) * t;
+    const veil = haze.veil ? haze.veil(y) : haze.top + (haze.street - haze.top) * (y / H);
     for (let x = 0; x < W; x++) {
       if (!solid(x, y)) continue;
       const rgb = c.get(x, y);
@@ -236,6 +236,13 @@ const OCCLUSION_TAPS = (() => {
     }
   }
   return taps;
+})();
+
+/** Toward the night sky's light: from above, a little behind the left shoulder, well out from the wall. */
+export const SKY_DIR = (() => {
+  const v = [-0.25, -1, 0.7];
+  const len = Math.hypot(v[0], v[1], v[2]);
+  return v.map((x) => x / len);
 })();
 
 /** A warm light of the street: the colour of firelight at full strength. */

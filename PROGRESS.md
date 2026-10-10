@@ -116,7 +116,7 @@ Plan and progress: `docs/combat_focus_plan.md`. Two audits found about 35 action
 - **Fixed in passing:** emphasis followed by punctuation (`*parry*,`) left a stray asterisk on screen (`KeyText`: the closing mark may now come before punctuation, Arabic punctuation too).
 - **Tests:** session 239 (Hamid's counsel card; no kick or charge in the Market or Streets; both taught in the Scholars' Quarter; a master's lesson silent on a first journey and teaching on a master's; the tree's master locks; the finished chapter opening them; the library's men unaware, hidden ambushers not; the log written and summed up, and silent when switched off).
 
-## The street standard: one section brought to final quality, then every building (art step 4, after "proceed with point 4, the art" and "continue with the rest of the building fixes"): BUILDINGS DONE, awaiting the user's eye
+## The street standard: one section brought to final quality, then every building, the ground, the clutter and the foreground (art step 4, after "proceed with point 4, the art", "continue with the rest of the building fixes" and "commit and push and continue"): DONE, awaiting the user's eye
 The Market's opening (the gate street and the potters' lane, columns 0–84) was taken as the standard: it is the first street every player sees, and its houses and shops recur through the chapter. The review's faults were plain there:
 - every roof wore the same row of teeth;
 - doors were black holes;
@@ -158,8 +158,27 @@ The Market's opening (the gate street and the potters' lane, columns 0–84) was
     - Its brick varies less from brick to brick (`calm`), so it reads by those big shapes.
   - The gate towers have stone corbels under their parapets, and iron fire-baskets burn either side of the gateway.
   - The dawn gains a low sun from the east (`GRADES.dawn.key`): the towers cast long shadows along the wall.
-- **Not yet brought to the standard:** the street paving, the foreground and the props. They come next, with the character materials.
-- **Tests** (`./tools/run_tests.ps1`, all passing, no script errors, after the first pass and again after the buildings): gameplay 226, enemy 325, session 249, finishers 25, lint 1 known, partial build 3, traversal of all four levels. Judged by eye in the game view: `tests/capture_tour.gd` before and after, every level (`captures/buildings_before_after.png`).
+- **The play brought to the standard** (the buildings committed as `9dc6638`, then "commit and push and continue").
+  - **The ground underfoot** (`environment/ground.mjs`). It was the shared tiles: a band of masonry lit flat, reading as more wall. It is now painted for each level, over the tiles (which keep the collisions), and lit by the level's own grade and fires.
+    - The paving is a band seen a little from above, its joints leaning back into the street. It is worn and broken here and there, and paved by the stretch: flags, finer stone at the college, brick pavers in the burnt quarter, great slabs at the walls, packed earth in the camp.
+    - The paving faces up, so it catches the sky and pools of firelight about each fire.
+    - The front face below it stands before the fires: a kerb that takes what the lit paving throws back, then rubble masonry sinking into the dark. The fighters now stand out against it.
+    - What lies in the street goes by the stretch: shards by the potters, spice by the spice row, pages by the books, straw in the khan and the camp, arrows at the walls, charcoal in the ruins. Ash and live embers lie about each fire, and blood is pooled under the dead and runs over the kerb.
+    - The stone of the play (steps, terraces) is ashlar with a lit top to walk on. Crates come big and small, and the planks stand on brackets. The galleries stand on posts down to the street, from each level's highest platform (`groundTop`).
+  - **The facades over the play's blocks** (`environment/facades.mjs`: the end towers, the Market's gallery house, the burnt blocks, the Last Gate's wall walk) were the old painter's, with baked light and painted glows. They are now built from the backdrop's own parts (copings, doors, sills, timber bays, banners, the siege's marks), painted with relief and lit where they stand. They are a little less veiled than the street behind them, being nearer, so the wall walk stands out from the rampart of the same brick.
+  - **The fires' light on the walls** no longer lies as a disc whose gradient the painting's palette cut into rings. It climbs the wall further than it spreads, and the smoke breaks its edge (`flame`).
+  - **The streets' clutter, modelled in 3D** (`environment/clutter3d.mjs`) and rendered like the characters (their light, outline and the fires' rim):
+    - jars with handles and painted bands, one glazed; a jar smashed, its grain spilt;
+    - sacks, one slashed open;
+    - a handcart on its spoked wheel, the other wheel off and leaning;
+    - rubble heaped from a house front;
+    - a charred beam in scales of charcoal with glowing splits;
+    - a heap of books, a fallen banner crumpled over rubble;
+    - stone shot, a brazier on its tripod, a well with its pulley and bucket.
+    - The camera has no pitch, so nothing lies flat: what has fallen is heaped, draped or propped.
+  - **The foreground**: the black rubble passing along the foot of the view was lost against the darkened ground. It is now a 3D heap of rubble, a beam end and a broken jar, near-black, the firelight catching its top.
+- **Not yet brought to the standard:** the props still painted flat: the stalls, the college's furniture (lectern, scroll rack, shelves, armillary, fountain, cypress), the standards and ladders, the gates and the lamp niche. Then the character materials.
+- **Tests** (`./tools/run_tests.ps1`, all passing, no script errors, after the first pass, after the buildings and after the play): gameplay 226, enemy 325, session 249, finishers 25, lint 1 known, partial build 3, traversal of all four levels. Judged by eye in the game view: `tests/capture_tour.gd` before and after, every level (`captures/buildings_before_after.png`).
 
 ## The combat fixes the first playtest log pointed to (after "yes please"): DONE, awaiting the next playtest
 The work before them was committed and pushed first (`e2431f7`).

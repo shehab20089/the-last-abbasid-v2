@@ -147,7 +147,7 @@ function parapet(c, x0, x1, top, ramp, tone) {
 
 /** Square merlons along a fortification's top. Given a `relief`, the walk's parapet stands out from `front` and the
  * merlons a little further. */
-function crenels(c, x0, x1, top, ramp, tone, { size = 8, gap = 6, relief = null, front = 0, broken = 0, seed = 7 } = {}) {
+export function crenels(c, x0, x1, top, ramp, tone, { size = 8, gap = 6, relief = null, front = 0, broken = 0, seed = 7 } = {}) {
   fillShape(c, x0, top, x1, top + 3, () => true, pick(ramp, tone + 1));
   relief?.rect(x0, top, x1, top + 2, front + 2);
   relief?.rect(x0, top + 3, x1, top + 3, front + 1);
@@ -165,7 +165,7 @@ function crenels(c, x0, x1, top, ramp, tone, { size = 8, gap = 6, relief = null,
   }
 }
 
-function door(c, cx, base, width, height, seed, ctx, state = "shut") {
+export function door(c, cx, base, width, height, seed, ctx, state = "shut") {
   if (state === "broken") {
     brokenDoor(c, cx, base, width, height, seed, ctx);
     return;
@@ -254,7 +254,7 @@ function brokenDoor(c, cx, base, width, height, seed, ctx) {
   if (burning) ctx.lamp(cx, base - 18, 70, 1.1);
 }
 
-function balcony(c, x, y, w, h, lit, ctx) {
+export function balcony(c, x, y, w, h, lit, ctx) {
   lattice(c, x, y, w, h, { ramp: P.wood, tone: 3, glow: lit ? (px, py) =>
     (hash2(px, py, 3) > 0.5 ? P.fire[3] : P.fire[2]) : null });
   beam(c, x - 3, y + h, w + 6, 4, { tone: 3 });
@@ -276,7 +276,7 @@ function balcony(c, x, y, w, h, lit, ctx) {
 }
 
 /** A black Abbasid banner hanging from a pole, torn at its foot, a gold crescent on its field. */
-function banner(c, x, y, w, h, seed, ctx) {
+export function banner(c, x, y, w, h, seed, ctx) {
   beam(c, x - 3, y - 2, w + 6, 2, { ramp: P.wood, tone: 2 });
   ctx?.relief?.rect(x - 3, y - 2, x + w + 2, y - 1, ctx.front + 3);
   for (let px = x; px < x + w; px++) {
@@ -293,7 +293,7 @@ function banner(c, x, y, w, h, seed, ctx) {
 }
 
 /** A gold crescent, horns up and to the right. */
-function crescent(c, cx, cy, r) {
+export function crescent(c, cx, cy, r) {
   for (let py = Math.floor(cy - r); py <= cy + r; py++) {
     for (let px = Math.floor(cx - r); px <= cx + r; px++) {
       const outer = Math.hypot(px + 0.5 - cx, py + 0.5 - cy) <= r;
@@ -366,7 +366,7 @@ function carpet(c, x, y, w, h, seed, ctx) {
 }
 
 /** A hanging brass lantern on a bracket, lit or dark. */
-function lantern(c, x, y, lit, ctx = null) {
+export function lantern(c, x, y, lit, ctx = null) {
   for (let d = 0; d < 6; d++) c.set(x - 6 + d, y - 6, P.iron[2]);
   c.set(x, y - 5, P.iron[2]);
   fillShape(c, x - 2, y - 4, x + 2, y + 2, () => true, (px, py) =>
@@ -406,7 +406,7 @@ function ladder(c, footX, footY, topY, relief = null, front = 0) {
 }
 
 /** A band of glazed tile: turquoise (or cobalt) ground with a running interlace. */
-function tileBand(c, x0, x1, y0, h, { seed = 3, glaze = P.tile } = {}) {
+export function tileBand(c, x0, x1, y0, h, { seed = 3, glaze = P.tile } = {}) {
   for (let y = y0; y < y0 + h; y++) {
     for (let x = x0; x <= x1; x++) {
       const ly = y - y0;
@@ -467,7 +467,7 @@ function muqarnasHood(c, cx, spring, half, rise, { ramp = P.plaster, tone = 4, r
 
 /** The relief of an archway drawn by archway(): its ring `ringOut` proud of `front`, its opening `recess` deep (a
  * value or a function of (x, y)). */
-function archRelief(relief, cx, base, width, height, { ring = 2, front = 0, ringOut = 1, recess = -6 } = {}) {
+export function archRelief(relief, cx, base, width, height, { ring = 2, front = 0, ringOut = 1, recess = -6 } = {}) {
   const half = width / 2;
   const rise = half * 0.9;
   const spring = base - height + rise;
@@ -603,7 +603,7 @@ function roofline(c, x0, x1, top, ramp, tone, seed, ctx) {
 }
 
 /** Shurafat: stepped merlons, broad and low, a gap between each, crowning a coping. */
-function shurafat(c, x0, x1, top, ramp, tone, relief, front) {
+export function shurafat(c, x0, x1, top, ramp, tone, relief, front) {
   for (let x = x0 + 4; x <= x1 - 12; x += 20) {
     for (let step = 0; step < 2; step++) {
       const y = top - 3 - step * 3;
@@ -615,7 +615,7 @@ function shurafat(c, x0, x1, top, ramp, tone, relief, front) {
 }
 
 /** A parapet's coping: a band standing out from the wall, lit on its top, its underside in shadow. */
-function coping(c, x0, x1, top, ramp, tone, relief, front) {
+export function coping(c, x0, x1, top, ramp, tone, relief, front) {
   fillShape(c, x0, top - 2, x1, top + 2, () => true, (x, y) => pick(ramp, tone + (y === top - 2 ? 2 : y === top + 2 ? -1 : 1)));
   relief.rect(x0, top - 2, x1, top + 1, front + 2.5);
   relief.rect(x0, top + 2, x1, top + 2, front + 1.5);
@@ -860,14 +860,14 @@ function building(c, x0, width, ground, kind, seed, ctx) {
 }
 
 /** A stone sill under a window, standing out from the wall: lit on top, shadowing the wall below. */
-function sill(c, x0, x1, y, relief, front) {
+export function sill(c, x0, x1, y, relief, front) {
   fillShape(c, x0, y, x1, y + 1, () => true, (x, yy) => pick(P.stone, yy === y ? 5 : 2));
   relief.rect(x0, y, x1, y + 1, front + 2.5);
 }
 
 /** Soot climbing the wall from an opening the fire has gone through: dark tongues, densest at the opening. Given a
  * `width` instead of an end, a broad plume that far across from x0. */
-function soot(c, x0, x1, base, height, seed, width = 0) {
+export function soot(c, x0, x1, base, height, seed, width = 0) {
   if (width > 0) x1 = x0 + width;
   for (let x = x0; x <= x1; x++) {
     const reach = height * (0.45 + fbm(x * 0.25, 0, { seed }) * 0.75);
@@ -1187,7 +1187,7 @@ function rampart(c, x0, width, ground, seed, ctx) {
  * paler brick, the scars of stones from the engines (a shallow crater, its cracks running out), and soot climbing
  * from fires at its foot.
  */
-function scarWall(c, x0, width, top, ground, height, seed, relief, ctx) {
+export function scarWall(c, x0, width, top, ground, height, seed, relief, ctx) {
   void ctx;
   const r = rng(seed + 77);
   // Repairs first, so the courses run over them.
@@ -1428,7 +1428,7 @@ function deepBand(c, x0, x1, ground, seed, relief) {
 
 /** Maps every opaque pixel to the nearest colour of `palette` (the level painting's), in a
  * perceptual space, so the street is drawn in the same colours as the city beyond it. */
-function toPalette(c, palette) {
+export function toPalette(c, palette) {
   const lab = (rgb) => {
     const f = (v) => {
       const l = (v / 255) ** 2.2;
@@ -1459,17 +1459,40 @@ function toPalette(c, palette) {
 
 // --- The whole street -----------------------------------------------------------------------------
 
+/** How the level's hour lights its street (GRADES); before a painted city the street stands darker, a silhouette lit
+ * by its fires and the sky. */
+export function levelGrade(level, look = level.look ?? "night") {
+  const base = GRADES[look] ?? GRADES.night;
+  return level.painting ? { ...base, ambient: base.ambient * 0.86, haze: base.haze + 0.08, fire: base.fire * 1.25,
+    edgeAmount: base.edgeAmount + 0.15 } : base;
+}
+
+/** The street's lights for lightRelief on a canvas whose top left is the level's (ox, oy): its fires, standing out in
+ * the street `fireZ` before the walls, and the lamps and lit windows of its facades (`lamps`, in level coordinates). */
+export function streetLights(level, lamps, grade, ox, oy, { fireZ = 22, lampZ = 10 } = {}) {
+  return [
+    ...level.fires.map(([col, row, size]) => ({ x: col * 16 + 8 - ox, y: row * 16 - 14 - oy, z: fireZ,
+      radius: size === "large" ? 210 : size === "medium" ? 170 : 125, color: FIRELIGHT, strength: 3.2 * grade.fire,
+      flame: true })),
+    ...lamps.map((l) => ({ x: l.x - ox, y: l.y - oy, z: lampZ, radius: l.radius, color: LAMPLIGHT, strength: 1.4 * l.strength })),
+  ];
+}
+
+/** How far a row of the street, at level y, sinks into the night's tint: the highest storeys most, the street least. */
+export function hazeAt(grade, levelY) {
+  const t = Math.max(0, Math.min(1, (levelY - BACKDROP_TOP) / BACKDROP_HEIGHT));
+  return grade.haze + (0.06 - grade.haze) * t;
+}
+
 export function paintBackdrop(level, look = "night") {
   const W = level.cols * 16;
   const H = BACKDROP_HEIGHT;
   const c = new Canvas(W, H);
   const relief = new Relief(W, H);
+  // The lamps and lit windows the painters hang, in level coordinates.
   const lamps = [];
   const ground = H;
-  const base = GRADES[look] ?? GRADES.night;
-  // Before a painted city the street stands darker, a silhouette lit by its fires and the sky.
-  const grade = level.painting ? { ...base, ambient: base.ambient * 0.86, haze: base.haze + 0.08, fire: base.fire * 1.25,
-    edgeAmount: base.edgeAmount + 0.15 } : base;
+  const grade = levelGrade(level, look);
   const fires = level.fires.map(([col, row, size]) => ({ x: col * 16 + 8, y: row * 16 - BACKDROP_TOP, size }));
   const ctx = {
     soot: (x0, w) => (fires.some((f) => f.x > x0 - 40 && f.x < x0 + w + 40) ? 1.1 : 0.35),
@@ -1482,7 +1505,7 @@ export function paintBackdrop(level, look = "night") {
     // street's lamps and lit windows, which light it as its fires do.
     relief,
     front: 0,
-    lamp: (x, y, radius, strength) => lamps.push({ x, y, radius, strength }),
+    lamp: (x, y, radius, strength) => lamps.push({ x, y: y + BACKDROP_TOP, radius, strength }),
   };
   for (const section of level.sections) {
     const themes = Array.isArray(section.theme) ? section.theme : [section.theme];
@@ -1510,11 +1533,7 @@ export function paintBackdrop(level, look = "night") {
   // storeys sinking into the night.
   lightRelief(c, relief, {
     ambient: { color: grade.sky, strength: grade.ambient },
-    lights: [
-      ...fires.map((f) => ({ x: f.x, y: f.y - 14, z: 22, radius: f.size === "large" ? 210 : f.size === "medium" ? 170 : 125,
-        color: FIRELIGHT, strength: 3.2 * grade.fire })),
-      ...lamps.map((l) => ({ x: l.x, y: l.y, z: 10, radius: l.radius, color: LAMPLIGHT, strength: 1.4 * l.strength })),
-    ],
+    lights: streetLights(level, lamps, grade, 0, BACKDROP_TOP),
     key: grade.key ?? null,
     haze: { tint: grade.tint, top: grade.haze, street: 0.06 },
   });
@@ -1527,13 +1546,16 @@ export function paintBackdrop(level, look = "night") {
       }
     }
   }
-  // The relief it was lit from, kept with it for whoever would look at it.
+  // The relief it was lit from, kept with it for whoever would look at it, and its lamps, which light the street.
   c.relief = relief;
+  c.lamps = lamps;
   return c;
 }
 
+/** Builds the level's backdrop into its env folder as chunks, with review crops; returns it (its `lamps` light the
+ * ground and the facades in the play). */
 export function buildBackdrop({ OUT, REVIEW, want, level }) {
-  if (!want("backdrop")) return;
+  if (!want("backdrop")) return null;
   const c = paintBackdrop(level, level.look ?? "night");
   if (level.painting) toPalette(c, JSON.parse(readFileSync(join(OUT, "palette.json"), "utf8")));
   const chunks = Math.ceil(c.width / CHUNK);
@@ -1545,4 +1567,5 @@ export function buildBackdrop({ OUT, REVIEW, want, level }) {
     c.crop(from, 0, Math.min(1280, width - from), c.height).save(join(REVIEW, `${level.id}_backdrop_${tag}.png`));
   }
   console.log(`backdrop ${chunks} chunks`);
+  return c;
 }

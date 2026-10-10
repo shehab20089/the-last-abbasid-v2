@@ -9,6 +9,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ATLAS } from "../asset_generation/environment/tiles.mjs";
 import { BACKDROP_TOP, CHUNK } from "../asset_generation/environment/backdrop.mjs";
+import { groundTop } from "../asset_generation/environment/ground.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const name = process.argv[2] ?? "fallen_market";
@@ -255,18 +256,26 @@ const emberMaterial = subResource("CanvasItemMaterial", { blend_mode: 1 });
 node("Fires", "Node2D", ".");
 LEVEL.fires.forEach(([col, row, size], i) => fire("Fires", `Fire${i}`, xOf(col), yOf(row), size, i * 0.37));
 
-// The tiles.
+// The tiles: the collisions, and the art where nothing is painted over them.
 node("Tiles", "TileMapLayer", ".", {
   tile_map_data: tileMapData(),
   tile_set: resource("TileSet", `${SHARED}/market_tileset.tres`),
 });
 
-// Facades painted over solid blocks so they read as buildings.
+// The ground underfoot, painted over the tiles and lit with the facades (ground.mjs): its fires' light is painted in,
+// so it stands on light mask 2 with the backdrop, and only each fire's broad WallLight reaches it, for the flicker.
+node("Ground", "Node2D", ".");
+for (let i = 0; i < Math.ceil(W / CHUNK); i++) {
+  node(`Chunk${i}`, "Sprite2D", "Ground", { texture: resource("Texture2D", `${ENV}/ground_${i}.png`),
+    centered: "false", position: v2(i * CHUNK, groundTop(LEVEL)), light_mask: 2 });
+}
+
+// Facades painted over solid blocks so they read as buildings, lit as the backdrop is (facades.mjs).
 node("Facades", "Node2D", ".");
 for (const facade of LEVEL.facades ?? []) {
   node(`Facade_${facade.kind}_${facade.col}`, "Sprite2D", "Facades", {
     texture: resource("Texture2D", `${ENV}/props/facade_${facade.kind}_${facade.col}.png`), centered: "false",
-    position: v2(facade.col * T, facade.top * T),
+    position: v2(facade.col * T, facade.top * T), light_mask: 2,
   });
 }
 

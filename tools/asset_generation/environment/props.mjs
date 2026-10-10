@@ -1,11 +1,11 @@
 // Props that dress the streets of every level: market stalls (their timber roofs are the one-way
-// platforms), clay jars, grain sacks, smouldering book piles, scattered pages, a fallen black
-// banner, rubble, a charred beam, a broken cart; a well and the posts captives are roped to; the
-// college's lecterns, scroll racks, toppled shelves, spilt ink, fountain, cypress and armillary
-// sphere; the siege's braziers, horse-tail standards, catapult stones and broken ladders; the lamp
-// niche where the hero rests; each level's exit gate; and dark foreground silhouettes. Each prop is
-// drawn standing on its bottom edge. The set pieces soldiers handle (a pyre of books, a plundered
-// chest) are modelled in 3D in props3d.mjs and rendered like the characters.
+// platforms), scattered pages; the posts captives are roped to; the college's lecterns, scroll
+// racks, toppled shelves, spilt ink, fountain, cypress and armillary sphere; the siege's horse-tail
+// standards and broken ladders; the lamp niche where the hero rests; each level's exit gate; and
+// dark foreground silhouettes. Each prop is drawn standing on its bottom edge. The set pieces
+// soldiers handle (a pyre of books, a plundered chest) and the streets' clutter (jars whole and
+// broken, sacks, a cart, rubble, a charred beam, a heap of books, a fallen banner, stone shot, a
+// brazier, a well) are modelled in 3D (props3d.mjs, clutter3d.mjs) and rendered like the characters.
 import { join } from "node:path";
 import {
   Canvas, P, archway, awning, bayer, beam, brickWall, fbm, fillShape, glow, hash2, hex, mix, pick,
@@ -13,6 +13,7 @@ import {
 import { rng } from "../lib/noise.mjs";
 import { strip } from "../lib/canvas.mjs";
 import { props3d } from "./props3d.mjs";
+import { clutter3d } from "./clutter3d.mjs";
 import { writeSpriteFramesRegions } from "../lib/godot_resources.mjs";
 
 const OUTLINE = P.outline;
@@ -114,51 +115,6 @@ function stall(variant) {
 
 // --- Small props --------------------------------------------------------------------------------
 
-function jars() {
-  const c = new Canvas(44, 30);
-  jar(c, 10, 30, 26, P.brick);
-  jar(c, 24, 30, 20, P.plaster);
-  jar(c, 35, 30, 14, P.tile);
-  return outline(c);
-}
-
-function brokenJars() {
-  const c = new Canvas(40, 22);
-  jar(c, 12, 22, 20, P.brick, { broken: true, seed: 3 });
-  for (let i = 0; i < 9; i++) {
-    const x = 18 + Math.floor(hash2(i, 0, 5) * 20);
-    fillShape(c, x, 19 + Math.floor(hash2(i, 1, 5) * 2), x + 2, 21, () => true, pick(P.brick, 3 + (i % 2)));
-  }
-  return outline(c);
-}
-
-function sacks() {
-  const c = new Canvas(46, 22);
-  sack(c, 2, 22, 14, 18, P.linen);
-  sack(c, 14, 22, 15, 14, P.linen);
-  heap(c, 28, 22, 16, 6, P.ochre);
-  return outline(c);
-}
-
-/** Books flung into a heap and set alight: charred edges, glowing seams, a few still whole. */
-function bookPile() {
-  const c = new Canvas(52, 22);
-  const r = rng(77);
-  for (let i = 0; i < 26; i++) {
-    const x = 4 + Math.floor(r() * 40);
-    const y = 21 - Math.floor(r() * (12 - Math.abs(x - 24) * 0.35));
-    const ramp = [P.madder, P.indigo, P.leather, P.saffron, P.wool][Math.floor(r() * 5)];
-    const w = 6 + Math.floor(r() * 4);
-    for (let px = x; px < x + w; px++) {
-      for (let py = y; py < y + 3; py++) {
-        const char = fbm(px * 0.4, py * 0.4, { seed: i }) > 0.55;
-        c.set(px, py, char ? (r() < 0.15 ? P.fire[3] : P.night[1]) : pick(ramp, py === y ? 3 : 1));
-      }
-    }
-  }
-  return outline(c);
-}
-
 function pages() {
   const c = new Canvas(64, 6);
   for (let i = 0; i < 9; i++) {
@@ -173,83 +129,7 @@ function pages() {
   return c;
 }
 
-function fallenBanner() {
-  const c = new Canvas(54, 10);
-  beam(c, 0, 6, 54, 2, { ramp: P.wood, tone: 2 });
-  for (let x = 8; x < 46; x++) {
-    const h = 5 - Math.floor(fbm(x * 0.3, 0, { seed: 4 }) * 3);
-    for (let y = 9 - h; y < 9; y++) c.set(x, y, y === 9 - h ? P.gold[1] : (x % 5 === 0 ? hex("#1d1a20") : hex("#0f0e11")));
-  }
-  return outline(c);
-}
-
-function rubble() {
-  const c = new Canvas(56, 18);
-  const r = rng(13);
-  for (let i = 0; i < 40; i++) {
-    const x = 2 + Math.floor(r() * 50);
-    const top = 17 - Math.floor((1 - Math.abs(x - 28) / 28) * 14 * r());
-    const w = 3 + Math.floor(r() * 4);
-    const h = 2 + Math.floor(r() * 2);
-    fillShape(c, x, top, x + w, Math.min(17, top + h), () => true, (px, py) => pick(P.brick, 3 + (py === top ? 1 : 0) - (r() < 0.2 ? 1 : 0)));
-  }
-  return outline(c);
-}
-
-function charredBeam() {
-  const c = new Canvas(70, 26);
-  for (let x = 0; x < 70; x++) {
-    const y = Math.floor(20 - x * 0.24);
-    for (let t = 0; t < 6; t++) {
-      const ember = fbm(x * 0.3, t * 0.5, { seed: 3 }) > 0.7;
-      c.set(x, y + t, ember && x % 3 === 0 ? P.fire[3] : pick(P.wood, t === 0 ? 2 : t === 5 ? 0 : 1));
-    }
-  }
-  return outline(c);
-}
-
-function cart() {
-  const c = new Canvas(64, 36);
-  beam(c, 4, 14, 50, 5, { tone: 3 });
-  for (let x = 6; x < 52; x += 8) beam(c, x, 6, 2, 9, { tone: 3 });
-  beam(c, 52, 16, 12, 3, { tone: 2 });
-  // One wheel on, one fallen.
-  const wheel = (cx, cy, r0) => {
-    for (let a = 0; a < 64; a++) {
-      const ang = (a / 64) * Math.PI * 2;
-      for (let d = r0 - 2; d <= r0; d++) c.set(Math.round(cx + Math.cos(ang) * d), Math.round(cy + Math.sin(ang) * d), P.wood[d === r0 ? 2 : 3]);
-    }
-    for (let s = 0; s < 6; s++) {
-      const ang = (s / 6) * Math.PI * 2;
-      for (let d = 0; d < r0; d++) c.set(Math.round(cx + Math.cos(ang) * d), Math.round(cy + Math.sin(ang) * d), P.wood[2]);
-    }
-  };
-  wheel(16, 25, 10);
-  for (let x = 34; x < 58; x++) for (let y = 32; y < 35; y++) c.set(x, y, P.wood[(x + y) % 3 === 0 ? 1 : 2]);
-  return outline(c);
-}
-
 // --- The streets, the college and the siege -------------------------------------------------------
-
-/** A round stone well-head under a timber frame, its pulley, rope and bucket. */
-function well() {
-  const c = new Canvas(48, 40);
-  for (let y = 22; y < 40; y++) {
-    for (let x = 6; x < 42; x++) {
-      const u = (x + 0.5 - 24) / 18;
-      const course = Math.floor((y - 22) / 5);
-      const joint = (y - 22) % 5 === 0 || (x + course * 4) % 9 === 0;
-      c.set(x, y, joint ? P.stone[1] : pick(P.stone, 3 + (u < -0.5 ? 1 : u > 0.55 ? -1 : 0)));
-    }
-  }
-  fillShape(c, 5, 20, 42, 22, () => true, (x, y) => pick(P.stone, y === 20 ? 5 : 4));
-  for (const px of [7, 39]) beam(c, px, 2, 3, 19, { tone: 3, seed: px });
-  beam(c, 4, 1, 40, 3, { tone: 4 });
-  fillShape(c, 21, 4, 26, 8, () => true, P.wood[2]);
-  for (let y = 9; y < 15; y++) c.set(24, y, P.linen[1]);
-  fillShape(c, 21, 15, 27, 20, () => true, (x, y) => (y === 15 ? P.iron[3] : pick(P.wood, 2)));
-  return outline(c);
-}
 
 /** A post with a coil of rope: where the soldiers tie their captives. */
 function ropePost() {
@@ -365,22 +245,6 @@ function armillary() {
   return outline(c);
 }
 
-/** A bronze brazier on a tripod, heaped with glowing coals. */
-function brazier() {
-  const c = new Canvas(20, 28);
-  for (let d = 0; d < 14; d++) {
-    c.set(4 + Math.floor(d * 0.3), 27 - d, P.iron[2]);
-    c.set(15 - Math.floor(d * 0.3), 27 - d, P.iron[2]);
-    c.set(10, 27 - d, P.iron[1]);
-  }
-  fillShape(c, 2, 9, 17, 14, () => true, (x, y) => (y === 9 ? P.bronze[4] : pick(P.bronze, 2 + (x < 6 ? 1 : 0))));
-  for (let x = 3; x < 17; x++) {
-    const h = 2 + Math.floor(hash2(x, 1, 3) * 3);
-    for (let y = 9 - h; y < 9; y++) c.set(x, y, hash2(x, y, 4) < 0.5 ? P.fire[4] : P.fire[2]);
-  }
-  return outline(c);
-}
-
 /** A Mongol horse-tail standard (tug): a tall pole crowned with a trident and black tails. */
 function standard() {
   const c = new Canvas(24, 92);
@@ -391,22 +255,6 @@ function standard() {
     for (let d = 0; d < 34; d++) {
       const x = 7 + t + Math.round(Math.sin(d * 0.18 + t * 0.9) * 1.5 + d * 0.06);
       c.set(x, 9 + d, t % 4 === 0 ? P.ash[1] : hex("#0f0c0d"));
-    }
-  }
-  return outline(c);
-}
-
-/** Stone shot for the catapults, heaped where it fell. */
-function stoneBalls() {
-  const c = new Canvas(26, 24);
-  for (const [bx, by, r] of [[8, 17, 6.5], [19, 18, 5.5], [13, 9, 6]]) {
-    for (let y = Math.floor(by - r); y <= by + r; y++) {
-      for (let x = Math.floor(bx - r); x <= bx + r; x++) {
-        const d = Math.hypot(x + 0.5 - bx, y + 0.5 - by) / r;
-        if (d > 1) continue;
-        const lit = (bx - x) * 0.6 + (by - y) * 0.8;
-        c.set(x, y, pick(P.stone, 3 + (lit > 2 ? 1 : lit < -2 ? -1 : 0) + (hash2(x, y, 7) < 0.1 ? -1 : 0)));
-      }
     }
   }
   return outline(c);
@@ -571,17 +419,6 @@ function foregroundPost() {
   return c;
 }
 
-function foregroundRubble() {
-  const c = new Canvas(160, 48);
-  const dark = [hex("#060507"), hex("#0d0b0e"), hex("#1a141a")];
-  for (let x = 0; x < 160; x++) {
-    const top = 48 - Math.floor(10 + fbm(x * 0.05, 0, { seed: 8 }) * 30 + (hash2(Math.floor(x / 7), 0, 2) * 6));
-    for (let y = top; y < 48; y++) c.set(x, y, dark[y === top ? 2 : y < top + 3 ? 1 : 0]);
-  }
-  for (const [x, h] of [[30, 28], [44, 22], [112, 32]]) jar(c, x, 48 - 4, h, dark.concat(dark));
-  return c;
-}
-
 function foregroundCloth() {
   const c = new Canvas(120, 90);
   const dark = [hex("#08070a"), hex("#110e13"), hex("#1b161e")];
@@ -600,16 +437,7 @@ export function buildProps(OUT, REVIEW) {
     sheet.push(canvas);
   };
   for (let v = 0; v < 3; v++) save(`stall_${v}`, stall(v));
-  save("jars", jars());
-  save("jars_broken", brokenJars());
-  save("sacks", sacks());
-  save("book_pile", bookPile());
   save("pages", pages());
-  save("banner_fallen", fallenBanner());
-  save("rubble", rubble());
-  save("beam_charred", charredBeam());
-  save("cart", cart());
-  save("well", well());
   save("rope_post", ropePost());
   save("lectern", lectern());
   save("scroll_rack", scrollRack());
@@ -618,12 +446,12 @@ export function buildProps(OUT, REVIEW) {
   save("fountain", fountain());
   save("cypress", cypress());
   save("armillary", armillary());
-  save("brazier", brazier());
   save("standard", standard());
-  save("stone_ball", stoneBalls());
   save("ladder_broken", ladderBroken());
-  // Set pieces the soldiers handle, modelled in 3D and rendered like them (environment/props3d.mjs).
+  // Set pieces the soldiers handle and the streets' clutter, modelled in 3D and rendered like them (props3d.mjs,
+  // clutter3d.mjs).
   for (const [name, canvas] of props3d()) save(name, canvas);
+  for (const [name, canvas] of clutter3d()) save(name, canvas);
   const niche = lampNiche();
   strip(niche).save(join(OUT, "props", "lamp_niche.png"));
   const nicheTexture = "res://assets/environments/market/props/lamp_niche.png";
@@ -641,7 +469,6 @@ export function buildProps(OUT, REVIEW) {
   save("last_gate", lastGate(false));
   save("last_gate_open", lastGate(true));
   save("fg_post", foregroundPost());
-  save("fg_rubble", foregroundRubble());
   save("fg_cloth", foregroundCloth());
   // Review sheet: everything on a mid background.
   const width = sheet.reduce((s, c) => s + c.width + 4, 0);

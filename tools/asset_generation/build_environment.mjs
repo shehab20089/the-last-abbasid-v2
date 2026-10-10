@@ -1,14 +1,16 @@
 // Builds a level's environment art: its parallax layers (sky, skyline, city, and the river where it
-// has one), the street-side backdrop and the facades over its solid blocks. The shared tileset and
-// prop library (used by every level) live with the market's art and build with --shared.
+// has one), the street-side backdrop, the ground underfoot and the facades over its solid blocks, the
+// last two lit by the backdrop's fires and lamps. The shared tileset and prop library (used by every
+// level) live with the market's art and build with --shared.
 // Usage: node tools/asset_generation/build_environment.mjs [--level fallen_market] [--only sky,...]
 //        node tools/asset_generation/build_environment.mjs --shared [--only tiles,props]
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildTileset, tilesetResource } from "./environment/tiles.mjs";
 import { buildLayers } from "./environment/layers.mjs";
-import { buildBackdrop } from "./environment/backdrop.mjs";
+import { buildBackdrop, paintBackdrop } from "./environment/backdrop.mjs";
+import { buildGround } from "./environment/ground.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const SHARED = join(ROOT, "assets", "environments", "market");
@@ -43,10 +45,16 @@ if (args.includes("--shared")) {
   const OUT = join(ROOT, (LEVEL.env ?? "res://assets/environments/market").replace("res://", ""));
   mkdirSync(join(OUT, "props"), { recursive: true });
   await buildLayers({ OUT, REVIEW, want, level: LEVEL });
-  buildBackdrop({ OUT, REVIEW, want, level: LEVEL });
-  if (want("facades")) {
-    const { buildFacades } = await import("./environment/facades.mjs");
-    buildFacades(OUT, LEVEL);
-    console.log("facades");
+  const backdrop = buildBackdrop({ OUT, REVIEW, want, level: LEVEL });
+  if (want("ground") || want("facades")) {
+    // The street's lamps light the play too; painted without saving when only the play is built.
+    const lamps = (backdrop ?? paintBackdrop(LEVEL, LEVEL.look ?? "night")).lamps;
+    const palette = LEVEL.painting ? JSON.parse(readFileSync(join(OUT, "palette.json"), "utf8")) : null;
+    if (want("ground")) buildGround({ OUT, REVIEW, level: LEVEL, lamps, palette });
+    if (want("facades")) {
+      const { buildFacades } = await import("./environment/facades.mjs");
+      buildFacades(OUT, LEVEL, { lamps, palette });
+      console.log("facades");
+    }
   }
 }

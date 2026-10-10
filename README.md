@@ -418,7 +418,7 @@ There is no hand-drawn sprite and no Blender file in the project. Every characte
 
 `node tools/animation_lint.mjs` checks every animation for pops, foot sliding, loop seams and limbs asked to reach too far, each soldier against his own attacks. The issues known today are kept, grouped by what causes them, in `tools/animation_lint_baseline.json`; `--check` fails on a new one or one grown worse (the test run does this), and `--update` rewrites the list after a fix. `node tools/review_reel.mjs` writes `captures/animation_reel.html`, where every character built plays each animation at its game timing with its live frames marked. The rules of light, value, colour and silhouette are in [`docs/art_style_guide.md`](docs/art_style_guide.md).
 
-**Environments:** each level's distant city is resampled from one of the concept paintings in `docs/concept_art/` and reduced to the game's palette. The streets before it (facades, stalls, towers, banners with the gold crescent, lattice balconies, cranes and hanging cages, cobalt tilework) are painted procedurally in that palette, kept lower and darker so the burning city shows above. Fires spit embers, smoke drifts, and a post-process adds bloom, split toning and a vignette.
+**Environments:** each level's distant city is resampled from one of the concept paintings in `docs/concept_art/` and reduced to the game's palette. The streets before it (facades, stalls, towers, banners with the gold crescent, lattice balconies, cranes and hanging cages, cobalt tilework) are painted procedurally in that palette, with relief beside the colour (recesses, cornices, sills, mortar), and lit from it by the hour and the street's own fires (`environment/relief.mjs`). They are kept lower and darker so the burning city shows above. The ground underfoot is painted the same way for each level: paving that catches the firelight over a dark foundation, strewn with what the sack has left. The streets' clutter (jars, sacks, a cart, rubble, braziers, a well) is modelled in 3D and rendered like the characters. Fires spit embers, smoke drifts, and a post-process adds bloom, split toning and a vignette.
 
 ---
 
@@ -435,7 +435,7 @@ Everything in `assets/` (and the level scenes and `app/main.tscn`) is generated 
 ```bash
 node tools/asset_generation/build_characters.mjs                        # hero, soldiers, captain, townspeople (--only <name>, --anim a,b)
 node tools/asset_generation/build_environment.mjs --shared              # the shared tileset and props
-node tools/asset_generation/build_environment.mjs --level streets_of_ash  # one level's sky, city, river, backdrop, facades
+node tools/asset_generation/build_environment.mjs --level streets_of_ash  # one level's sky, city, river, backdrop, ground, facades
 node tools/asset_generation/build_effects.mjs                           # sparks, blood, dust, fire, smoke, light, projectiles
 node tools/asset_generation/build_ui.mjs                                # panels, bars, icons, the app icon
 node tools/asset_generation/build_font.mjs                              # the pixel fonts

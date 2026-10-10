@@ -19,10 +19,10 @@ import { CORPSES, TOWNSFOLK_PIECES } from "../characters/townsfolk3d_animations.
 const SAMPLES = 4;
 const YAW = 22;
 const frac = (x) => x - Math.floor(x);
-const hash = (x, y, seed = 0) => frac(Math.sin(x * 127.1 + y * 311.7 + seed * 74.7) * 43758.5453);
+export const hash = (x, y, seed = 0) => frac(Math.sin(x * 127.1 + y * 311.7 + seed * 74.7) * 43758.5453);
 
 /** A small seeded random source (mulberry32). */
-function random(seed) {
+export function random(seed) {
   let a = seed >>> 0;
   return () => {
     a = (a + 0x6d2b79f5) >>> 0;
@@ -34,12 +34,12 @@ function random(seed) {
 }
 
 /** A material from a ramp: lit by the key, a dark outline, a touch of firelight on the back edge. */
-const material = (ramp, bias = 0, extra = {}) => ({
+export const material = (ramp, bias = 0, extra = {}) => ({
   ramp, outline: mix(ramp[0], P.outline, 0.55), line: ramp[0], rim: 0.3, shade: (s) => pick(ramp, s.light, bias), ...extra,
 });
 
 /** Renders parts ({ mesh, material, group?, prio? }) into a canvas of the given size. */
-function render(parts, { width, height, baseline = 1, yaw = YAW }) {
+export function render(parts, { width, height, baseline = 1, yaw = YAW }) {
   const camera = spriteCamera({ width, height, scale: SAMPLES, yaw, baseline });
   const items = parts.map((p, id) => ({ id, v: p.mesh.v, uv: p.mesh.uv, t: p.mesh.t, smooth: p.mesh.smooth,
     twoSided: p.mesh.twoSided, bias: p.bias }));
@@ -49,7 +49,7 @@ function render(parts, { width, height, baseline = 1, yaw = YAW }) {
 
 // --- Books -------------------------------------------------------------------------------------
 
-const COVERS = [P.madder, P.indigo, P.leather, P.saffron, P.jade, P.ochre, P.wool];
+export const COVERS = [P.madder, P.indigo, P.leather, P.saffron, P.jade, P.ochre, P.wool];
 
 // A book's surface (a rounded box, its length along x): v is the height up its edge (0 at the
 // middle of the page block); w goes round it from the head (0) by the fore-edge (0.25) and the
@@ -57,14 +57,14 @@ const COVERS = [P.madder, P.indigo, P.leather, P.saffron, P.jade, P.ochre, P.woo
 const pagesShow = (s) => Math.abs(s.v) < 0.32 && Math.abs(frac(s.w) - 0.75) > 0.12;
 
 /** A bound book: leather covers and spine, the page block showing at head, tail and fore-edge. */
-function bookMaterial(cover) {
+export function bookMaterial(cover) {
   return material(cover, -0.2, {
     shade: (s) => (pagesShow(s) ? pick(P.parchment, s.light, -1.2) : pick(cover, s.light, -0.1)),
   });
 }
 
 /** A book the fire has had: black, ash at its edges, a crack here and there still glowing. */
-const CHARRED = material(P.night, 0, {
+export const CHARRED = material(P.night, 0, {
   rim: 0.15,
   shade: (s) => {
     const h = hash(Math.floor(s.x / 2), s.y, 3);
@@ -75,7 +75,7 @@ const CHARRED = material(P.night, 0, {
 });
 
 /** Half-burnt: the cover scorched black from one end, embers along the line where it burns. */
-function scorched(cover) {
+export function scorched(cover) {
   return material(cover, -0.2, {
     shade: (s) => {
       const edge = frac(s.w * 2 + 0.25);
@@ -87,7 +87,7 @@ function scorched(cover) {
 }
 
 /** A book lying at (x, y, z) (z its underside), turned by yaw and tilted. */
-function book(x, y, z, { len = 10, wide = 7.5, thick = 2.4, yaw = 0, tilt = 0, roll = 0 } = {}) {
+export function book(x, y, z, { len = 10, wide = 7.5, thick = 2.4, yaw = 0, tilt = 0, roll = 0 } = {}) {
   let m = roundedBox([0, 0, thick / 2], [len, wide, thick], { roundness: 0.22, rings: 6, segments: 12 });
   if (tilt) m = rotated(m, [0, 1, 0], tilt);
   if (roll) m = rotated(m, [1, 0, 0], roll);
