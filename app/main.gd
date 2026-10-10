@@ -2,8 +2,8 @@ class_name AbbasidGame
 extends Node
 ## The session: the front door (title, pause, settings, results), the level in play and the hero
 ## in it, the camera, the HUD and conversations, saving and loading, death and return, and the
-## story of Chapter I. It wires gameplay signals to presentation (sound, effects, camera shake,
-## hit-stop) and never decides a blow. The story itself is data: each level names its objectives,
+## story of Chapter I. How the fighting looks and sounds is its CombatPresentation's (app/combat_presentation.gd),
+## which it binds to each fighter; it never decides a blow. The story itself is data: each level names its objectives,
 ## its ambushes, who gives what, where its exit leads and the card told on the way. It keeps the
 ## hero's growth too (a Progression over the save): the Honour his deeds earn, the lamp menu where he
 ## spends it, the keepsakes given to him, and applies what he has become to the hero.
@@ -29,49 +29,6 @@ const MANUSCRIPTS_TOTAL: int = 16
 const TECHNIQUES: Array[StringName] = [&"sweep", &"bash", &"plunge", &"roll_cut", &"knives", &"charge", &"pommel", &"whirl",
 	&"delayed_cut", &"executioner", &"running_thrust", &"storm", &"pierce", &"naft", &"second_wind", &"judgment",
 	&"kick", &"low_cut", &"rising_cleave", &"running_slash", &"guarded_thrust", &"down_stab", &"windmill"]
-## The glow of the second wind's fury while it holds, the copies his blows leave in it, and the embers.
-const STEEL_GLOW: Color = Color(1.0, 0.8, 0.42)
-const FURY_ECHO: Color = Color(1.0, 0.78, 0.4, 0.32)
-const EMBERS_EVERY: float = 0.16
-## The Storm's blur of steel, the copies a judgment's blink leaves, and the dust the Storm raises.
-const STORM_ECHO: Color = Color(0.78, 0.88, 1.0, 0.36)
-const JUDGMENT_ECHO: Color = Color(1.0, 0.86, 0.5, 0.5)
-const STORM_DUST_EVERY: float = 0.14
-## An Art's moment: how long the world stays drained of colour (real s) and how fast it comes back.
-const ART_FOCUS_HOLD: float = 0.32
-const ART_FOCUS_FADE: float = 0.45
-## The glint of a blow's end (Steady Breath), and the pale copies a close call leaves.
-const STEADY_GLOW: Color = Color(1.0, 0.96, 0.82)
-const CLOSE_CALL_ECHO: Color = Color(0.94, 0.96, 1.0, 0.62)
-## The copies fast movement leaves behind him: a dash, the plunge's fall (a plain roll leaves none, so a close
-## call's own copies stand out).
-const FALL_ECHO: Color = Color(0.55, 0.72, 0.95, 0.38)
-const DASH_ECHO: Color = Color(1.0, 0.78, 0.5, 0.42)
-const ECHO_EVERY: float = 0.045
-## The copies a soldier's spring leaves (a skirmisher's dash and leap, a spear's running lunge): smoke-dim.
-const SOLDIER_ECHO: Color = Color(0.85, 0.6, 0.45, 0.32)
-## A soldier's lunge at least this fast is a spring that leaves copies behind.
-const SPRING_SPEED: float = 300.0
-## The held cleave's glow and glint, by how far it has grown (1 to 3).
-const CHARGE_GLOW: Array[Color] = [Color(1.0, 0.86, 0.6), Color(1.0, 0.74, 0.36), Color(1.0, 0.52, 0.2)]
-## The glow of a soldier open to a finisher: moonlit steel, nothing like a warning's colours.
-const FINISH_GLOW: Color = Color(0.5, 0.8, 1.0)
-## For colour-blind eyes (a setting): the warnings told apart by brightness as well as hue (a bright yellow sweep,
-## a blue guard-breaker, a deep vermilion), and the finisher's glow a sea green no warning uses.
-const TELL_COLOURS_CLEAR: Array[Color] = [Color(1.0, 0.97, 0.9), Color(1.0, 0.88, 0.12), Color(0.38, 0.55, 1.0),
-	Color(0.95, 0.22, 0.02)]
-const FINISH_GLOW_CLEAR: Color = Color(0.25, 1.0, 0.7)
-## A soldier's warnings, by what answers the blow (AttackDefinition.Tell): white (block or parry), amber (a
-## low sweep: jump or roll), violet (it breaks a held guard: parry or roll), red (nothing a shield does:
-## roll). Each its own colour and sound; all but the white also hang their own sign over his head and
-## flush his body, held through the wind-up until the blow lands.
-const TELL_COLOURS: Array[Color] = [Color(1.0, 0.97, 0.9), Color(1.0, 0.68, 0.22), Color(0.74, 0.46, 1.0),
-	Color(1.0, 0.3, 0.2)]
-const TELL_GLINTS: Array[StringName] = [&"glint", &"glint_low", &"glint_break", &"glint_dire"]
-const TELL_SOUNDS: Array[StringName] = [&"enemy_tell", &"enemy_tell_low", &"enemy_tell_break", &"enemy_tell_dire"]
-const TELL_FLUSH: Array[float] = [0.0, 0.28, 0.3, 0.36]
-## Seconds a blade stays wet after a kill (its trail runs dark red, then clears).
-const BLOODIED_TIME: float = 2.5
 ## Townspeople in the chapter kneeling under a headsman's sabre, who can be saved.
 const CAPTIVES_TOTAL: int = 7
 const DEATH_DELAY: float = 2.4
@@ -83,10 +40,6 @@ const FIRST_MEETING_RANGE: float = 150.0
 const FIRST_MEETING_DELAY: float = 1.5
 ## How near someone with something to say must be to call out to him.
 const CALL_RANGE: float = 230.0
-## Wounded below this share of his health, the screen's edges darken to blood in time with his heart (every
-## HEART_EVERY seconds).
-const DANGER_AT: float = 0.3
-const HEART_EVERY: float = 0.95
 ## What each warning's card shows: its title, its words, the move that answers it (MoveDemos).
 const WARNING_LESSONS: Array[Array] = [
 	["LESSON_WARN_WHITE", "HINT_WARN_WHITE", &"guard"],
@@ -117,23 +70,6 @@ var _last_blow: HitData
 var _remedies_seen: int = 0
 ## Seconds in play since the level was entered.
 var _level_time: float = 0.0
-## The warnings' colours and the finisher's glow, as the settings choose them.
-var _tell_colours: Array[Color] = TELL_COLOURS
-var _finish_glow: Color = FINISH_GLOW
-## How near to death the screen shows him, and where his heartbeat is.
-var _danger: float = 0.0
-var _heart: float = 0.0
-## An Art's moment: how drained the world is, and how long it stays so; the fury's embers and the Storm's dust.
-var _focus: float = 0.0
-var _focus_left: float = 0.0
-var _ember_left: float = 0.0
-var _storm_dust_left: float = 0.0
-## Soldiers winding up a warned blow (by instance id): the blow, so the flush holds until it lands.
-var _warned: Dictionary[int, AttackDefinition] = {}
-## When the hero last gasped for breath he did not have (msec), so the gasp does not repeat on every frame.
-var _last_gasp: int = 0
-## Seconds to the next copy fast movement leaves behind him.
-var _echo_left: float = 0.0
 var state: State = State.TITLE
 var level: Level
 var level_path: String = ""
@@ -146,6 +82,8 @@ var _boss: MongolSoldier
 var progression: Progression
 ## How the game is played, written for playtests (shared/playtest/play_log.gd).
 var play_log: PlayLog
+## How the fighting looks and sounds (app/combat_presentation.gd), bound to each fighter as he enters.
+var presentation: CombatPresentation
 ## The nodes bought before the lamp menu opened (those bought by it are taught as he rises).
 var _bought_before: Array[StringName] = []
 
@@ -181,10 +119,13 @@ func _ready() -> void:
 	play_log = PlayLog.new()
 	play_log.name = "PlayLog"
 	add_child(play_log)
+	presentation = CombatPresentation.new()
+	presentation.name = "Presentation"
+	add_child(presentation)
+	presentation.setup(self)
 	world.process_mode = Node.PROCESS_MODE_PAUSABLE
 	vfx.process_mode = Node.PROCESS_MODE_PAUSABLE
 	gore.process_mode = Node.PROCESS_MODE_PAUSABLE
-	gore.piece_landed.connect(_on_piece_landed)
 	camera.process_mode = Node.PROCESS_MODE_PAUSABLE
 	hud.glyphs = glyphs
 	settings_screen.settings = settings
@@ -225,14 +166,7 @@ func _process(delta: float) -> void:
 	var cursor: Input.MouseMode = Input.MOUSE_MODE_HIDDEN if state == State.PLAYING else Input.MOUSE_MODE_VISIBLE
 	if Input.mouse_mode != cursor and DisplayServer.get_name() != "headless":
 		Input.mouse_mode = cursor
-	_update_finish_prompt()
-	_update_warnings()
-	_update_focus(delta / maxf(Engine.time_scale, 0.001))
 	_update_messages()
-	_update_danger(delta / maxf(Engine.time_scale, 0.001))
-	_update_charge_glow()
-	_update_steel_glow()
-	_update_echoes(delta / maxf(Engine.time_scale, 0.001))
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -407,11 +341,10 @@ func _on_settings_changed() -> void:
 		hit_stop.clear()
 	Combatant.flash_scale = 1.0 if settings.flashes else 0.3
 	vfx.calm = not settings.flashes
-	_tell_colours = TELL_COLOURS_CLEAR if settings.colourblind else TELL_COLOURS
-	_finish_glow = FINISH_GLOW_CLEAR if settings.colourblind else FINISH_GLOW
-	var grade: ShaderMaterial = _grade()
-	if grade != null:
-		grade.set_shader_parameter(&"brightness", settings.brightness)
+	presentation.apply_settings()
+	var post: ShaderMaterial = grade()
+	if post != null:
+		post.set_shader_parameter(&"brightness", settings.brightness)
 	card.cinematic.brightness = settings.brightness
 	# The playtest log, as the player chose (never while the checks run: they turn it on themselves).
 	play_log.enabled = settings.playtest_log and (OS.get_environment("ABBASID_USER_PREFIX") == "" or play_log.in_checks)
@@ -639,80 +572,42 @@ func _real_delay(seconds: float) -> void:
 
 # --- The hero and the soldiers: presentation ---------------------------------------------------------
 
+## The hero's signals the session keeps (the story, his growth, the playtest log); how he looks and sounds is the
+## presentation's (bound last).
 func _wire_hero() -> void:
 	_wire_combatant(hero)
 	hero.interactable_changed.connect(_on_target_changed)
 	hero.died.connect(_on_hero_died)
-	hero.jumped.connect(sounds.play.bind(&"jump", -6.0))
-	hero.footstep.connect(sounds.play.bind(&"footstep", -12.0))
-	hero.landed.connect(_on_hero_landed)
 	hero.rolled.connect(_on_hero_rolled)
-	hero.healed.connect(_on_hero_healed)
 	hero.health_changed.connect(_on_hero_health)
 	hero.remedies_changed.connect(_on_hero_remedies)
 	_remedies_seen = hero.remedies
 	hero.interacted.connect(_on_hero_interacted)
 	hero.finisher_started.connect(_on_finisher_started)
-	hero.finisher_struck.connect(_on_finisher_struck)
-	hero.finisher_ended.connect(_on_finisher_ended)
-	hero.plunge_landed.connect(_on_plunge_landed)
-	hero.thrown.connect(_on_knife_thrown)
-	hero.charge_changed.connect(_on_charge_changed)
 	hero.art_started.connect(_on_art_started)
-	hero.wounds_opened.connect(_on_wounds_opened)
-	hero.cried.connect(_on_cried)
-	hero.flitted.connect(_on_flitted)
-	hero.judgment_ended.connect(_on_judgment_ended)
-	hero.art_refused.connect(_on_art_refused)
 	hero.technique_used.connect(_on_technique_used)
-	hero.breath_glint.connect(_on_breath_glint)
-	hero.winded.connect(_on_winded)
 	hero.steady_breath.connect(_on_steady_breath)
 	hero.close_call.connect(_on_close_call)
-	hero.breath_refused.connect(_on_breath_refused)
 	hero.knocked_down.connect(_on_knocked_down.bind(hero))
 	hero.glanced.connect(_on_glanced)
-	hero.bounced.connect(sounds.play.bind(&"jump", -4.0))
+	presentation.bind_hero(hero)
 
 
+## A soldier's signals the session keeps (his death's rewards, the playtest log, the lessons); how he looks and
+## sounds is the presentation's (bound last).
 func _wire_soldier(soldier: MongolSoldier) -> void:
 	_wire_combatant(soldier)
 	soldier.died.connect(_on_soldier_died.bind(soldier))
-	if soldier.get_meta(&"activity", &"") == &"stab":
-		soldier.sprite.frame_changed.connect(_on_stab_frame.bind(soldier))
 	soldier.projectile_spawned.connect(_on_projectile)
-	soldier.surprised.connect(_on_soldier_surprised)
 	soldier.knocked_down.connect(_on_knocked_down.bind(soldier))
-	soldier.evaded.connect(_on_soldier_evaded.bind(soldier))
-	soldier.steeled.connect(_on_soldier_steeled.bind(soldier))
-	soldier.ignited.connect(_on_soldier_ignited.bind(soldier))
-	soldier.sprite.frame_changed.connect(_on_soldier_frame.bind(soldier))
-	var brain: EnemyBrain = soldier.get_node_or_null(^"Brain") as EnemyBrain
-	if brain != null:
-		brain.alerted.connect(sounds.play.bind(&"enemy_alert", -5.0))
+	presentation.bind_soldier(soldier)
 
 
-## A soldier falls: cut apart if the blow took something off him, and bleeding where he lies (a
-## finisher has already cut him, frame by frame).
+## A soldier falls: counted, and what killing him earns (how he falls is the presentation's).
 func _on_soldier_died(soldier: MongolSoldier) -> void:
 	play_log.event("kill", _kind(soldier), soldier.global_position.x)
-	sounds.play(&"enemy_death", -2.0)
 	_reward_kill(soldier)
 	_honour_kill(soldier)
-	if soldier.in_finisher:
-		gore.bleed_out(soldier, soldier.sprite, soldier.gore_set, soldier.facing, soldier.severed)
-		return
-	# The blade that killed him is wet with it for a while.
-	var trail: SwordTrail = hero.get_node_or_null(^"Sprite/Trail") as SwordTrail if hero != null else null
-	if trail != null and settings.gore:
-		trail.bloodied = BLOODIED_TIME
-	if soldier.severed != &"":
-		var blow: float = soldier.killing_hit.direction if soldier.killing_hit != null else -soldier.facing
-		var fury: float = 3.0 if soldier.profile.armoured_body else 1.0
-		gore.cut_down(soldier, soldier.sprite, soldier.gore_set, soldier.severed, soldier.facing, blow, fury)
-		sounds.play(&"sever", -1.0)
-		hit_stop.trigger(0.09)
-	gore.bleed_out(soldier, soldier.sprite, soldier.gore_set, soldier.facing, soldier.severed)
 
 
 ## The sabre fell before the hero could stop it.
@@ -797,134 +692,20 @@ func _earn(amount: int, once: StringName = &"", announce: bool = true) -> void:
 		hud.notice(tr("NOTICE_HONOUR") % amount)
 
 
-## A soldier stabbing at a body on the street: blood with each thrust.
-func _on_stab_frame(soldier: MongolSoldier) -> void:
-	if soldier.dead or soldier.sprite.animation != &"stab" or soldier.sprite.frame != 1:
-		return
-	# Only where it can be seen (the street keeps only so many marks).
-	if hero == null or absf(soldier.global_position.x - hero.global_position.x) > 420.0:
-		return
-	var at: Vector2 = soldier.global_position + Vector2(soldier.facing * 20.0, -5.0)
-	gore.spatter(at, soldier.facing, soldier.global_position.y, 1)
-	sounds.play(&"sever", -16.0)
-
-
 # --- Finishers ------------------------------------------------------------------------------------
 
-## A scripted kill begins. The last soldier standing gets the full one: the bars close in, a sting,
-## and the street holds its breath. While others still fight, it plays quick and plain.
+## A scripted kill begins, for the playtest log (how it plays is the presentation's).
 func _on_finisher_started(_target: Combatant, finisher: FinisherDefinition) -> void:
 	play_log.event("finisher", finisher.resource_path.get_file().get_basename(), hero.global_position.x)
-	hud.set_finish_target(null)
-	if hero.is_judging():
-		sounds.play(&"judgment_gong", -3.0)
-		hero.flash(0.5, CHARGE_GLOW[0])
-	if hero.finisher_cinematic:
-		hud.cinematic_bars(true)
-		sounds.play(&"finisher")
-		camera.shake(1.5)
-	else:
-		sounds.play(&"finisher", -10.0)
 
 
-## A finisher's blow: what it cuts off flies, or the blood bursts from a thrust; time slows on it.
-func _on_finisher_struck(target: Combatant, finisher: FinisherDefinition, frame: int, cut: StringName) -> void:
-	var soldier: MongolSoldier = target as MongolSoldier
-	if soldier == null:
-		return
-	var full: bool = hero.finisher_cinematic
-	if full and frame >= finisher.slow_from and frame <= finisher.slow_to:
-		hit_stop.slow(0.3, 0.7)
-	if cut != &"":
-		gore.cut_down(soldier, soldier.sprite, soldier.gore_set, cut, soldier.facing, hero.facing, 1.6 if full else 1.2)
-		sounds.play(&"sever")
-		hit_stop.trigger(0.11 if full else 0.07)
-		camera.shake(4.5 if full else 3.0)
-	else:
-		var middle: Vector2 = soldier.global_position + Vector2(0.0, -40.0)
-		var last: bool = frame == finisher.burst_frames[finisher.burst_frames.size() - 1]
-		gore.burst(soldier, soldier.sprite, soldier.gore_set, middle, hero.facing, last)
-		sounds.play(&"sever", -4.0)
-		hit_stop.trigger(0.08 if full else 0.05)
-		camera.shake(3.0 if full else 2.0)
-	if settings.gore:
-		var trail: SwordTrail = hero.get_node_or_null(^"Sprite/Trail") as SwordTrail
-		if trail != null:
-			trail.bloodied = BLOODIED_TIME
-
-
-func _on_finisher_ended(_target: Combatant) -> void:
-	if not hero.is_judging():
-		hud.cinematic_bars(false)
-
-
-func _on_knife_thrown(knife: Node2D) -> void:
-	sounds.play(&"sword_swing", -6.0)
-	var thrown: ThrownKnife = knife as ThrownKnife
-	if thrown != null:
-		thrown.impacted.connect(_on_arrow_impacted)
-	# The hero's naphtha flask: Greek fire.
-	var flask: FirePot = knife as FirePot
-	if flask != null:
-		flask.burst.connect(_on_naft_burst)
-
-
-## An Art spent: the world stops a heartbeat and drains of colour about him, the Art's name crosses the
-## screen, a drum and a ring of steel, then its own sound; a judgment draws the black bars for all its men.
+## An Art spent, for the playtest log (its moment is the presentation's).
 func _on_art_started(art: ArtDefinition) -> void:
 	play_log.event("art", art.resource_path.get_file().get_basename(), hero.global_position.x)
-	sounds.play(&"art_moment", -2.0)
-	if art.cue != &"":
-		sounds.play(art.cue, -1.0)
-	hit_stop.trigger(0.14)
-	hit_stop.slow(0.4, 0.3)
-	_focus = 1.0
-	_focus_left = ART_FOCUS_HOLD
-	hud.art_banner(tr(art.name_key), _arabic_name(art.name_key))
-	camera.shake(3.0)
-	hero.flash(0.7, CHARGE_GLOW[1])
-	if art.judgment:
-		hud.cinematic_bars(true)
-	if art.attack != null and art.attack.lunge_speed > 200.0:
-		vfx.play(&"dust", hero.global_position, hero.facing < 0.0, true)
-	elif art.attack != null and art.attack.radial:
-		vfx.play(&"dust", hero.global_position, false, true)
-		vfx.play(&"dust", hero.global_position, true, true)
-
-
-## The name an Art has in Arabic (shown above its name as it is spent), whatever the language.
-func _arabic_name(key: String) -> String:
-	var arabic: Translation = TranslationServer.get_translation_object("ar")
-	if arabic == null:
-		return ""
-	return String(arabic.get_message(StringName(key)))
-
-
-## Wounded near to death: blood at the screen's edges in time with his heart, and the heart itself; it fades as he
-## heals (or the game waits).
-func _update_danger(real: float) -> void:
-	var target: float = 0.0
-	if hero != null and is_instance_valid(hero) and not hero.dead and state == State.PLAYING and hero.max_health > 0.0:
-		var left: float = hero.health / hero.max_health
-		if left < DANGER_AT:
-			target = lerpf(0.4, 0.85, 1.0 - left / DANGER_AT)
-	_danger = move_toward(_danger, target, real * 1.5)
-	var beat: float = 0.0
-	if _danger > 0.0 and state == State.PLAYING:
-		_heart += real
-		if _heart >= HEART_EVERY:
-			_heart = 0.0
-			sounds.play(&"heartbeat", -5.0)
-		# Two beats, the strong one and its echo.
-		var t: float = _heart / HEART_EVERY
-		beat = maxf(exp(-pow((t - 0.04) * 13.0, 2.0)), 0.7 * exp(-pow((t - 0.25) * 13.0, 2.0)))
-	var grade: ShaderMaterial = _grade()
-	if grade != null:
-		grade.set_shader_parameter(&"danger", _danger * (0.6 + 0.4 * beat))
 
 
 ## The post-process's material (the grade over the world).
-func _grade() -> ShaderMaterial:
+func grade() -> ShaderMaterial:
 	var rect: CanvasItem = get_node_or_null(^"Post/Grade") as CanvasItem
 	return rect.material as ShaderMaterial if rect != null else null
 
@@ -945,79 +726,6 @@ func _save_game() -> bool:
 	return true
 
 
-## The world drained of colour about the hero after an Art is spent, then its colour back.
-func _update_focus(real: float) -> void:
-	if _focus_left > 0.0:
-		_focus_left -= real
-	elif _focus > 0.0:
-		_focus = maxf(0.0, _focus - real / ART_FOCUS_FADE)
-	var rect: CanvasItem = get_node_or_null(^"Post/Grade") as CanvasItem
-	var grade: ShaderMaterial = rect.material as ShaderMaterial if rect != null else null
-	if grade == null:
-		return
-	grade.set_shader_parameter(&"focus", _focus)
-	if _focus > 0.0 and hero != null:
-		var size: Vector2 = get_viewport().get_visible_rect().size
-		var at: Vector2 = hero.get_global_transform_with_canvas().origin + Vector2(0.0, -40.0)
-		grade.set_shader_parameter(&"focus_center", Vector2(at.x / size.x, at.y / size.y))
-
-
-## The Line's wounds open together on the men it passed through: a slash across each, a burst of blood.
-func _on_wounds_opened(targets: Array[Combatant]) -> void:
-	if targets.is_empty():
-		return
-	sounds.play(&"wounds_open", 0.0)
-	hit_stop.trigger(0.12)
-	camera.shake(4.5)
-	for target: Combatant in targets:
-		if is_instance_valid(target):
-			vfx.play(&"hit_slash", target.global_position + Vector2(0.0, -42.0), target.global_position.x < hero.global_position.x)
-
-
-## Greek fire: the flask bursts in a fireball and the street goes up.
-func _on_naft_burst(at: Vector2, _outcome: int) -> void:
-	sounds.play(&"naft_burst", 0.0)
-	vfx.play(&"naft_burst", at + Vector2(0.0, 6.0), false, true)
-	vfx.play(&"dust", at, false, true)
-	vfx.play(&"dust", at, true, true)
-	hit_stop.trigger(0.08)
-	camera.shake(6.0)
-
-
-## A man set ablaze: the fire takes him, and burns on him as he runs.
-func _on_soldier_ignited(soldier: MongolSoldier) -> void:
-	sounds.play(&"ignite", -4.0)
-	vfx.follow(&"fire_medium", soldier, Vector2(0.0, -28.0), Color.WHITE, soldier.burn_left())
-
-
-## The guard's cry: the air driven out along the street both ways, dust thrown up, the street shaken.
-func _on_cried(_radius: float) -> void:
-	vfx.play(&"shockwave", hero.global_position + Vector2(0.0, 4.0), false, true)
-	vfx.play(&"dust", hero.global_position + Vector2(-18.0, 0.0), true, true)
-	vfx.play(&"dust", hero.global_position + Vector2(18.0, 0.0), false, true)
-	hit_stop.trigger(0.1)
-	camera.shake(6.0)
-	hero.flash(0.8, STEEL_GLOW)
-
-
-## Between two judgments he crosses the street in a blink: gold copies of him along the way.
-func _on_flitted(from: Vector2, to: Vector2) -> void:
-	sounds.play(&"pierce_dash", -4.0)
-	for i: int in 5:
-		vfx.echo(hero.sprite, JUDGMENT_ECHO, 0.32, from.lerp(to, float(i) / 5.0))
-	hit_stop.slow(0.35, 0.25)
-
-
-func _on_judgment_ended() -> void:
-	hud.cinematic_bars(false)
-	camera.shake(3.0)
-
-
-## An Art asked for without the resolve to pay for it.
-func _on_art_refused(_art: ArtDefinition) -> void:
-	sounds.play(&"art_refused", -4.0)
-
-
 ## The coach named a move: counted, so it gives up on one never taken up.
 func _on_coach_named(technique: StringName) -> void:
 	save.note_shown(technique)
@@ -1029,162 +737,34 @@ func _on_technique_used(technique: StringName) -> void:
 	save.practise(technique)
 
 
-## Steel glints on him as a blow ends: the moment to raise the shield and draw breath.
-func _on_breath_glint() -> void:
-	vfx.play(&"glint", hero.global_position + Vector2(hero.facing * 6.0, -50.0), false, false, STEADY_GLOW)
-	sounds.play(&"breath_glint", -12.0)
-
-
-## The shield raised in the glint: breath drawn, the bar brightens.
+## The shield raised in the glint, for the playtest log.
 func _on_steady_breath() -> void:
 	play_log.count("breath", "steady breath")
-	sounds.play(&"breath_in", -5.0)
-	hero.flash(0.3, STEADY_GLOW)
-	hud.breath_drawn()
 
 
-## Rolled just as the blow came: the world slows, pale copies of him trail through it, breath returns and
-## his next blow is a counter.
+## Rolled just as the blow came, for the playtest log; the first time, what it is.
 func _on_close_call(_hit: HitData) -> void:
 	play_log.count("breath", "close call")
-	hit_stop.slow(0.35, 0.4)
-	sounds.play(&"close_call", -2.0)
-	hud.breath_drawn()
-	for i: int in 4:
-		if i > 0:
-			await _real_delay(0.05)
-		if hero == null or not is_instance_valid(hero):
-			return
-		vfx.echo(hero.sprite, CLOSE_CALL_ECHO, 0.32)
 	if not save.has_flag(&"seen_close_call"):
 		save.set_flag(&"seen_close_call")
 		_hint("HINT_CLOSE_CALL")
 
 
-## A soldier leaps back out of reach: a scuff of dust where he sprang, and a pale copy left in the air.
-func _on_soldier_evaded(soldier: MongolSoldier) -> void:
-	vfx.play(&"dust", soldier.global_position, soldier.facing > 0.0, true)
-	sounds.play(&"jump", -4.0)
-	vfx.echo(soldier.sprite, SOLDIER_ECHO, 0.26)
-
-
-## A soldier's spring (a dash, a running lunge, a leap) leaves pale copies behind, as the hero's does.
-func _on_soldier_frame(soldier: MongolSoldier) -> void:
-	var attack: AttackDefinition = soldier.current_attack
-	var springing: bool = (attack != null and attack.lunge_speed >= SPRING_SPEED
-		and attack.is_lunge_frame(soldier.sprite.frame))
-	if springing or (soldier.sprite.animation == &"evade" and soldier.sprite.frame in [2, 3, 4]):
-		vfx.echo(soldier.sprite, SOLDIER_ECHO, 0.22)
-
-
 ## A light blow glanced off a raised shield: the first time, the answers are named.
 func _on_glanced() -> void:
-	camera.kick(-hero.facing, 2.0)
-	sounds.play(&"glance", -3.0)
 	if not save.has_flag(&"seen_glance"):
 		save.set_flag(&"seen_glance")
 		_hint("HINT_GLANCE")
 
 
-## A man thrown off his feet: he hits the street with a thud and the dust flies.
+## A man thrown off his feet: the first soldier, what the heavy button does over a man down.
 func _on_knocked_down(body: Combatant) -> void:
-	var behind: float = -body.facing * 14.0
-	vfx.play(&"dust", body.global_position + Vector2(behind, 0.0), body.facing > 0.0, true)
-	sounds.play(&"body_drop", -2.0)
-	camera.shake(2.4 if body == hero else 1.8)
 	if body != hero and not save.has_flag(&"seen_ground_stroke"):
 		save.set_flag(&"seen_ground_stroke")
 		_hint("HINT_GROUND_STAB")
 
 
-## His breath runs out: two ragged gasps, and the bar flashes.
-func _on_winded() -> void:
-	_last_gasp = Time.get_ticks_msec()
-	sounds.play(&"winded", -4.0)
-	hud.breath_refused()
-	hud.markers.breath_refused()
-
-
-## No breath left for what he asked: a gasp, and the bar flashes.
-func _on_breath_refused() -> void:
-	var now: int = Time.get_ticks_msec()
-	if now - _last_gasp > 450:
-		_last_gasp = now
-		sounds.play(&"breath_out", -6.0)
-	hud.breath_refused()
-	hud.markers.breath_refused()
-
-
-## Fast movement leaves pale copies of him behind: the roll, a dash (the running thrust, the Piercing
-## Line), the plunge's fall.
-func _update_echoes(real: float) -> void:
-	if hero == null or state != State.PLAYING:
-		return
-	var tint: Color = Color.TRANSPARENT
-	match hero.state:
-		Warrior.State.PLUNGE:
-			if hero.velocity.y > 200.0:
-				tint = FALL_ECHO
-		Warrior.State.ATTACK, Warrior.State.ART:
-			var attack: AttackDefinition = hero.current_attack
-			if attack != null and attack.lunge_speed >= 200.0 and absf(hero.velocity.x) > 150.0:
-				tint = DASH_ECHO
-			elif attack != null and attack.art and attack.rehit and attack.radial:
-				tint = STORM_ECHO
-				_storm_dust_left -= real
-				if _storm_dust_left <= 0.0:
-					_storm_dust_left = STORM_DUST_EVERY
-					vfx.play(&"dust", hero.global_position, randf() < 0.5, true)
-			elif hero.is_steeled() and hero.state == Warrior.State.ATTACK:
-				tint = FURY_ECHO
-	if tint.a <= 0.0:
-		_echo_left = 0.0
-		return
-	_echo_left -= real
-	if _echo_left <= 0.0:
-		_echo_left = ECHO_EVERY
-		vfx.echo(hero.sprite, tint, 0.2)
-
-
-## While the fury holds he glows gold, embers lifting off him.
-func _update_steel_glow() -> void:
-	if hero == null or not hero.is_steeled() or hero.charge_level > 0:
-		return
-	hero.glow(0.16 + 0.08 * sin(Time.get_ticks_msec() * 0.008), STEEL_GLOW)
-	_ember_left -= get_process_delta_time() / maxf(Engine.time_scale, 0.001)
-	if _ember_left <= 0.0:
-		_ember_left = EMBERS_EVERY
-		vfx.play(&"embers", hero.global_position + Vector2(randf_range(-9.0, 9.0), -6.0), randf() < 0.5, true)
-
-
-## The plunge strikes the street: dust thrown both ways, the ground shakes.
-func _on_plunge_landed() -> void:
-	sounds.play(&"land", -1.0)
-	vfx.play(&"dust", hero.global_position, false, true)
-	vfx.play(&"dust", hero.global_position, true, true)
-	camera.shake(3.5)
-
-
-## The soldier a finisher would take glows, and the heavy button shows over him, while he stands open.
-func _update_finish_prompt() -> void:
-	var target: Combatant = hero.finisher_target if hero != null and state == State.PLAYING else null
-	hud.set_finish_target(target)
-	if target != null:
-		var pulse: float = 0.24 + 0.12 * sin(Time.get_ticks_msec() * 0.012)
-		target.glow(pulse, _finish_glow)
-
-
-func _on_piece_landed(_at: Vector2) -> void:
-	sounds.play(&"body_drop", -8.0)
-
-
-## A first strike on a soldier who never saw it coming: he dies before he can turn.
-func _on_soldier_surprised() -> void:
-	sounds.play(&"guard_break", -3.0)
-	hit_stop.trigger(0.12)
-	camera.shake(2.4)
-
-
+## The blows the session keeps track of (the playtest log, what felled him, the first warnings' lessons).
 func _wire_combatant(combatant: Combatant) -> void:
 	combatant.struck.connect(_on_struck.bind(combatant))
 	combatant.swung.connect(_on_swung.bind(combatant))
@@ -1215,111 +795,25 @@ func _fall_tip() -> String:
 	return "TIP_WHITE"
 
 
+## A blow met: for the playtest log, and the last that landed on him (what felled him).
 func _on_struck(hit: HitData, outcome: HitData.Outcome, target: Combatant) -> void:
 	_log_blow(hit, outcome, target)
 	if target == hero and outcome == HitData.Outcome.HIT:
 		_last_blow = hit
-	var guard_point: Vector2 = target.global_position + Vector2(target.facing * 13.0, -46.0)
-	var shake: float = hit.attack.camera_shake if hit.attack != null else 1.5
-	match outcome:
-		HitData.Outcome.HIT:
-			var thrown_left: bool = hit.direction < 0.0
-			var impact: StringName = hit.attack.impact_effect if hit.attack != null else &"hit_pierce"
-			vfx.play(impact, hit.position, thrown_left)
-			vfx.play(&"hit_spark", hit.position)
-			vfx.play(&"blood_spray", hit.position, thrown_left)
-			if settings.gore:
-				vfx.play(&"hit_flecks", hit.position, thrown_left)
-			gore.spatter(hit.position, hit.direction, target.global_position.y)
-			if hit.knockback >= 200.0:
-				# A blow that shoves him back raises dust where his heels drag.
-				vfx.play(&"dust", target.global_position, thrown_left, true)
-			sounds.play(hit.attack.hit_cue if hit.attack != null else &"arrow_hit")
-			sounds.play(&"hero_hurt" if target == hero else &"enemy_hurt", -3.0)
-			hit_stop.trigger(hit.hit_stop)
-			camera.shake(shake + (1.5 if target == hero else 0.0))
-			camera.kick(hit.direction, clampf(shake * 0.8, 1.0, 4.0))
-		HitData.Outcome.BLOCKED:
-			vfx.play(&"block_spark", guard_point, target.facing < 0.0)
-			sounds.play(&"shield_block")
-			hit_stop.trigger(0.045)
-			camera.shake(1.0)
-		HitData.Outcome.PARRIED:
-			vfx.play(&"parry_flash", guard_point)
-			vfx.play(&"hit_spark", guard_point)
-			sounds.play(&"parry")
-			hit_stop.trigger(0.14)
-			camera.shake(3.0)
-			# Time slows on his own parry only (a soldier beating his blade aside is no moment of his).
-			if target == hero:
-				hit_stop.slow(0.45, 0.28)
-				hud.breath_drawn()
-		HitData.Outcome.GUARD_BROKEN:
-			vfx.play(&"block_spark", guard_point, target.facing < 0.0)
-			vfx.play(&"hit_spark", guard_point)
-			sounds.play(&"guard_break")
-			hit_stop.trigger(0.1)
-			camera.shake(3.0)
 
 
+## A blow begun, for the playtest log.
 func _on_swung(attack: AttackDefinition, combatant: Combatant) -> void:
 	if combatant == hero:
 		play_log.event("swing", _blow_name(attack), hero.global_position.x)
 	elif combatant is MongolSoldier:
 		# Every soldier's blow is begun at him: one that never touches him was avoided (jumped, stepped from).
 		play_log.count("aimed", _blow_name(attack))
-	sounds.play(attack.swing_cue, -2.0)
-	if attack.flinch_radius > 0.0:
-		# A blow like a falling beam: grit thrown up both ways, and the street shakes.
-		vfx.play(&"dust", combatant.global_position + Vector2(combatant.facing * 30.0, 0.0), false, true)
-		vfx.play(&"dust", combatant.global_position + Vector2(combatant.facing * 30.0, 0.0), true, true)
-		camera.shake(3.0)
 
 
-## The held cleave grows: a breath drawn, then a ring of steel and a glint along the blade at each step.
-func _on_charge_changed(level: int) -> void:
-	if level == 1:
-		sounds.play(&"charge_hum", -4.0)
-	elif level >= 2:
-		sounds.play(&"charge_level", -3.0 if level == 2 else 0.0)
-		vfx.play(&"glint", _blade_tip(hero), false, false, CHARGE_GLOW[level - 1])
-		camera.shake(0.8 if level == 2 else 1.6)
-
-
-## While the hero holds the cleave back he glows warmer as it grows.
-func _update_charge_glow() -> void:
-	if hero == null or hero.charge_level <= 0:
-		return
-	var level: int = hero.charge_level
-	var pulse: float = 0.1 + 0.08 * level + 0.06 * sin(Time.get_ticks_msec() * (0.008 + 0.004 * level))
-	hero.glow(pulse, CHARGE_GLOW[level - 1])
-
-
-## Where a fighter's blade tip is now, in the world (his hand's height when unknown).
-func _blade_tip(combatant: Combatant) -> Vector2:
-	var tip: Vector2 = Vector2(12, -62)
-	if combatant.hitboxes != null:
-		var known: Vector2 = combatant.hitboxes.tip(combatant.sprite.animation, combatant.sprite.frame)
-		if known != Vector2.INF:
-			tip = known
-	return combatant.global_position + Vector2(tip.x * combatant.facing, tip.y)
-
-
-## A soldier winds up: steel catches the light on his blade (following him through the wind-up), in the
-## colour of what answers the blow. A blow a shield does not simply answer (a low sweep, a guard-breaker, one
-## no shield stops) also hangs its sign over his head and flushes his body that colour until it lands. Each
-## warning has its own sound, softer the further off it comes.
+## A soldier winds up a blow (its warning is the presentation's): the first of each colour is taught.
 func _on_telegraphed(attack: AttackDefinition, combatant: Combatant) -> void:
-	var tell: int = attack.tell()
-	var colour: Color = _tell_colours[tell]
-	vfx.follow(&"glint", combatant, _blade_tip(combatant) - combatant.global_position, colour)
-	if tell != AttackDefinition.Tell.GUARD:
-		vfx.follow(TELL_GLINTS[tell], combatant, Vector2(0.0, _head_of(combatant) - 12.0), colour)
-		_warned[combatant.get_instance_id()] = attack
-		combatant.flash(TELL_FLUSH[tell] + 0.3, colour)
-	var cue: StringName = TELL_SOUNDS[tell] if sounds.has_cue(TELL_SOUNDS[tell]) else &"enemy_tell"
-	sounds.play(cue, _warning_volume(combatant))
-	_first_warning(tell, combatant)
+	_first_warning(attack.tell(), combatant)
 
 
 ## The first warning of each colour the hero meets stops the game: what it means and how to answer it, with the
@@ -1425,82 +919,17 @@ func _fighting() -> bool:
 	return false
 
 
-## A soldier flinched twice close together steels himself: a cool grey flash and a breath drawn (not a
-## warning's colour: he is not winding up, he will just not be stopped a moment).
-func _on_soldier_steeled(soldier: MongolSoldier) -> void:
-	soldier.flash(0.22, Color(0.72, 0.78, 0.86))
-	sounds.play(&"breath_in", -12.0)
-
-
-## A warned soldier's flush holds through his wind-up, until the blow lands or is broken off.
-func _update_warnings() -> void:
-	for id: int in _warned.keys():
-		var combatant: Combatant = instance_from_id(id) as Combatant
-		var attack: AttackDefinition = _warned[id]
-		if (combatant == null or combatant.dead or combatant.current_attack != attack
-				or combatant.sprite.frame >= attack.active_from):
-			_warned.erase(id)
-			continue
-		var tell: int = attack.tell()
-		combatant.glow(TELL_FLUSH[tell], _tell_colours[tell])
-
-
-## How far above his feet a fighter's head is (the top of his hurtbox), for the signs over him.
-func _head_of(combatant: Combatant) -> float:
-	var shape: CollisionShape2D = combatant.hurtbox.get_node_or_null(^"Shape") as CollisionShape2D
-	var rect: RectangleShape2D = shape.shape as RectangleShape2D if shape != null else null
-	if rect == null:
-		return -66.0
-	return shape.position.y - rect.size.y * 0.5
-
-
-## A warning sounds in full near the hero and softer further off (never silent: it is a warning).
-func _warning_volume(combatant: Combatant) -> float:
-	if hero == null:
-		return -6.0
-	var distance: float = absf(combatant.global_position.x - hero.global_position.x)
-	return -6.0 - clampf((distance - 220.0) / 260.0, 0.0, 1.0) * 9.0
-
-
+## An arrow loosed or a pot thrown, for the playtest log.
 func _on_projectile(projectile: Node2D) -> void:
-	var arrow: Arrow = projectile as Arrow
-	if arrow != null:
-		sounds.play(&"bow_release", -3.0)
-		arrow.impacted.connect(_on_arrow_impacted)
+	if projectile is Arrow:
 		play_log.count("aimed", "arrow")
-	var pot: FirePot = projectile as FirePot
-	if pot != null:
-		pot.burst.connect(_on_pot_burst)
+	if projectile is FirePot:
 		play_log.count("aimed", "fire_pot")
 
 
-## A fire pot breaks: clay and naphtha, and the fire takes.
-func _on_pot_burst(at: Vector2, _outcome: int) -> void:
-	sounds.play(&"pot_burst", -2.0)
-	vfx.play(&"dust", at, false, true)
-	camera.shake(2.0)
-
-
-func _on_arrow_impacted(at: Vector2, outcome: int) -> void:
-	if outcome == -1:
-		sounds.play(&"arrow_thunk", -4.0)
-		vfx.play(&"dust", at, false, true)
-
-
-func _on_hero_landed(speed: float) -> void:
-	if speed > 220.0:
-		sounds.play(&"land", -4.0)
-		vfx.play(&"dust", hero.global_position, false, true)
-
-
+## A roll, for the playtest log.
 func _on_hero_rolled() -> void:
 	play_log.count("roll")
-	sounds.play(&"roll", -3.0)
-	vfx.play(&"dust", hero.global_position, hero.facing < 0.0, true)
-
-
-func _on_hero_healed(_amount: float) -> void:
-	sounds.play(&"heal")
 
 
 ## His health, for the playtest log (the lowest on each street).
@@ -1521,8 +950,6 @@ func _on_hero_died() -> void:
 	play_log.event("fall", felled_by, hero.global_position.x)
 	play_log.write_summary()
 	state = State.DEAD
-	sounds.play(&"hero_death")
-	gore.bleed_out(hero, hero.sprite, null, hero.facing)
 	music.play_music(&"")
 	save.deaths += 1
 	if save.level != "":
@@ -1859,7 +1286,7 @@ func _show_card(card: Dictionary) -> void:
 			var demo: StringName = lesson[2]
 			save.note_lesson(StringName(key))
 			lesson_screen.show_lesson(tr(&"LESSON_WARNING_HEADING"), tr(title), key, MoveDemos.of(demo), null,
-				TELL_GLINTS[tell], _tell_colours[tell])
+				CombatPresentation.TELL_GLINTS[tell], presentation.tell_colours[tell])
 	sounds.play(&"manuscript", -6.0)
 
 

@@ -342,7 +342,8 @@ The game renders at **640×360** and scales by whole multiples: a 1280×720 wind
 
 ```
 the-last-abbasid/
-├── app/                 the session: main.tscn (generated) + main.gd (AbbasidGame)
+├── app/                 the session: main.tscn (generated) + main.gd (AbbasidGame), and its
+│                        combat presentation (combat_presentation.gd: how the fighting looks and sounds)
 ├── features/
 │   ├── combat/          Combatant, HitData, AttackDefinition, FinisherDefinition, hitboxes, hit-flash shader
 │   ├── warrior/         the hero: state machine, input, animator, profile and attack definitions
@@ -384,7 +385,7 @@ flowchart LR
     R --> J{"judge_hit"}
     J -->|"HIT · BLOCKED · PARRIED ·<br/>DODGED · GUARD_BROKEN"| O["on_struck /<br/>on_hit_landed"]
     O --> G["signals"]
-    G --> M["app/main.gd"]
+    G --> M["CombatPresentation<br/>(app/combat_presentation.gd,<br/>bound by the session)"]
     M --> P["VFX · gore · sound ·<br/>shake · hit-stop · HUD"]
 ```
 
@@ -392,7 +393,7 @@ flowchart LR
 - **Data in read-only resources.** `WarriorProfile`, `EnemyProfile`, `AttackDefinition`, `FinisherDefinition`, `ArtDefinition`, and the technique tree's `TechniqueDefinition`, `KeepsakeDefinition`, `Modifiers` and `ProgressionCatalog` hold the tuning; mutable state belongs to the actor.
 - **Growth is rules over the save.** `Progression` (`features/progression/`) keeps Honour, the nodes bought, the keepsakes owned and worn and the Arts carried in the `SaveGame`; the session applies the result to the hero (`Warrior.set_techniques`, `set_modifiers`), and the lamp menu shows it.
 - **Animation-driven timing.** An attack's active, recovery and telegraph frames index its animation strip, and the hitbox on each active frame is the blade's swept polygon, generated with the sprites.
-- **Gameplay never depends on presentation.** Effects, gore, sound and the HUD are wired in `app/main.gd` from signals; the directors know no gameplay types.
+- **Gameplay never depends on presentation.** Effects, gore, sound and the fight's marks on the HUD are wired from the fighters' signals by the session's `CombatPresentation` (`app/combat_presentation.gd`), which decides nothing; the session keeps its own connections for the story, growth and the playtest log. The directors know no gameplay types.
 - **The story is data.** Each level's terrain, props, soldiers and their activities, people, captives, triggers, objectives, exit and boss arena are a JavaScript file in `tools/levels/`, built into a scene. `main.gd` holds no level-specific story.
 - **Typed GDScript everywhere.** The project turns untyped declarations and unsafe access into errors.
 

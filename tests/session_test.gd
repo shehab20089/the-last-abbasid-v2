@@ -772,8 +772,8 @@ func _settings_and_access() -> void:
 	check(InputMap.action_has_event(&"jump", space) and InputMap.action_has_event(&"heavy_attack", key_k)
 		and not InputMap.action_has_event(&"jump", key_n), "every button put back as it was")
 	settings.set_colourblind(true)
-	check(game._tell_colours == AbbasidGame.TELL_COLOURS_CLEAR and game._finish_glow == AbbasidGame.FINISH_GLOW_CLEAR,
-		"warnings in colours told apart by colour-blind eyes")
+	check(game.presentation.tell_colours == CombatPresentation.TELL_COLOURS_CLEAR
+		and game.presentation.finish_glow == CombatPresentation.FINISH_GLOW_CLEAR, "warnings in colours told apart by colour-blind eyes")
 	settings.set_colourblind(false)
 	settings.set_time_effects(false)
 	game.hit_stop.trigger(0.2)
