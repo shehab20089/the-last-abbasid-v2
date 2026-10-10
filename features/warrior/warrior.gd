@@ -94,12 +94,8 @@ const KNIFE_OFFSET: Vector2 = Vector2(18, -52)
 ## Falls faster than this (px/s) end in the landing crouch.
 const HARD_LANDING: float = 260.0
 const ATTACK_FRICTION: float = 1500.0
-## How near (px) and how level a staggered soldier must be for a finisher.
-const FINISH_REACH: float = 64.0
-const FINISH_LEVEL: float = 10.0
-## While another soldier this near (px) is still in the fight, a finisher plays this much quicker,
-## without the bars and the slow time.
-const FIGHT_RADIUS: float = 320.0
+## While another soldier near is still in the fight (WarriorMoves.FIGHT_RADIUS), a finisher plays this much
+## quicker, without the bars and the slow time.
 const QUICK_FINISHER: float = 1.4
 ## combo_index for what is not the light combo.
 const HEAVY_INDEX: int = -1
@@ -126,10 +122,6 @@ const KICK_INDEX: int = 3
 const JUDGMENT_GAP: float = 30.0
 ## How far before him a man lying on the street can be struck by the ground stroke.
 const GROUND_REACH: float = 60.0
-## A man down is finished from over him (the ground finisher sets him this far ahead), not from across the
-## street: within this much of it.
-const GROUND_FINISH_AT: float = 2.0
-const GROUND_FINISH_SLACK: float = 26.0
 ## No move: nothing follows.
 const NO_INDEX: int = -100
 ## The technique each learned move's combo index stands for.
@@ -247,13 +239,10 @@ var _nearest: Interactable
 var finisher_target: Combatant:
 	get:
 		return finisher_target if is_instance_valid(finisher_target) else null
-## The finisher playing, its soldier, and the last one played.
+## The finisher playing, and its soldier.
 var _finisher: FinisherDefinition
 var _finished: Combatant
-var _last_finisher: FinisherDefinition
 var _finisher_frame: int = -1
-## A finisher to play next instead of a random one (tests, set pieces).
-var next_finisher: FinisherDefinition
 ## The finisher playing is the full one (bars, slow time): no other soldier near is still fighting.
 var finisher_cinematic: bool = false
 
@@ -317,7 +306,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	_after_move(was_on_floor, fall_speed)
 	_update_nearest_interactable()
-	_update_finisher_target()
+	finisher_target = moves.man_to_finish()
 
 
 # --- Public ---------------------------------------------------------------------------------------
@@ -977,13 +966,13 @@ func _open_wounds() -> void:
 ## The Judgment of the Guard: the nearest man before him finished where he stands; one who cannot be
 ## (a captain in his armour, a hardened man still fresh) takes one great blow instead.
 func _judge(art: ArtDefinition) -> bool:
-	var targets: Array[Combatant] = _foes_by_distance(art.judgment_reach)
+	var targets: Array[Combatant] = moves.men_to_judge(art)
 	if targets.is_empty():
 		art_refused.emit(art)
 		return false
 	set_resolve(resolve - art.cost)
 	_judgment = art
-	_judging = targets.slice(0, maxi(1, art.judgment_chain))
+	_judging = targets
 	art_started.emit(art)
 	technique_used.emit(art.id)
 	_judge_next()
@@ -1029,21 +1018,6 @@ func _end_judgment() -> void:
 	if is_on_floor():
 		animator.play(&"idle")
 	judgment_ended.emit()
-
-
-## The living soldiers within `reach` px of him, before or behind and level with him, nearest first.
-func _foes_by_distance(reach: float) -> Array[Combatant]:
-	var found: Array[Combatant] = []
-	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
-		var other: Combatant = node as Combatant
-		if other == null or other.dead or other.is_untouchable():
-			continue
-		var offset: Vector2 = other.global_position - global_position
-		if absf(offset.x) <= reach and absf(offset.y) <= 40.0:
-			found.append(other)
-	found.sort_custom(func(a: Combatant, b: Combatant) -> bool:
-		return absf(a.global_position.x - global_position.x) < absf(b.global_position.x - global_position.x))
-	return found
 
 
 ## No wall stands between two points on his line (a blink never goes through stone).
@@ -1768,60 +1742,25 @@ func _update_nearest_interactable() -> void:
 # the scripted kills. The hero is untouchable through it (no soldier starts an attack on him); the
 # soldier is set where the choreography wants him and plays his half frame-locked.
 
-func _update_finisher_target() -> void:
-	finisher_target = null
-	if finishers.is_empty() or dead or not is_on_floor():
-		return
-	var best: float = FINISH_REACH
-	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
-		var other: Combatant = node as Combatant
-		if other == null or not other.can_be_finished():
-			continue
-		var offset: Vector2 = other.global_position - global_position
-		if absf(offset.y) > FINISH_LEVEL or absf(offset.x) > best:
-			continue
-		# Before him, or close enough to turn to.
-		if offset.x * facing < -12.0:
-			continue
-		# A man down: only from over him.
-		if other.is_down() and absf(offset.x * facing - GROUND_FINISH_AT) > GROUND_FINISH_SLACK:
-			continue
-		finisher_target = other
-		best = absf(offset.x)
-
-
 ## Plays a finisher on the soldier in reach, if there is one, or on `forced` (the Judgment of the
 ## Guard, whatever his state; always the full one). True when it began.
 func _start_finisher(forced: Combatant = null, quick: bool = false) -> bool:
 	var target: Combatant = forced if forced != null else finisher_target
 	if target == null or (forced == null and not target.can_be_finished()):
 		return false
-	var choices: Array[FinisherDefinition] = []
-	var lying: bool = target.is_down()
-	for finisher: FinisherDefinition in finishers:
-		if target.has_finisher(finisher) and finisher != _last_finisher and finisher.ground == lying:
-			choices.append(finisher)
-	if choices.is_empty():
-		for finisher: FinisherDefinition in finishers:
-			if target.has_finisher(finisher) and finisher.ground == lying:
-				choices.append(finisher)
-	if choices.is_empty():
+	var chosen: FinisherDefinition = moves.finisher_for(target)
+	if chosen == null:
 		return false
-	var chosen: FinisherDefinition = choices.pick_random()
-	if next_finisher != null and target.has_finisher(next_finisher):
-		chosen = next_finisher
-		next_finisher = null
 	input.consume(&"heavy_attack")
 	cancel_attack()
 	moves.forget()
 	set_facing(signf(target.global_position.x - global_position.x) if target.global_position.x != global_position.x else facing)
 	_finisher = chosen
 	_finished = target
-	_last_finisher = chosen
 	_finisher_frame = -1
 	velocity = Vector2.ZERO
 	# The full one when he is the last (or it is a judgment); a quick one while others still fight.
-	finisher_cinematic = not quick and (forced != null or not foe_still_fighting(target))
+	finisher_cinematic = not quick and (forced != null or not moves.foe_still_fighting(target))
 	var speed: float = 1.0 if finisher_cinematic else QUICK_FINISHER
 	# A kill like that steels him (a judgment was already paid for).
 	if forced == null:
@@ -1858,16 +1797,6 @@ func _finisher_step() -> void:
 		finisher_struck.emit(target, _finisher, frame, &"")
 	if frame == _finisher.death_frame:
 		target.finisher_kill()
-
-
-## True while another soldier near him is still in the fight.
-func foe_still_fighting(except: Combatant) -> bool:
-	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
-		var other: Combatant = node as Combatant
-		if (other != null and other != except and other.in_fight()
-				and absf(other.global_position.x - global_position.x) <= FIGHT_RADIUS):
-			return true
-	return false
 
 
 func _end_finisher() -> void:

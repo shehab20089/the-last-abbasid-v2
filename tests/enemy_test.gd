@@ -363,7 +363,7 @@ func _test_finishers() -> void:
 		var soldier: MongolSoldier = await _staggered("swordsman", 44.0)
 		check(warrior.finisher_target == soldier, "%s: a staggered soldier before him can be finished" % key)
 		var finisher: FinisherDefinition = load("res://assets/characters/warrior/finishers/finish_%s.tres" % key)
-		warrior.next_finisher = finisher
+		warrior.moves.next_finisher = finisher
 		var health: float = warrior.health
 		var counts: Array[int] = [0, 0, 0]
 		warrior.finisher_started.connect(func(_t: Combatant, _f: FinisherDefinition) -> void: counts[0] += 1)

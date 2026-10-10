@@ -92,7 +92,7 @@ func _finisher(key: String, kind: String) -> void:
 		soldier.knock_down()
 		await _wait(0.6)
 		# A man down is finished only from over him.
-		hero.global_position.x = soldier.global_position.x - Warrior.GROUND_FINISH_AT - 8.0
+		hero.global_position.x = soldier.global_position.x - WarriorMoves.GROUND_FINISH_AT - 8.0
 		await _wait(0.1)
 	else:
 		soldier.stagger(6.0)
@@ -101,7 +101,7 @@ func _finisher(key: String, kind: String) -> void:
 	if drawing:
 		cells.append(await _crop())
 		await _save_full("%s_0_prompt" % key)
-	hero.next_finisher = finisher
+	hero.moves.next_finisher = finisher
 	hero.input.press(&"heavy_attack")
 	var began: bool = false
 	var victim_played: bool = false

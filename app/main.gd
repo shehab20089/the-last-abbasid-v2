@@ -354,6 +354,12 @@ func _on_settings_changed() -> void:
 		hud.set_objective(_last_objective)
 
 
+## The post-process's material (the grade over the world).
+func grade() -> ShaderMaterial:
+	var rect: CanvasItem = get_node_or_null(^"Post/Grade") as CanvasItem
+	return rect.material as ShaderMaterial if rect != null else null
+
+
 func _on_card_cue(cue: StringName) -> void:
 	sounds.play(cue)
 
@@ -529,6 +535,22 @@ func _journal() -> Dictionary:
 		"chapter": chapter}
 
 
+## Writes the journey down. Only a write that took is shown as saved (a lamp turns a moment in the corner of
+## the screen); one that failed says so, and everything stays in memory, so the next save (the next lamp, the
+## next street) can still write it. True when it was written.
+func _save_game() -> bool:
+	var result: Error = save.write()
+	if result != OK:
+		push_warning("The journey could not be saved to %s: %s" % [SaveGame.file_path(), error_string(result)])
+		# Said once while it shows (a rest at a lamp saves twice).
+		if not hud.notices.texts().has(tr(&"NOTICE_SAVE_FAILED")):
+			hud.notice(tr(&"NOTICE_SAVE_FAILED"))
+		return false
+	if hero != null:
+		hud.saved()
+	return true
+
+
 func _pause_for(next: State) -> void:
 	state = next
 	get_tree().paused = true
@@ -570,7 +592,7 @@ func _real_delay(seconds: float) -> void:
 	await get_tree().create_timer(seconds, true, false, true).timeout
 
 
-# --- The hero and the soldiers: presentation ---------------------------------------------------------
+# --- The hero and the soldiers -----------------------------------------------------------------------
 
 ## The hero's signals the session keeps (the story, his growth, the playtest log); how he looks and sounds is the
 ## presentation's (bound last).
@@ -692,7 +714,7 @@ func _earn(amount: int, once: StringName = &"", announce: bool = true) -> void:
 		hud.notice(tr("NOTICE_HONOUR") % amount)
 
 
-# --- Finishers ------------------------------------------------------------------------------------
+# --- In the fight: lessons, messages and the log -------------------------------------------------
 
 ## A scripted kill begins, for the playtest log (how it plays is the presentation's).
 func _on_finisher_started(_target: Combatant, finisher: FinisherDefinition) -> void:
@@ -702,28 +724,6 @@ func _on_finisher_started(_target: Combatant, finisher: FinisherDefinition) -> v
 ## An Art spent, for the playtest log (its moment is the presentation's).
 func _on_art_started(art: ArtDefinition) -> void:
 	play_log.event("art", art.resource_path.get_file().get_basename(), hero.global_position.x)
-
-
-## The post-process's material (the grade over the world).
-func grade() -> ShaderMaterial:
-	var rect: CanvasItem = get_node_or_null(^"Post/Grade") as CanvasItem
-	return rect.material as ShaderMaterial if rect != null else null
-
-
-## Writes the save, and a lamp turns a moment in the corner of the screen.
-## Writes the journey down. Only a write that took is shown as saved; one that failed says so, and everything
-## stays in memory, so the next save (the next lamp, the next street) can still write it. True when it was written.
-func _save_game() -> bool:
-	var result: Error = save.write()
-	if result != OK:
-		push_warning("The journey could not be saved to %s: %s" % [SaveGame.file_path(), error_string(result)])
-		# Said once while it shows (a rest at a lamp saves twice).
-		if not hud.notices.texts().has(tr(&"NOTICE_SAVE_FAILED")):
-			hud.notice(tr(&"NOTICE_SAVE_FAILED"))
-		return false
-	if hero != null:
-		hud.saved()
-	return true
 
 
 ## The coach named a move: counted, so it gives up on one never taken up.

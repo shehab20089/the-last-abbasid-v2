@@ -8,7 +8,9 @@ extends RefCounted
 ## thrust, or the cleave. A press in a blow's live frames is kept for the moment it gives way: the light
 ## button carries the string on, the heavy one turns the step into its ender. It decides and remembers; the
 ## Warrior pays for each move and plays it (his states, his rules, his breath). A move is named by its
-## combo index (`Warrior.HEAVY_INDEX` and the rest).
+## combo index (`Warrior.HEAVY_INDEX` and the rest). It also chooses inside the finishers and the Judgment of
+## the Guard: the man a finisher would take and the finisher played on him (the full one or the quick one),
+## and the men a judgment takes; the hero plays them.
 
 ## How far ahead (px) a man must be for a run to end in a running blow (else the button is the plain one).
 const RUN_REACH: float = 170.0
@@ -19,6 +21,16 @@ const COACH_REACH: float = 200.0
 const LOW_CUT_COACH: float = 72.0
 const SWEEP_COACH: float = 72.0
 const GUARDED_COACH: float = 80.0
+## How near (px) and how level a staggered soldier must be for a finisher.
+const FINISH_REACH: float = 64.0
+const FINISH_LEVEL: float = 10.0
+## A man down is finished from over him (the ground finisher sets him this far ahead), not from across the
+## street: within this much of it.
+const GROUND_FINISH_AT: float = 2.0
+const GROUND_FINISH_SLACK: float = 26.0
+## While another soldier this near (px) is still in the fight, a finisher is the quick one (no bars, no slow
+## time; `Warrior.QUICK_FINISHER`).
+const FIGHT_RADIUS: float = 320.0
 
 ## A press kept from the live frames of the blow playing for the moment it gives way: the blow it calls
 ## for, and its index.
@@ -29,6 +41,10 @@ var delay_window: float = 0.0
 ## A beat after a step of the string ends in which the light button still carries it on, and the step.
 var string_grace: float = 0.0
 var string_next: int = -1
+## A finisher to play next instead of a random one (tests, set pieces).
+var next_finisher: FinisherDefinition
+## The last finisher played (not played twice running while another will do).
+var _last_finisher: FinisherDefinition
 
 var warrior: Warrior
 var profile: WarriorProfile:
@@ -228,6 +244,75 @@ func cleave_follows() -> bool:
 		Warrior.RUNNING_INDEX, Warrior.LOW_INDEX, Warrior.RUN_SLASH_INDEX, Warrior.RIPOSTE_INDEX, Warrior.GUARDED_INDEX]
 
 
+# --- The finishers and the Judgment -------------------------------------------------------------
+
+## The staggered soldier a finisher would take now, or null: near and level with him, before him or close
+## enough to turn to, a man down only from over him; none while he has no finishers, is dead or is off his
+## feet. The nearest is taken.
+func man_to_finish() -> Combatant:
+	if warrior.finishers.is_empty() or warrior.dead or not warrior.is_on_floor():
+		return null
+	var at: Vector2 = warrior.global_position
+	var found: Combatant = null
+	var best: float = FINISH_REACH
+	for node: Node in warrior.get_tree().get_nodes_in_group(&"enemies"):
+		var other: Combatant = node as Combatant
+		if other == null or not other.can_be_finished():
+			continue
+		var offset: Vector2 = other.global_position - at
+		if absf(offset.y) > FINISH_LEVEL or absf(offset.x) > best:
+			continue
+		# Before him, or close enough to turn to.
+		if offset.x * warrior.facing < -12.0:
+			continue
+		# A man down: only from over him.
+		if other.is_down() and absf(offset.x * warrior.facing - GROUND_FINISH_AT) > GROUND_FINISH_SLACK:
+			continue
+		found = other
+		best = absf(offset.x)
+	return found
+
+
+## The finisher he plays on `target`, standing or lying: one the man has a half for, not the last one played
+## while another will do; `next_finisher` instead when it is set and fits. Null when none fits. The one
+## chosen is remembered as the last played.
+func finisher_for(target: Combatant) -> FinisherDefinition:
+	var choices: Array[FinisherDefinition] = []
+	var lying: bool = target.is_down()
+	for finisher: FinisherDefinition in warrior.finishers:
+		if target.has_finisher(finisher) and finisher != _last_finisher and finisher.ground == lying:
+			choices.append(finisher)
+	if choices.is_empty():
+		for finisher: FinisherDefinition in warrior.finishers:
+			if target.has_finisher(finisher) and finisher.ground == lying:
+				choices.append(finisher)
+	if choices.is_empty():
+		return null
+	var chosen: FinisherDefinition = choices.pick_random()
+	if next_finisher != null and target.has_finisher(next_finisher):
+		chosen = next_finisher
+		next_finisher = null
+	_last_finisher = chosen
+	return chosen
+
+
+## The men a judgment takes, nearest first: the living within its reach before or behind him and level
+## with him (none out of reach of every blow for now, as a man rising), at most its chain.
+func men_to_judge(art: ArtDefinition) -> Array[Combatant]:
+	var at: Vector2 = warrior.global_position
+	var found: Array[Combatant] = []
+	for node: Node in warrior.get_tree().get_nodes_in_group(&"enemies"):
+		var other: Combatant = node as Combatant
+		if other == null or other.dead or other.is_untouchable():
+			continue
+		var offset: Vector2 = other.global_position - at
+		if absf(offset.x) <= art.judgment_reach and absf(offset.y) <= 40.0:
+			found.append(other)
+	found.sort_custom(func(a: Combatant, b: Combatant) -> bool:
+		return absf(a.global_position.x - at.x) < absf(b.global_position.x - at.x))
+	return found.slice(0, maxi(1, art.judgment_chain))
+
+
 # --- The coach's reading -------------------------------------------------------------------------
 
 ## The learned techniques a button would make of this moment, for a coach to name (nothing is decided
@@ -273,7 +358,7 @@ func open_techniques() -> Array[StringName]:
 				out.append(&"running_thrust")
 			if _running_at_foe() and warrior.knows(&"running_slash") and profile.running_slash != null:
 				out.append(&"running_slash")
-			if warrior.has_resolve() and warrior.foe_still_fighting(null):
+			if warrior.has_resolve() and foe_still_fighting(null):
 				for art: ArtDefinition in warrior.carried_arts():
 					if warrior.resolve >= art.cost:
 						out.append(art.id)
@@ -308,7 +393,7 @@ func downed_foe(reach: float) -> Combatant:
 		if other == null or not other.is_down():
 			continue
 		var offset: Vector2 = other.global_position - at
-		if absf(offset.y) <= Warrior.FINISH_LEVEL and absf(offset.x) <= reach:
+		if absf(offset.y) <= FINISH_LEVEL and absf(offset.x) <= reach:
 			return other
 	return null
 
@@ -363,6 +448,17 @@ func _running_at_foe() -> bool:
 			continue
 		var ahead: float = (other.global_position.x - at.x) * warrior.facing
 		if ahead > 0.0 and ahead <= RUN_REACH and absf(other.global_position.y - at.y) <= 40.0:
+			return true
+	return false
+
+
+## True while another soldier near him is still in the fight.
+func foe_still_fighting(except: Combatant) -> bool:
+	var at: Vector2 = warrior.global_position
+	for node: Node in warrior.get_tree().get_nodes_in_group(&"enemies"):
+		var other: Combatant = node as Combatant
+		if (other != null and other != except and other.in_fight()
+				and absf(other.global_position.x - at.x) <= FIGHT_RADIUS):
 			return true
 	return false
 
