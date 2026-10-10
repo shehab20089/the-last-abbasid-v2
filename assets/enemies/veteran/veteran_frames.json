@@ -89,6 +89,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_idle.png"
  },
@@ -182,6 +183,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_walk.png"
  },
@@ -275,6 +277,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_run.png"
  },
@@ -322,6 +325,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_alert.png"
  },
@@ -424,6 +428,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_attack.png"
  },
@@ -504,6 +509,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_cut.png"
  },
@@ -537,6 +543,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_block.png"
  },
@@ -570,6 +577,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_block_hit.png"
  },
@@ -639,20 +647,22 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_hurt.png"
  },
  "stagger": {
   "name": "stagger",
-  "frames": 4,
+  "frames": 5,
   "width": 176,
   "height": 128,
   "fps": 6,
   "loop": false,
   "durations": [
-   0.8,
-   1.6,
-   1.6,
+   0.7,
+   0.6,
+   1.2,
+   1.5,
    1
   ],
   "blades": [
@@ -664,6 +674,16 @@
     "tip": [
      2.1,
      -50.9
+    ]
+   },
+   {
+    "hilt": [
+     -1.6,
+     -33
+    ],
+    "tip": [
+     8.7,
+     -35
     ]
    },
    {
@@ -697,6 +717,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_stagger.png"
  },
@@ -843,6 +864,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_death.png"
  },
@@ -871,6 +893,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_loot.png"
  },
@@ -903,6 +926,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_burn.png"
  },
@@ -961,6 +985,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_menace.png"
  },
@@ -1019,6 +1044,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_execute.png"
  },
@@ -1110,6 +1136,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_behead.png"
  },
@@ -1179,12 +1206,13 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_stab.png"
  },
  "death_head": {
   "name": "death_head",
-  "frames": 11,
+  "frames": 12,
   "width": 176,
   "height": 128,
   "fps": 10,
@@ -1194,7 +1222,8 @@
    1.4,
    1.2,
    0.6,
-   0.6,
+   0.45,
+   0.45,
    1.4,
    1.2,
    0.8,
@@ -1245,12 +1274,22 @@
    },
    {
     "hilt": [
-     4.8,
-     -24.2
+     4.6,
+     -25.7
+    ],
+    "tip": [
+     14.6,
+     -29.9
+    ]
+   },
+   {
+    "hilt": [
+     4.9,
+     -22.7
     ],
     "tip": [
      14.9,
-     -26
+     -22.3
     ]
    },
    {
@@ -1314,6 +1353,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     -6,
@@ -1332,8 +1372,12 @@
     -55.1
    ],
    [
-    6,
-    -50.8
+    6.1,
+    -52.2
+   ],
+   [
+    5.9,
+    -49.4
    ],
    [
     5.7,
@@ -1397,6 +1441,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -16.2,
@@ -1592,6 +1637,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     -6.4,
@@ -1671,6 +1717,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -1.1,
@@ -1806,6 +1853,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     -17.1,
@@ -1923,8 +1971,8 @@
    },
    {
     "hilt": [
-     -7.6,
-     -19.5
+     -7.7,
+     -19.4
     ],
     "tip": [
      -3.9,
@@ -1952,6 +2000,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     9.1,
@@ -1979,7 +2028,7 @@
    ],
    [
     -14.7,
-    -43.6
+    -44.2
    ],
    [
     -26.1,
@@ -2063,45 +2112,46 @@
    },
    {
     "hilt": [
-     0.9,
-     -52.6
+     -2,
+     -40.5
     ],
     "tip": [
-     -4,
-     -63.7
+     5,
+     -50.9
     ]
    },
    {
     "hilt": [
-     -17.6,
-     -21.9
+     -14.9,
+     -34.7
     ],
     "tip": [
-     -33.6,
-     -32.3
+     -30.9,
+     -44.3
     ]
    },
    {
     "hilt": [
-     -21.4,
-     -12.8
+     -22.5,
+     -25.2
     ],
     "tip": [
-     -37.4,
-     -22.3
+     -38.3,
+     -34.3
     ]
    },
    {
     "hilt": [
-     -21.7,
-     -9.4
+     -28.4,
+     -12.6
     ],
     "tip": [
-     -37.4,
-     -18.3
+     -43.8,
+     -21.3
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     1.8,
@@ -2124,19 +2174,19 @@
     -43.4
    ],
    [
-    -5.6,
-    -41.1
+    -7.2,
+    -40.7
    ],
    [
-    -5.9,
-    -24
+    -10.7,
+    -27.8
    ],
    [
-    -8.4,
-    -15.6
+    -15.6,
+    -19.7
    ],
    [
-    -9.6,
+    -17.9,
     -11.3
    ]
   ],
@@ -2196,6 +2246,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -1.5,
@@ -2270,6 +2321,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -1,
@@ -2296,16 +2348,16 @@
     -59.9
    ],
    [
+    -14.1,
+    -49.3
+   ],
+   [
     -21,
     -35.7
    ],
    [
-    -26.4,
-    -18.3
-   ],
-   [
-    -27.6,
-    -8.8
+    -27.4,
+    -12.3
    ]
   ],
   "file": "veteran_finished_disarm.png"
@@ -2376,6 +2428,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_hurt_b.png"
  },
@@ -2445,6 +2498,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_reel.png"
  },
@@ -2514,6 +2568,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_parried.png"
  },
@@ -2605,6 +2660,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_knockdown.png"
  },
@@ -2638,6 +2694,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_down.png"
  },
@@ -2773,6 +2830,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_getup.png"
  },
@@ -2820,6 +2878,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     -17.7,
@@ -2913,6 +2972,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "veteran_cut_b.png"
  }

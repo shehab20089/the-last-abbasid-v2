@@ -17,6 +17,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "archer_idle.png"
  },
@@ -38,6 +39,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "archer_walk.png"
  },
@@ -59,6 +61,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "archer_run.png"
  },
@@ -79,6 +82,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "archer_alert.png"
  },
@@ -107,6 +111,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "archer_shoot.png"
  },
@@ -133,6 +138,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "archer_kick.png"
  },
@@ -157,6 +163,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "archer_hurt.png"
  },
@@ -195,6 +202,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "archer_death.png"
  },
@@ -217,12 +225,13 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "archer_watch.png"
  },
  "death_head": {
   "name": "death_head",
-  "frames": 11,
+  "frames": 12,
   "width": 176,
   "height": 128,
   "fps": 10,
@@ -232,7 +241,8 @@
    1.4,
    1.2,
    0.6,
-   0.6,
+   0.45,
+   0.45,
    1.4,
    1.2,
    0.8,
@@ -251,8 +261,10 @@
    null,
    null,
    null,
+   null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -6,
@@ -271,8 +283,12 @@
     -55.1
    ],
    [
-    6,
-    -50.8
+    6.1,
+    -52.2
+   ],
+   [
+    5.9,
+    -49.4
    ],
    [
     5.7,
@@ -336,6 +352,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -16.2,
@@ -423,6 +440,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -6.4,
@@ -502,6 +520,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -1.1,
@@ -565,6 +584,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -17.1,
@@ -630,6 +650,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     9.1,
@@ -657,7 +678,7 @@
    ],
    [
     -14.7,
-    -43.6
+    -44.2
    ],
    [
     -26.1,
@@ -699,6 +720,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     1.8,
@@ -721,19 +743,19 @@
     -43.4
    ],
    [
-    -5.6,
-    -41.1
+    -7.2,
+    -40.7
    ],
    [
-    -5.9,
-    -24
+    -10.7,
+    -27.8
    ],
    [
-    -8.4,
-    -15.6
+    -15.6,
+    -19.7
    ],
    [
-    -9.6,
+    -17.9,
     -11.3
    ]
   ],
@@ -766,6 +788,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -1.5,
@@ -831,6 +854,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -1,
@@ -857,16 +881,16 @@
     -59.9
    ],
    [
+    -14.1,
+    -49.3
+   ],
+   [
     -21,
     -35.7
    ],
    [
-    -26.4,
-    -18.3
-   ],
-   [
-    -27.6,
-    -8.8
+    -27.4,
+    -12.3
    ]
   ],
   "file": "archer_finished_disarm.png"
@@ -892,6 +916,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "archer_hurt_b.png"
  },
@@ -916,6 +941,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "archer_reel.png"
  },
@@ -940,6 +966,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "archer_parried.png"
  },
@@ -968,6 +995,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "archer_knockdown.png"
  },
@@ -983,6 +1011,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "archer_down.png"
  },
@@ -1019,6 +1048,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "archer_getup.png"
  },
@@ -1039,6 +1069,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -17.7,

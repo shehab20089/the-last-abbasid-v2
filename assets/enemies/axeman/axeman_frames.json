@@ -89,6 +89,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "axeman_idle.png"
  },
@@ -182,6 +183,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "axeman_walk.png"
  },
@@ -275,6 +277,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "axeman_run.png"
  },
@@ -322,6 +325,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "axeman_alert.png"
  },
@@ -424,6 +428,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "axeman_axe_chop.png"
  },
@@ -526,6 +531,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "axeman_axe_hook.png"
  },
@@ -595,6 +601,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "axeman_axe_jab.png"
  },
@@ -708,6 +715,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "axeman_axe_sweep.png"
  },
@@ -777,20 +785,22 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "axeman_hurt.png"
  },
  "stagger": {
   "name": "stagger",
-  "frames": 4,
+  "frames": 5,
   "width": 176,
   "height": 128,
   "fps": 6,
   "loop": false,
   "durations": [
-   0.8,
-   1.8,
-   1.8,
+   0.7,
+   0.6,
+   1.4,
+   1.7,
    1
   ],
   "blades": [
@@ -802,6 +812,16 @@
     "tip": [
      9.6,
      -47.3
+    ]
+   },
+   {
+    "hilt": [
+     9.8,
+     -28.1
+    ],
+    "tip": [
+     15.1,
+     -28.1
     ]
    },
    {
@@ -835,6 +855,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "axeman_stagger.png"
  },
@@ -981,12 +1002,13 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "axeman_death.png"
  },
  "death_head": {
   "name": "death_head",
-  "frames": 11,
+  "frames": 12,
   "width": 176,
   "height": 128,
   "fps": 10,
@@ -996,7 +1018,8 @@
    1.4,
    1.2,
    0.6,
-   0.6,
+   0.45,
+   0.45,
    1.4,
    1.2,
    0.8,
@@ -1048,11 +1071,21 @@
    {
     "hilt": [
      16.5,
-     -17.2
+     -20
     ],
     "tip": [
      21.8,
-     -16.5
+     -20
+    ]
+   },
+   {
+    "hilt": [
+     16.5,
+     -14.6
+    ],
+    "tip": [
+     21.6,
+     -13.2
     ]
    },
    {
@@ -1116,6 +1149,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     -6.5,
@@ -1134,8 +1168,12 @@
     -59.5
    ],
    [
-    6.5,
-    -54.8
+    6.6,
+    -56.4
+   ],
+   [
+    6.4,
+    -53.4
    ],
    [
     6.2,
@@ -1199,6 +1237,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -17.5,
@@ -1394,6 +1433,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     -6.9,
@@ -1473,6 +1513,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -1.2,
@@ -1608,6 +1649,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     -18.5,
@@ -1726,11 +1768,11 @@
    {
     "hilt": [
      0.2,
-     -20.1
+     -20
     ],
     "tip": [
-     2.8,
-     -23.7
+     2.7,
+     -23.6
     ]
    },
    {
@@ -1754,6 +1796,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     9.8,
@@ -1781,7 +1824,7 @@
    ],
    [
     -15.9,
-    -47
+    -47.8
    ],
    [
     -28.1,
@@ -1865,45 +1908,46 @@
    },
    {
     "hilt": [
-     5,
-     -57.3
+     9.6,
+     -40.9
     ],
     "tip": [
-     4.7,
-     -61.6
+     14.4,
+     -43.9
     ]
    },
    {
     "hilt": [
-     -27.1,
-     -25.8
+     -24.1,
+     -39.7
     ],
     "tip": [
-     -33.3,
-     -30.7
+     -30.3,
+     -44.6
     ]
    },
    {
     "hilt": [
-     -31.1,
-     -16
+     -32.3,
+     -29.5
     ],
     "tip": [
-     -37.4,
-     -20.9
+     -38.6,
+     -34.3
     ]
    },
    {
     "hilt": [
-     -31.5,
-     -12.4
+     -38.8,
+     -15.8
     ],
     "tip": [
-     -37.8,
-     -17.3
+     -45,
+     -20.7
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     2,
@@ -1926,19 +1970,19 @@
     -46.8
    ],
    [
-    -6.1,
-    -44.4
+    -7.7,
+    -43.9
    ],
    [
-    -6.4,
-    -25.9
+    -11.6,
+    -30
    ],
    [
-    -9.1,
-    -16.8
+    -16.9,
+    -21.2
    ],
    [
-    -10.4,
+    -19.4,
     -12.2
    ]
   ],
@@ -1998,6 +2042,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -1.6,
@@ -2072,6 +2117,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -1.1,
@@ -2098,16 +2144,16 @@
     -64.7
    ],
    [
+    -15.2,
+    -53.2
+   ],
+   [
     -22.7,
     -38.6
    ],
    [
-    -28.6,
-    -19.8
-   ],
-   [
-    -29.8,
-    -9.5
+    -29.5,
+    -13.3
    ]
   ],
   "file": "axeman_finished_disarm.png"
@@ -2178,6 +2224,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "axeman_hurt_b.png"
  },
@@ -2247,6 +2294,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "axeman_reel.png"
  },
@@ -2316,6 +2364,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "axeman_parried.png"
  },
@@ -2407,6 +2456,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "axeman_knockdown.png"
  },
@@ -2440,6 +2490,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "axeman_down.png"
  },
@@ -2575,6 +2626,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "axeman_getup.png"
  },
@@ -2622,6 +2674,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     -19.2,

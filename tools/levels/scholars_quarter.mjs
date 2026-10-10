@@ -85,8 +85,7 @@ export const LEVEL = {
     { kind: "tower", col: 0, width: 3, top: 4 },
     { kind: "tower", col: 297, width: 3, top: 4 },
   ],
-  knownTechniques: ["sweep", "bash", "knives", "charge", "storm", "kick", "low_cut", "rising_cleave",
-    "running_slash"],
+  knownTechniques: ["sweep", "low_cut", "bash", "running_slash", "storm", "knives"],
   // Soldiers here are tougher than the market's (health, poise): the hero has grown too.
   toughness: [1.2, 1.1],
   aggression: 1.2,
@@ -119,10 +118,10 @@ export const LEVEL = {
     // Rifling a fallen shelf at the library door.
     { kind: "skirmisher", col: 92, face: 1, activity: "loot", patrol: 0 },
     // In the library, at their work until the hero walks in.
-    { kind: "swordsman", col: 112, face: -1, dormant: true, group: "library", activity: "loot" },
-    { kind: "archer", col: 117, row: 22, face: -1, dormant: true, group: "library", activity: "watch" },
-    { kind: "spearman", col: 128, face: 1, dormant: true, group: "library", activity: "stab" },
-    { kind: "swordsman", col: 144, face: 1, dormant: true, group: "library", activity: "menace" },
+    { kind: "swordsman", col: 112, face: -1, dormant: true, group: "library", activity: "loot", patrol: 0 },
+    { kind: "archer", col: 117, row: 22, face: -1, dormant: true, group: "library", activity: "watch", patrol: 0 },
+    { kind: "spearman", col: 128, face: 1, dormant: true, group: "library", activity: "stab", patrol: 0 },
+    { kind: "swordsman", col: 144, face: 1, dormant: true, group: "library", activity: "menace", patrol: 0 },
     // On the river wall: stabbing at a body; then an execution, covered from the mooring steps.
     { kind: "spearman", col: 170, face: 1, activity: "stab", patrol: 0 },
     { kind: "swordsman", col: 183, face: 1, activity: "execute", victim: "river_captive", delay: 3.0, patrol: 0 },
@@ -148,13 +147,19 @@ export const LEVEL = {
       gives: "codex", notice: "NOTICE_CODEX", keepsake: "ink_stone" },
   ],
   triggers: [
-    // Before the headsman's clock starts (300 px short of him, col 35): the guarded thrust.
-    { id: "lesson_guarded_thrust", from: 18, to: 21, teaches: "guarded_thrust" },
-    { id: "lesson_down_stab", from: 64, to: 67, teaches: "down_stab" },
+    // Master's techniques: taught only on a journey after the chapter has been finished.
+    { id: "lesson_guarded_thrust", from: 18, to: 21, teaches: "guarded_thrust", requiresFlag: "master" },
+    { id: "lesson_down_stab", from: 64, to: 67, teaches: "down_stab", requiresFlag: "master" },
     { id: "library", from: 102, to: 104, height: 64, event: "ambush", group: "library", line: "LIBRARY_1" },
     { id: "river", from: 154, to: 157, line: "RIVER_1" },
+    // Past the library, before the river wall's clock (col 164) and the engineers' fire: the kick, to drive a
+    // man into the burning ground.
+    { id: "lesson_kick", from: 158, to: 161, teaches: "kick" },
     { id: "hint_engineer", from: 172, to: 175, hint: "HINT_ENGINEER" },
     { id: "hint_axeman", from: 199, to: 201, hint: "HINT_AXEMAN" },
+    // Past the axeman, before the second shield wall: the charge, which breaks a wall from a step away and a big
+    // man's poise.
+    { id: "lesson_charge", from: 214, to: 217, teaches: "charge" },
   ],
   exit: { name: "GardenDoor", col: 292, art: "garden_door", prompt: "PROMPT_OPEN_GARDEN_DOOR",
     lockedPrompt: "PROMPT_GARDEN_DOOR", lockedLine: "GATE_LOCKED_3", requires: "codex",

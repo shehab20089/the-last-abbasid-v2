@@ -97,7 +97,7 @@ export const LEVEL = {
     { kind: "tower", col: 277, width: 3, top: 4 },
   ],
   // Techniques the hero has learned before he comes here.
-  knownTechniques: ["sweep", "charge", "kick", "low_cut"],
+  knownTechniques: ["sweep", "low_cut"],
   // Soldiers here are tougher than the market's (health, poise): the hero has grown too.
   toughness: [1.1, 1],
   aggression: 1.1,
@@ -161,7 +161,8 @@ export const LEVEL = {
   ],
   triggers: [
     { id: "streets_start", from: 6, to: 9, line: "STREETS_1" },
-    { id: "lesson_rising_cleave", from: 15, to: 18, teaches: "rising_cleave" },
+    // A master's technique: taught only on a journey after the chapter has been finished.
+    { id: "lesson_rising_cleave", from: 15, to: 18, teaches: "rising_cleave", requiresFlag: "master" },
     { id: "hint_rooftops", from: 40, to: 45, hint: "HINT_ROOFTOPS" },
     { id: "hint_archers", from: 52, to: 56, hint: "HINT_ARCHERS" },
     { id: "hint_execution", from: 63, to: 65, hint: "HINT_EXECUTION" },

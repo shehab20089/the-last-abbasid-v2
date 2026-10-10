@@ -19,6 +19,8 @@ signal entered(trigger: StoryTrigger)
 @export var speaker: String = ""
 ## A technique the hero learns here if no one has taught it to him yet (a lesson he walked past).
 @export var teaches: StringName = &""
+## A save flag it waits on: without it the trigger does nothing (the master's lessons, on a later journey).
+@export var requires_flag: StringName = &""
 @export var once: bool = true
 
 var _fired: bool = false

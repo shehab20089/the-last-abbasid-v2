@@ -2,20 +2,29 @@ param(
     [string]$GodotPath = $env:GODOT_PATH,
     [switch]$Visual
 )
-# Imports the project, then runs every headless suite with fixed 1/60 s frames (so timings are
-# identical on any machine), and optionally the rendered captures (which need a window).
+# Checks the generators (a partial character build keeps every file in step; no animation issue beyond
+# the known ones in tools/animation_lint_baseline.json), imports the project, then runs every headless
+# suite with fixed 1/60 s frames (so timings are identical on any machine), and optionally the rendered
+# captures (which need a window).
 $ErrorActionPreference = 'Stop'
 if ($GodotPath) { $env:GODOT_PATH = $GodotPath }
 Push-Location (Split-Path $PSScriptRoot -Parent)
 # The traversal plays the whole level in simulated time; give it room.
 if (-not $env:GODOT_TIMEOUT_SECONDS) { $env:GODOT_TIMEOUT_SECONDS = '400' }
 try {
+    & node tools/check_partial_build.mjs
+    if ($LASTEXITCODE -ne 0) { throw 'A partial character build does not keep its files in step.' }
+    & node tools/animation_lint.mjs --check
+    if ($LASTEXITCODE -ne 0) { throw 'The animation lint found issues beyond the known ones (tools/animation_lint_baseline.json).' }
     & node tools/run_godot_cli.mjs --headless --editor --path . --quit
     if ($LASTEXITCODE -ne 0) { throw 'Godot import failed.' }
     $suites = @(
         @{ Script = 'res://tests/gameplay_test.gd'; Marker = 'GAMEPLAY_TEST_COMPLETE'; Args = @() },
         @{ Script = 'res://tests/enemy_test.gd'; Marker = 'ENEMY_TEST_COMPLETE'; Args = @() },
-        @{ Script = 'res://tests/session_test.gd'; Marker = 'SESSION_TEST_COMPLETE'; Args = @() }
+        @{ Script = 'res://tests/session_test.gd'; Marker = 'SESSION_TEST_COMPLETE'; Args = @() },
+        # Every finisher truly plays on a soldier who meets its terms (headless it only checks; with a window,
+        # as with -Visual, it renders them into captures/finishers/).
+        @{ Script = 'res://tests/capture_finishers.gd'; Marker = 'FINISHERS_CAPTURE_DONE'; Args = @() }
     )
     # The autoplayer finishes every level of the chapter.
     foreach ($level in @('fallen_market', 'streets_of_ash', 'scholars_quarter', 'last_gate')) {
@@ -40,7 +49,7 @@ try {
         }
     }
     if ($Visual) {
-        foreach ($capture in @('res://tests/capture_level.gd', 'res://tests/capture_session.gd')) {
+        foreach ($capture in @('res://tests/capture_level.gd', 'res://tests/capture_session.gd', 'res://tests/capture_finishers.gd')) {
             & node tools/run_godot_cli.mjs --path . --script $capture
             if ($LASTEXITCODE -ne 0) { throw "$capture failed." }
         }

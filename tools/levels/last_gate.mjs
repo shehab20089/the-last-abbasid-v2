@@ -95,8 +95,8 @@ export const LEVEL = {
     { kind: "rampart", col: 110, width: 31, top: 22 },
     { kind: "tower", col: 237, width: 3, top: 4 },
   ],
-  knownTechniques: ["sweep", "bash", "plunge", "knives", "charge", "storm", "pierce", "naft", "kick", "low_cut",
-    "rising_cleave", "running_slash", "guarded_thrust", "down_stab"],
+  knownTechniques: ["sweep", "low_cut", "bash", "running_slash", "storm", "knives", "plunge", "kick", "charge", "pierce",
+    "naft"],
   // Soldiers here are tougher than the market's (health, poise): the hero has grown too.
   toughness: [1.3, 1.2],
   aggression: 1.3,
@@ -134,8 +134,9 @@ export const LEVEL = {
     // Walked past Hamid: his breath comes to him anyway, on the road.
     { id: "lesson_breath", from: 24, to: 27, teaches: "second_wind" },
     { id: "hint_maceman", from: 112, to: 115, above: 80, height: 120, hint: "HINT_MACEMAN" },
-    // Past the wall's archers, before the shield-bearer and the axeman: the heavy string's last blow.
-    { id: "lesson_windmill", from: 140, to: 143, teaches: "windmill" },
+    // Past the wall's archers, before the shield-bearer and the axeman: the heavy string's last blow (a master's
+    // technique, taught only on a journey after the chapter has been finished).
+    { id: "lesson_windmill", from: 140, to: 143, teaches: "windmill", requiresFlag: "master" },
     { id: "boss", from: 196, to: 198, event: "boss", hint: "HINT_BOSS", speaker: "SPEAKER_TOQTO", line: "TOQTO_INTRO" },
   ],
   // The gate square: burning barricades close behind the hero, and the camera keeps to the square.

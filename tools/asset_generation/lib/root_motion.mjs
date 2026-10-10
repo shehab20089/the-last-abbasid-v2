@@ -3,19 +3,60 @@
 // the sprite must keep a foot that bears weight still on the ground meanwhile, so every planted
 // foot is shifted back in the sprite by exactly the distance the body has travelled.
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-/** Attack definitions in a folder, by animation name: { lunge, from, to }. */
-export function readAttacks(folder) {
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
+
+/**
+ * A character's attacks, by animation name: { lunge, from, to, activeFrom, activeTo }. `source` is a
+ * folder of definitions that are all his (the hero's), or a soldier's profile (an EnemyProfile .tres): then
+ * the attacks it names and those they lead on to (a follow-up, a riposte), never another soldier's, though
+ * several share an animation's name (the captain's sweep is not the spearman's). Where two of his attacks
+ * play one animation (the spearman's thrust and his lunge), the sprites are drawn for the first his profile
+ * names.
+ */
+export function readAttacks(source) {
   const out = {};
-  for (const file of existsSync(folder) ? readdirSync(folder) : []) {
-    if (!file.endsWith(".tres")) continue;
-    const text = readFileSync(join(folder, file), "utf8");
-    const anim = /animation = &"([^"]+)"/.exec(text)?.[1];
-    if (!anim) continue;
-    const num = (key, fallback) => Number(new RegExp(`^${key} = (-?[\\d.]+)`, "m").exec(text)?.[1] ?? fallback);
-    out[anim] = { lunge: num("lunge_speed", 0), from: num("lunge_from", 0), to: num("lunge_to", -1),
-      activeFrom: num("active_from", 2), activeTo: num("active_to", 3) };
+  for (const attack of attackUses(source)) {
+    if (!out[attack.anim]) out[attack.anim] = attack;
+  }
+  return out;
+}
+
+/**
+ * Every attack definition a character uses (see readAttacks), in order, each with its animation and file:
+ * [{ anim, file, lunge, from, to, activeFrom, activeTo, projectile }].
+ */
+export function attackUses(source) {
+  const out = [];
+  const take = (path) => {
+    const text = readFileSync(path, "utf8");
+    const anim = /^animation = &"([^"]+)"/m.exec(text)?.[1];
+    if (anim) {
+      const num = (key, fallback) => Number(new RegExp(`^${key} = (-?[\\d.]+)`, "m").exec(text)?.[1] ?? fallback);
+      out.push({ anim, file: path.split(/[\\/]/).pop(), lunge: num("lunge_speed", 0), from: num("lunge_from", 0),
+        to: num("lunge_to", -1), activeFrom: num("active_from", 2), activeTo: num("active_to", 3),
+        projectile: num("projectile_frame", -1) });
+    }
+    return text;
+  };
+  if (source.endsWith(".tres")) {
+    const seen = new Set();
+    const queue = [source];
+    while (queue.length) {
+      const path = queue.shift();
+      if (seen.has(path) || !existsSync(path)) continue;
+      seen.add(path);
+      const text = take(path);
+      for (const [, res] of text.matchAll(/\[ext_resource type="Resource" path="res:\/\/([^"]+\.tres)"/g)) {
+        queue.push(join(ROOT, res));
+      }
+    }
+    return out;
+  }
+  for (const file of existsSync(source) ? readdirSync(source).sort() : []) {
+    if (file.endsWith(".tres")) take(join(source, file));
   }
   return out;
 }

@@ -287,7 +287,7 @@ next_level = "res://features/levels/scholars_quarter/scholars_quarter.tscn"
 exit_card = &"streets_end"
 exit_title = "LEVEL_SCHOLARS_QUARTER"
 objectives = PackedStringArray("salim_freed|OBJ_SCHOLARS_QUARTER|exit", "captors_cleared|OBJ_SPEAK_SALIM|npc:salim", "captors|OBJ_FREE_CAPTIVES|group:captors", "|OBJ_FOLLOW_CAPTIVES|col:190:MARKER_CAPTIVES")
-known_techniques = PackedStringArray("sweep", "charge", "kick", "low_cut")
+known_techniques = PackedStringArray("sweep", "low_cut")
 toughness = Vector2(1.10, 1.00)
 aggression = 1.10
 manuscript_ids = PackedStringArray("recipe", "letter", "furusiyya_bash", "furusiyya_storm")
@@ -1529,6 +1529,7 @@ requires = &"captors_cleared"
 gives_flag = &"salim_freed"
 gives_notice = "NOTICE_SALIM"
 teaches = &"knives"
+counsel = &""
 gives_keepsake = &"saffron_sash"
 idle_animation = &"stand"
 talk_animation = &"talk"
@@ -1708,6 +1709,7 @@ group = &""
 line = "STREETS_1"
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/streets_start"]
 shape = SubResource("RectangleShape2D_47")
@@ -1722,6 +1724,7 @@ group = &""
 line = ""
 speaker = ""
 teaches = &"rising_cleave"
+requires_flag = &"master"
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/lesson_rising_cleave"]
 shape = SubResource("RectangleShape2D_48")
@@ -1736,6 +1739,7 @@ group = &""
 line = ""
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_rooftops"]
 shape = SubResource("RectangleShape2D_49")
@@ -1750,6 +1754,7 @@ group = &""
 line = ""
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_archers"]
 shape = SubResource("RectangleShape2D_50")
@@ -1764,6 +1769,7 @@ group = &""
 line = ""
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_execution"]
 shape = SubResource("RectangleShape2D_51")
@@ -1778,6 +1784,7 @@ group = &""
 line = ""
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_shieldbearer"]
 shape = SubResource("RectangleShape2D_52")
@@ -1792,6 +1799,7 @@ group = &""
 line = ""
 speaker = ""
 teaches = &"running_slash"
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/lesson_running_slash"]
 shape = SubResource("RectangleShape2D_53")
@@ -1806,6 +1814,7 @@ group = &""
 line = ""
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_skirmisher"]
 shape = SubResource("RectangleShape2D_54")
@@ -1820,6 +1829,7 @@ group = &""
 line = "MOSQUE_DEAD_1"
 speaker = "SPEAKER_YUSUF"
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/mosque_dead"]
 shape = SubResource("RectangleShape2D_55")
@@ -1834,6 +1844,7 @@ group = &"captors"
 line = "CAPTORS_1"
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/captors"]
 shape = SubResource("RectangleShape2D_56")

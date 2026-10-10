@@ -200,7 +200,7 @@ next_level = ""
 exit_card = &"ending"
 exit_title = ""
 objectives = PackedStringArray("captain_cleared|OBJ_OPEN_GATE|exit", "|OBJ_REACH_GATE|exit")
-known_techniques = PackedStringArray("sweep", "bash", "plunge", "knives", "charge", "storm", "pierce", "naft", "kick", "low_cut", "rising_cleave", "running_slash", "guarded_thrust", "down_stab")
+known_techniques = PackedStringArray("sweep", "low_cut", "bash", "running_slash", "storm", "knives", "plunge", "kick", "charge", "pierce", "naft")
 toughness = Vector2(1.30, 1.20)
 aggression = 1.30
 manuscript_ids = PackedStringArray("route", "oath", "furusiyya_roll")
@@ -930,6 +930,7 @@ requires = &""
 gives_flag = &"hamid_breath"
 gives_notice = ""
 teaches = &"second_wind"
+counsel = &""
 gives_keepsake = &""
 idle_animation = &"sit"
 talk_animation = &"talk"
@@ -1095,6 +1096,7 @@ group = &""
 line = ""
 speaker = ""
 teaches = &"second_wind"
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/lesson_breath"]
 shape = SubResource("RectangleShape2D_23")
@@ -1109,6 +1111,7 @@ group = &""
 line = ""
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_maceman"]
 shape = SubResource("RectangleShape2D_24")
@@ -1123,6 +1126,7 @@ group = &""
 line = ""
 speaker = ""
 teaches = &"windmill"
+requires_flag = &"master"
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/lesson_windmill"]
 shape = SubResource("RectangleShape2D_25")
@@ -1137,6 +1141,7 @@ group = &""
 line = "TOQTO_INTRO"
 speaker = "SPEAKER_TOQTO"
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/boss"]
 shape = SubResource("RectangleShape2D_26")

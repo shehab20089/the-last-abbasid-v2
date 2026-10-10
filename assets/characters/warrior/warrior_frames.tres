@@ -1067,6 +1067,10 @@ region = Rect2(640, 0, 160, 128)
 atlas = ExtResource("42_plunge_land")
 region = Rect2(800, 0, 160, 128)
 
+[sub_resource type="AtlasTexture" id="plunge_land_6"]
+atlas = ExtResource("42_plunge_land")
+region = Rect2(960, 0, 160, 128)
+
 [sub_resource type="AtlasTexture" id="bash_0"]
 atlas = ExtResource("43_bash")
 region = Rect2(0, 0, 160, 128)
@@ -2665,17 +2669,20 @@ animations = [{
 "duration": 1.40,
 "texture": SubResource("plunge_land_1")
 }, {
-"duration": 1.40,
+"duration": 0.70,
 "texture": SubResource("plunge_land_2")
 }, {
-"duration": 1.20,
+"duration": 0.70,
 "texture": SubResource("plunge_land_3")
 }, {
-"duration": 1.00,
+"duration": 1.20,
 "texture": SubResource("plunge_land_4")
 }, {
 "duration": 1.00,
 "texture": SubResource("plunge_land_5")
+}, {
+"duration": 1.00,
+"texture": SubResource("plunge_land_6")
 }],
 "loop": false,
 "name": &"plunge_land",

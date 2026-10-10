@@ -32,7 +32,9 @@ function stagger(ready, { sword = 60, shieldFace = 70 } = {}) {
     head: { yaw: 10, pitch: 26, roll: -8 }, footN: [-10, -4.6, 4.2], footF: [6, 4.8, 4.2],
     handN: [4, -12, 30], sword: [sword, 40], handF: [5, 6, 32], shield: [shieldFace, -40],
   });
-  return [open, dazed, nudge(dazed, { pelvis: [0.4, -0.6], torso: { roll: 4, pitch: 2 }, head: { roll: 8 } }),
+  // From thrown back to slumped over through a frame between, the head lagging behind the body.
+  const slumping = pose(blend(open, dazed, 0.5), { head: { yaw: 18, pitch: -2, roll: 2 } });
+  return [open, slumping, dazed, nudge(dazed, { pelvis: [0.4, -0.6], torso: { roll: 4, pitch: 2 }, head: { roll: 8 } }),
     blend(dazed, ready, 0.55)];
 }
 
@@ -231,6 +233,9 @@ function headlessFall(ready, { sword = 150, shieldFace = 50, arms = {} } = {}) {
     sword: [sword - 40, 40], handF: [10, 6, 32], shield: [shieldFace + 10, -20], ...arms });
   const kneeling = pose(ready, { pelvis: [-1, 21.6], hips: { yaw: -10, pitch: 8 }, torso: { yaw: 0, pitch: 12 }, ...knees,
     handN: [7, -12, 22], sword: [70, 40], handF: [9, 6, 24], shield: [shieldFace + 20, -40], ...arms });
+  // The knees go over three frames: the front foot drawn back under him as the toes turn down, not slid.
+  const going = (t, footF, toeF) => pose(blend(buckle, kneeling, t), { footN: blend(buckle.footN, knees.footN, t), footF,
+    toeN: -80 * t, toeF });
   return [
     pose(ready, { pelvis: [-1.6, ready.pelvis[1] + 0.3], hips: { yaw: -16, pitch: -4 }, torso: { yaw: -10, pitch: -10, roll: 4 },
       handN: [6, -13, 54], sword: [sword + 20, 30], handF: [13, 6, 54], shield: [shieldFace, 20], ...arms }),
@@ -239,7 +244,8 @@ function headlessFall(ready, { sword = 150, shieldFace = 50, arms = {} } = {}) {
     pose(ready, { pelvis: [-0.5, 36.4], hips: { yaw: -12, pitch: 4 }, torso: { yaw: -4, pitch: 4, roll: 3 },
       handN: [4, -12, 38], sword: [sword - 20, 34], handF: [10, 6, 38], shield: [shieldFace + 10, -10], ...arms }),
     buckle,
-    pose(blend(buckle, kneeling, 0.5), { footN: [-12, -4.6, 3.8], footF: [-3, 4.8, 4.0], toeN: -40, toeF: -30 }),
+    going(0.33, [0.8, 4.8, 4.1], -26),
+    going(0.66, [-5.6, 4.8, 3.6], -53),
     kneeling,
     pose(ready, { pelvis: [-0.5, 21.2], hips: { yaw: -10, pitch: 14 }, torso: { yaw: 0, pitch: 18 }, ...knees,
       handN: [9, -12, 18], sword: [60, 40], handF: [10, 6, 20], shield: [shieldFace + 20, -46], ...arms }),
@@ -288,7 +294,7 @@ function cutDown(ready, size, { sword = 150, shieldFace = 50, arms = {} } = {}) 
   const timing = { size, fps: 10, loop: false, wind: [-10, 0, -6], limp: 0.9 };
   return {
     death_head: { ...timing, poses: cutAway(headlessFall(ready, { sword, shieldFace, arms }), "head"),
-      durations: [0.8, 1.4, 1.2, 0.6, 0.6, 1.4, 1.2, 0.8, 0.7, 1, 2.4], motion: [-30, 0, 0], wound: WOUNDS.head },
+      durations: [0.8, 1.4, 1.2, 0.6, 0.45, 0.45, 1.4, 1.2, 0.8, 0.7, 1, 2.4], motion: [-30, 0, 0], wound: WOUNDS.head },
     death_arm: { ...timing, poses: cutAway(fall, "arm"), durations: [1, 1.4, 1.2, 0.7, 0.7, 0.6, 0.6, 0.6, 0.8, 1, 1.2, 2],
       motion: [-50, 0, 0], wound: WOUNDS.arm },
     death_leg: { ...timing, poses: cutAway(fall, "leg"), durations: [1, 1, 1, 0.7, 0.7, 0.6, 0.6, 0.6, 0.8, 1, 1.2, 2],
@@ -307,7 +313,7 @@ function cutDown(ready, size, { sword = 150, shieldFace = 50, arms = {} } = {}) 
 const BELLY = (f) => toParent(f.spine, [5, 0, 2]);
 
 function finishedSet(ready, size, { sword = 150, shieldFace = 50, arms = {} } = {}) {
-  const [, dazed] = stagger(ready, { sword: sword - 90, shieldFace: shieldFace + 20 });
+  const [, , dazed] = stagger(ready, { sword: sword - 90, shieldFace: shieldFace + 20 });
   const fall = death(ready, { sword, shieldFace, arms });
   const legs = legsFall(ready);
   const knees = { footN: [-15, -4.6, 3.0], footF: [-12, 4.8, 3.2], toeN: -80, toeF: -80, kneeN: [1, -0.15, -0.2],
@@ -323,25 +329,30 @@ function finishedSet(ready, size, { sword = 150, shieldFace = 50, arms = {} } = 
   const timed = (name, poses, extra = {}) => ({ size, fps: FINISHERS[name].fps, loop: false, poses,
     durations: FINISHERS[name].durations, wind: [-10, 0, -6], limp: 0.6, ...extra });
   const from = (poses, at, cut) => poses.map((p, i) => (i >= at ? cutAway([p], cut)[0] : p));
+  /** The whole pose carried back along the street by dx: a man thrown off his feet lands behind where he stood. */
+  const carried = (p, dx) => nudge(p, { pelvis: [dx, 0], footN: [dx, 0, 0], footF: [dx, 0, 0], handN: [dx, 0, 0],
+    handF: [dx, 0, 0] });
 
-  // Kicked to his knees, then his head (cut on 4); he falls back.
+  // Kicked to his knees, then his head (cut on 4); he falls back, the legs and arms following the body down.
   const behead = [
     dazed,
     pose(ready, { pelvis: [-4, 33], hips: { yaw: -10, pitch: 30 }, torso: { yaw: 0, pitch: 34 }, head: { yaw: 6, pitch: 24 },
       footN: [-12, -4.6, 4.2], footF: [-2, 4.8, 6], handN: [6, -13, 30], sword: [sword - 60, 40], handF: [8, 7, 30],
       shield: [shieldFace + 20, -40], ...arms }),
     pose(ready, { pelvis: [-3, 26], hips: { yaw: -10, pitch: 16 }, torso: { yaw: 0, pitch: 18 }, head: { yaw: 4, pitch: 10 },
-      footN: [-14, -4.6, 3.4], footF: [-8, 4.8, 3.6], toeN: -60, toeF: -50, kneeN: [1, -0.15, -0.2], kneeF: [1, 0.15, -0.2],
+      footN: [-14, -4.6, 3.4], footF: [-7, 4.8, 3.8], toeN: -60, toeF: -36, kneeN: [1, -0.15, -0.2], kneeF: [1, 0.15, -0.2],
       handN: [4, -13, 24], sword: [60, 40], handF: [6, 8, 26], shield: [shieldFace + 30, -60], ...arms }),
     kneel,
     pose(kneel, { pelvis: [-1.6, 22.6], torso: { pitch: -10, roll: 4 }, handN: [2, -13, 30], handF: [4, 9, 32] }),
     pose(kneel, { pelvis: [-2, 21.6], torso: { pitch: -2, roll: -4 }, handN: [-2, -13, 24], handF: [0, 9, 26] }),
-    back([-4, 17], -34, { sword: [120, 50], handN: [-6, -13, 20] }),
+    back([-4, 17], -34, { sword: [120, 50], handN: [-6, -13, 20], handF: [-5, 9, 18], footN: [-11, -4.6, 3.2],
+      footF: [-8, 4.8, 3.4], toeN: -60, toeF: -60 }),
     back([-7, 11], -66, { sword: [180, 60], handN: [-12, -13, 12] }),
     back([-8, 9], -86),
   ];
 
-  // Run through (bursts on 1, 2, 5), lifted on the blade, kicked off it onto his back.
+  // Run through (bursts on 1, 2, 5), lifted on the blade, kicked off it: thrown back with his hands to the
+  // wound, he goes over and lands on his back a stride behind where he stood.
   const pierced = pose(ready, { pelvis: [-1, 36], hips: { yaw: -6, pitch: 18 }, torso: { yaw: 0, pitch: 28 },
     head: { yaw: 6, pitch: 30 }, handN: [10, -12, 40], sword: [sword - 40, 40], handF: [10, 8, 40], shield: [shieldFace + 20, -30],
     ...arms });
@@ -354,12 +365,12 @@ function finishedSet(ready, size, { sword = 150, shieldFace = 50, arms = {} } = 
     agony,
     lifted,
     nudge(lifted, { torso: { roll: 3, pitch: 2 }, head: { roll: 6 }, handN: [0, 0, -1.5] }),
-    pose(ready, { pelvis: [-8, 34], hips: { yaw: -10, pitch: -20 }, torso: { yaw: -6, pitch: -24 }, head: { yaw: 16, pitch: -20 },
-      footN: [-6, -4.6, 8], footF: [6, 4.8, 12], handN: [10, -13, 52], sword: [sword, 60], handF: [10, 9, 52],
-      shield: [shieldFace + 30, 30], ...arms }),
-    fall[4],
-    fall[6],
-    fall[8],
+    pose(ready, { pelvis: [-10, 34], hips: { yaw: -10, pitch: -22 }, torso: { yaw: -4, pitch: -6 }, head: { yaw: 10, pitch: 16 },
+      footN: [-8, -4.6, 6], toeN: -10, footF: [0, 4.8, 9], toeF: 24, handN: [-2, -10, 40], sword: [sword - 30, 40],
+      handF: [1, 7, 39], shield: [shieldFace + 30, -10], ...arms }),
+    carried(pose(fall[3], { handN: [-4, -13, 32], handF: [-2, 8, 34] }), -7),
+    carried(pose(fall[5], { handN: [-10, -13, 22], handF: [-7, 9, 25] }), -9),
+    carried(pose(fall[8], { handN: [-16, -13, 9], handF: [-12, 9, 11] }), -9),
   ];
 
   // Through the waist on 3: the upper body is gone; the legs stand a moment, then fold and fall.
@@ -370,7 +381,8 @@ function finishedSet(ready, size, { sword = 150, shieldFace = 50, arms = {} } = 
     ...cutAway([legs[0], legs[1], legs[3], legs[5], legs[7]], "waist"),
   ];
 
-  // His sword arm on 1 (he reels, clutching at the stump), his head on 4; he falls back.
+  // His sword arm on 1 (he reels, clutching at the stump), his head on 4; the body stands a heartbeat, its knees
+  // go, and it falls back, the hand dropping from the stump as it goes.
   const reel = pose(ready, { pelvis: [-2, 37], hips: { yaw: -22, pitch: -6 }, torso: { yaw: -16, pitch: -10, roll: 6 },
     head: { yaw: 20, pitch: -20, roll: 8 }, handF: [6, 6, 50], shield: [shieldFace + 30, 10], ...arms });
   const clutch = pose(reel, { pelvis: [-4, 36], torso: { yaw: -10, pitch: 10, roll: 2 }, head: { yaw: 14, pitch: 10 },
@@ -384,9 +396,9 @@ function finishedSet(ready, size, { sword = 150, shieldFace = 50, arms = {} } = 
     staggerBack,
     pose(staggerBack, { torso: { pitch: -12, roll: 5 }, handF: [4, 4, 56] }),
     pose(staggerBack, { pelvis: [-7, 35], torso: { pitch: -16, roll: -3 } }),
-    fall[4],
-    fall[6],
-    fall[8],
+    pose(fall[2], { handF: [0, 1, 44] }),
+    pose(fall[4], { handF: [-6, 6, 30], footN: [-3, -4.6, 4.2] }),
+    pose(fall[7], { handF: [-11, 8, 16], footN: [3, -4.6, 3.6] }),
   ];
   const lostArm = from(disarmed, 1, "arm");
   const lostHead = lostArm.map((p, i) => (i >= 4 ? { ...cutAway([p], "head")[0], woundAt: WOUNDS.head } : p));
@@ -662,7 +674,7 @@ export const SWORDSMAN = {
       shield: [26, 16], handN: [-2, -10.5, 48] }),
     SWORD_GUARD] },
   hurt: { size: WIDE, fps: 12, loop: false, poses: hurt(SWORD_READY), durations: [1, 1.2, 0.8, 0.8, 1], motion: [-80, 0, 0] },
-  stagger: { size: WIDE, fps: 6, loop: false, poses: stagger(SWORD_READY), durations: [0.8, 1.6, 1.6, 1], motion: [-40, 0, 0] },
+  stagger: { size: WIDE, fps: 6, loop: false, poses: stagger(SWORD_READY), durations: [0.7, 0.6, 1.2, 1.5, 1], motion: [-40, 0, 0] },
   death: { size: WIDE, fps: 10, loop: false, poses: death(SWORD_READY), durations: [1, 1, 1, 0.7, 0.7, 0.6, 0.6, 0.6, 0.8, 1, 1.2, 2],
     motion: [-50, 0, 0], wind: [-10, 0, -6], limp: 0.9 },
   loot: { size: BODY, fps: 6, loop: true, poses: loot(), durations: [1.6, 1, 1.4, 1, 2.2, 1, 0.8] },
@@ -708,6 +720,37 @@ function spearThrust() {
     reach,
     pose(blend(lunge, SPEAR_READY, 0.55), { footF: reach.footF, footN: BACK }),
     pose(SPEAR_READY, { footF: reach.footF }),
+  ];
+}
+
+/**
+ * The running lunge (spearman_lunge: 320 px/s on frames 2-3): from a crouched coil he bounds off the back foot,
+ * flies with the point levelled, and lands on the front foot driving it home, skidding on that foot as the rush
+ * spends itself. A strip of its own: the thrust's planted feet would skate at this speed. Telegraph 1, active
+ * 3-4, as the thrust.
+ */
+function spearLunge() {
+  const coil = spr({ pelvis: [-3.4, 33.4], hips: { yaw: -30, pitch: 12 }, torso: { yaw: -26, pitch: 10, roll: 2 },
+    head: { yaw: 28, pitch: -8 }, footN: [-12, -4.6, 4.2], footF: [7, 4.8, 4.2], handN: [-9, -10, 44], sword: [94, 4],
+    handF: [11, 3, 48], shield: [26, 4] });
+  const bound = spr({ pelvis: [2.4, 37.6], hips: { yaw: -16, pitch: 10 }, torso: { yaw: -10, pitch: 8 },
+    head: { yaw: 22, pitch: -6 }, footF: [12, 4.8, 10], toeF: 20, footN: [-11, -4.6, 7.4], toeN: -40, handN: [-4, -10, 46],
+    sword: [93, 3], handF: [12, 3, 50], shield: [24, 4] });
+  const flight = spr({ pelvis: [5.4, 37], hips: { yaw: 4, pitch: 12 }, torso: { yaw: 16, pitch: 12, roll: -2 },
+    head: { yaw: 4, pitch: -2 }, footF: [17, 4.8, 9], toeF: 18, footN: [-9, -4.6, 9.6], toeN: -30, handN: [23, -9, 46],
+    sword: [92, 1], handF: [2, 5, 46], shield: [18, -6] });
+  const land = spr({ pelvis: [5.6, 33.4], hips: { yaw: 6, pitch: 14 }, torso: { yaw: 20, pitch: 12, roll: -2 }, head: { yaw: 2 },
+    footF: [17, 4.8, 4.2], toeF: 0, footN: [-6, -4.6, 6.4], toeN: -8, handN: [26, -9, 45.4], sword: [92, 1],
+    handF: [1, 5, 45], shield: [18, -6] });
+  return [
+    blend(SPEAR_READY, coil, 0.6),
+    coil,
+    bound,
+    flight,
+    land,
+    pose(blend(land, SPEAR_READY, 0.55), { footF: [16, 4.8, 4.2], footN: [-8, -4.6, LIFT], toeN: 6 }),
+    // The skid spent, the front foot drawn in under him into his guard.
+    pose(SPEAR_READY, { footF: [13, 4.8, 4.2] }),
   ];
 }
 
@@ -762,10 +805,12 @@ export const SPEARMAN = {
   alert: { size: LONG, fps: 8, loop: false, poses: spearAlert(), durations: [1, 2, 1] },
   thrust: { size: LONG, fps: 12, loop: false, poses: spearThrust(),
     durations: [1.2, 2.2, 0.8, 0.8, 1.4, 1.2, 1.2], motion: [80, 0, 0] },
+  lunge: { size: LONG, fps: 12, loop: false, poses: spearLunge(), durations: [1.2, 2.2, 0.8, 0.8, 1.4, 1.2, 1.2],
+    motion: [200, 0, 0], skid: true },
   sweep: { size: LONG, fps: 12, loop: false, poses: spearSweep(), durations: [1.2, 2, 0.8, 1, 1.2, 1.2] },
   hurt: { size: LONG, fps: 12, loop: false, poses: hurt(SPEAR_READY, { sword: 130 }), durations: [1, 1.2, 0.8, 0.8, 1],
     motion: [-80, 0, 0] },
-  stagger: { size: LONG, fps: 6, loop: false, poses: stagger(SPEAR_READY, { sword: 40 }), durations: [0.8, 1.6, 1.6, 1],
+  stagger: { size: LONG, fps: 6, loop: false, poses: stagger(SPEAR_READY, { sword: 40 }), durations: [0.7, 0.6, 1.2, 1.5, 1],
     motion: [-40, 0, 0] },
   death: { size: LONG, fps: 10, loop: false, poses: death(SPEAR_READY, { sword: 130 }),
     durations: [1, 1, 1, 0.7, 0.7, 0.6, 0.6, 0.6, 0.8, 1, 1.2, 2], motion: [-50, 0, 0], wind: [-10, 0, -6], limp: 0.9 },
@@ -984,8 +1029,9 @@ function capSweep() {
     head: { yaw: 30, pitch: 6 }, footN: [-12, -4.8, 4.2], footF: [10, 5, 4.2], handN: [-9, -9, 32], sword: [-56, 12],
     handF: [12, 3, 44], shield: [26, 6] });
   const held = pose(coil, { pelvis: [-2.9, 32.3], torso: { yaw: -32, pitch: 18.5, roll: 3 }, handN: [-10, -9, 31.6] });
+  // He steps into it: the front foot travels lifted as the blade crosses, and lands for the follow-through.
   const across = cr({ pelvis: [3.8, 31.2], hips: { yaw: 6, pitch: 18 }, torso: { yaw: 16, pitch: 24 }, head: { yaw: 6, pitch: 10 },
-    footN: [-11, -4.8, 4.2], footF: [17, 5, 4.2], handN: [18, -9, 26], sword: [76, -6], handF: [4, 6, 42],
+    footN: [-11, -4.8, 4.2], footF: [14, 5, 6.6], toeF: 10, handN: [18, -9, 26], sword: [76, -6], handF: [4, 6, 42],
     shield: [44, -14] });
   const through = cr({ pelvis: [4.6, 31], hips: { yaw: 18, pitch: 18 }, torso: { yaw: 32, pitch: 24, roll: -3 },
     head: { yaw: 2, pitch: 10 }, footF: [17, 5, 4.2], footN: [-8, -4.8, 6.4], toeN: 6, handN: [13, -2, 24], sword: [52, -36],
@@ -993,7 +1039,7 @@ function capSweep() {
   return [
     blend(CAP_READY, coil, 0.55), coil, held, across, through,
     pose(blend(through, CAP_READY, 0.45), { footF: through.footF, footN: CAP_BACK }),
-    pose(CAP_READY, { pelvis: [3, 37], footF: [14, 5, 4.2] }),
+    pose(CAP_READY, { pelvis: [3, 37], footF: [15.5, 5, 4.2] }),
   ];
 }
 
@@ -1035,12 +1081,14 @@ function kneelingBeheaded() {
       sword: [80, 40], handF: [8, 10, 24], shield: [80, -60] }),
     pose(kneel, { pelvis: [1, 20], hips: { pitch: 36 }, torso: { pitch: 24 }, footF: [10, 5, 4.2], handN: [22, -12, 12],
       sword: [90, 50], handF: [16, 10, 14], shield: [80, -70] }),
-    pose(kneel, { pelvis: [3, 14], hips: { pitch: 60 }, torso: { pitch: 18 }, footN: [-22, -4.8, 3.4], footF: [-12, 5, 3.6],
-      ...flat, handN: [28, -13, 6], sword: [90, 60], handF: [24, 10, 7], shield: [80, -86] }),
-    pose(kneel, { pelvis: [5, 9], hips: { pitch: 80 }, torso: { pitch: 6 }, footN: [-29, -4.8, 3.4], footF: [-27, 5, 3.6],
-      ...flat, handN: [32, -13, 4], sword: [90, 70], handF: [28, 10, 5], shield: [80, -90] }),
-    pose(kneel, { pelvis: [5, 8.2], hips: { pitch: 86 }, torso: { pitch: 4 }, footN: [-30, -4.8, 3.4], footF: [-28, 5, 3.6],
-      ...flat, handN: [33, -13, 3], sword: [90, 72], handF: [29, 10, 4], shield: [80, -90] }),
+    // Over onto his face: the body goes forward over the front foot, which turns and draws back only as its knee
+    // goes down; he lies with that leg bent under him.
+    pose(kneel, { pelvis: [4, 14], hips: { pitch: 60 }, torso: { pitch: 18 }, footN: [-22, -4.8, 3.4], footF: [4, 5, 3.8],
+      ...flat, toeF: -40, handN: [29, -13, 6], sword: [90, 60], handF: [25, 10, 7], shield: [80, -86] }),
+    pose(kneel, { pelvis: [7, 9], hips: { pitch: 80 }, torso: { pitch: 6 }, footN: [-27, -4.8, 3.4], footF: [-3, 5, 3.6],
+      ...flat, toeF: -70, handN: [34, -13, 4], sword: [90, 70], handF: [30, 10, 5], shield: [80, -90] }),
+    pose(kneel, { pelvis: [8, 8.2], hips: { pitch: 86 }, torso: { pitch: 4 }, footN: [-28, -4.8, 3.4], footF: [-10, 5, 3.6],
+      ...flat, handN: [35, -13, 3], sword: [90, 72], handF: [31, 10, 4], shield: [80, -90] }),
   ];
 }
 
@@ -1073,7 +1121,7 @@ export const CAPTAIN = {
     pose(CAP_GUARD, { pelvis: [-3, 35.4], torso: { yaw: 6, pitch: 3 }, head: { pitch: -6 }, handF: [9, 3, 53], shield: [26, 14] }),
     CAP_GUARD] },
   hurt: { size: WIDE, fps: 12, loop: false, poses: hurt(CAP_READY), durations: [1, 1.2, 0.8, 0.8, 1], motion: [-60, 0, 0] },
-  stagger: { size: WIDE, fps: 6, loop: false, poses: stagger(CAP_READY), durations: [0.8, 1.8, 1.8, 1], motion: [-30, 0, 0] },
+  stagger: { size: WIDE, fps: 6, loop: false, poses: stagger(CAP_READY), durations: [0.7, 0.6, 1.4, 1.7, 1], motion: [-30, 0, 0] },
   death: { size: WIDE, fps: 8, loop: false, poses: death(CAP_READY), durations: [1, 1.2, 1.2, 0.8, 0.8, 0.7, 0.7, 0.6, 0.8, 1, 1.4, 2.4],
     motion: [-40, 0, 0], wind: [-10, 0, -6], limp: 0.9 },
   // His end: beaten to his knee, then beheaded where he kneels.
@@ -1204,7 +1252,7 @@ export const MACEMAN = {
     motion: [50, 0, 0] },
   hurt: { size: WIDE, fps: 12, loop: false, poses: hurt(MACE_READY, { sword: 150, shieldFace: 0 }), durations: [1, 1.2, 0.8, 0.8, 1],
     motion: [-60, 0, 0] },
-  stagger: { size: WIDE, fps: 6, loop: false, poses: stagger(MACE_READY, { sword: 60, shieldFace: 0 }), durations: [0.8, 1.8, 1.8, 1],
+  stagger: { size: WIDE, fps: 6, loop: false, poses: stagger(MACE_READY, { sword: 60, shieldFace: 0 }), durations: [0.7, 0.6, 1.4, 1.7, 1],
     motion: [-30, 0, 0] },
   death: { size: WIDE, fps: 9, loop: false, poses: death(MACE_READY, { sword: 140, shieldFace: 0, arms: { shield: [0, 60] } }),
     durations: [1, 1.2, 1.2, 0.8, 0.8, 0.7, 0.7, 0.6, 0.8, 1, 1.4, 2.4], motion: [-40, 0, 0], wind: [-10, 0, -6], limp: 0.9 },
@@ -1291,7 +1339,7 @@ export const SHIELDBEARER = {
   block_hit: { size: WIDE, fps: 12, loop: false, motion: [-50, 0, 0], poses: WALL_HIT },
   hurt: { size: WIDE, fps: 12, loop: false, poses: hurt(WALL_READY, { sword: 120, shieldFace: 30 }), durations: [1, 1.2, 0.8, 0.8, 1],
     motion: [-70, 0, 0] },
-  stagger: { size: WIDE, fps: 6, loop: false, poses: stagger(WALL_READY, { sword: 40, shieldFace: 70 }), durations: [0.8, 1.6, 1.6, 1],
+  stagger: { size: WIDE, fps: 6, loop: false, poses: stagger(WALL_READY, { sword: 40, shieldFace: 70 }), durations: [0.7, 0.6, 1.2, 1.5, 1],
     motion: [-40, 0, 0] },
   death: { size: WIDE, fps: 10, loop: false, poses: death(WALL_READY, { sword: 130 }),
     durations: [1, 1, 1, 0.7, 0.7, 0.6, 0.6, 0.6, 0.8, 1, 1.2, 2], motion: [-50, 0, 0], wind: [-10, 0, -6], limp: 0.9 },
@@ -1361,7 +1409,7 @@ export const ENGINEER = {
   throw_pot: { size: WIDE, fps: 10, loop: false, poses: throwPot(), durations: [1, 2.2, 1, 0.8, 1, 1.2, 1.2, 1] },
   hurt: { size: WIDE, fps: 12, loop: false, poses: hurt(EMPTY_HANDED, POT_ARMS).map((p) => ({ ...p, shield: [0, -20] })),
     durations: [1, 1.2, 0.8, 0.8, 1], motion: [-80, 0, 0] },
-  stagger: { size: WIDE, fps: 6, loop: false, poses: stagger(EMPTY_HANDED, { sword: 40, shieldFace: 0 }), durations: [0.8, 1.6, 1.6, 1],
+  stagger: { size: WIDE, fps: 6, loop: false, poses: stagger(EMPTY_HANDED, { sword: 40, shieldFace: 0 }), durations: [0.7, 0.6, 1.2, 1.5, 1],
     motion: [-40, 0, 0] },
   death: { size: WIDE, fps: 10, loop: false, poses: death(EMPTY_HANDED, POT_ARMS),
     durations: [1, 1, 1, 0.7, 0.7, 0.6, 0.6, 0.6, 0.8, 1, 1.2, 2], motion: [-50, 0, 0], wind: [-10, 0, -6], limp: 0.9 },
@@ -1509,7 +1557,7 @@ export const SKIRMISHER = {
   hurt: { size: WIDE, fps: 12, loop: false, poses: hurt(SKIRM_READY, SKIRM_ARMS), durations: [1, 1.2, 0.8, 0.8, 1],
     motion: [-90, 0, 0] },
   stagger: { size: WIDE, fps: 6, loop: false, poses: stagger(SKIRM_READY, { sword: 60, shieldFace: -30 }),
-    durations: [0.8, 1.6, 1.6, 1], motion: [-40, 0, 0] },
+    durations: [0.7, 0.6, 1.2, 1.5, 1], motion: [-40, 0, 0] },
   death: { size: WIDE, fps: 10, loop: false, poses: death(SKIRM_READY, SKIRM_ARMS),
     durations: [1, 1, 1, 0.7, 0.7, 0.6, 0.6, 0.6, 0.8, 1, 1.2, 2], motion: [-50, 0, 0], wind: [-10, 0, -6], limp: 0.9 },
   loot: { size: BODY, fps: 6, loop: true, poses: SKIRM_LOOT(), durations: [1.6, 1, 1.4, 1, 2.2, 1, 0.8] },
@@ -1665,7 +1713,7 @@ export const AXEMAN = {
     motion: [50, 0, 0] },
   hurt: { size: WIDE, fps: 12, loop: false, poses: hurt(AXE_READY, { sword: 150, shieldFace: 0 }), durations: [1, 1.2, 0.8, 0.8, 1],
     motion: [-60, 0, 0] },
-  stagger: { size: WIDE, fps: 6, loop: false, poses: stagger(AXE_READY, { sword: 60, shieldFace: 0 }), durations: [0.8, 1.8, 1.8, 1],
+  stagger: { size: WIDE, fps: 6, loop: false, poses: stagger(AXE_READY, { sword: 60, shieldFace: 0 }), durations: [0.7, 0.6, 1.4, 1.7, 1],
     motion: [-30, 0, 0] },
   death: { size: WIDE, fps: 9, loop: false, poses: death(AXE_READY, AXE_ARMS),
     durations: [1, 1.2, 1.2, 0.8, 0.8, 0.7, 0.7, 0.6, 0.8, 1, 1.4, 2.4], motion: [-40, 0, 0], wind: [-10, 0, -6], limp: 0.9 },

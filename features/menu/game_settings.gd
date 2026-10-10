@@ -47,6 +47,8 @@ var charge_toggle: bool = false
 var move_prompts: Prompts = Prompts.LEARNING
 var lessons: LessonMode = LessonMode.FULL
 var language: String = "en"
+## Whether a playtest log is written (user://playlogs: the blows, falls and time per street; kept on this computer).
+var playtest_log: bool = true
 ## Each rebound action's buttons ("key:<code>", "mouse:<button>", "pad:<button>", "axis:<axis>:<sign>"); the
 ## actions not here keep the project's.
 var bindings: Dictionary[StringName, PackedStringArray] = {}
@@ -86,6 +88,7 @@ func load_settings() -> void:
 		var mode: int = file.get_value("interface", "lessons", lessons)
 		lessons = clampi(mode, 0, LessonMode.size() - 1) as LessonMode
 		language = file.get_value("interface", "language", language)
+		playtest_log = file.get_value("interface", "playtest_log", playtest_log)
 		bindings.clear()
 		if file.has_section("controls"):
 			for key: String in file.get_section_keys("controls"):
@@ -113,6 +116,7 @@ func save() -> void:
 	file.set_value("interface", "move_prompts", int(move_prompts))
 	file.set_value("interface", "lessons", int(lessons))
 	file.set_value("interface", "language", language)
+	file.set_value("interface", "playtest_log", playtest_log)
 	for action: StringName in bindings:
 		file.set_value("controls", String(action), bindings[action])
 	file.save(file_path())
@@ -182,6 +186,11 @@ func set_move_prompts(next: Prompts) -> void:
 
 func set_lessons(next: LessonMode) -> void:
 	lessons = next
+	_commit()
+
+
+func set_playtest_log(on: bool) -> void:
+	playtest_log = on
 	_commit()
 
 

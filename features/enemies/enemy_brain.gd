@@ -115,7 +115,8 @@ func _ready() -> void:
 
 ## A soldier who has not seen the hero: busy at his task if he has one, and open to a first strike.
 func _go_about_business() -> void:
-	soldier.unaware = not dormant
+	# A dormant group's ambushers are ready for him; a man busy at his task in plain sight has not seen him.
+	soldier.unaware = not dormant or _at_work_in_sight()
 	if activity != &"":
 		soldier.rest_animation = activity
 
@@ -156,11 +157,18 @@ func end_activity() -> void:
 ## A comrade's shout: a soldier still about his business turns to the fight (all but a headsman,
 ## who finishes his work first).
 func hear_alarm() -> void:
-	if dormant or soldier.dead or (mode != Mode.IDLE and mode != Mode.PATROL) or activity == &"execute":
+	if (dormant and not _at_work_in_sight()) or soldier.dead or (mode != Mode.IDLE and mode != Mode.PATROL) or activity == &"execute":
 		return
 	_acquire_target()
 	if target != null and not target.dead:
 		_alert()
+
+
+## A man of a dormant group busy at a task in plain sight (the library's looters): he waits for the group's
+## trigger like the rest, but sees, hears and is taken unawares as any busy soldier does. Hidden ambushers and those
+## with no task wait blind until they are sprung.
+func _at_work_in_sight() -> bool:
+	return activity != &"" and not soldier.get_meta(&"hidden", false)
 
 
 ## Lets a dormant soldier notice the hero (an ambush springs). Once sprung, he does not give up the
@@ -497,7 +505,7 @@ func _acquire_target() -> void:
 
 
 func _notices() -> bool:
-	if dormant or target == null or target.dead:
+	if (dormant and not _at_work_in_sight()) or target == null or target.dead:
 		return false
 	var p: EnemyProfile = soldier.profile
 	var offset: Vector2 = target.global_position - soldier.global_position

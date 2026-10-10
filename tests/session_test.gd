@@ -19,6 +19,7 @@ func _initialize() -> void:
 
 func _run() -> void:
 	SaveGame.erase()
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveGame.records_path()))
 	AbbasidGame.start_in_level = AbbasidGame.FIRST_LEVEL
 	change_scene_to_file("res://app/main.tscn")
 	await frames(20)
@@ -27,6 +28,9 @@ func _run() -> void:
 	check(game.hero != null and game.hero.is_on_floor(), "the hero stands in the street")
 	check(game.hud.objective_label.text != "", "an objective is shown")
 	game.hero.input.enabled = false
+	# The playtest log is kept through the play-through (it is off for the checks unless they turn it on).
+	game.play_log.in_checks = true
+	game.play_log.enabled = true
 	# The first warning of each colour stops the game (tested on its own, in _warning_card).
 	for tell: int in 4:
 		game.save.set_flag(StringName("seen_warning_%d" % tell))
@@ -42,6 +46,9 @@ func _run() -> void:
 	await _speak_with_ibrahim()
 	await _river_gate()
 	_check_save()
+	await _play_log()
+	await _save_failure()
+	await _lesson_language()
 	await _lesson_walked_past()
 	await _arts_in_the_streets()
 	await _growth()
@@ -149,11 +156,12 @@ func _speak_with_guard() -> void:
 	await _finish_dialogue()
 	await frames(4)
 	check(game.save.has_flag(&"talked_wounded_guard"), "the conversation is remembered")
-	check(game.hero.knows(&"charge") and game.save.has_flag(&"knows_charge"), "Hamid's counsel teaches the charged cleave")
+	check(game.save.lessons.has(&"HINT_COUNSEL_RIPOSTE") and not game.hero.knows(&"charge"),
+		"Hamid's counsel is the parry and the riposte (the held blow waits for the Scholars' Quarter)")
 	check(not (_interactable("wounded_guard") as Npc).has_news(), "and he has nothing new to say")
 	# What he taught stops the game: the move performed, its buttons, how and when.
 	check(game.state == AbbasidGame.State.LESSON and game.lesson_screen.visible and game.get_tree().paused
-		and game.lesson_screen.lesson == "HINT_LEARNED_CHARGE", "the new technique is shown on a card that stops the game")
+		and game.lesson_screen.lesson == "HINT_COUNSEL_RIPOSTE", "his counsel is shown on a card that stops the game")
 	check(game.lesson_screen._preview.visible, "Yusuf performs it")
 	game.lesson_screen.chosen.emit(&"lesson_done")
 	await frames(4)
@@ -311,6 +319,8 @@ func _ambush() -> void:
 		if not soldier.visible:
 			unseen += 1
 	check(unseen == 3, "they are out of sight until it springs")
+	check(ambushers.all(func(soldier: MongolSoldier) -> bool: return not soldier.unaware),
+		"hidden ambushers are ready for him, never taken unawares")
 	var trigger: Node2D = game.level.triggers.get_node("ambush") as Node2D
 	game.hero.global_position = Vector2(trigger.global_position.x, trigger.global_position.y + 76.0)
 	await frames(8)
@@ -411,22 +421,57 @@ func _check_save() -> void:
 	check(loaded.deaths == 1, "the falls are saved")
 
 
-## Walked past Hamid: the lesson of the held blow comes before the first lamp anyway.
+## Each lesson comes where its soldiers are (docs/combat_focus_plan.md): the Market and the Streets of Ash teach
+## neither the kick nor the charge; the Scholars' Quarter teaches the kick before the engineers' fire and the
+## charge past the axeman; a master's lesson (the guarded thrust) is given only on a journey after the chapter
+## was finished.
 func _lesson_walked_past() -> void:
-	print("a lesson walked past")
-	for flag: StringName in [&"knows_charge", &"hamid_counsel", &"talked_wounded_guard"]:
+	print("lessons where their soldiers are")
+	for level: String in ["fallen_market", "streets_of_ash"]:
+		game._enter_level("res://features/levels/%s/%s.tscn" % [level, level], &"", false, false)
+		await frames(20)
+		check(game.level.triggers.get_node_or_null("lesson_charge") == null
+			and game.level.triggers.get_node_or_null("lesson_kick") == null and not game.hero.knows(&"charge")
+			and not game.hero.knows(&"kick"), "no kick or charge is taught in %s, where no soldier asks for one" % level)
+	for flag: StringName in [&"knows_kick", &"knows_charge", &"knows_guarded_thrust", &"master", &"lesson_kick",
+			&"lesson_charge", &"lesson_guarded_thrust"]:
 		game.save.flags.erase(flag)
-	game._enter_level(AbbasidGame.FIRST_LEVEL, &"", false, false)
+	game._enter_level("res://features/levels/scholars_quarter/scholars_quarter.tscn", &"", false, false)
 	await frames(20)
 	game.hero.input.enabled = false
-	check(not game.hero.knows(&"charge"), "without Hamid's counsel he does not hold his blow back")
-	var lesson: Node2D = game.level.triggers.get_node("lesson_charge") as Node2D
-	game.hero.global_position = Vector2(lesson.global_position.x, game.hero.global_position.y)
+	# A master's lesson: nothing on a first journey.
+	var guarded: Node2D = game.level.triggers.get_node("lesson_guarded_thrust") as Node2D
+	game.hero.global_position = Vector2(guarded.global_position.x, game.hero.global_position.y)
 	await frames(10)
-	check(game.hero.knows(&"charge") and game.save.has_flag(&"knows_charge"), "the lesson comes before the first lamp")
-	check(game.state == AbbasidGame.State.LESSON and game.lesson_screen.lesson == "HINT_LEARNED_CHARGE",
-		"and stops the game to show it")
+	check(not game.hero.knows(&"guarded_thrust") and game.state == AbbasidGame.State.PLAYING,
+		"on a first journey a master's lesson teaches nothing")
+	for lesson: StringName in [&"lesson_kick", &"lesson_charge"]:
+		var technique: StringName = StringName(String(lesson).trim_prefix("lesson_"))
+		check(not game.hero.knows(technique), "before its lesson he does not know the %s" % technique)
+		var trigger: Node2D = game.level.triggers.get_node(String(lesson)) as Node2D
+		# The soldiers before it beaten, as a player passing through would have (a lesson waits for the quiet).
+		for soldier: MongolSoldier in game.level.soldiers():
+			if not soldier.dead and absf(soldier.global_position.x - trigger.global_position.x) < 400.0:
+				soldier.take_damage(soldier.max_health * 10.0)
+		await frames(30)
+		game.hero.global_position = Vector2(trigger.global_position.x, game.hero.global_position.y)
+		await frames(10)
+		check(game.hero.knows(technique) and game.state == AbbasidGame.State.LESSON
+			and game.lesson_screen.lesson == "HINT_LEARNED_%s" % String(technique).to_upper(),
+			"the %s is taught where its soldiers are, on a card that stops the game" % technique)
+		await _read_cards()
+	# A master's journey: the same lesson teaches.
+	game.save.set_flag(&"master")
+	game._enter_level("res://features/levels/scholars_quarter/scholars_quarter.tscn", &"", false, false)
+	await frames(20)
+	game.hero.input.enabled = false
+	guarded = game.level.triggers.get_node("lesson_guarded_thrust") as Node2D
+	game.hero.global_position = Vector2(guarded.global_position.x, game.hero.global_position.y)
+	await frames(10)
+	check(game.hero.knows(&"guarded_thrust"), "on a master's journey it teaches the guarded thrust")
 	await _read_cards()
+	for flag: StringName in [&"master", &"knows_guarded_thrust", &"knows_kick", &"knows_charge"]:
+		game.save.flags.erase(flag)
 
 
 ## The Streets of Ash: a leaf of the treatise teaches the Storm of Blades, and with it the resolve meter,
@@ -589,6 +634,26 @@ func _coach() -> void:
 	await frames(40)
 	check(lessons.current_text() == tr("HINT_ATTACK"), "and whole once the fight is over")
 	lessons.clear()
+	# A wounded man down: from a step off the coach names the ground stroke; over him the finisher's prompt (on
+	# the same button) stands alone, the coach gone without lingering.
+	game.settings.set_move_prompts(GameSettings.Prompts.ALWAYS)
+	var lying: MongolSoldier = scene.instantiate() as MongolSoldier
+	game.level.get_node("Enemies").add_child(lying)
+	lying.global_position = game.hero.global_position + Vector2(game.hero.facing * 44.0, 0.0)
+	(lying.get_node("Brain") as Node).process_mode = Node.PROCESS_MODE_DISABLED
+	lying.unaware = false
+	await frames(4)
+	lying.health = lying.max_health * 0.4
+	lying.knock_down()
+	await frames(30)
+	var stroke: StringName = coach.wanted_technique()
+	game.hero.global_position.x = lying.global_position.x - game.hero.facing * 8.0
+	await frames(10)
+	check(stroke == &"ground_stab" and game.hero.finisher_target == lying and coach.wanted_technique() == &""
+		and not coach._panel.visible, "over a wounded man down, the finisher's prompt stands alone (%s a step off)" % stroke)
+	lying.queue_free()
+	game.settings.set_move_prompts(GameSettings.Prompts.LEARNING)
+	await frames(2)
 	game.save.bought.clear()
 	game._apply_growth()
 
@@ -762,8 +827,14 @@ func _growth() -> void:
 	await frames(4)
 	check(game.state == AbbasidGame.State.LAMP, "the lamp menu opens")
 	var tree: Progression = game.progression
+	check(tree.state_of(tree.node(&"pommel")) == Progression.NodeState.LOCKED
+		and tree.lock_reason(tree.node(&"pommel")) == "LOCK_MASTER",
+		"on a first journey the master's techniques wait for a finished chapter")
+	check(tree.lock_reason(tree.node(&"judgment")) == "LOCK_LAST_GATE",
+		"and the Judgment waits only for the Last Gate, not for the master's techniques above it")
+	# A master's journey.
+	game.save.set_flag(&"master")
 	check(tree.state_of(tree.node(&"whirl")) == Progression.NodeState.LOCKED, "a node waits for the one above it")
-	check(tree.state_of(tree.node(&"executioner")) == Progression.NodeState.LOCKED, "and one waits for the story")
 	game.lamp_menu._on_node_pressed(&"pommel")
 	game.lamp_menu._on_node_pressed(&"whirl")
 	game.lamp_menu._on_node_pressed(&"steady_guard")
@@ -782,6 +853,7 @@ func _growth() -> void:
 	await frames(4)
 	check(game.save.honour == 400 and game.save.bought.is_empty() and not game.hero.knows(&"pommel"),
 		"unlearning gives every Honour back")
+	game.save.flags.erase(&"master")
 	# Keepsakes: given, worn at once while a slot is free, changing how he fights.
 	game._give_keepsake(&"red_thread")
 	game._give_keepsake(&"bronze_seal")
@@ -881,7 +953,17 @@ func _library() -> void:
 	# What the levels before taught him, and a page of the treatise here.
 	check(game.hero.knows(&"bash") and not game.hero.knows(&"plunge"), "here he knows the bash, not yet the plunge")
 	check(game.hero.knows(&"knives") and game.hero.knives == game.hero.max_knives(), "and carries Salim's knives")
-	check(game.hero.knows(&"charge"), "and holds his blow back as Hamid taught him")
+	check(not game.hero.knows(&"charge") and not game.hero.knows(&"kick"),
+		"the kick and the charge are still to come, where their soldiers are")
+	# The library's men, busy at their work in plain sight, have not seen him: the plunge from the gallery takes
+	# them unawares, as its page says.
+	var at_work: Array[MongolSoldier] = []
+	for soldier: MongolSoldier in game.level.soldiers():
+		if soldier.get_meta(&"group", &"") == &"library":
+			at_work.append(soldier)
+	check(at_work.size() == 4 and at_work.all(func(soldier: MongolSoldier) -> bool: return soldier.unaware),
+		"the library's men at their work can be taken unawares (%d of %d)" % [at_work.filter(
+			func(soldier: MongolSoldier) -> bool: return soldier.unaware).size(), at_work.size()])
 	check(game.hero.knows(&"storm") and game.hero.has_resolve(), "and the Storm of Blades")
 	# The first engineer he kills leaves him his naphtha.
 	var engineer: MongolSoldier = null
@@ -981,6 +1063,9 @@ func _last_gate() -> void:
 	game.card.skip()
 	await frames(4)
 	check(game.state == AbbasidGame.State.COMPLETE and game.complete.visible, "the chapter is complete")
+	check(SaveGame.is_master() and game.save.has_flag(&"master"),
+		"the chapter finished, every later journey is a master's (its techniques open)")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveGame.records_path()))
 
 
 ## The story told in pictures (docs/cinematics_plan.md): each cinematic is made and plays every shot to its end,
@@ -1137,6 +1222,101 @@ func _cinematics() -> void:
 	card.queue_free()
 	TranslationServer.set_locale(locale)
 	await process_frame
+
+
+## The playtest log: what was played is written as it happens (each street entered, every blow swung and taken,
+## kills, falls, lamps) and summed up per street for a person to read; switched off, nothing more is written.
+func _play_log() -> void:
+	print("the playtest log")
+	var log: PlayLog = game.play_log
+	# A blow swung, and one taken on the shield from a soldier of the street.
+	game.hero.swung.emit(load("res://features/warrior/definitions/light_1.tres") as AttackDefinition)
+	var soldier: Combatant = null
+	for node: Node in game.level.enemies.get_children():
+		if node is MongolSoldier:
+			soldier = node as Combatant
+			break
+	var slash: AttackDefinition = load("res://features/enemies/definitions/swordsman_slash.tres")
+	game.hero.struck.emit(HitData.from_attack(soldier, slash), HitData.Outcome.BLOCKED)
+	await frames(2)
+	log.write_summary()
+	var events: String = FileAccess.get_file_as_string(log.file_path())
+	var summary: String = FileAccess.get_file_as_string(log.summary_path())
+	for needle: String in [",enter,streets_of_ash", ",swing,", ",kill,", ",fall,", ",taken,", ",lamp,"]:
+		if not events.contains(needle):
+			print("  missing from the log: %s" % needle)
+	for needle: String in ["== FALLEN_MARKET, played", "Falls (", "Blows swung (", "Warnings and his answers ("]:
+		if not summary.contains(needle):
+			print("  missing from the summary: %s" % needle)
+	check(events.contains(",enter,streets_of_ash") and events.contains(",swing,") and events.contains(",kill,")
+		and events.contains(",fall,") and events.contains(",taken,") and events.contains(",lamp,"),
+		"every street, blow, kill, fall and lamp is written as it happens")
+	check(summary.contains("== FALLEN_MARKET, played") and summary.contains("Falls (")
+		and summary.contains("Blows swung (") and summary.contains("Warnings and his answers ("),
+		"and summed up per street for a person to read")
+	var before: int = events.length()
+	game.settings.set_playtest_log(false)
+	log.event("swing", "light_1")
+	var after: String = FileAccess.get_file_as_string(log.file_path())
+	check(after.length() == before and not log.enabled, "switched off in the settings, nothing more is written")
+	game.settings.set_playtest_log(true)
+	log.in_checks = false
+	log.enabled = false
+	for path: String in [log.file_path(), log.summary_path()]:
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+
+## A save that fails is never shown as saved (captures/review_2026-10-09/probe_save.gd): no lamp turns in the corner,
+## the lamp's "your way is saved" is not said; the player is told it failed; the journey stays in memory, so the
+## next save writes all of it and says so.
+func _save_failure() -> void:
+	print("a save that fails")
+	var prefix: String = OS.get_environment("ABBASID_USER_PREFIX")
+	game.hud._saved_left = 0.0
+	game.hud.notices.clear()
+	game.save.set_flag(&"kept_in_memory")
+	# A folder that does not exist: the write cannot take.
+	OS.set_environment("ABBASID_USER_PREFIX", prefix + "missing_folder/")
+	var written: bool = game._save_game()
+	check(not written and game.hud._saved_left <= 0.0 and not SaveGame.exists(),
+		"a save that fails is never shown as saved")
+	check(game.hud.notices.texts().has(tr("NOTICE_SAVE_FAILED")), "the player is told it failed")
+	# Resting at a lamp while it fails: no word of a saved way.
+	var lamp: Checkpoint = game.level.checkpoint(&"square_lamp")
+	game.hud.notices.clear()
+	lamp.interact(game.hero)
+	await frames(10)
+	game.lamp_menu.chosen.emit(&"leave")
+	await frames(10)
+	var news: PackedStringArray = game.hud.notices.texts()
+	check(not news.has(tr("NOTICE_SAVED")) and news.has(tr("NOTICE_SAVE_FAILED")) and game.hud._saved_left <= 0.0,
+		"a lamp whose save failed does not say the way is saved (%s)" % " | ".join(news))
+	OS.set_environment("ABBASID_USER_PREFIX", prefix)
+	check(game._save_game() and game.hud._saved_left > 0.0, "the next save is written, and shown")
+	check(SaveGame.load_game().has_flag(&"kept_in_memory"), "with what was kept in memory meanwhile")
+	game.save.flags.erase(&"kept_in_memory")
+	game._save_game()
+
+
+## A lesson up as the language changes is laid out again in the new one, right to left in Arabic, and back
+## (captures/review_2026-10-09/probe_language.gd).
+func _lesson_language() -> void:
+	print("a lesson as the language changes")
+	var lessons: LessonCard = game.hud.lessons
+	lessons.clear()
+	game.settings.set_language("en")
+	lessons._show("HINT_MOVE", false)
+	var english: String = lessons.current_text()
+	game.settings.set_language("ar")
+	await frames(2)
+	var title_key: String = Lessons.title_of("HINT_MOVE")
+	check(lessons.current() == "HINT_MOVE" and lessons.current_text() == tr("HINT_MOVE")
+		and lessons.current_text() != english and lessons._text.is_layout_rtl()
+		and (title_key == "" or lessons._title.text == tr(title_key)),
+		"a lesson up when Arabic is chosen is laid out again in Arabic, right to left")
+	game.settings.set_language("en")
+	await frames(2)
+	check(lessons.current_text() == english and not lessons._text.is_layout_rtl(), "and back in English, left to right")
+	lessons.clear()
 
 ## Quitting while sounds still play makes Godot report their playbacks as leaked; free the
 ## session first and give the audio thread a moment to let go.

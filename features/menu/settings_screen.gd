@@ -9,14 +9,15 @@ extends MenuScreen
 
 const PAGES: Array[StringName] = [&"gameplay", &"controls", &"audio", &"display", &"access"]
 const ROWS: Dictionary[StringName, Array] = {
-	&"gameplay": [&"prompts", &"lessons", &"charge", &"gore", &"language"],
+	&"gameplay": [&"prompts", &"lessons", &"charge", &"gore", &"language", &"playtest_log"],
 	&"audio": [&"Master", &"Music", &"Effects", &"Ambience"],
 	&"display": [&"fullscreen", &"window_scale", &"vsync", &"brightness"],
 	&"access": [&"shake", &"flashes", &"time_effects", &"colourblind"],
 }
 const LABELS: Dictionary[StringName, String] = {
 	&"prompts": "SETTINGS_PROMPTS", &"lessons": "SETTINGS_LESSONS", &"charge": "SETTINGS_CHARGE",
-	&"gore": "SETTINGS_GORE", &"language": "SETTINGS_LANGUAGE", &"Master": "SETTINGS_MASTER", &"Music": "SETTINGS_MUSIC",
+	&"gore": "SETTINGS_GORE", &"language": "SETTINGS_LANGUAGE", &"playtest_log": "SETTINGS_PLAYTEST_LOG",
+	&"Master": "SETTINGS_MASTER", &"Music": "SETTINGS_MUSIC",
 	&"Effects": "SETTINGS_EFFECTS", &"Ambience": "SETTINGS_AMBIENCE", &"fullscreen": "SETTINGS_FULLSCREEN",
 	&"window_scale": "SETTINGS_WINDOW", &"vsync": "SETTINGS_VSYNC", &"brightness": "SETTINGS_BRIGHTNESS",
 	&"shake": "SETTINGS_SHAKE", &"flashes": "SETTINGS_FLASHES", &"time_effects": "SETTINGS_TIME",
@@ -267,6 +268,8 @@ func _value_text(setting: StringName) -> String:
 			return tr(modes[int(settings.lessons)])
 		&"language":
 			return "English" if settings.language == "en" else "العربية"
+		&"playtest_log":
+			return tr("SETTING_ON") if settings.playtest_log else tr("SETTING_OFF")
 	return ""
 
 
@@ -336,6 +339,8 @@ func _step(setting: StringName, direction: int) -> void:
 			settings.set_gore(not settings.gore)
 		&"charge":
 			settings.set_charge_toggle(not settings.charge_toggle)
+		&"playtest_log":
+			settings.set_playtest_log(not settings.playtest_log)
 		&"prompts":
 			var count: int = GameSettings.Prompts.size()
 			settings.set_move_prompts(wrapi(int(settings.move_prompts) + direction, 0, count) as GameSettings.Prompts)

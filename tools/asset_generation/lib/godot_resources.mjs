@@ -1,5 +1,6 @@
 // Writes Godot text resources for generated art.
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync } from "node:fs";
+import { writeSteadily } from "./files.mjs";
 import { dirname } from "node:path";
 
 function cross(o, a, b) {
@@ -120,7 +121,7 @@ export function writeFrameHitboxes(path, meta) {
     "",
   ].join("\n");
   mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, text);
+  writeSteadily(path, text);
 }
 
 /**
@@ -147,7 +148,7 @@ export function writeGoreSet(path, { pieces, bottoms, origins, cuts, wounds }) {
     "",
   ].join("\n");
   mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, text);
+  writeSteadily(path, text);
 }
 
 /**
@@ -177,7 +178,7 @@ export function writeFinisherDefinition(path, key, finisher) {
     "",
   ].join("\n");
   mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, text);
+  writeSteadily(path, text);
 }
 
 /**
@@ -201,7 +202,7 @@ export function writeSpriteFramesRegions(path, animations) {
     `"name": &"${a.name}",\n"speed": ${a.fps.toFixed(1)}\n}`);
   lines.push("[resource]", `animations = [${anims.join(", ")}]`, "");
   mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, lines.join("\n"));
+  writeSteadily(path, lines.join("\n"));
 }
 
 /**
@@ -238,5 +239,5 @@ export function writeSpriteFrames(path, resDir, meta) {
   lines.push(`animations = [${animations.join(", ")}]`);
   lines.push("");
   mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, lines.join("\n"));
+  writeSteadily(path, lines.join("\n"));
 }

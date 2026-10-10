@@ -1,6 +1,11 @@
 // Writes captures/animation_reel.html: every character's animations playing at their in-game
 // timing (frame rate and per-frame holds), with the attacks' live frames marked, for review on any
 // screen. The sprite strips are embedded, so the page stands alone.
+// The cast is whoever has been built: every folder under assets/characters (the hero), assets/enemies
+// (the soldiers) and assets/npcs (the townsfolk) with a <prefix>_frames.json, so a new soldier is in the
+// reel as soon as his art is. Names come from the game's words (a soldier's profile, a speaker's name);
+// a soldier's live frames from the attacks his own profile uses (several soldiers share an animation
+// name, each with his own timing), the hero's from his definitions.
 // Usage: node tools/review_reel.mjs
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -8,49 +13,151 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
-const CAST = [
-  { id: "yusuf", name: "Yusuf", role: "Guardsman of the Caliph", dir: "assets/characters/warrior", prefix: "warrior",
-    defs: "features/warrior/definitions", side: "hero" },
-  { id: "swordsman", name: "Swordsman", role: "Mongol, sabre and shield", dir: "assets/enemies/swordsman", prefix: "swordsman",
-    defs: "features/enemies/definitions", side: "foe" },
-  { id: "spearman", name: "Spearman", role: "Mongol, spear and shield", dir: "assets/enemies/spearman", prefix: "spearman",
-    defs: "features/enemies/definitions", side: "foe" },
-  { id: "archer", name: "Archer", role: "Mongol, composite bow", dir: "assets/enemies/archer", prefix: "archer",
-    defs: "features/enemies/definitions", side: "foe" },
-  { id: "captain", name: "Toqto Noyan", role: "Captain of a thousand", dir: "assets/enemies/captain", prefix: "captain",
-    defs: "features/enemies/definitions", side: "foe" },
-  ...[["scholar", "Shaykh Ibrahim", "Bookseller"], ["guard", "Hamid", "Wounded guardsman"], ["mother", "Mother", "Sheltering her child"],
-    ["salim", "Salim", "The man in the saffron sash"], ["librarian", "Abd al-Latif", "Keeper of the library"],
-    ["copyist", "Copyist", "Hiding among the books"], ["refugee_man", "Townsman", "Fleeing the fires"],
-    ["refugee_woman", "Townswoman", "Fleeing the fires"]].map(([id, name, role]) => ({
-    id, name, role, dir: `assets/npcs/${id}`, prefix: id, defs: null, side: "town" })),
+/** Where the built characters are, and which side each folder's people are on. */
+const FOLDERS = [
+  { folder: "assets/characters", side: "hero" },
+  { folder: "assets/enemies", side: "foe" },
+  { folder: "assets/npcs", side: "town" },
 ];
+const HERO_DEFINITIONS = "features/warrior/definitions";
+const ENEMY_DEFINITIONS = "features/enemies/definitions";
+/** The order soldiers are met in; any soldier not listed follows, by name. */
+const MET = ["swordsman", "spearman", "archer", "veteran", "maceman", "shieldbearer", "engineer", "skirmisher", "axeman",
+  "captain"];
+/** A line under each name (the reel's own words); a character without one shows his side. */
+const ROLES = {
+  warrior: "Guardsman of the Caliph", swordsman: "Mongol, sabre and shield", spearman: "Mongol, spear and shield",
+  archer: "Mongol, composite bow", veteran: "Keshig, the khan's guard", maceman: "Mongol, flanged mace",
+  shieldbearer: "Georgian auxiliary, tower shield", engineer: "Siege engineer, fire pots", skirmisher: "Kipchak, sabre and knife",
+  axeman: "Georgian auxiliary, long axe", captain: "Captain of a thousand", scholar: "Bookseller", guard: "Wounded guardsman",
+  mother: "Sheltering her child", salim: "The man in the saffron sash", librarian: "Keeper of the library",
+  copyist: "Hiding among the books", refugee_man: "Fleeing the fires", refugee_woman: "Fleeing the fires",
+};
+/** The speaker's name for one whose folder is named otherwise (it goes before a soldier's profile name). */
+const SPEAKERS = { warrior: "SPEAKER_YUSUF", captain: "SPEAKER_TOQTO", scholar: "SPEAKER_IBRAHIM", refugee_man: "SPEAKER_REFUGEE" };
+const SIDE_ROLES = { hero: "The hero", foe: "Soldier", town: "Townsfolk" };
 
-/** The live frames of every attack definition, by animation name. */
-function liveFrames(dir) {
+/** The English column of the game's words (assets/localization/strings.csv: key, English, Arabic). */
+function words() {
+  const text = readFileSync(join(ROOT, "assets", "localization", "strings.csv"), "utf8");
   const out = {};
-  if (!dir) return out;
-  const folder = join(ROOT, dir);
-  for (const file of existsSync(folder) ? readdirSync(folder) : []) {
-    if (!file.endsWith(".tres")) continue;
-    const text = readFileSync(join(folder, file), "utf8");
-    const anim = /animation = &"([^"]+)"/.exec(text)?.[1];
-    if (!anim) continue;
-    const num = (key, fallback) => Number(new RegExp(`^${key} = (-?\\d+)`, "m").exec(text)?.[1] ?? fallback);
-    out[anim] = {
-      name: /display_name = "([^"]+)"/.exec(text)?.[1] ?? anim,
-      from: num("active_from", 2), to: num("active_to", 3), telegraph: num("telegraph_frame", -1),
-      projectile: num("projectile_frame", -1), recovery: num("recovery_from", 4),
-      dire: /^unblockable = true/m.test(text) || /^parryable = false/m.test(text),
-      sweep: !/^use_blade_sweep = false/m.test(text),
-    };
+  let row = [];
+  let cell = "";
+  let quoted = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (quoted) {
+      if (c === '"' && text[i + 1] === '"') { cell += '"'; i++; }
+      else if (c === '"') quoted = false;
+      else cell += c;
+    } else if (c === '"') quoted = true;
+    else if (c === ",") { row.push(cell); cell = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && text[i + 1] === "\n") i++;
+      row.push(cell);
+      if (row.length > 1) out[row[0]] = row[1];
+      row = [];
+      cell = "";
+    } else cell += c;
+  }
+  return out;
+}
+const WORDS = words();
+const titled = (id) => id.split("_").map((w) => w[0].toUpperCase() + w.slice(1)).join(" ");
+
+/** One attack definition's frames, or null if the file is not one. */
+function attackOf(text) {
+  const anim = /^animation = &"([^"]+)"/m.exec(text)?.[1];
+  if (!anim) return null;
+  const num = (key, fallback) => Number(new RegExp(`^${key} = (-?\\d+)`, "m").exec(text)?.[1] ?? fallback);
+  return {
+    anim,
+    name: /display_name = "([^"]+)"/.exec(text)?.[1] ?? anim,
+    from: num("active_from", 2), to: num("active_to", 3), telegraph: num("telegraph_frame", -1),
+    projectile: num("projectile_frame", -1), recovery: num("recovery_from", 4),
+    dire: /^unblockable = true/m.test(text) || /^parryable = false/m.test(text),
+    sweep: !/^use_blade_sweep = false/m.test(text),
+  };
+}
+
+/** The hero's live frames: every attack definition in his folder, by animation name. */
+function heroLive() {
+  const out = {};
+  const folder = join(ROOT, HERO_DEFINITIONS);
+  for (const file of readdirSync(folder).filter((f) => f.endsWith(".tres")).sort()) {
+    const attack = attackOf(readFileSync(join(folder, file), "utf8"));
+    if (attack && !out[attack.anim]) out[attack.anim] = attack;
   }
   return out;
 }
 
-const cast = CAST.map((c) => {
-  const meta = JSON.parse(readFileSync(join(ROOT, c.dir, `${c.prefix}_frames.json`), "utf8"));
-  const live = liveFrames(c.defs);
+/** A soldier's live frames: the attacks his profile uses, and those they lead on to (a follow-up, a riposte),
+ *  the profile's own first where two share an animation. */
+function soldierLive(profile) {
+  const out = {};
+  const seen = new Set();
+  const queue = [profile];
+  while (queue.length) {
+    const path = queue.shift();
+    if (seen.has(path) || !existsSync(path)) continue;
+    seen.add(path);
+    const text = readFileSync(path, "utf8");
+    const attack = attackOf(text);
+    if (attack && !out[attack.anim]) out[attack.anim] = attack;
+    for (const [, res] of text.matchAll(/\[ext_resource type="Resource" path="res:\/\/([^"]+\.tres)"/g)) {
+      queue.push(join(ROOT, res));
+    }
+  }
+  return out;
+}
+
+/** Everyone built, the hero first, then the soldiers in the order they are met, then the townsfolk. */
+function castOf() {
+  const out = [];
+  const warnings = [];
+  for (const { folder, side } of FOLDERS) {
+    const people = [];
+    for (const id of readdirSync(join(ROOT, folder)).sort()) {
+      const dir = `${folder}/${id}`;
+      const frames = existsSync(join(ROOT, dir)) ? readdirSync(join(ROOT, dir)).find((f) => f.endsWith("_frames.json")) : null;
+      if (!frames) {
+        warnings.push(`${dir} has no frames (not built?)`);
+        continue;
+      }
+      let name = WORDS[SPEAKERS[id] ?? `SPEAKER_${id.toUpperCase()}`];
+      let live = {};
+      if (side === "hero") live = heroLive();
+      if (side === "foe") {
+        const profile = join(ROOT, ENEMY_DEFINITIONS, `${id}.tres`);
+        if (existsSync(profile)) {
+          const shown = /^display_name = "([^"]+)"/m.exec(readFileSync(profile, "utf8"))?.[1];
+          if (!SPEAKERS[id] && shown) name = WORDS[shown] ?? shown;
+          live = soldierLive(profile);
+        } else warnings.push(`${dir}: no profile at ${ENEMY_DEFINITIONS}/${id}.tres, so no live frames`);
+      }
+      people.push({ id, name: name ?? titled(id), role: ROLES[id] ?? SIDE_ROLES[side], side, dir,
+        meta: frames, live });
+    }
+    if (side === "foe") {
+      const rank = (id) => (MET.includes(id) ? MET.indexOf(id) : MET.length);
+      people.sort((a, b) => rank(a.id) - rank(b.id) || a.id.localeCompare(b.id));
+    }
+    out.push(...people);
+  }
+  // Every soldier the game defines should have been built.
+  for (const file of readdirSync(join(ROOT, ENEMY_DEFINITIONS))) {
+    const text = readFileSync(join(ROOT, ENEMY_DEFINITIONS, file), "utf8");
+    if (/script_class="EnemyProfile"/.test(text) && !out.some((p) => p.side === "foe" && `${p.id}.tres` === file)) {
+      warnings.push(`the profile ${file} has no built art in assets/enemies`);
+    }
+  }
+  return { people: out, warnings };
+}
+
+const { people, warnings } = castOf();
+const cast = people.map((c) => {
+  const meta = JSON.parse(readFileSync(join(ROOT, c.dir, c.meta), "utf8"));
+  const live = c.live;
   const animations = Object.values(meta).map((m) => ({
     name: m.name,
     frames: m.frames,
@@ -202,7 +309,8 @@ function stateOf(a, f) {
 }
 
 // Sword trails, as the game draws them (features/combat/sword_trail.gd): each live frame adds a
-// crescent from the blade's last position to its new one, fading in 0.13 s, drawn behind the body.
+// crescent over the outer half of the blade from its last position to its new one, fading in 0.13 s, drawn
+// behind the body (the game's fade_time, inner and glow).
 const FADE = 0.13;
 let crescents = [];
 
@@ -240,11 +348,11 @@ function addTrail(a, f) {
     const hy = from.hilt[1] + (to.hilt[1] - from.hilt[1]) * k;
     const d = [Math.cos(a0 + turn * k), Math.sin(a0 + turn * k)];
     const l = len(from) + (len(to) - len(from)) * k;
-    const reach = 0.8 + (0.32 - 0.8) * k;
+    const reach = 0.8 + (0.5 - 0.8) * k;
     outer.push([hx + d[0] * l, hy + d[1] * l]);
     inner.push([hx + d[0] * l * reach, hy + d[1] * l * reach]);
-    oa.push(0.95 * Math.pow(k, 1.4));
-    ia.push(0.4 * k);
+    oa.push(0.65 * Math.pow(k, 1.2));
+    ia.push(0.12 * k);
   }
   crescents.push({ age: 0, tint, edge: outer.slice(5), points: outer.concat(inner.reverse()), alphas: oa.concat(ia.reverse()) });
 }
@@ -266,7 +374,7 @@ function drawTrails(ox, oy) {
       ctx.fill();
     }
     if (c.edge) {
-      ctx.strokeStyle = "rgba(255, 255, 245, " + life.toFixed(3) + ")";
+      ctx.strokeStyle = "rgba(255, 255, 245, " + (life * 0.85).toFixed(3) + ")";
       ctx.lineWidth = 1;
       ctx.beginPath();
       c.edge.forEach((p, i) => (i ? ctx.lineTo(ox + p[0], oy + p[1]) : ctx.moveTo(ox + p[0], oy + p[1])));
@@ -413,5 +521,12 @@ requestAnimationFrame(tick);
 `;
 
 writeFileSync(join(ROOT, "captures", "animation_reel.html"), html);
-console.log(`animation reel: ${cast.length} characters, ${cast.reduce((n, c) => n + c.animations.length, 0)} animations,`
-  + ` ${(html.length / 1024).toFixed(0)} KB`);
+const count = (side) => cast.filter((c) => c.side === side).length;
+for (const c of cast) {
+  const marked = c.animations.filter((a) => a.live).length;
+  console.log(`  ${c.side.padEnd(4)} ${c.id.padEnd(14)} ${String(c.animations.length).padStart(3)} animations`
+    + (marked ? `, ${marked} with live frames` : ""));
+}
+for (const warning of warnings) console.log(`  warning: ${warning}`);
+console.log(`animation reel: ${cast.length} characters (${count("hero")} hero, ${count("foe")} soldiers, ${count("town")} townsfolk),`
+  + ` ${cast.reduce((n, c) => n + c.animations.length, 0)} animations, ${(html.length / 1024).toFixed(0)} KB`);

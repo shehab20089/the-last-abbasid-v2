@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://druxvq5isv7nh"
-path="res://.godot/imported/archer_draw.png-0c48a09888819e6b72493b34b4cd3494.ctex"
+uid="uid://bi2gmd06xccca"
+path="res://.godot/imported/spearman_lunge.png-8c0a7a6260ede9078ccbbc92e9a01a55.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/enemies/archer/archer_draw.png"
-dest_files=["res://.godot/imported/archer_draw.png-0c48a09888819e6b72493b34b4cd3494.ctex"]
+source_file="res://assets/enemies/spearman/spearman_lunge.png"
+dest_files=["res://.godot/imported/spearman_lunge.png-8c0a7a6260ede9078ccbbc92e9a01a55.ctex"]
 
 [params]
 

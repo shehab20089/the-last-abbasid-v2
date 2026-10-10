@@ -304,7 +304,8 @@ function plungeLand() {
     handN: [14, -9, 34], sword: [40, 6], handF: [8, 5, 44], shield: [46, 8] });
   const rise = pose(pull, { pelvis: [0.5, 34.5], hips: { yaw: -16, pitch: 8 }, torso: { yaw: -2, pitch: 11 },
     head: { pitch: 0 }, handN: [12, -9.5, 39], sword: [96, 14], handF: [8, 3, 46], shield: [40, 0] });
-  return [impact, sink, pull, rise, blend(rise, READY, 0.6), READY];
+  // The blade comes out of the street over two frames, so the body unfolds off it rather than springing up.
+  return [impact, sink, blend(sink, pull, 0.5), pull, rise, blend(rise, READY, 0.6), READY];
 }
 
 // --- Sword ----------------------------------------------------------------------------------
@@ -1008,7 +1009,7 @@ function death() {
     ready({ pelvis: [-4, 32], hips: { yaw: -20, pitch: 4 }, torso: { yaw: -8, pitch: -4 }, head: { yaw: 16, pitch: -10 },
       footN: [-11, -4.6, 4.2], footF: [5, 4.8, 4.2], handN: [4, -12, 38], sword: [120, 30], handF: [4, 5, 44], shield: [50, 0] }),
     ready({ pelvis: [-3, 27], hips: { yaw: -17, pitch: 4 }, torso: { yaw: -4, pitch: 0 }, head: { yaw: 13, pitch: -4 },
-      footN: [-13, -4.6, 3.8], footF: [-3, 4.8, 4.6], toeN: -40, toeF: -30, kneeN: [1, -0.15, -0.1], kneeF: [1, 0.15, -0.1],
+      footN: [-13, -4.6, 3.8], footF: [-1.5, 4.8, 4.5], toeN: -40, toeF: -34, kneeN: [1, -0.15, -0.1], kneeF: [1, 0.15, -0.1],
       handN: [4, -12, 34], sword: [100, 36], handF: [5, 5, 39], shield: [55, -10] }),
     kneel(4, { handN: [5, -12, 30], sword: [80, 40], handF: [6, 5, 34], shield: [60, -20] }),
     kneel(14, { handN: [8, -12, 22], sword: [40, 40], handF: [8, 6, 28], shield: [64, -30], head: { yaw: 8, pitch: 20 } }),
@@ -1546,7 +1547,7 @@ export const ANIMATIONS = {
     motion: [60, 0, 0] },
   plunge: { size: WIDE, fps: 16, loop: false, poses: PLUNGE, durations: [1, 1.2, 0.8], motion: [0, 0, 60] },
   plunge_fall: { size: WIDE, fps: 10, loop: true, poses: PLUNGE_FALL, motion: [0, 0, -540] },
-  plunge_land: { size: WIDE, fps: 16, loop: false, poses: plungeLand(), durations: [0.8, 1.4, 1.4, 1.2, 1, 1] },
+  plunge_land: { size: WIDE, fps: 16, loop: false, poses: plungeLand(), durations: [0.8, 1.4, 0.7, 0.7, 1.2, 1, 1] },
   bash: { size: WIDE, fps: 20, loop: false, poses: bash(), durations: [1, 1, 0.8, 1.2, 1.4, 1.4], motion: [80, 0, 0] },
   pommel_strike: { size: WIDE, fps: 20, loop: false, poses: pommelStrike(), durations: [1.8, 0.8, 1, 1.4, 1.4, 1.2],
     motion: [60, 0, 0] },

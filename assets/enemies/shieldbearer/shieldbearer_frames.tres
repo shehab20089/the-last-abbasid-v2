@@ -240,6 +240,10 @@ region = Rect2(352, 0, 176, 128)
 atlas = ExtResource("10_stagger")
 region = Rect2(528, 0, 176, 128)
 
+[sub_resource type="AtlasTexture" id="stagger_4"]
+atlas = ExtResource("10_stagger")
+region = Rect2(704, 0, 176, 128)
+
 [sub_resource type="AtlasTexture" id="death_0"]
 atlas = ExtResource("11_death")
 region = Rect2(0, 0, 176, 128)
@@ -331,6 +335,10 @@ region = Rect2(1584, 0, 176, 128)
 [sub_resource type="AtlasTexture" id="death_head_10"]
 atlas = ExtResource("12_death_head")
 region = Rect2(1760, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="death_head_11"]
+atlas = ExtResource("12_death_head")
+region = Rect2(1936, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_arm_0"]
 atlas = ExtResource("13_death_arm")
@@ -979,17 +987,20 @@ animations = [{
 "speed": 12.0
 }, {
 "frames": [{
-"duration": 0.80,
+"duration": 0.70,
 "texture": SubResource("stagger_0")
 }, {
-"duration": 1.60,
+"duration": 0.60,
 "texture": SubResource("stagger_1")
 }, {
-"duration": 1.60,
+"duration": 1.20,
 "texture": SubResource("stagger_2")
 }, {
-"duration": 1.00,
+"duration": 1.50,
 "texture": SubResource("stagger_3")
+}, {
+"duration": 1.00,
+"texture": SubResource("stagger_4")
 }],
 "loop": false,
 "name": &"stagger",
@@ -1049,26 +1060,29 @@ animations = [{
 "duration": 0.60,
 "texture": SubResource("death_head_3")
 }, {
-"duration": 0.60,
+"duration": 0.45,
 "texture": SubResource("death_head_4")
 }, {
-"duration": 1.40,
+"duration": 0.45,
 "texture": SubResource("death_head_5")
 }, {
-"duration": 1.20,
+"duration": 1.40,
 "texture": SubResource("death_head_6")
 }, {
-"duration": 0.80,
+"duration": 1.20,
 "texture": SubResource("death_head_7")
 }, {
-"duration": 0.70,
+"duration": 0.80,
 "texture": SubResource("death_head_8")
 }, {
-"duration": 1.00,
+"duration": 0.70,
 "texture": SubResource("death_head_9")
 }, {
-"duration": 2.40,
+"duration": 1.00,
 "texture": SubResource("death_head_10")
+}, {
+"duration": 2.40,
+"texture": SubResource("death_head_11")
 }],
 "loop": false,
 "name": &"death_head",

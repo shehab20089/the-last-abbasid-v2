@@ -89,6 +89,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "maceman_idle.png"
  },
@@ -182,6 +183,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "maceman_walk.png"
  },
@@ -275,6 +277,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "maceman_run.png"
  },
@@ -322,6 +325,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "maceman_alert.png"
  },
@@ -424,6 +428,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "maceman_mace_smash.png"
  },
@@ -526,6 +531,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "maceman_mace_swing.png"
  },
@@ -595,20 +601,22 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "maceman_hurt.png"
  },
  "stagger": {
   "name": "stagger",
-  "frames": 4,
+  "frames": 5,
   "width": 176,
   "height": 128,
   "fps": 6,
   "loop": false,
   "durations": [
-   0.8,
-   1.8,
-   1.8,
+   0.7,
+   0.6,
+   1.4,
+   1.7,
    1
   ],
   "blades": [
@@ -620,6 +628,16 @@
     "tip": [
      5.8,
      -53.7
+    ]
+   },
+   {
+    "hilt": [
+     7.5,
+     -35
+    ],
+    "tip": [
+     12.5,
+     -35
     ]
    },
    {
@@ -653,6 +671,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "maceman_stagger.png"
  },
@@ -799,12 +818,13 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "maceman_death.png"
  },
  "death_head": {
   "name": "death_head",
-  "frames": 11,
+  "frames": 12,
   "width": 176,
   "height": 128,
   "fps": 10,
@@ -814,7 +834,8 @@
    1.4,
    1.2,
    0.6,
-   0.6,
+   0.45,
+   0.45,
    1.4,
    1.2,
    0.8,
@@ -865,12 +886,22 @@
    },
    {
     "hilt": [
-     14.2,
-     -24.1
+     14.1,
+     -27
     ],
     "tip": [
-     19.2,
-     -23.4
+     19.1,
+     -27.1
+    ]
+   },
+   {
+    "hilt": [
+     14.2,
+     -21.4
+    ],
+    "tip": [
+     19.1,
+     -20
     ]
    },
    {
@@ -934,6 +965,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     -6.4,
@@ -952,8 +984,12 @@
     -58.4
    ],
    [
-    6.4,
-    -53.8
+    6.5,
+    -55.4
+   ],
+   [
+    6.3,
+    -52.4
    ],
    [
     6.1,
@@ -1017,6 +1053,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -17.2,
@@ -1212,6 +1249,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     -6.8,
@@ -1291,6 +1329,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -1.2,
@@ -1426,6 +1465,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     -18.2,
@@ -1543,12 +1583,12 @@
    },
    {
     "hilt": [
-     -3.5,
-     -27
+     -3.6,
+     -26.9
     ],
     "tip": [
-     -1.1,
-     -30.4
+     -1.2,
+     -30.3
     ]
    },
    {
@@ -1572,6 +1612,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     9.6,
@@ -1599,7 +1640,7 @@
    ],
    [
     -15.6,
-    -46.2
+    -46.9
    ],
    [
     -27.6,
@@ -1683,45 +1724,46 @@
    },
    {
     "hilt": [
-     0.7,
-     -63.1
+     6.5,
+     -47.8
     ],
     "tip": [
-     0.4,
-     -67.2
+     11,
+     -50.5
     ]
    },
    {
     "hilt": [
-     -29.6,
-     -31.7
+     -26.7,
+     -45.3
     ],
     "tip": [
-     -35.5,
-     -36.3
+     -32.6,
+     -49.9
     ]
    },
    {
     "hilt": [
-     -33.6,
-     -22.1
+     -34.8,
+     -35.3
     ],
     "tip": [
-     -39.5,
-     -26.7
+     -40.7,
+     -39.8
     ]
    },
    {
     "hilt": [
-     -34,
-     -18.5
+     -41.1,
+     -21.9
     ],
     "tip": [
-     -39.9,
-     -23.1
+     -47,
+     -26.5
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     2,
@@ -1744,19 +1786,19 @@
     -46
    ],
    [
-    -6,
-    -43.6
+    -7.6,
+    -43.1
    ],
    [
-    -6.2,
-    -25.4
+    -11.4,
+    -29.5
    ],
    [
-    -8.9,
-    -16.5
+    -16.6,
+    -20.8
    ],
    [
-    -10.2,
+    -19,
     -12
    ]
   ],
@@ -1816,6 +1858,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -1.6,
@@ -1890,6 +1933,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -1.1,
@@ -1916,16 +1960,16 @@
     -63.5
    ],
    [
+    -15,
+    -52.3
+   ],
+   [
     -22.3,
     -37.9
    ],
    [
-    -28,
-    -19.4
-   ],
-   [
-    -29.3,
-    -9.4
+    -29,
+    -13
    ]
   ],
   "file": "maceman_finished_disarm.png"
@@ -1996,6 +2040,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "maceman_hurt_b.png"
  },
@@ -2065,6 +2110,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "maceman_reel.png"
  },
@@ -2134,6 +2180,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "maceman_parried.png"
  }

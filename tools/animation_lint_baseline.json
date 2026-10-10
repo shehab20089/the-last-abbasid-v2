@@ -1,0 +1,11 @@
+{
+  "about": "Known animation issues, measured by tools/animation_lint.mjs and grouped by what causes them. `node tools/animation_lint.mjs --check` (run by tools/run_tests.ps1) fails on an issue not listed here, or one grown worse than the size kept with it (by more than 1 px or 15%), and names those mended since. After mending one, or when a change is meant, run `node tools/animation_lint.mjs --update`: known issues keep their group, new ones go to a group for their kind, to be looked into and given their cause.",
+  "groups": [
+    {
+      "cause": "Accepted: the plunge begins with a snap, the sabre swung over and the body tucked in one frame at 16 fps, as a blow is (the plunge is a strike begun in the air; its live frames are on the fall that follows).",
+      "issues": {
+        "yusuf plunge: frame 1: head jumps": 11.9
+      }
+    }
+  ]
+}

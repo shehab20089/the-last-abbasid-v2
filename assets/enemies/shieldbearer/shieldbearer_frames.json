@@ -89,6 +89,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "shieldbearer_idle.png"
  },
@@ -182,6 +183,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "shieldbearer_walk.png"
  },
@@ -275,6 +277,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "shieldbearer_run.png"
  },
@@ -322,6 +325,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "shieldbearer_alert.png"
  },
@@ -413,6 +417,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "shieldbearer_wall_jab.png"
  },
@@ -493,6 +498,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "shieldbearer_wall_shove.png"
  },
@@ -526,6 +532,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "shieldbearer_block.png"
  },
@@ -559,6 +566,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "shieldbearer_block_hit.png"
  },
@@ -628,20 +636,22 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "shieldbearer_hurt.png"
  },
  "stagger": {
   "name": "stagger",
-  "frames": 4,
+  "frames": 5,
   "width": 176,
   "height": 128,
   "fps": 6,
   "loop": false,
   "durations": [
-   0.8,
-   1.6,
-   1.6,
+   0.7,
+   0.6,
+   1.2,
+   1.5,
    1
   ],
   "blades": [
@@ -653,6 +663,16 @@
     "tip": [
      12.2,
      -44.6
+    ]
+   },
+   {
+    "hilt": [
+     10.7,
+     -25.2
+    ],
+    "tip": [
+     14.4,
+     -23
     ]
    },
    {
@@ -686,6 +706,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "shieldbearer_stagger.png"
  },
@@ -832,12 +853,13 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "shieldbearer_death.png"
  },
  "death_head": {
   "name": "death_head",
-  "frames": 11,
+  "frames": 12,
   "width": 176,
   "height": 128,
   "fps": 10,
@@ -847,7 +869,8 @@
    1.4,
    1.2,
    0.6,
-   0.6,
+   0.45,
+   0.45,
    1.4,
    1.2,
    0.8,
@@ -899,11 +922,21 @@
    {
     "hilt": [
      17.8,
-     -20
+     -22.8
     ],
     "tip": [
-     21.7,
-     -18.9
+     21.8,
+     -22
+    ]
+   },
+   {
+    "hilt": [
+     17.8,
+     -17.5
+    ],
+    "tip": [
+     21.6,
+     -16
     ]
    },
    {
@@ -967,6 +1000,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     -6,
@@ -986,7 +1020,11 @@
    ],
    [
     6.1,
-    -50.8
+    -52.2
+   ],
+   [
+    6,
+    -49.4
    ],
    [
     5.8,
@@ -1050,6 +1088,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -16.2,
@@ -1245,6 +1284,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     -6.4,
@@ -1324,6 +1364,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -1.1,
@@ -1459,6 +1500,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     -17.1,
@@ -1576,12 +1618,12 @@
    },
    {
     "hilt": [
-     -1,
-     -28.7
+     -1.1,
+     -28.6
     ],
     "tip": [
-     0.9,
-     -31.4
+     0.8,
+     -31.3
     ]
    },
    {
@@ -1605,6 +1647,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     9.1,
@@ -1632,7 +1675,7 @@
    ],
    [
     -14.7,
-    -43.6
+    -44.2
    ],
    [
     -26.1,
@@ -1716,45 +1759,46 @@
    },
    {
     "hilt": [
-     2.2,
-     -61.5
+     11.4,
+     -43.8
     ],
     "tip": [
-     2.5,
-     -64.2
+     15.3,
+     -44.9
     ]
    },
    {
     "hilt": [
-     -33.5,
-     -34.2
+     -30.8,
+     -47.1
     ],
     "tip": [
-     -38.2,
-     -37.9
+     -35.5,
+     -50.8
     ]
    },
    {
     "hilt": [
-     -37.3,
-     -25.2
+     -38.4,
+     -37.6
     ],
     "tip": [
-     -42,
-     -28.8
+     -43.1,
+     -41.3
     ]
    },
    {
     "hilt": [
-     -37.6,
-     -21.8
+     -44.3,
+     -25
     ],
     "tip": [
-     -42.4,
-     -25.5
+     -49.1,
+     -28.7
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     1.8,
@@ -1777,19 +1821,19 @@
     -43.4
    ],
    [
-    -5.6,
-    -41.1
+    -7.2,
+    -40.7
    ],
    [
-    -5.9,
-    -24
+    -10.7,
+    -27.8
    ],
    [
-    -8.4,
-    -15.6
+    -15.6,
+    -19.7
    ],
    [
-    -9.6,
+    -17.9,
     -11.3
    ]
   ],
@@ -1849,6 +1893,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -1.5,
@@ -1923,6 +1968,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": [
    [
     -1,
@@ -1949,16 +1995,16 @@
     -59.9
    ],
    [
+    -14.1,
+    -49.3
+   ],
+   [
     -21,
     -35.7
    ],
    [
-    -26.4,
-    -18.3
-   ],
-   [
-    -27.6,
-    -8.8
+    -27.4,
+    -12.3
    ]
   ],
   "file": "shieldbearer_finished_disarm.png"
@@ -2029,6 +2075,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "shieldbearer_hurt_b.png"
  },
@@ -2098,6 +2145,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "shieldbearer_reel.png"
  },
@@ -2167,6 +2215,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "shieldbearer_parried.png"
  },
@@ -2258,6 +2307,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "shieldbearer_knockdown.png"
  },
@@ -2291,6 +2341,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "shieldbearer_down.png"
  },
@@ -2426,6 +2477,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": null,
   "file": "shieldbearer_getup.png"
  },
@@ -2473,6 +2525,7 @@
     ]
    }
   ],
+  "allRound": false,
   "wounds": [
    [
     -17.7,

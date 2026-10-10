@@ -310,7 +310,7 @@ for (const npc of LEVEL.npcs) {
   node(npc.id, null, "Interactables", {
     position: v2(xOf(npc.col), yOf(npc.row ?? STREET)), npc_id: sn(npc.id), dialogue: sn(npc.dialogue),
     requires: sn(npc.requires ?? ""), gives_flag: sn(npc.gives ?? ""), gives_notice: str(npc.notice ?? ""),
-    teaches: sn(npc.teaches ?? ""), gives_keepsake: sn(npc.keepsake ?? ""),
+    teaches: sn(npc.teaches ?? ""), counsel: sn(npc.counsel ?? ""), gives_keepsake: sn(npc.keepsake ?? ""),
     idle_animation: sn(idle), talk_animation: sn(talk), waiting_animation: sn(waiting ?? ""),
     face: npc.face.toFixed(1),
     frames: resource("SpriteFrames", `res://assets/npcs/${npc.kind}/${npc.kind}_frames.tres`),
@@ -376,6 +376,7 @@ for (const t of LEVEL.triggers) {
     position: v2(t.from * T + width / 2, yOf(STREET) - above - height / 2), script: resource("Script", "res://features/levels/story_trigger.gd"),
     trigger_id: str(t.id), hint: str(t.hint ?? ""), event: sn(t.event ?? ""), group: sn(t.group ?? ""),
     line: str(t.line ?? ""), speaker: str(t.speaker ?? ""), teaches: sn(t.teaches ?? ""),
+    requires_flag: sn(t.requiresFlag ?? ""),
   });
   node("Shape", "CollisionShape2D", `Triggers/${t.id}`, {
     shape: subResource("RectangleShape2D", { size: v2(width, height) }),

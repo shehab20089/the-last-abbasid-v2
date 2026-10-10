@@ -96,7 +96,10 @@ func wanted_technique() -> StringName:
 		return &""
 	if settings != null and settings.move_prompts == GameSettings.Prompts.OFF:
 		return &""
-	if _threatened() or hero.state == Warrior.State.ART or hero.state == Warrior.State.FINISHER:
+	# A blow on its way, an Art or a finisher playing, or a man to finish (his own prompt, on the same button as
+	# the ground stroke named a step before): the coach gives way at once, without lingering.
+	if (_threatened() or hero.state == Warrior.State.ART or hero.state == Warrior.State.FINISHER
+			or hero.finisher_target != null):
 		_linger = 0.0
 		return &""
 	var learning: bool = settings == null or settings.move_prompts == GameSettings.Prompts.LEARNING

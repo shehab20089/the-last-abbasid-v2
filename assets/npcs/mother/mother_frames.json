@@ -13,6 +13,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "mother_crouch.png"
  },
@@ -30,6 +31,7 @@
    null,
    null
   ],
+  "allRound": false,
   "wounds": null,
   "file": "mother_talk.png"
  }

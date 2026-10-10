@@ -44,12 +44,15 @@ func show_text(text: String) -> void:
 		add_child(flow)
 		for written: String in paragraph.split(" ", false):
 			var word: String = written
-			var ends: bool = word.ends_with("*") and word.length() > 1
-			if word.begins_with("*"):
+			if word.begins_with("*") and word.length() > 1:
 				gold = true
 				word = word.substr(1)
-			if ends:
-				word = word.substr(0, word.length() - 1)
+			# The closing mark may have punctuation after it ("*parry*," or "*الصدّ*،").
+			var ends: bool = false
+			var close: int = word.rfind("*")
+			if close >= 0 and _only_punctuation(word.substr(close + 1)):
+				ends = true
+				word = word.substr(0, close) + word.substr(close + 1)
 			flow.add_child(_word(word, gold))
 			if ends:
 				gold = false
@@ -64,6 +67,14 @@ func shown_text() -> String:
 func refresh() -> void:
 	if _text != "":
 		show_text(_text)
+
+
+## Whether `tail` is nothing but punctuation (what may follow the mark that closes an emphasis).
+static func _only_punctuation(tail: String) -> bool:
+	for character: String in tail:
+		if not character in ".,;:!?)\"'…،؛؟»":
+			return false
+	return true
 
 
 func _space() -> int:

@@ -160,17 +160,31 @@ func _begin_next() -> void:
 func _show(key: String, short: bool) -> void:
 	_key = key
 	_short = short
-	var text: String = tr(key)
-	if short:
+	var text: String = _lay_out()
+	_left = clampf(BASE_TIME + text.length() * PER_CHARACTER, MIN_TIME, MAX_TIME)
+	_alpha = 0.0
+	shown.emit(key)
+
+
+## The lesson shown, its title and words in the language of the moment (the whole, or its first sentence).
+## Returns the words.
+func _lay_out() -> String:
+	var text: String = tr(_key)
+	if _short:
 		text = _first_sentence(text)
-	var title: String = Lessons.title_of(key)
+	var title: String = Lessons.title_of(_key)
 	_title.text = tr(title) if title != "" else ""
 	_title.visible = title != ""
 	_text.show_text(text)
 	_panel.reset_size()
-	_left = clampf(BASE_TIME + text.length() * PER_CHARACTER, MIN_TIME, MAX_TIME)
-	_alpha = 0.0
-	shown.emit(key)
+	return text
+
+
+## Another language chosen while a lesson is up: its title and words are laid out again in it (right to left
+## in Arabic), keeping the time it has left; those waiting are translated when their turn comes.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSLATION_CHANGED and _key != "" and _text != null:
+		_lay_out()
 
 
 ## The first sentence of a lesson (in a fight, what to do).

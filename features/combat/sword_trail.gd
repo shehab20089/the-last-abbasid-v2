@@ -26,12 +26,18 @@ extends Node2D
 @export var blood_color: Color = Color(0.62, 0.07, 0.06)
 ## The bright edge along the front of a cut.
 @export var edge_color: Color = Color(1.0, 1.0, 0.96)
-## Seconds a crescent takes to fade.
-@export var fade_time: float = 0.17
-## How far along the blade (0 hilt, 1 tip) the crescent reaches inward.
-@export_range(0.0, 1.0) var inner: float = 0.2
+## Seconds a crescent takes to fade: short, so a great blow's crescents do not pile into a sheet.
+@export var fade_time: float = 0.13
+## How far along the blade (0 hilt, 1 tip) the crescent reaches inward: only its outer half, so the arm,
+## the grip and the man struck stay in sight through it.
+@export_range(0.0, 1.0) var inner: float = 0.5
 ## How far along the blade the hot core along the leading edge begins.
 @export_range(0.0, 1.0) var core: float = 0.8
+## The afterglow's strength at its leading edge and on its inner side, and how far the hot core whitens: the
+## band stays the colour of the blow (its warning) and lighter than the blade it follows.
+@export_range(0.0, 1.0) var glow: float = 0.65
+@export_range(0.0, 1.0) var inner_glow: float = 0.12
+@export_range(0.0, 1.0) var core_white: float = 0.45
 
 const SAMPLES: int = 10
 ## A blade that turns less than this (radians) between frames is thrusting, not cutting.
@@ -89,14 +95,14 @@ func _draw() -> void:
 		if crescent.has("core"):
 			var core_points: PackedVector2Array = crescent["core"]
 			var core_alphas: PackedFloat32Array = crescent["core_alphas"]
-			var hot: Color = tint.lerp(Color.WHITE, 0.65)
+			var hot: Color = tint.lerp(Color.WHITE, core_white)
 			var core_colors: PackedColorArray = PackedColorArray()
 			for a: float in core_alphas:
 				core_colors.append(Color(hot, a * life))
 			draw_polygon(core_points, core_colors)
 		if crescent.has("edge"):
 			var edge: PackedVector2Array = crescent["edge"]
-			draw_polyline(edge, Color(edge_color, life), 1.0)
+			draw_polyline(edge, Color(edge_color, life * 0.85), 1.0)
 
 
 func _on_frame_changed() -> void:
@@ -166,9 +172,9 @@ func _add_crescent(from: PackedVector2Array, to: PackedVector2Array, turn: float
 		var reach: float = lerpf(0.8, inner, k)
 		inside.append(_flip(hilt + direction * length * reach, facing))
 		hot_in.append(_flip(hilt + direction * length * lerpf(0.95, core, k), facing))
-		outer_alpha.append(lerpf(0.0, 0.9, pow(k, 1.2)))
-		inner_alpha.append(lerpf(0.0, 0.3, k))
-		hot_alpha.append(lerpf(0.0, 1.0, pow(k, 1.8)))
+		outer_alpha.append(lerpf(0.0, glow, pow(k, 1.2)))
+		inner_alpha.append(lerpf(0.0, inner_glow, k))
+		hot_alpha.append(lerpf(0.0, 0.85, pow(k, 1.8)))
 	var points: PackedVector2Array = PackedVector2Array()
 	var alphas: PackedFloat32Array = PackedFloat32Array()
 	for i: int in outer.size():

@@ -142,6 +142,8 @@ var _talking: Npc
 var _boss: MongolSoldier
 ## The hero's growth, kept in the save.
 var progression: Progression
+## How the game is played, written for playtests (shared/playtest/play_log.gd).
+var play_log: PlayLog
 ## The nodes bought before the lamp menu opened (those bought by it are taught as he rises).
 var _bought_before: Array[StringName] = []
 
@@ -174,6 +176,9 @@ var _bought_before: Array[StringName] = []
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	play_log = PlayLog.new()
+	play_log.name = "PlayLog"
+	add_child(play_log)
 	world.process_mode = Node.PROCESS_MODE_PAUSABLE
 	vfx.process_mode = Node.PROCESS_MODE_PAUSABLE
 	gore.process_mode = Node.PROCESS_MODE_PAUSABLE
@@ -213,6 +218,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if state == State.PLAYING:
 		save.play_time += delta / maxf(Engine.time_scale, 0.001)
+		play_log.played(delta / maxf(Engine.time_scale, 0.001))
 	# The cursor is for the menus; in play it is out of the way.
 	var cursor: Input.MouseMode = Input.MOUSE_MODE_HIDDEN if state == State.PLAYING else Input.MOUSE_MODE_VISIBLE
 	if Input.mouse_mode != cursor and DisplayServer.get_name() != "headless":
@@ -336,18 +342,29 @@ func _new_game() -> void:
 	SaveGame.erase()
 	save = SaveGame.new()
 	save.level = FIRST_LEVEL
+	_master_journey()
 	title.close()
 	state = State.CARD
+	play_log.event("card", "intro begins")
 	card.play(&"intro", _card_lines(&"intro"), "CHAPTER_1_TITLE")
 
 
 func _continue_game() -> void:
 	save = SaveGame.load_game()
+	_master_journey()
 	title.close()
 	_enter_level(save.level if save.level != "" else FIRST_LEVEL, save.checkpoint, true, true)
 
 
+## A journey begun after the chapter was finished is a master's: the master's techniques open on the tree and are
+## taught on the way (docs/combat_focus_plan.md).
+func _master_journey() -> void:
+	if SaveGame.is_master():
+		save.set_flag(&"master")
+
+
 func _on_card_finished(id: StringName) -> void:
+	play_log.event("card", "%s ends" % id)
 	match id:
 		&"intro":
 			_enter_level(FIRST_LEVEL, &"", true, true)
@@ -394,6 +411,8 @@ func _on_settings_changed() -> void:
 	if grade != null:
 		grade.set_shader_parameter(&"brightness", settings.brightness)
 	card.cinematic.brightness = settings.brightness
+	# The playtest log, as the player chose (never while the checks run: they turn it on themselves).
+	play_log.enabled = settings.playtest_log and (OS.get_environment("ABBASID_USER_PREFIX") == "" or play_log.in_checks)
 	card.cinematic.calm = not settings.flashes
 	# Another language: the objective and the names over the world in it at once.
 	if level != null and hero != null:
@@ -450,6 +469,7 @@ func _setup_level(checkpoint: StringName) -> void:
 	level.add_child(hero)
 	level.move_child(hero, level.enemies.get_index() + 1)
 	save.set_flag(StringName("reached_%s" % level.level_id))
+	play_log.enter_level(level.level_id)
 	_apply_growth()
 	_apply_vigour()
 	hero.charge_toggle = settings.charge_toggle
@@ -505,6 +525,7 @@ func _unload_level() -> void:
 
 
 func _pause() -> void:
+	play_log.write_summary()
 	state = State.PAUSED
 	get_tree().paused = true
 	hero.input.clear()
@@ -669,6 +690,7 @@ func _wire_soldier(soldier: MongolSoldier) -> void:
 ## A soldier falls: cut apart if the blow took something off him, and bleeding where he lies (a
 ## finisher has already cut him, frame by frame).
 func _on_soldier_died(soldier: MongolSoldier) -> void:
+	play_log.event("kill", _kind(soldier), soldier.global_position.x)
 	sounds.play(&"enemy_death", -2.0)
 	_reward_kill(soldier)
 	_honour_kill(soldier)
@@ -690,6 +712,7 @@ func _on_soldier_died(soldier: MongolSoldier) -> void:
 
 ## The sabre fell before the hero could stop it.
 func _on_captive_killed(captive: Captive) -> void:
+	play_log.event("captive", "lost %s" % captive.name, captive.global_position.x)
 	_lay_keepsake(captive)
 	gore.cut_down(captive, captive, captive.gore_set, &"head", captive.facing(), captive.facing())
 	gore.bleed_out(captive, captive, captive.gore_set, captive.facing())
@@ -703,6 +726,7 @@ func _on_captive_killed(captive: Captive) -> void:
 
 ## Someone the soldiers would have killed got away.
 func _on_captive_saved(captive: Captive) -> void:
+	play_log.event("captive", "saved %s" % captive.name, captive.global_position.x)
 	if captive.captive_id == &"":
 		# Freed with their captors beaten.
 		_earn(CATALOG.person_freed, StringName("freed_%s_%s" % [level.level_id, captive.name]))
@@ -784,7 +808,8 @@ func _on_stab_frame(soldier: MongolSoldier) -> void:
 
 ## A scripted kill begins. The last soldier standing gets the full one: the bars close in, a sting,
 ## and the street holds its breath. While others still fight, it plays quick and plain.
-func _on_finisher_started(_target: Combatant, _finisher: FinisherDefinition) -> void:
+func _on_finisher_started(_target: Combatant, finisher: FinisherDefinition) -> void:
+	play_log.event("finisher", finisher.resource_path.get_file().get_basename(), hero.global_position.x)
 	hud.set_finish_target(null)
 	if hero.is_judging():
 		sounds.play(&"judgment_gong", -3.0)
@@ -842,6 +867,7 @@ func _on_knife_thrown(knife: Node2D) -> void:
 ## An Art spent: the world stops a heartbeat and drains of colour about him, the Art's name crosses the
 ## screen, a drum and a ring of steel, then its own sound; a judgment draws the black bars for all its men.
 func _on_art_started(art: ArtDefinition) -> void:
+	play_log.event("art", art.resource_path.get_file().get_basename(), hero.global_position.x)
 	sounds.play(&"art_moment", -2.0)
 	if art.cue != &"":
 		sounds.play(art.cue, -1.0)
@@ -899,10 +925,19 @@ func _grade() -> ShaderMaterial:
 
 
 ## Writes the save, and a lamp turns a moment in the corner of the screen.
-func _save_game() -> void:
-	save.write()
+## Writes the journey down. Only a write that took is shown as saved; one that failed says so, and everything
+## stays in memory, so the next save (the next lamp, the next street) can still write it. True when it was written.
+func _save_game() -> bool:
+	var result: Error = save.write()
+	if result != OK:
+		push_warning("The journey could not be saved to %s: %s" % [SaveGame.file_path(), error_string(result)])
+		# Said once while it shows (a rest at a lamp saves twice).
+		if not hud.notices.texts().has(tr(&"NOTICE_SAVE_FAILED")):
+			hud.notice(tr(&"NOTICE_SAVE_FAILED"))
+		return false
 	if hero != null:
 		hud.saved()
+	return true
 
 
 ## The world drained of colour about the hero after an Art is spent, then its colour back.
@@ -985,6 +1020,7 @@ func _on_coach_named(technique: StringName) -> void:
 
 ## One more use of a learned technique (the coach stops naming it once it is in his hands).
 func _on_technique_used(technique: StringName) -> void:
+	play_log.count("technique", technique)
 	save.practise(technique)
 
 
@@ -996,6 +1032,7 @@ func _on_breath_glint() -> void:
 
 ## The shield raised in the glint: breath drawn, the bar brightens.
 func _on_steady_breath() -> void:
+	play_log.count("breath", "steady breath")
 	sounds.play(&"breath_in", -5.0)
 	hero.flash(0.3, STEADY_GLOW)
 	hud.breath_drawn()
@@ -1004,6 +1041,7 @@ func _on_steady_breath() -> void:
 ## Rolled just as the blow came: the world slows, pale copies of him trail through it, breath returns and
 ## his next blow is a counter.
 func _on_close_call(_hit: HitData) -> void:
+	play_log.count("breath", "close call")
 	hit_stop.slow(0.35, 0.4)
 	sounds.play(&"close_call", -2.0)
 	hud.breath_drawn()
@@ -1173,6 +1211,7 @@ func _fall_tip() -> String:
 
 
 func _on_struck(hit: HitData, outcome: HitData.Outcome, target: Combatant) -> void:
+	_log_blow(hit, outcome, target)
 	if target == hero and outcome == HitData.Outcome.HIT:
 		_last_blow = hit
 	var guard_point: Vector2 = target.global_position + Vector2(target.facing * 13.0, -46.0)
@@ -1219,6 +1258,8 @@ func _on_struck(hit: HitData, outcome: HitData.Outcome, target: Combatant) -> vo
 
 
 func _on_swung(attack: AttackDefinition, combatant: Combatant) -> void:
+	if combatant == hero:
+		play_log.event("swing", _blow_name(attack), hero.global_position.x)
 	sounds.play(attack.swing_cue, -2.0)
 	if attack.flinch_radius > 0.0:
 		# A blow like a falling beam: grit thrown up both ways, and the street shakes.
@@ -1306,7 +1347,8 @@ func _hint(key: String) -> void:
 
 
 ## A lesson came onto the screen: a soft sound.
-func _on_lesson_shown(_key: String) -> void:
+func _on_lesson_shown(key: String) -> void:
+	play_log.event("lesson", key)
 	sounds.play(&"lesson", -8.0)
 
 
@@ -1442,6 +1484,7 @@ func _on_hero_landed(speed: float) -> void:
 
 
 func _on_hero_rolled() -> void:
+	play_log.count("roll")
 	sounds.play(&"roll", -3.0)
 	vfx.play(&"dust", hero.global_position, hero.facing < 0.0, true)
 
@@ -1451,6 +1494,9 @@ func _on_hero_healed(_amount: float) -> void:
 
 
 func _on_hero_died() -> void:
+	var felled_by: String = "%s: %s" % [_kind(_last_blow.attacker), _blow_name(_last_blow.attack)] if _last_blow != null else "unknown"
+	play_log.event("fall", felled_by, hero.global_position.x)
+	play_log.write_summary()
 	state = State.DEAD
 	sounds.play(&"hero_death")
 	gore.bleed_out(hero, hero.sprite, null, hero.facing)
@@ -1469,6 +1515,7 @@ func _on_hero_died() -> void:
 # --- Lamps, pages and people -----------------------------------------------------------------------
 
 func _on_checkpoint(lamp: Checkpoint) -> void:
+	play_log.event("lamp", lamp.checkpoint_id, lamp.global_position.x)
 	var first: bool = not lamp.checkpoint_id in save.lit
 	if first:
 		save.lit.append(lamp.checkpoint_id)
@@ -1512,8 +1559,8 @@ func _leave_lamp() -> void:
 		if bought.grants != &"":
 			_hint("HINT_LEARNED_%s" % String(bought.grants).to_upper())
 	hero.rest()
-	_save_game()
-	hud.notice(tr(&"NOTICE_SAVED"))
+	if _save_game():
+		hud.notice(tr(&"NOTICE_SAVED"))
 	_resume_play()
 	# The first rest: what Honour is, and how it is spent.
 	if not save.has_flag(&"seen_lamp_menu"):
@@ -1663,6 +1710,17 @@ func _learn(technique: StringName, card: bool = true) -> void:
 		_hint(String(lesson))
 
 
+## Someone explains a move he already has (Hamid: the parry and the riposte): a card that shows it performed, or
+## its words at the top of the screen when lessons are short; kept for the Guide either way.
+func _counsel(move: StringName) -> void:
+	var lesson: StringName = StringName("HINT_COUNSEL_%s" % String(move).to_upper())
+	save.note_lesson(lesson)
+	if settings.lessons == GameSettings.LessonMode.FULL:
+		_cards.append({"kind": "counsel", "id": move})
+	else:
+		_hint(String(lesson))
+
+
 ## A new Art is carried at once: into an empty hand, or in place of the second (a lamp lets him choose).
 func _carry_art(art: StringName) -> void:
 	if art in save.arts:
@@ -1722,6 +1780,8 @@ func _on_dialogue_finished(id: StringName) -> void:
 			sounds.play(&"manuscript")
 			if npc.teaches != &"":
 				_learn(npc.teaches)
+			if npc.counsel != &"":
+				_counsel(npc.counsel)
 		if id == npc.dialogue and npc.gives_keepsake != &"":
 			_give_keepsake(npc.gives_keepsake)
 	_refresh_story()
@@ -1757,6 +1817,11 @@ func _show_card(card: Dictionary) -> void:
 			var key: String = "HINT_LEARNED_%s" % String(technique).to_upper()
 			lesson_screen.show_lesson(tr(&"LESSON_NEW_ART" if art else &"LESSON_NEW_TECHNIQUE"),
 				tr(Lessons.technique_name(technique)), key, _card_demo(technique))
+		"counsel":
+			var move: StringName = card["id"]
+			var name: String = String(move).to_upper()
+			lesson_screen.show_lesson(tr(&"LESSON_COUNSEL_HEADING"), tr("COUNSEL_%s_TITLE" % name), "HINT_COUNSEL_%s" % name,
+				MoveDemos.of(move))
 		"lamp":
 			var niche: AtlasTexture = AtlasTexture.new()
 			niche.atlas = LAMP_PICTURE
@@ -1870,6 +1935,9 @@ func _say(speaker: String, line: String) -> void:
 
 
 func _on_trigger(trigger: StoryTrigger) -> void:
+	# A trigger that waits on the story (a master's lesson) does nothing without it.
+	if trigger.requires_flag != &"" and not save.has_flag(trigger.requires_flag):
+		return
 	# A lesson or a line once given is not given again on another life (the Guide keeps the lessons).
 	if trigger.once and trigger.teaches == &"" and (trigger.event == &"" or trigger.event == &"refugees"):
 		save.set_flag(StringName(trigger.trigger_id))
@@ -1899,6 +1967,7 @@ func _on_trigger(trigger: StoryTrigger) -> void:
 
 
 func _on_group_cleared(group: StringName) -> void:
+	play_log.event("cleared", group, hero.global_position.x if hero != null else NAN)
 	var before: String = objective()
 	save.set_flag(StringName("%s_cleared" % group))
 	# Those the group held are free.
@@ -1940,6 +2009,8 @@ func _on_runner_fell(runner: FleeingCivilian) -> void:
 
 ## The way out: on to the next level through its story card, or, from the last, the chapter's end.
 func _on_exit() -> void:
+	play_log.event("left", level.level_id, hero.global_position.x)
+	play_log.write_summary()
 	state = State.ENDING
 	hit_stop.clear()
 	hero.set_cinematic(true)
@@ -1959,11 +2030,15 @@ func _on_exit() -> void:
 	await _fade_to(1.0)
 	hud.set_gameplay_visible(false)
 	_unload_level()
+	play_log.event("card", "%s begins" % (story if next != "" else &"ending"))
 	card.play(story if next != "" else &"ending", _card_lines(story if next != "" else &"ending"), heading)
 	fade.color.a = 0.0
 
 
 func _show_complete() -> void:
+	# The chapter finished: every later journey is a master's (and this one, should it go on).
+	SaveGame.record_master()
+	save.set_flag(&"master")
 	_close_menus()
 	state = State.COMPLETE
 	get_tree().paused = true
@@ -2085,3 +2160,40 @@ func _on_boss_died() -> void:
 	_say("SPEAKER_YUSUF", "YUSUF_AFTER_TOQTO")
 	music.play_music(level.music)
 	_refresh_story()
+
+
+# --- The playtest log ----------------------------------------------------------------------------------
+
+## A blow on him (its warning and how he answered it: hit, blocked, parried, dodged, guard broken) or one of his
+## meeting a man (and how the man took it), for the playtest log.
+func _log_blow(hit: HitData, outcome: HitData.Outcome, target: Combatant) -> void:
+	var outcomes: Array = HitData.Outcome.keys()
+	var outcome_name: String = outcomes[outcome]
+	var how: String = outcome_name.to_lower().replace("_", " ")
+	if target == hero:
+		var warning: String = PlayLog.tell_name(int(hit.attack.tell())) if hit.attack != null else "arrow"
+		play_log.count("warning", "%s %s" % [warning, how])
+		play_log.event("taken", "%s %s: %s, %s" % [_kind(hit.attacker), _blow_name(hit.attack), warning, how],
+			hero.global_position.x)
+	elif hit.attacker == hero:
+		play_log.count("landed", "%s %s" % [_blow_name(hit.attack), how])
+
+
+## What kind of man a combatant is, for the playtest log (the soldier's profile, or Yusuf).
+func _kind(combatant: Combatant) -> String:
+	if combatant == null:
+		return "unknown"
+	if combatant == hero:
+		return "yusuf"
+	var soldier: MongolSoldier = combatant as MongolSoldier
+	if soldier != null and soldier.profile != null:
+		return soldier.profile.resource_path.get_file().get_basename()
+	return String(combatant.name)
+
+
+## A blow's name for the playtest log: its definition's file (light_1, heavy, archer_shot), or the arrow.
+func _blow_name(attack: AttackDefinition) -> String:
+	if attack == null:
+		return "arrow"
+	var file: String = attack.resource_path.get_file().get_basename()
+	return file if file != "" else attack.display_name.to_snake_case()

@@ -146,8 +146,8 @@ export const LEVEL = {
     { id: "gate_captive", kind: "refugee_man", col: 36, face: 1, run: -1, thanks: "SAVED_1" },
   ],
   npcs: [
-    // Hamid, who cannot walk: his counsel teaches the charged cleave.
-    { id: "wounded_guard", kind: "guard", col: 11, face: 1, dialogue: "guard", gives: "hamid_counsel", teaches: "charge" },
+    // Hamid, who cannot walk: his counsel is the parry and the riposte, before the first duel.
+    { id: "wounded_guard", kind: "guard", col: 11, face: 1, dialogue: "guard", gives: "hamid_counsel", counsel: "riposte" },
     // Crouched over her son, her back to the soldier; she speaks once he is dead.
     { id: "mother", kind: "mother", col: 101, face: 1, dialogue: "mother", requires: "mother_cleared", keepsake: "red_thread" },
     { id: "ibrahim", kind: "scholar", col: 248, face: -1, dialogue: "ibrahim", requires: "ambush_cleared", keepsake: "reed_pen",
@@ -155,15 +155,14 @@ export const LEVEL = {
   ],
   // Areas that start story beats, hints and ambushes: [id, col0, col1]. The first street's lessons come one
   // after another, each a few strides past the last and before the fight that needs it: moving, striking
-  // (before the headsman's clock starts at col 15), the headsman, the charge (Hamid's, if walked past), the lamp
-  // (pointed out as the hero comes near it), the shield, remedies, the roll, the archer, the kick.
+  // (before the headsman's clock starts at col 15), the headsman, the surprise, the lamp (pointed out as the hero
+  // comes near it), the shield, remedies, the roll, the archer; the sweep before the ambush, the low cut before
+  // the river gate's guards. The charge and the kick are taught in the Scholars' Quarter, where their soldiers are.
   triggers: [
     { id: "hint_move", from: 3, to: 9, hint: "HINT_MOVE" },
     { id: "hint_attack", from: 12, to: 15, hint: "HINT_ATTACK" },
     { id: "execution", from: 16, to: 18, hint: "HINT_EXECUTION", speaker: "SPEAKER_YUSUF", line: "EXECUTION_1" },
     { id: "refugees", from: 44, to: 46, event: "refugees", speaker: "SPEAKER_REFUGEE", line: "REFUGEE_1" },
-    // Walked past Hamid: the lesson comes anyway, well before the first lamp.
-    { id: "lesson_charge", from: 50, to: 53, teaches: "charge" },
     { id: "hint_surprise", from: 57, to: 61, hint: "HINT_SURPRISE" },
     { id: "hint_guard", from: 86, to: 89, hint: "HINT_GUARD" },
     { id: "mother_cry", from: 92, to: 94, event: "alarm", group: "mother", speaker: "SPEAKER_MOTHER",
@@ -171,8 +170,6 @@ export const LEVEL = {
     { id: "hint_heal", from: 103, to: 106, hint: "HINT_HEAL" },
     { id: "hint_roll", from: 108, to: 111, hint: "HINT_ROLL" },
     { id: "hint_archer", from: 117, to: 120, hint: "HINT_ARCHER_COVER" },
-    // Before the terrace: the kick that ends the string, to throw a man back off his ground.
-    { id: "lesson_kick", from: 125, to: 128, teaches: "kick" },
     { id: "hint_climb", from: 146, to: 150, hint: "HINT_CLIMB" },
     { id: "burners", from: 150, to: 152, speaker: "SPEAKER_YUSUF", line: "BURNERS_1" },
     { id: "hint_plunge", from: 153, to: 158, above: 80, height: 120, hint: "HINT_PLUNGE" },

@@ -1,8 +1,9 @@
 // Minimal, dependency-free PNG encoder and decoder (8-bit RGBA / RGB, non-interlaced).
 // The asset generators only need Node's built-in zlib.
 import { deflateSync, inflateSync } from "node:zlib";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import { dirname } from "node:path";
+import { writeSteadily } from "./files.mjs";
 
 const SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
@@ -58,8 +59,9 @@ export function encodePng(width, height, rgba) {
 
 export function writePng(path, width, height, rgba) {
   mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, encodePng(width, height, rgba));
+  writeSteadily(path, encodePng(width, height, rgba));
 }
+
 
 function paeth(a, b, c) {
   const p = a + b - c;

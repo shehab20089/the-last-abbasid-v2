@@ -217,7 +217,13 @@ size = Vector2(48, 320)
 size = Vector2(48, 320)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_40"]
+size = Vector2(48, 320)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_41"]
 size = Vector2(32, 320)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_42"]
+size = Vector2(48, 320)
 
 [node name="ScholarsQuarter" type="Node2D"]
 script = ExtResource("1_level_gd")
@@ -230,7 +236,7 @@ next_level = "res://features/levels/last_gate/last_gate.tscn"
 exit_card = &"scholars_end"
 exit_title = "LEVEL_LAST_GATE"
 objectives = PackedStringArray("codex|OBJ_GARDEN_DOOR|exit", "library_cleared|OBJ_SPEAK_LIBRARIAN|npc:librarian", "library|OBJ_SAVE_LIBRARY|group:library", "|OBJ_FIND_LIBRARIAN|npc:librarian")
-known_techniques = PackedStringArray("sweep", "bash", "knives", "charge", "storm", "kick", "low_cut", "rising_cleave", "running_slash")
+known_techniques = PackedStringArray("sweep", "low_cut", "bash", "running_slash", "storm", "knives")
 toughness = Vector2(1.20, 1.10)
 aggression = 1.20
 manuscript_ids = PackedStringArray("astronomy", "furusiyya_plunge", "poem", "furusiyya_pierce", "algebra")
@@ -1260,6 +1266,7 @@ requires = &""
 gives_flag = &""
 gives_notice = ""
 teaches = &""
+counsel = &""
 gives_keepsake = &""
 idle_animation = &"crouch"
 talk_animation = &"talk"
@@ -1275,6 +1282,7 @@ requires = &"library_cleared"
 gives_flag = &"codex"
 gives_notice = "NOTICE_CODEX"
 teaches = &""
+counsel = &""
 gives_keepsake = &"ink_stone"
 idle_animation = &"idle"
 talk_animation = &"talk"
@@ -1358,6 +1366,7 @@ position = Vector2(1800, 448)
 start_facing = -1.0
 metadata/group = &"library"
 metadata/dormant = true
+metadata/patrol = 0.0
 metadata/activity = &"loot"
 
 [node name="archer_6" parent="Enemies" instance=ExtResource("58_archer_tscn")]
@@ -1365,6 +1374,7 @@ position = Vector2(1880, 352)
 start_facing = -1.0
 metadata/group = &"library"
 metadata/dormant = true
+metadata/patrol = 0.0
 metadata/activity = &"watch"
 
 [node name="spearman_7" parent="Enemies" instance=ExtResource("57_spearman_tscn")]
@@ -1372,6 +1382,7 @@ position = Vector2(2056, 448)
 start_facing = 1.0
 metadata/group = &"library"
 metadata/dormant = true
+metadata/patrol = 0.0
 metadata/activity = &"stab"
 
 [node name="swordsman_8" parent="Enemies" instance=ExtResource("56_swordsman_tscn")]
@@ -1379,6 +1390,7 @@ position = Vector2(2312, 448)
 start_facing = 1.0
 metadata/group = &"library"
 metadata/dormant = true
+metadata/patrol = 0.0
 metadata/activity = &"menace"
 
 [node name="spearman_9" parent="Enemies" instance=ExtResource("57_spearman_tscn")]
@@ -1436,6 +1448,7 @@ group = &""
 line = ""
 speaker = ""
 teaches = &"guarded_thrust"
+requires_flag = &"master"
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/lesson_guarded_thrust"]
 shape = SubResource("RectangleShape2D_35")
@@ -1450,6 +1463,7 @@ group = &""
 line = ""
 speaker = ""
 teaches = &"down_stab"
+requires_flag = &"master"
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/lesson_down_stab"]
 shape = SubResource("RectangleShape2D_36")
@@ -1464,6 +1478,7 @@ group = &"library"
 line = "LIBRARY_1"
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/library"]
 shape = SubResource("RectangleShape2D_37")
@@ -1478,9 +1493,25 @@ group = &""
 line = "RIVER_1"
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/river"]
 shape = SubResource("RectangleShape2D_38")
+
+[node name="lesson_kick" type="Area2D" parent="Triggers"]
+position = Vector2(2552, 288)
+script = ExtResource("64_story_trigger_gd")
+trigger_id = "lesson_kick"
+hint = ""
+event = &""
+group = &""
+line = ""
+speaker = ""
+teaches = &"kick"
+requires_flag = &""
+
+[node name="Shape" type="CollisionShape2D" parent="Triggers/lesson_kick"]
+shape = SubResource("RectangleShape2D_39")
 
 [node name="hint_engineer" type="Area2D" parent="Triggers"]
 position = Vector2(2776, 288)
@@ -1492,9 +1523,10 @@ group = &""
 line = ""
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_engineer"]
-shape = SubResource("RectangleShape2D_39")
+shape = SubResource("RectangleShape2D_40")
 
 [node name="hint_axeman" type="Area2D" parent="Triggers"]
 position = Vector2(3200, 288)
@@ -1506,9 +1538,25 @@ group = &""
 line = ""
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_axeman"]
-shape = SubResource("RectangleShape2D_40")
+shape = SubResource("RectangleShape2D_41")
+
+[node name="lesson_charge" type="Area2D" parent="Triggers"]
+position = Vector2(3448, 288)
+script = ExtResource("64_story_trigger_gd")
+trigger_id = "lesson_charge"
+hint = ""
+event = &""
+group = &""
+line = ""
+speaker = ""
+teaches = &"charge"
+requires_flag = &""
+
+[node name="Shape" type="CollisionShape2D" parent="Triggers/lesson_charge"]
+shape = SubResource("RectangleShape2D_42")
 
 [node name="PlayerStart" type="Marker2D" parent="."]
 position = Vector2(88, 448)

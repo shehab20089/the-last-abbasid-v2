@@ -32,6 +32,28 @@ var shown: Dictionary[StringName, int] = {}
 var lessons: Array[StringName] = []
 
 
+## Where a finished chapter is remembered, apart from any one journey (a new game keeps it).
+static func records_path() -> String:
+	return "user://%s%s" % [OS.get_environment("ABBASID_USER_PREFIX"), "records.cfg"]
+
+
+## Whether the chapter has been finished on this computer: a later journey is a master's, with the master's
+## techniques open.
+static func is_master() -> bool:
+	var file: ConfigFile = ConfigFile.new()
+	if file.load(records_path()) != OK:
+		return false
+	var finished: bool = file.get_value("chapters", "chapter_1", false)
+	return finished
+
+
+static func record_master() -> void:
+	var file: ConfigFile = ConfigFile.new()
+	file.load(records_path())
+	file.set_value("chapters", "chapter_1", true)
+	file.save(records_path())
+
+
 static func file_path() -> String:
 	return "user://%s%s" % [OS.get_environment("ABBASID_USER_PREFIX"), FILE]
 

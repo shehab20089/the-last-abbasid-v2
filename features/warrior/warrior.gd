@@ -255,8 +255,11 @@ var _action_done: bool = false
 var _interact_target: Interactable
 var _interactables: Array[Interactable] = []
 var _nearest: Interactable
-## The staggered soldier a finisher would take now, or null.
-var finisher_target: Combatant
+## The staggered soldier a finisher would take now, or null; null too once he is freed (a street left in the
+## middle of a frame), before the hero looks again.
+var finisher_target: Combatant:
+	get:
+		return finisher_target if is_instance_valid(finisher_target) else null
 ## The finisher playing, its soldier, and the last one played.
 var _finisher: FinisherDefinition
 var _finished: Combatant

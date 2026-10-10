@@ -1,9 +1,14 @@
 // Builds every character's animation strips, SpriteFrames resources, frame metadata and review
 // sheets. Every character is a 3D model rendered into pixel art: Yusuf (characters/yusuf.mjs), the
 // Mongol soldiers (characters/mongol3d.mjs) and the townsfolk (characters/townsfolk3d.mjs). A soldier
-// also gets his gore set: the pieces a killing blow can cut from him, tumbling, and his wounds. Usage: node tools/asset_generation/build_characters.mjs [--only warrior]
-// [--anim idle,walk]
-import { mkdirSync, writeFileSync } from "node:fs";
+// also gets his gore set: the pieces a killing blow can cut from him, tumbling, and his wounds.
+// Usage: node tools/asset_generation/build_characters.mjs [--only warrior] [--anim idle,walk] [--out folder]
+// --anim renders only those animations and merges them into the character's data from its last full build
+// (frames.json): the frame data, the SpriteFrames, the hitboxes and the gore set are all written again from
+// the merged data, so the strips and what the game reads of them always agree.
+// --out writes everything under another folder instead of the project (the checks build there).
+import { existsSync, mkdirSync, readFileSync } from "node:fs";
+import { writeSteadily } from "./lib/files.mjs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { strip } from "./lib/canvas.mjs";
@@ -31,6 +36,7 @@ const option = (name) => {
 };
 const only = option("only")?.split(",");
 const animFilter = option("anim")?.split(",");
+const OUT = option("out") ? resolve(option("out")) : ROOT;
 
 /** A 3D character: its model and its animations. */
 const modelled = (model, animations) => ({
@@ -53,28 +59,28 @@ const CHARACTERS = {
   warrior: { render: () => modelled(yusuf, YUSUF_ANIMATIONS), dir: "assets/characters/warrior", prefix: "warrior",
     attacks: "features/warrior/definitions", friction: 1500, finishers: true },
   swordsman: { render: () => soldier("swordsman", SWORDSMAN), dir: "assets/enemies/swordsman", prefix: "swordsman",
-    attacks: "features/enemies/definitions", friction: 1600, pieces: PIECES.swordsman, cuts: CUTS },
+    attacks: "features/enemies/definitions/swordsman.tres", friction: 1600, pieces: PIECES.swordsman, cuts: CUTS },
   spearman: { render: () => soldier("spearman", SPEARMAN), dir: "assets/enemies/spearman", prefix: "spearman",
-    attacks: "features/enemies/definitions", friction: 1600, pieces: PIECES.spearman,
+    attacks: "features/enemies/definitions/spearman.tres", friction: 1600, pieces: PIECES.spearman,
     cuts: { ...CUTS, arm: ["arm", "spear"], waist: ["upper", "spear"] } },
   archer: { render: () => soldier("archer", ARCHER), dir: "assets/enemies/archer", prefix: "archer", pieces: PIECES.archer,
     cuts: CUTS },
   captain: { render: () => soldier("captain", CAPTAIN), dir: "assets/enemies/captain", prefix: "captain",
-    attacks: "features/enemies/definitions", friction: 1600, pieces: PIECES.captain, cuts: CUTS },
+    attacks: "features/enemies/definitions/captain.tres", friction: 1600, pieces: PIECES.captain, cuts: CUTS },
   veteran: { render: () => soldier("veteran", VETERAN), dir: "assets/enemies/veteran", prefix: "veteran",
-    attacks: "features/enemies/definitions", friction: 1600, pieces: PIECES.veteran, cuts: CUTS },
+    attacks: "features/enemies/definitions/veteran.tres", friction: 1600, pieces: PIECES.veteran, cuts: CUTS },
   maceman: { render: () => soldier("maceman", MACEMAN), dir: "assets/enemies/maceman", prefix: "maceman",
-    attacks: "features/enemies/definitions", friction: 1600, pieces: PIECES.maceman,
+    attacks: "features/enemies/definitions/maceman.tres", friction: 1600, pieces: PIECES.maceman,
     cuts: { ...CUTS, arm: ["arm", "spear"], waist: ["upper", "spear"] } },
   shieldbearer: { render: () => soldier("shieldbearer", SHIELDBEARER), dir: "assets/enemies/shieldbearer",
-    prefix: "shieldbearer", attacks: "features/enemies/definitions", friction: 1600, pieces: PIECES.shieldbearer,
+    prefix: "shieldbearer", attacks: "features/enemies/definitions/shieldbearer.tres", friction: 1600, pieces: PIECES.shieldbearer,
     cuts: { ...CUTS, arm: ["arm", "spear"], waist: ["upper", "spear"] } },
   engineer: { render: () => soldier("engineer", ENGINEER), dir: "assets/enemies/engineer", prefix: "engineer",
     pieces: PIECES.engineer, cuts: CUTS },
   skirmisher: { render: () => soldier("skirmisher", SKIRMISHER), dir: "assets/enemies/skirmisher", prefix: "skirmisher",
-    attacks: "features/enemies/definitions", friction: 1600, pieces: PIECES.skirmisher, cuts: CUTS },
+    attacks: "features/enemies/definitions/skirmisher.tres", friction: 1600, pieces: PIECES.skirmisher, cuts: CUTS },
   axeman: { render: () => soldier("axeman", AXEMAN), dir: "assets/enemies/axeman", prefix: "axeman",
-    attacks: "features/enemies/definitions", friction: 1600, pieces: PIECES.axeman,
+    attacks: "features/enemies/definitions/axeman.tres", friction: 1600, pieces: PIECES.axeman,
     cuts: { ...CUTS, arm: ["arm", "spear"], waist: ["upper", "spear"] } },
 };
 for (const kind of Object.keys(TOWNSFOLK_ANIMATIONS)) {
@@ -107,31 +113,43 @@ function writeRendered(path, model, name, animation) {
 
 for (const [key, entry] of Object.entries(CHARACTERS)) {
   if (only && !only.includes(key)) continue;
-  const outDir = join(ROOT, entry.dir);
+  const outDir = join(OUT, entry.dir);
   mkdirSync(outDir, { recursive: true });
+  mkdirSync(join(OUT, "captures", "art_review"), { recursive: true });
   const meta = {};
+  // A partial build keeps every other animation's data as the last full build wrote it.
+  const metaPath = join(outDir, `${entry.prefix}_frames.json`);
+  const kept = animFilter && existsSync(metaPath) ? JSON.parse(readFileSync(metaPath, "utf8")) : {};
   const rendered = entry.render();
   const animations = rendered.animations;
   // The game's lunges, so the sprites can keep planted feet still while the body travels.
   const attacks = entry.attacks ? readAttacks(join(ROOT, entry.attacks)) : {};
+  // A partial build touches only the characters that have the animations named.
+  if (animFilter && !animFilter.some((name) => name in animations)) continue;
+  for (const name of animFilter ?? []) {
+    if (!(name in animations)) console.warn(`${key}: no animation "${name}"`);
+  }
   for (const [name, animation] of Object.entries(animations)) {
-    if (animFilter && !animFilter.includes(name)) continue;
+    if (animFilter && !animFilter.includes(name)) {
+      if (!kept[name]) throw new Error(`${key}: ${name} has no data yet; build ${key} in full first`);
+      meta[name] = kept[name];
+      continue;
+    }
     const file = `${entry.prefix}_${name}.png`;
     const attack = attacks[name];
     const moving = attack && attack.lunge > 0 && !animation.skid
       ? { ...animation, travel: rootMotion(animation, attack, entry.friction) } : animation;
     const result = writeRendered(join(outDir, file), rendered.model, name, moving);
-    reviewSheet(result.canvases).save(join(ROOT, "captures", "art_review", `${entry.prefix}_${name}.png`));
+    reviewSheet(result.canvases).save(join(OUT, "captures", "art_review", `${entry.prefix}_${name}.png`));
     delete result.canvases;
     meta[name] = { ...result, file };
     console.log(`${key}: ${name} (${result.frames} frames)`);
   }
-  if (!animFilter) {
-    writeFileSync(join(outDir, `${entry.prefix}_frames.json`), JSON.stringify(meta, null, 1));
-    writeSpriteFrames(join(outDir, `${entry.prefix}_frames.tres`), `res://${entry.dir}`, meta);
-    writeFrameHitboxes(join(outDir, `${entry.prefix}_hitboxes.tres`), meta);
-    if (entry.pieces) writeGore(entry, rendered.model, outDir, meta);
-  }
+  // Everything the game reads of the strips, from the (merged) data: always written together.
+  writeSteadily(metaPath, JSON.stringify(meta, null, 1));
+  writeSpriteFrames(join(outDir, `${entry.prefix}_frames.tres`), `res://${entry.dir}`, meta);
+  writeFrameHitboxes(join(outDir, `${entry.prefix}_hitboxes.tres`), meta);
+  if (entry.pieces) writeGore(entry, rendered.model, outDir, meta);
   // The hero's scripted kills, read by the game from the same timing the two halves were drawn to.
   if (entry.finishers) {
     for (const [name, finisher] of Object.entries(FINISHERS)) {
@@ -157,7 +175,7 @@ function writeGore(entry, model, outDir, meta) {
     const frames = renderPiece(model, { ...piece, angles: TURNS });
     const file = `${entry.prefix}_piece_${name}.png`;
     strip(frames.map((f) => f.canvas)).save(join(outDir, file));
-    reviewSheet(frames.map((f) => f.canvas)).save(join(ROOT, "captures", "art_review", `${entry.prefix}_piece_${name}.png`));
+    reviewSheet(frames.map((f) => f.canvas)).save(join(OUT, "captures", "art_review", `${entry.prefix}_piece_${name}.png`));
     const [w, h] = piece.size;
     animations.push({ name, texture: `res://${entry.dir}/${file}`, frames: frames.map((_, i) => [i * w, 0, w, h]), fps: 14,
       loop: true });

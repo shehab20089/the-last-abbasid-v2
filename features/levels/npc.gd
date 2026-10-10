@@ -26,6 +26,8 @@ const NEAR_GLOW: float = 0.1
 @export var gives_notice: String = ""
 ## What their gift teaches the hero (knives), or nothing.
 @export var teaches: StringName = &""
+## A move he already has that this person explains, shown on a card after they speak (Hamid: the riposte).
+@export var counsel: StringName = &""
 ## A keepsake of theirs they give him once they are free to speak (a thread, a pen), or nothing.
 @export var gives_keepsake: StringName = &""
 @export var idle_animation: StringName = &"idle"

@@ -233,16 +233,16 @@ size = Vector2(32, 320)
 size = Vector2(32, 320)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_45"]
-size = Vector2(48, 320)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_46"]
 size = Vector2(64, 320)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_47"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_46"]
 size = Vector2(48, 320)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_48"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_47"]
 size = Vector2(32, 320)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_48"]
+size = Vector2(48, 320)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_49"]
 size = Vector2(48, 320)
@@ -251,24 +251,18 @@ size = Vector2(48, 320)
 size = Vector2(48, 320)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_51"]
-size = Vector2(48, 320)
+size = Vector2(64, 320)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_52"]
-size = Vector2(48, 320)
+size = Vector2(32, 320)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_53"]
-size = Vector2(64, 320)
+size = Vector2(80, 120)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_54"]
 size = Vector2(32, 320)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_55"]
-size = Vector2(80, 120)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_56"]
-size = Vector2(32, 320)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_57"]
 size = Vector2(64, 320)
 
 [node name="FallenMarket" type="Node2D"]
@@ -1425,7 +1419,8 @@ dialogue = &"guard"
 requires = &""
 gives_flag = &"hamid_counsel"
 gives_notice = ""
-teaches = &"charge"
+teaches = &""
+counsel = &"riposte"
 gives_keepsake = &""
 idle_animation = &"sit"
 talk_animation = &"talk"
@@ -1441,6 +1436,7 @@ requires = &"mother_cleared"
 gives_flag = &""
 gives_notice = ""
 teaches = &""
+counsel = &""
 gives_keepsake = &"red_thread"
 idle_animation = &"crouch"
 talk_animation = &"talk"
@@ -1456,6 +1452,7 @@ requires = &"ambush_cleared"
 gives_flag = &"satchel"
 gives_notice = "NOTICE_SATCHEL"
 teaches = &""
+counsel = &""
 gives_keepsake = &"reed_pen"
 idle_animation = &"idle"
 talk_animation = &"talk"
@@ -1577,6 +1574,7 @@ group = &""
 line = ""
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_move"]
 shape = SubResource("RectangleShape2D_41")
@@ -1591,6 +1589,7 @@ group = &""
 line = ""
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_attack"]
 shape = SubResource("RectangleShape2D_42")
@@ -1605,6 +1604,7 @@ group = &""
 line = "EXECUTION_1"
 speaker = "SPEAKER_YUSUF"
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/execution"]
 shape = SubResource("RectangleShape2D_43")
@@ -1619,23 +1619,10 @@ group = &""
 line = "REFUGEE_1"
 speaker = "SPEAKER_REFUGEE"
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/refugees"]
 shape = SubResource("RectangleShape2D_44")
-
-[node name="lesson_charge" type="Area2D" parent="Triggers"]
-position = Vector2(824, 288)
-script = ExtResource("59_story_trigger_gd")
-trigger_id = "lesson_charge"
-hint = ""
-event = &""
-group = &""
-line = ""
-speaker = ""
-teaches = &"charge"
-
-[node name="Shape" type="CollisionShape2D" parent="Triggers/lesson_charge"]
-shape = SubResource("RectangleShape2D_45")
 
 [node name="hint_surprise" type="Area2D" parent="Triggers"]
 position = Vector2(944, 288)
@@ -1647,9 +1634,10 @@ group = &""
 line = ""
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_surprise"]
-shape = SubResource("RectangleShape2D_46")
+shape = SubResource("RectangleShape2D_45")
 
 [node name="hint_guard" type="Area2D" parent="Triggers"]
 position = Vector2(1400, 288)
@@ -1661,9 +1649,10 @@ group = &""
 line = ""
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_guard"]
-shape = SubResource("RectangleShape2D_47")
+shape = SubResource("RectangleShape2D_46")
 
 [node name="mother_cry" type="Area2D" parent="Triggers"]
 position = Vector2(1488, 288)
@@ -1675,9 +1664,10 @@ group = &"mother"
 line = "MOTHER_CRY_1"
 speaker = "SPEAKER_MOTHER"
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/mother_cry"]
-shape = SubResource("RectangleShape2D_48")
+shape = SubResource("RectangleShape2D_47")
 
 [node name="hint_heal" type="Area2D" parent="Triggers"]
 position = Vector2(1672, 288)
@@ -1689,9 +1679,10 @@ group = &""
 line = ""
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_heal"]
-shape = SubResource("RectangleShape2D_49")
+shape = SubResource("RectangleShape2D_48")
 
 [node name="hint_roll" type="Area2D" parent="Triggers"]
 position = Vector2(1752, 288)
@@ -1703,9 +1694,10 @@ group = &""
 line = ""
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_roll"]
-shape = SubResource("RectangleShape2D_50")
+shape = SubResource("RectangleShape2D_49")
 
 [node name="hint_archer" type="Area2D" parent="Triggers"]
 position = Vector2(1896, 288)
@@ -1717,23 +1709,10 @@ group = &""
 line = ""
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_archer"]
-shape = SubResource("RectangleShape2D_51")
-
-[node name="lesson_kick" type="Area2D" parent="Triggers"]
-position = Vector2(2024, 288)
-script = ExtResource("59_story_trigger_gd")
-trigger_id = "lesson_kick"
-hint = ""
-event = &""
-group = &""
-line = ""
-speaker = ""
-teaches = &"kick"
-
-[node name="Shape" type="CollisionShape2D" parent="Triggers/lesson_kick"]
-shape = SubResource("RectangleShape2D_52")
+shape = SubResource("RectangleShape2D_50")
 
 [node name="hint_climb" type="Area2D" parent="Triggers"]
 position = Vector2(2368, 288)
@@ -1745,9 +1724,10 @@ group = &""
 line = ""
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_climb"]
-shape = SubResource("RectangleShape2D_53")
+shape = SubResource("RectangleShape2D_51")
 
 [node name="burners" type="Area2D" parent="Triggers"]
 position = Vector2(2416, 288)
@@ -1759,9 +1739,10 @@ group = &""
 line = "BURNERS_1"
 speaker = "SPEAKER_YUSUF"
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/burners"]
-shape = SubResource("RectangleShape2D_54")
+shape = SubResource("RectangleShape2D_52")
 
 [node name="hint_plunge" type="Area2D" parent="Triggers"]
 position = Vector2(2488, 308)
@@ -1773,9 +1754,10 @@ group = &""
 line = ""
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_plunge"]
-shape = SubResource("RectangleShape2D_55")
+shape = SubResource("RectangleShape2D_53")
 
 [node name="ambush" type="Area2D" parent="Triggers"]
 position = Vector2(3296, 288)
@@ -1787,9 +1769,10 @@ group = &"ambush"
 line = "AMBUSH_1"
 speaker = ""
 teaches = &""
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/ambush"]
-shape = SubResource("RectangleShape2D_56")
+shape = SubResource("RectangleShape2D_54")
 
 [node name="lesson_low_cut" type="Area2D" parent="Triggers"]
 position = Vector2(4352, 288)
@@ -1801,9 +1784,10 @@ group = &""
 line = ""
 speaker = ""
 teaches = &"low_cut"
+requires_flag = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/lesson_low_cut"]
-shape = SubResource("RectangleShape2D_57")
+shape = SubResource("RectangleShape2D_55")
 
 [node name="PlayerStart" type="Marker2D" parent="."]
 position = Vector2(104, 448)

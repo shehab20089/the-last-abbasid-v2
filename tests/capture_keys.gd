@@ -1,5 +1,5 @@
 extends SceneTree
-## Renders every place a string of buttons is shown (J J then K): a new technique's card, a lesson card, the
+## Renders every place a string of buttons is shown (J J then K): a new technique's card, Hamid's counsel card, a lesson card, the
 ## Techniques page, the lamp menu, the coach over the hero, a game-over tip. Full frames into captures/keys/ (or
 ## captures/keys/ar with `-- ar`). Not a pass/fail check. Needs a window:
 ## node tools/run_godot_cli.mjs --path . --script res://tests/capture_keys.gd [-- ar]
@@ -41,6 +41,12 @@ func _run() -> void:
 	game._show_card({"kind": "technique", "id": &"whirl"})
 	await _wait(1.6)
 	await _save("01_card_whirl")
+	game.lesson_screen.chosen.emit(&"lesson_done")
+	await _wait(0.3)
+	# Hamid's counsel: the parry and the riposte, performed.
+	game._show_card({"kind": "counsel", "id": &"riposte"})
+	await _wait(2.2)
+	await _save("01b_counsel_riposte")
 	game.lesson_screen.chosen.emit(&"lesson_done")
 	await _wait(0.3)
 	# Lesson cards at the top: the whirl, then the delayed cut.

@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_script")
 display_name = "Running Lunge"
-animation = &"thrust"
+animation = &"lunge"
 active_from = 3
 active_to = 4
 recovery_from = 5
