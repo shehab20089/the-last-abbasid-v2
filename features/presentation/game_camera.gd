@@ -12,7 +12,7 @@ extends Camera2D
 ## upper half of the frame.
 @export var height: float = 84.0
 ## Largest shake offset in pixels at full trauma.
-@export var max_shake: float = 6.0
+@export var max_shake: float = 5.0
 ## Scales every shake (the player's setting).
 var shake_scale: float = 1.0
 
@@ -22,6 +22,8 @@ var _trauma: float = 0.0
 var _focus: Vector2 = Vector2.ZERO
 var _noise: FastNoiseLite = FastNoiseLite.new()
 var _time: float = 0.0
+## A push along x the way a blow landed, springing back to nothing.
+var _kick: float = 0.0
 
 
 func _ready() -> void:
@@ -51,6 +53,11 @@ func shake(amount: float) -> void:
 	_trauma = minf(1.0, _trauma + amount * 0.12)
 
 
+## Jolts the view a few pixels the way a blow travels (`direction` +1 right, -1 left).
+func kick(direction: float, pixels: float) -> void:
+	_kick = clampf(_kick + direction * pixels * shake_scale, -6.0, 6.0)
+
+
 func _process(delta: float) -> void:
 	# Real time: the camera keeps moving smoothly through hit-stop.
 	var real: float = delta / maxf(Engine.time_scale, 0.001)
@@ -62,8 +69,9 @@ func _process(delta: float) -> void:
 		_focus = _focus.lerp(goal, 1.0 - exp(-real / follow_time))
 		global_position = _focus.round()
 	_trauma = maxf(0.0, _trauma - real * 1.6)
-	var power: float = _trauma * _trauma * max_shake * shake_scale
-	offset = Vector2(_noise.get_noise_2d(_time, 0.0), _noise.get_noise_2d(0.0, _time)) * power
+	var power: float = _trauma * max_shake * shake_scale
+	_kick *= exp(-real * 16.0)
+	offset = Vector2(_noise.get_noise_2d(_time, 0.0), _noise.get_noise_2d(0.0, _time)) * power + Vector2(_kick, 0.0)
 	offset = offset.round()
 
 

@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="AttackDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Judgment of the Guard"
+animation = &"cleave_charged"
+active_from = 1
+active_to = 2
+recovery_from = 3
+damage = 60.0
+health_share = 0.4
+poise_damage = 80.0
+stamina_damage = 80.0
+knockback = 360.0
+knocks_down = true
+hit_stop = 0.22
+camera_shake = 8.0
+guard_break = true
+overwhelms = true
+unblockable = true
+severs = Array[StringName]([&"head", &"waist"])
+sever_chance = 1.0
+lunge_speed = 120.0
+lunge_from = 0
+lunge_to = 0
+stamina_cost = 0.0
+breath_gain = 0.0
+resolve_gain = 0.0
+art = true
+swing_cue = &"charge_release"
+hit_cue = &"sword_hit_heavy"

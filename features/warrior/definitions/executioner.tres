@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="AttackDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Executioner's Cleave"
+animation = &"executioner"
+active_from = 3
+active_to = 4
+recovery_from = 5
+damage = 38.0
+poise_damage = 50.0
+stamina_damage = 50.0
+knockback = 310.0
+knocks_down = true
+hit_stop = 0.16
+camera_shake = 5.5
+guard_break = true
+severs = Array[StringName]([&"waist", &"head", &"waist"])
+sever_chance = 1.0
+lunge_speed = 100.0
+seeks = 60.0
+strike_at = 30.0
+lunge_from = 2
+lunge_to = 3
+stamina_cost = 20.0
+breath_gain = 9.0
+resolve_gain = 8.0
+swing_cue = &"sword_heavy"
+hit_cue = &"sword_hit_heavy"

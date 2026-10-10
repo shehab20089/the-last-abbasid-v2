@@ -44,6 +44,8 @@ const STEEL = ramp("#101318", "#20252c", "#363d47", "#555e6a", "#7f8995", "#b7c1
 const MASK = ramp("#0b0909", "#151112", "#201a1b", "#2c2425");
 /** Raw flesh where a part was cut away, wet and dark. */
 const DEEL_CRIMSON = ramp("#120607", "#230b0d", "#371114", "#4e181a", "#682221", "#842e29");
+/** The Kipchak horsemen's dun felt. */
+const DEEL_OCHRE = ramp("#120d07", "#22180d", "#352614", "#4b371c", "#644a26", "#7f5f33");
 const WHITE = ramp("#3b3733", "#615a53", "#8c847a", "#b7aea1", "#ddd5c7", "#f1ebdf");
 const CLAY = ramp("#1e110b", "#341d12", "#4f2c1a", "#6d3f25", "#8d5633", "#ab6f45");
 const FELT = ramp("#121010", "#1f1b19", "#2e2825", "#403834", "#544943", "#6a5d55");
@@ -132,6 +134,8 @@ return {
     shade: (s) => pick(FUR, s.light, -0.2 - (((s.x * 3 + s.y * 2) % 5 === 0) ? 1 : 0)),
   },
   helmet: { ramp: IRON, outline: outlineOf(IRON), line: IRON[0], rim: 0.3, shade: (s) => metal(IRON, s, -1.3, 0.62) },
+  // Bright worked steel: a knife's blade, an axe's edge.
+  knife: { ramp: STEEL, outline: outlineOf(STEEL), line: STEEL[0], rim: 0.35, shade: (s) => metal(STEEL, s, 0.4, 0.5) },
   helmetBand: {
     ramp: BRONZE, outline: outlineOf(BRONZE), line: BRONZE[0], rim: 0.3,
     shade: (s) => metal(BRONZE, s, -0.5 - ((Math.floor(s.u * 0.8) % 3 === 0) ? 1 : 0), 0.6),
@@ -315,6 +319,12 @@ const KINDS = {
     beard: true, helmet: "conical", deel: DEEL_CRIMSON },
   engineer: { cuirass: false, weapon: "pot", shield: 0, plume: "none", mask: false, beard: true, hat: "felt",
     deel: DEEL_UMBER },
+  // A Kipchak skirmisher of the steppe: no armour and no shield, a fur cap, a short sabre and a long knife.
+  skirmisher: { cuirass: false, weapon: "knives", shield: 0, plume: "none", mask: false, beard: true, furHat: true,
+    deel: DEEL_OCHRE },
+  // A Georgian axeman: mail to the knee, a conical helm, a long-hafted bearded axe in both hands.
+  axeman: { cuirass: true, mail: true, full: true, weapon: "axe", shield: 0, plume: "none", mask: false, beard: true,
+    helmet: "conical", deel: DEEL_CRIMSON, scale: 1.08 },
 };
 
 /**
@@ -547,6 +557,36 @@ function buildParts(kind) {
       { frame: head, segments: 6 })), "sword", M.bronze, { group: "sword", prio: 2.6 });
     add_("pommel", onWeapon(ellipsoid([-7.6, 0, 0], [1.2, 1.2, 1.2], { rings: 6, segments: 8 })), "sword", M.helmet,
       { group: "sword", prio: 2.5 });
+  } else if (k.weapon === "knives") {
+    // A short curved sabre in the near hand.
+    add_("grip", onWeapon(limb([-3.0, 0, 0], [2.0, 0, 0], 0.85, 0.8, { sides: 8, steps: 2 })), "sword", M.grip,
+      { group: "sword", prio: 2 });
+    add_("pommel", onWeapon(ellipsoid([-3.5, 0, 0.2], [1.0, 0.9, 1.1], { rings: 6, segments: 8 })), "sword", M.bronze,
+      { group: "sword", prio: 2.5 });
+    add_("guard", onWeapon(roundedBox([2.4, 0, 0], [1.0, 1.1, 4.4], { roundness: 0.6 })), "sword", M.bronze,
+      { group: "sword", prio: 2.5 });
+    // A long knife in the far fist (whose centre sits 2.5 off the wrist), its blade carrying on the
+    // forearm's line past the knuckles, so a stab reads as the arm's reach made longer.
+    const onKnife = (m) => place(m, rest.handF);
+    add_("daggerGrip", onKnife(limb([-2.2, 0, 2.5], [2.0, 0, 2.5], 0.8, 0.75, { sides: 8, steps: 2 })), "handF", M.grip,
+      { group: "armF", prio: 2.2 });
+    add_("daggerGuard", onKnife(roundedBox([2.2, 0, 2.5], [0.8, 1.0, 3.2], { roundness: 0.6 })), "handF", M.bronze,
+      { group: "armF", prio: 2.5 });
+    add_("dagger", onKnife(roundedBox([7.6, 0, 2.5], [10.6, 0.9, 2.0], { roundness: 0.4 })), "handF", M.knife,
+      { group: "armF", prio: 2.4 });
+  } else if (k.weapon === "axe") {
+    // A long haft, iron-shod, and a broad bearded head on the edge side of its end.
+    add_("shaft", onWeapon(limb([-14, 0, 0], [30, 0, 0], 1.0, 0.92, { sides: 8, steps: 6 })), "sword", M.shaft,
+      { group: "sword", prio: 2.2 });
+    add_("socket", onWeapon(limb([25, 0, 0], [30, 0, 0], 1.35, 1.25, { sides: 8, steps: 2 })), "sword", M.helmet,
+      { group: "sword", prio: 2.5 });
+    // The head: a narrow neck off the socket flaring to a broad edge, its beard reaching down the haft.
+    add_("axeHead", onWeapon(roundedBox([27.6, 0, 2.6], [4.6, 1.3, 4.4], { roundness: 0.4 })), "sword", M.helmet,
+      { group: "sword", prio: 2.6 });
+    add_("axeBlade", onWeapon(roundedBox([25.6, 0, 6.8], [10.4, 0.9, 4.2], { roundness: 0.35 })), "sword", M.knife,
+      { group: "sword", prio: 2.7 });
+    add_("pommel", onWeapon(ellipsoid([-14.6, 0, 0], [1.2, 1.2, 1.2], { rings: 6, segments: 8 })), "sword", M.helmet,
+      { group: "sword", prio: 2.5 });
   } else if (k.weapon === "pot") {
     // A clay pot of naphtha in the throwing hand, its wick alight; three more on a strap at his hip.
     const held = { o: [1.4, 0, 1.2], x: [0, 1, 0], y: [1, 0, 0], z: [0, 0, 1] };
@@ -655,6 +695,9 @@ const BLADES = {
   sabre: { from: 3.4, length: 25, curve: 2.6, colors: { edge: STEEL[6], flat: STEEL[4], spine: STEEL[3], dark: STEEL[1] } },
   spear: { from: 47.5, length: 9.5, curve: 0, colors: { edge: STEEL[6], flat: STEEL[4], spine: STEEL[3], dark: STEEL[1] } },
   shortspear: { from: 32, length: 8.5, curve: 0, colors: { edge: STEEL[6], flat: STEEL[4], spine: STEEL[3], dark: STEEL[1] } },
+  knives: { from: 2.8, length: 17, curve: 2.0, colors: { edge: STEEL[6], flat: STEEL[4], spine: STEEL[3], dark: STEEL[1] } },
+  // The axe's head is modelled; its line is only for where it strikes.
+  axe: { from: 20.6, length: 10.4, curve: 0, lift: 7.6, hidden: true, colors: { edge: STEEL[6], flat: STEEL[4], spine: STEEL[3], dark: STEEL[1] } },
   // The mace's head is modelled; its line is only for where it strikes.
   mace: { from: 22, length: 10, curve: 0, hidden: true, colors: { edge: STEEL[6], flat: STEEL[4], spine: STEEL[3], dark: STEEL[1] } },
   captain: { from: 3.4, length: 30, curve: 3.0, colors: { edge: STEEL[6], flat: STEEL[4], spine: STEEL[3], dark: STEEL[1] } },

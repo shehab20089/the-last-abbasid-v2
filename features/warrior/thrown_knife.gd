@@ -76,6 +76,10 @@ func _on_area_entered(area: Area2D) -> void:
 		sprite.flip_h = not sprite.flip_h
 		lifetime = 0.4
 		return
+	# A knife that killed may come back to his belt (a keepsake's gift).
+	var hero: Warrior = thrower as Warrior
+	if target.dead and hero != null and is_instance_valid(hero):
+		hero.knife_returned()
 	queue_free()
 
 

@@ -7,12 +7,14 @@
 [ext_resource type="Resource" path="res://features/enemies/definitions/captain_slash_c.tres" id="5_c"]
 [ext_resource type="Resource" path="res://features/enemies/definitions/captain_smash.tres" id="6_smash"]
 [ext_resource type="Resource" path="res://features/enemies/definitions/captain_bash.tres" id="7_bash"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/captain_sweep.tres" id="8_sweep"]
 
 [resource]
 script = ExtResource("1_script")
 display_name = "BOSS_CAPTAIN"
-max_health = 420.0
-max_poise = 70.0
+max_health = 520.0
+art_resistance = 0.5
+max_poise = 90.0
 walk_speed = 44.0
 run_speed = 120.0
 hurt_time = 0.25
@@ -26,10 +28,11 @@ lose_range = 2000.0
 alert_time = 0.4
 preferred_range = 48.0
 min_range = 26.0
-attacks = Array[ExtResource("2_attack")]([ExtResource("3_a"), ExtResource("4_b"), ExtResource("5_c"), ExtResource("6_smash"), ExtResource("7_bash")])
-attack_ranges = PackedFloat32Array(66, 66, 74, 96, 170)
+attacks = Array[ExtResource("2_attack")]([ExtResource("3_a"), ExtResource("4_b"), ExtResource("5_c"), ExtResource("6_smash"), ExtResource("7_bash"), ExtResource("8_sweep")])
+attack_ranges = PackedFloat32Array(66, 66, 74, 96, 170, 62)
 attack_cooldown = Vector2(0.9, 1.5)
 block_chance = 0.5
+reaction_time = 0.15
 block_time = 0.8
 retreat_chance = 0.15
 patrol_distance = 0.0

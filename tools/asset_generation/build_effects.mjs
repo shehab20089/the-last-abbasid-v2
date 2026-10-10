@@ -409,27 +409,89 @@ for (const [name, radii, bone, seed] of [
   save("dust", frames, 16, false);
 }
 
-// --- Telegraph glint: a four-point star that flares on a raised blade. --------------------------
+// --- Telegraph glints: one shape for each warning, drawn in white and greys so the tint is the colour. --
+// The session tints them: white for a blow a shield answers (the four-point star), amber for a low sweep
+// (a flat flare over a chevron pointing down: jump or roll), violet for a blow that breaks a held guard (a
+// cross in a diamond that cracks apart: parry or roll), red for a blow no shield stops (an eight-point
+// burst in a ring: roll). A dark rim keeps each readable over flames. The plain star is also the hero's
+// own glint (a held cleave growing, the moment to draw breath), tinted his colours.
 {
-  const frames = [];
-  for (let f = 0; f < 6; f++) {
-    const c = new Canvas(20, 20);
-    const len = [2, 5, 8, 7, 4, 2][f];
-    const color = f < 4 ? WHITE : P.fire[5];
-    for (let k = 0; k < 4; k++) {
-      const angle = (k / 4) * Math.PI * 2;
-      ray(c, 10, 10, angle, 0, len, (s) => (s < 0.4 ? color : P.fire[f < 3 ? 5 : 4]));
-    }
-    if (f > 0 && f < 4) {
-      for (let k = 0; k < 4; k++) {
-        const angle = (k / 4) * Math.PI * 2 + Math.PI / 4;
-        ray(c, 10, 10, angle, 0, len * 0.35, P.fire[4]);
+  const N = (v, a = 255) => [v, v, v, a];
+  const RIM = N(16, 255);
+  const SIZE = 26;
+  const C = SIZE / 2;
+  const LEN = [3, 6, 10, 9, 7, 5, 3];
+  const lit = (s) => (s < 0.45 ? N(255) : N(205));
+  /** A frame: the shape drawn, then a dark rim round every lit pixel. */
+  const frame = (draw) => {
+    const c = new Canvas(SIZE, SIZE);
+    draw(c);
+    const on = [];
+    for (let y = 0; y < SIZE; y++) for (let x = 0; x < SIZE; x++) if (c.alpha(x, y) > 0) on.push([x, y]);
+    for (const [x, y] of on) {
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        if (c.inside(x + dx, y + dy) && c.alpha(x + dx, y + dy) === 0) c.set(x + dx, y + dy, RIM);
       }
     }
-    c.set(10, 10, WHITE);
-    frames.push(c);
+    return c;
+  };
+  const shapes = {
+    glint: (c, f) => {
+      for (let k = 0; k < 4; k++) ray(c, C, C, (k / 4) * Math.PI * 2, 0, LEN[f], lit);
+      if (f > 0 && f < 5) for (let k = 0; k < 4; k++) ray(c, C, C, (k / 4) * Math.PI * 2 + Math.PI / 4, 0, LEN[f] * 0.35, N(215));
+      c.set(C, C, N(255));
+    },
+    glint_low: (c, f) => {
+      ray(c, C, C, 0, 0, LEN[f] * 1.2, lit);
+      ray(c, C, C, Math.PI, 0, LEN[f] * 1.2, lit);
+      ray(c, C, C, Math.PI / 2, 0, LEN[f] * 0.3, lit);
+      ray(c, C, C, -Math.PI / 2, 0, LEN[f] * 0.3, lit);
+      if (f > 0 && f < 6) {
+        const w = Math.min(5, 2 + f);
+        const y0 = C + 3 + Math.min(f, 3);
+        c.line(C - w, y0, C, y0 + w - 1, N(235));
+        c.line(C + w, y0, C, y0 + w - 1, N(235));
+      }
+      c.set(C, C, N(255));
+    },
+    glint_break: (c, f) => {
+      // A cross inside a diamond; the diamond cracks at its corners and its sides fly apart.
+      const cross = [3, 4, 5, 6, 5, 3, 2][f];
+      for (let k = 0; k < 4; k++) ray(c, C, C, (k / 4) * Math.PI * 2 + Math.PI / 4, 0, cross, lit);
+      if (f > 0 && f < 6) {
+        const r = [0, 7, 8, 9, 9, 9][f];
+        const apart = [0, 0, 0, 0, 1.4, 2.6][f];
+        const gap = f < 4 ? 0 : 0.22;
+        const corners = [[0, -r], [r, 0], [0, r], [-r, 0]];
+        for (let k = 0; k < 4; k++) {
+          const [ax, ay] = corners[k];
+          const [bx, by] = corners[(k + 1) % 4];
+          const ox = Math.sign(ax + bx) * apart, oy = Math.sign(ay + by) * apart;
+          c.line(Math.round(C + ax + (bx - ax) * gap + ox), Math.round(C + ay + (by - ay) * gap + oy),
+            Math.round(C + ax + (bx - ax) * (1 - gap) + ox), Math.round(C + ay + (by - ay) * (1 - gap) + oy),
+            N(f < 5 ? 240 : 185));
+        }
+      }
+      c.set(C, C, N(255));
+    },
+    glint_dire: (c, f) => {
+      for (let k = 0; k < 4; k++) ray(c, C, C, (k / 4) * Math.PI * 2, 0, LEN[f] * 1.15, lit);
+      for (let k = 0; k < 4; k++) ray(c, C, C, (k / 4) * Math.PI * 2 + Math.PI / 4, 0, LEN[f] * 0.62, lit);
+      if (f > 1 && f < 6) {
+        const r = 7 + (f - 2) * 1.3;
+        for (let a = 0; a < 64; a++) {
+          const angle = (a / 64) * Math.PI * 2;
+          c.set(Math.round(C + Math.cos(angle) * r), Math.round(C + Math.sin(angle) * r), N(f < 4 ? 235 : 175));
+        }
+      }
+      c.ellipse(C, C, 1, 1, N(255));
+    },
+  };
+  for (const [name, draw] of Object.entries(shapes)) {
+    const frames = [];
+    for (let f = 0; f < LEN.length; f++) frames.push(frame((c) => draw(c, f)));
+    save(name, frames, 20, false);
   }
-  save("glint", frames, 18, false);
 }
 
 // --- Fire: looping flames in three sizes. ---------------------------------------------------------
@@ -509,6 +571,179 @@ function fireFrames(w, h, count, seed, tongues) {
 save("fire_small", fireFrames(20, 30, 12, 3, 2), 14, true);
 save("fire_medium", fireFrames(34, 52, 12, 7, 3), 13, true);
 save("fire_large", fireFrames(56, 96, 12, 13, 4), 12, true);
+
+// --- Naphtha burning on the street (a fire pot's): low and wide over a white-hot pool of burning oil, with
+// black soot rolling off it. Nothing like the city's fires (scenery): this one burns whoever stands in it.
+function naftFrames(w, h, count, seed) {
+  const flameH = Math.round(h * 0.62);
+  const flames = fireFrames(w, flameH, count, seed, 5);
+  const frames = [];
+  for (let f = 0; f < count; f++) {
+    const c = new Canvas(w, h);
+    const t = f / count;
+    // Soot first, so the flames burn in front of it.
+    for (let k = 0; k < 5; k++) {
+      const life = (t + hash2(k, 1, seed)) % 1;
+      const sx = w * (0.18 + 0.64 * hash2(k, 2, seed)) + Math.sin(life * 5 + k) * 2.5;
+      const sy = h - flameH * 0.7 - life * h * 0.5;
+      const r = 2.6 + life * 3.8;
+      for (let y = Math.floor(sy - r); y <= sy + r; y++) {
+        for (let x = Math.floor(sx - r); x <= sx + r; x++) {
+          if (!c.inside(x, y)) continue;
+          const d = Math.hypot(x + 0.5 - sx, y + 0.5 - sy) / r;
+          if (d >= 1) continue;
+          const tone = P.smoke[d < 0.55 ? 0 : 1];
+          const a = Math.round(240 * Math.min(1, (1 - life) * 1.3) * (1 - d * 0.5));
+          if (a > c.alpha(x, y)) c.set(x, y, [tone[0], tone[1], tone[2], a]);
+        }
+      }
+    }
+    c.blit(flames[f], 0, h - flameH);
+    // The pool of burning oil along the foot, flickering white-hot.
+    for (let x = 1; x < w - 1; x++) {
+      const edge = Math.abs(x + 0.5 - w / 2) / (w / 2);
+      if (edge > 0.94) continue;
+      const flick = hash2(x, f, seed + 5);
+      c.set(x, h - 1, flick > 0.45 ? P.fire[6] : P.fire[5]);
+      if (edge < 0.78) c.set(x, h - 2, flick > 0.75 ? P.fire[6] : flick > 0.3 ? P.fire[5] : P.fire[4]);
+    }
+    frames.push(c);
+  }
+  return frames;
+}
+save("naft_fire", naftFrames(46, 38, 12, 31), 15, true);
+
+// --- The Arts' effects: Greek fire bursting, the guard's cry, the fury's embers. -------------------------------
+
+/**
+ * A fireball: a white-hot core that blooms into ragged billows of flame, lifts, and cools through dark red
+ * into a column of smoke, with embers thrown out. Drawn standing on the ground (its foot at the bottom).
+ */
+function fireball(size, count, seed) {
+  const frames = [];
+  const cx = size / 2;
+  const ground = size - 6;
+  const heatColour = (h) => (h > 1.35 ? P.fire[6] : h > 1.1 ? P.fire[5] : h > 0.85 ? P.fire[4] : h > 0.62 ? P.fire[3]
+    : h > 0.45 ? P.fire[2] : P.fire[1]);
+  // Billows thrown up and out of the burst, each swelling as it rises.
+  const puffs = [];
+  for (let i = 0; i < 18; i++) {
+    const angle = (hash2(i, 1, seed) - 0.5) * Math.PI * 0.95;
+    puffs.push({ dx: Math.sin(angle), up: Math.cos(angle), speed: 0.3 + hash2(i, 2, seed) * 0.42,
+      r: 0.1 + hash2(i, 3, seed) * 0.08, delay: hash2(i, 4, seed) * 0.18 });
+  }
+  for (let f = 0; f < count; f++) {
+    const k = f / (count - 1);
+    const c = new Canvas(size, size);
+    const heat = Math.max(0, 1.15 - k * 1.25);
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        let best = 0;
+        for (const pf of puffs) {
+          const kk = Math.max(0, (k - pf.delay) / (1 - pf.delay));
+          const ease = 1 - Math.pow(1 - kk, 2);
+          const px = cx + pf.dx * size * pf.speed * ease * 0.55;
+          const py = ground - size * 0.1 - pf.up * size * pf.speed * ease * 0.7 - ease * size * 0.14;
+          const r = size * pf.r * (0.45 + ease * 1.35);
+          const d = Math.hypot(x + 0.5 - px, (y + 0.5 - py) * 1.08) / r;
+          if (d < 1) best = Math.max(best, 1 - d);
+        }
+        if (best <= 0) continue;
+        const n = fbm(x * 0.1, y * 0.1 - f * 0.45, { octaves: 3, seed });
+        const body = best * (0.75 + n * 0.5);
+        if (body < 0.12) continue;
+        const fire = body * 2.0 * heat + (n - 0.5) * 0.3;
+        if (fire > 0.32) {
+          c.set(x, y, heatColour(fire));
+        } else {
+          const tone = P.smoke[body > 0.45 ? 2 : 1];
+          const alpha = Math.round(235 * Math.min(1, body * 2.4) * (1 - k * 0.5));
+          if (alpha > 14) c.set(x, y, [tone[0], tone[1], tone[2], alpha]);
+        }
+      }
+    }
+    for (let e = 0; e < 20; e++) {
+      const angle = (hash2(e, 5, seed) - 0.5) * Math.PI * 1.4;
+      const speed = 0.3 + hash2(e, 6, seed) * 0.5;
+      const ex = Math.round(cx + Math.sin(angle) * size * speed * k * 0.7);
+      const ey = Math.round(ground - Math.cos(angle) * size * speed * k - k * k * size * 0.12);
+      if (k > 0.12 && k < 0.92 && c.inside(ex, ey) && c.alpha(ex, ey) < 200) {
+        c.set(ex, ey, hash2(e, 7, seed) > 0.5 ? P.fire[6] : P.fire[5]);
+      }
+    }
+    frames.push(c);
+  }
+  return frames;
+}
+save("naft_burst", fireball(112, 14, 41), 18, false);
+
+/**
+ * The guard's cry: a ring of driven air racing out along the street both ways, bright at first, kicking up a
+ * wall of dust where it meets the ground, thinning as it goes. Drawn standing on the ground.
+ */
+{
+  const W = 220;
+  const H = 52;
+  const cx = W / 2;
+  const ground = H - 4;
+  const frames = [];
+  for (let f = 0; f < 9; f++) {
+    const k = f / 8;
+    const c = new Canvas(W, H);
+    const r = 10 + 98 * Math.pow(k, 0.7);
+    const fade = 1 - k;
+    // The ring: an ellipse on the ground, its near and far edges.
+    for (const [scale, strength] of [[1, 1], [0.72, 0.55]]) {
+      for (let a = 0; a < 360; a += 0.4) {
+        const rad = (a * Math.PI) / 180;
+        for (const thick of [0, 1]) {
+          const x = Math.round(cx + Math.cos(rad) * (r * scale + thick));
+          const y = Math.round(ground - 10 + Math.sin(rad) * (r * scale + thick) * 0.16);
+          if (!c.inside(x, y)) continue;
+          const tone = f < 5 ? [255, 236, 190] : P.ash[3];
+          c.set(x, y, [tone[0], tone[1], tone[2], Math.round(240 * strength * Math.pow(fade, 0.8))]);
+        }
+      }
+    }
+    // Dust thrown up where it meets the street, both ways.
+    for (const side of [-1, 1]) {
+      const at = cx + side * r;
+      for (let y = 0; y < H; y++) {
+        for (let x = Math.floor(at - 20); x <= at + 20; x++) {
+          if (!c.inside(x, y)) continue;
+          const u = Math.abs(x + 0.5 - at) / 20;
+          const v = (ground - y) / (14 + 28 * fade);
+          if (u >= 1 || v < 0 || v >= 1) continue;
+          const n = fbm(x * 0.2, y * 0.2 + f, { octaves: 2, seed: 61 });
+          const density = (1 - u) * (1 - v) * (0.6 + n * 0.8) * fade;
+          if (density < 0.18) continue;
+          const tone = density > 0.5 ? P.ash[2] : P.ash[1];
+          if (c.alpha(x, y) === 0) c.set(x, y, [tone[0], tone[1], tone[2], Math.round(Math.min(1, density) * 220)]);
+        }
+      }
+    }
+    frames.push(c);
+  }
+  save("shockwave", frames, 20, false);
+}
+
+/** The fury's embers: a few sparks lifting off him and burning out. */
+{
+  const frames = [];
+  for (let f = 0; f < 10; f++) {
+    const k = f / 9;
+    const c = new Canvas(24, 44);
+    for (let e = 0; e < 6; e++) {
+      const x = Math.round(12 + (hash2(e, 1, 71) - 0.5) * 14 + Math.sin(k * 5 + e) * 2);
+      const y = Math.round(40 - k * (24 + hash2(e, 2, 71) * 14) - hash2(e, 3, 71) * 6);
+      if (k > hash2(e, 4, 71) * 0.4 + 0.55) continue;
+      c.set(x, y, k < 0.35 ? P.fire[6] : P.fire[5]);
+      if (k < 0.3) c.set(x, y + 1, P.fire[4]);
+    }
+    frames.push(c);
+  }
+  save("embers", frames, 14, false);
+}
 
 // --- Drifting smoke: translucent bands that tile sideways, for slow-scrolling haze layers. -------
 /**
@@ -639,6 +874,31 @@ for (const [name, size] of [["smoke_small", 12], ["smoke_medium", 20], ["smoke_l
   for (let x = 1; x < 13; x++) c.set(x, 9, P.leather[1]);
   c.set(5, 0, P.parchment[4]); c.set(6, 1, P.parchment[3]); c.set(4, 1, P.parchment[3]);
   c.save(join(OUT, "manuscript.png"));
+}
+
+// --- A guardsman's token: the bronze badge of the Caliph's guard, a crescent struck on it, fallen in
+// the dirt. -------------------------------------------------------------------------------------------
+{
+  const c = new Canvas(10, 9);
+  for (let y = 1; y < 9; y++) for (let x = 1; x < 9; x++) {
+    const d = Math.hypot(x + 0.5 - 5, (y + 0.5 - 5) * 1.15);
+    if (d <= 3.9) c.set(x, y, d > 3.1 ? (y < 4 ? P.bronze[4] : P.bronze[1]) : y < 5 ? P.bronze[3] : P.bronze[2]);
+  }
+  c.set(4, 3, P.gold[4]); c.set(3, 4, P.gold[4]); c.set(3, 5, P.gold[3]); c.set(4, 6, P.gold[3]);
+  c.set(5, 0, P.leather[3]); c.set(5, 1, P.leather[2]);
+  c.save(join(OUT, "guard_token.png"));
+}
+
+// --- A keepsake: a small bundle wrapped in cloth and tied, as someone kept it close. ---------------
+{
+  const c = new Canvas(12, 9);
+  for (let y = 2; y < 9; y++) for (let x = 1; x < 11; x++) {
+    const d = Math.hypot((x + 0.5 - 6) / 5, (y + 0.5 - 5.6) / 3.4);
+    if (d <= 1) c.set(x, y, d > 0.8 ? P.madder[1] : y < 4 ? P.madder[4] : P.madder[3]);
+  }
+  for (let y = 2; y < 9; y++) c.set(6, y, P.gold[3]);
+  c.set(5, 1, P.gold[4]); c.set(7, 1, P.gold[4]); c.set(6, 1, P.gold[3]);
+  c.save(join(OUT, "keepsake.png"));
 }
 
 writeSpriteFrames(join(OUT, "effect_frames.tres"), "res://assets/effects", meta);

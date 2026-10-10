@@ -4,6 +4,7 @@ extends SceneTree
 ## sentries, the spearman's amber low sweep, and a quick finisher while another soldier still fights.
 ## A sheet each (enlarged 2x) and a few full frames. Not a pass/fail check. Needs a window:
 ## node tools/run_godot_cli.mjs --path . --script res://tests/capture_moves.gd
+## With `-- tells`: only the four warnings (a cut, a low sweep, a guard-breaker, a blow no shield stops).
 
 const LEVEL: String = "res://features/levels/fallen_market/fallen_market.tscn"
 ## The crop about the hero's feet.
@@ -36,11 +37,14 @@ func _run() -> void:
 		if brain != null:
 			brain.process_mode = Node.PROCESS_MODE_DISABLED
 	var home: Vector2 = game.hero.global_position
-	await _plunge()
-	await _air_slash(home)
-	await _bash()
-	await _low_sweep(home)
-	await _quick_finisher(home)
+	if "tells" in OS.get_cmdline_user_args():
+		await _tells(home)
+	else:
+		await _plunge()
+		await _air_slash(home)
+		await _bash()
+		await _low_sweep(home)
+		await _quick_finisher(home)
 	print("MOVES_CAPTURE_DONE %s" % destination)
 	Engine.time_scale = 1.0
 	current_scene.queue_free()
@@ -135,6 +139,39 @@ func _low_sweep(home: Vector2) -> void:
 			break
 	_sheet(cells, "low_sweep")
 	spearman.queue_free()
+
+
+## The four warnings, each from the wind-up to the blow: white (a cut), amber (a low sweep), violet (a blow
+## that breaks a guard), red (one no shield stops).
+func _tells(home: Vector2) -> void:
+	var hero: Warrior = game.hero
+	hero.global_position = home
+	hero.set_facing(1.0)
+	await _wait(0.4)
+	var tells: Array[String] = ["swordsman:swordsman_cut", "spearman:spearman_sweep", "maceman:maceman_smash",
+		"axeman:axeman_hook", "captain:captain_smash", "captain:captain_sweep"]
+	for pair: String in tells:
+		var entry: PackedStringArray = pair.split(":")
+		game.gore.clear()
+		var soldier: MongolSoldier = await _soldier(entry[0], 58.0)
+		await _wait(0.3)
+		var blow: AttackDefinition = load("res://features/enemies/definitions/%s.tres" % entry[1]) as AttackDefinition
+		var cells: Array[Image] = []
+		hero._invulnerable = 3.0
+		soldier.attack(blow)
+		var last: int = -1
+		for i: int in 90:
+			await process_frame
+			if soldier.sprite.frame != last:
+				last = soldier.sprite.frame
+				cells.append(await _crop())
+				if last == maxi(blow.telegraph_frame, 0) + 1:
+					await _save_full("tell_%s" % entry[1])
+			if soldier.current_attack == null or last > blow.active_to:
+				break
+		_sheet(cells, "tell_%s" % entry[1])
+		soldier.queue_free()
+		await _wait(0.5)
 
 
 ## A wounded, staggered soldier finished while another, nearer the gate, is still in the fight.

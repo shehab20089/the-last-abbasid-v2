@@ -18,6 +18,8 @@ extends Resource
 @export var slow_to: int = -1
 ## The frame on which he dies (the rest is his body coming to rest).
 @export var death_frame: int = 0
+## Played on a man thrown to the ground (the blade driven down into him), never on one standing.
+@export var ground: bool = false
 
 
 ## What a frame cuts off, or nothing.

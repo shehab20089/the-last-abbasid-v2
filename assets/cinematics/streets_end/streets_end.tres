@@ -1,0 +1,93 @@
+[gd_resource type="Resource" script_class="CinematicDefinition" load_steps=18 format=3]
+
+[ext_resource type="Script" path="res://features/cinematics/cinematic_definition.gd" id="1_1"]
+[ext_resource type="Script" path="res://features/cinematics/cinematic_shot.gd" id="2_2"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/streets.png" id="3_3"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/streets_depth.png" id="4_4"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/streets_masks.png" id="5_5"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/streets_end/palette_0.png" id="6_6"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/library.png" id="7_7"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/library_depth.png" id="8_8"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/library_masks.png" id="9_9"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/streets_end/palette_1.png" id="10_10"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/scholars.png" id="11_11"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/scholars_depth.png" id="12_12"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/scholars_masks.png" id="13_13"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/streets_end/palette_2.png" id="14_14"]
+
+[sub_resource type="Resource" id="Resource_shot0"]
+script = ExtResource("2_2")
+painting = ExtResource("3_3")
+depth = ExtResource("4_4")
+masks = ExtResource("5_5")
+painting_rect = Rect2(0, 0, 1672, 941)
+palette = ExtResource("6_6")
+camera_keys = Array[Rect2]([Rect2(420, 40, 1100, 460), Rect2(570, 60, 1000, 418)])
+camera_times = PackedFloat32Array(0, 1)
+reference = 0.5
+parallax = 0.2495
+grade_from = PackedFloat32Array(1.22, 1.06, 1, 1, 1, 1)
+grade_to = PackedFloat32Array(1.22, 1.06, 1, 1, 1, 1)
+lines = PackedStringArray("STREETS_END_1")
+lead = 1.2
+tail = 1
+minimum = 8
+fade_in = 1
+fire = 0.5
+sway = 0.5
+smoke = 0.5
+smoke_area = Rect2(300, 0, 1372, 400)
+embers = 30
+ash = 50
+ambience = &"fire_wind"
+
+[sub_resource type="Resource" id="Resource_shot1"]
+script = ExtResource("2_2")
+painting = ExtResource("7_7")
+depth = ExtResource("8_8")
+masks = ExtResource("9_9")
+painting_rect = Rect2(0, 0, 1672, 941)
+palette = ExtResource("10_10")
+camera_keys = Array[Rect2]([Rect2(130, 160, 1300, 544), Rect2(330, 220, 1000, 418)])
+camera_times = PackedFloat32Array(0, 1)
+reference = 0.5
+parallax = 0.188
+grade_from = PackedFloat32Array(0.9, 1, 0.9, 1, 1, 1)
+grade_to = PackedFloat32Array(0.9, 1, 0.9, 1, 1, 1)
+lines = PackedStringArray("STREETS_END_2")
+lead = 1
+tail = 0.3
+minimum = 7
+dissolve = 1.4
+fire = 0.3
+motes = 20
+
+[sub_resource type="Resource" id="Resource_shot2"]
+script = ExtResource("2_2")
+painting = ExtResource("11_11")
+depth = ExtResource("12_12")
+masks = ExtResource("13_13")
+painting_rect = Rect2(0, 0, 1672, 941)
+palette = ExtResource("14_14")
+camera_keys = Array[Rect2]([Rect2(0, 60, 1672, 700), Rect2(100, 100, 1500, 628)])
+camera_times = PackedFloat32Array(0, 1)
+reference = 0.5
+parallax = 0.535
+grade_from = PackedFloat32Array(1.22, 1.06, 1, 1, 1, 1)
+grade_to = PackedFloat32Array(1.22, 1.06, 1, 1, 1, 1)
+heading = true
+lead = 2
+tail = 0.8
+minimum = 5
+dissolve = 2
+fade_out = 1
+fire = 0.6
+smoke = 0.4
+smoke_area = Rect2(0, 0, 1672, 330)
+embers = 40
+ash = 30
+
+[resource]
+script = ExtResource("1_1")
+id = &"streets_end"
+shots = Array[ExtResource("2_2")]([SubResource("Resource_shot0"), SubResource("Resource_shot1"), SubResource("Resource_shot2")])

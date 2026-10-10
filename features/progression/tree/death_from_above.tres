@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="TechniqueDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/progression/technique_definition.gd" id="1_script"]
+[ext_resource type="Script" path="res://features/progression/modifiers.gd" id="2_mods"]
+[ext_resource type="Texture2D" path="res://assets/ui/tech_death_from_above.png" id="3_icon"]
+
+[sub_resource type="Resource" id="Resource_mods"]
+script = ExtResource("2_mods")
+plunge_damage = 1.50
+plunge_flinch = 56.0
+
+[resource]
+script = ExtResource("1_script")
+id = &"death_from_above"
+demo = &"plunge"
+branch = 2
+tier = 3
+cost = 90
+requires = &"bandolier"
+requires_known = &"plunge"
+modifiers = SubResource("Resource_mods")
+name_key = "TECH_DEATH_FROM_ABOVE"
+description_key = "TECH_DEATH_FROM_ABOVE_DESC"
+icon = ExtResource("3_icon")

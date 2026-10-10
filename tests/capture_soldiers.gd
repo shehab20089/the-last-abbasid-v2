@@ -2,8 +2,9 @@ extends SceneTree
 ## Renders a short fight with each new soldier through the real session (by the Fallen Market's
 ## potters' lamp): the shield-bearer's wall turning a cut and then bashed aside; the keshig veteran's
 ## two cuts; the mace-bearer's overhead blow; the engineer's fire pot bursting into flame; and the
-## hero's throwing knife and rolling cut. A sheet each (enlarged 2x). Not a pass/fail check. Needs a
-## window: node tools/run_godot_cli.mjs --path . --script res://tests/capture_soldiers.gd
+## hero's throwing knife and rolling cut; the Kipchak skirmisher's dash, knife and leap; the Georgian axeman's
+## hook, chop and sweep. A sheet each (enlarged 2x). Not a pass/fail check. Needs a window:
+## node tools/run_godot_cli.mjs --path . --script res://tests/capture_soldiers.gd [-- new] (new: only the last two)
 
 const LEVEL: String = "res://features/levels/fallen_market/fallen_market.tscn"
 ## The crop about the hero's feet.
@@ -36,12 +37,24 @@ func _run() -> void:
 		if brain != null:
 			brain.process_mode = Node.PROCESS_MODE_DISABLED
 	home = game.hero.global_position
+	if "new" in OS.get_cmdline_user_args():
+		await _skirmisher()
+		await _axeman()
+		print("SOLDIERS_CAPTURE_DONE %s" % destination)
+		Engine.time_scale = 1.0
+		current_scene.queue_free()
+		await process_frame
+		OS.delay_msec(200)
+		quit()
+		return
 	await _shieldbearer()
 	await _veteran()
 	await _maceman()
 	await _engineer()
 	await _knife()
 	await _roll_cut()
+	await _skirmisher()
+	await _axeman()
 	print("SOLDIERS_CAPTURE_DONE %s" % destination)
 	Engine.time_scale = 1.0
 	current_scene.queue_free()
@@ -144,6 +157,90 @@ func _roll_cut() -> void:
 	_sheet(cells, "roll_cut")
 	if is_instance_valid(target):
 		target.queue_free()
+
+
+## The skirmisher's dash from across the street with the knife after it; then a cleave wound up near him
+## and he leaps back out of reach.
+func _skirmisher() -> void:
+	var hero: Warrior = await _fresh()
+	var skirmisher: MongolSoldier = await _soldier("skirmisher", 110.0)
+	var cells: Array[Image] = [await _crop()]
+	var dash: AttackDefinition = skirmisher.profile.attacks[SkirmisherBrain.DASH]
+	hero.input.block_held = true
+	skirmisher.attack(dash)
+	skirmisher.aim_lunge(absf(skirmisher.global_position.x - hero.global_position.x), MongolSoldier.ATTACK_FRICTION)
+	await _soldier_frames(cells, skirmisher, "skirmisher_dash")
+	skirmisher.attack(dash.follow_up)
+	await _soldier_frames(cells, skirmisher, "")
+	hero.input.block_held = false
+	_sheet(cells, "skirmisher_dash")
+	skirmisher.queue_free()
+	hero = await _fresh()
+	skirmisher = await _soldier("skirmisher", 52.0)
+	var brain: SkirmisherBrain = skirmisher.get_node("Brain") as SkirmisherBrain
+	brain.target = hero
+	cells = [await _crop()]
+	hero.input.press(&"heavy_attack")
+	await _wait(0.06)
+	brain.evade()
+	var last: String = ""
+	var start: int = Time.get_ticks_msec()
+	var saved: bool = false
+	while Time.get_ticks_msec() - start < 900:
+		await process_frame
+		var key: String = "%s:%d" % [skirmisher.sprite.animation, skirmisher.sprite.frame]
+		if key != last:
+			last = key
+			cells.append(await _crop())
+			if not saved and skirmisher.sprite.animation == &"evade" and skirmisher.sprite.frame == 3:
+				saved = true
+				await _save_full("skirmisher_leap")
+	_sheet(cells, "skirmisher_leap")
+	skirmisher.queue_free()
+
+
+## The axeman's hook dragging a raised guard in, the chop into the street, the low sweep.
+func _axeman() -> void:
+	var hero: Warrior = await _fresh()
+	var axeman: MongolSoldier = await _soldier("axeman", 64.0)
+	var cells: Array[Image] = [await _crop()]
+	hero.input.block_held = true
+	await _wait(0.15)
+	axeman.attack(axeman.profile.attacks[AxemanBrain.HOOK])
+	await _soldier_frames(cells, axeman, "axeman_hook")
+	hero.input.block_held = false
+	_sheet(cells, "axeman_hook")
+	for pick: int in [AxemanBrain.CHOP, AxemanBrain.SWEEP]:
+		hero = await _fresh()
+		hero.rest()
+		axeman.global_position = hero.global_position + Vector2(60.0, 0.0)
+		axeman.velocity = Vector2.ZERO
+		axeman.set_facing(-1.0)
+		await _wait(0.9)
+		var attack: AttackDefinition = axeman.profile.attacks[pick]
+		cells = [await _crop()]
+		axeman.attack(attack)
+		await _soldier_frames(cells, axeman, "axeman_%s" % attack.animation)
+		_sheet(cells, "axeman_%s" % attack.animation)
+	axeman.queue_free()
+
+
+## A frame each time `soldier`'s frame changes until his blow is done; the full screen saved at its
+## first live frame (as `label`, if given).
+func _soldier_frames(cells: Array[Image], soldier: MongolSoldier, label: String) -> void:
+	var attack: AttackDefinition = soldier.current_attack
+	var last: int = -1
+	var saved: bool = label.is_empty()
+	for i: int in 240:
+		await process_frame
+		if soldier.current_attack == null or soldier.dead:
+			break
+		if soldier.sprite.frame != last:
+			last = soldier.sprite.frame
+			cells.append(await _crop())
+			if not saved and attack != null and attack.is_active_frame(last):
+				saved = true
+				await _save_full(label)
 
 
 func _fresh() -> Warrior:

@@ -15,6 +15,7 @@
    null,
    null
   ],
+  "wounds": null,
   "file": "guard_sit.png"
  },
  "talk": {
@@ -31,6 +32,7 @@
    null,
    null
   ],
+  "wounds": null,
   "file": "guard_talk.png"
  }
 }

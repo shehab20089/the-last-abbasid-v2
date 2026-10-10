@@ -149,8 +149,15 @@ node(LEVEL.id.split("_").map((w) => w[0].toUpperCase() + w.slice(1)).join(""), "
   next_level: str(LEVEL.next),
   exit_card: sn(LEVEL.exitCard ?? ""),
   exit_title: str(LEVEL.exitTitle ?? ""),
-  objectives: `PackedStringArray(${(LEVEL.objectives ?? []).map(([flag, key]) => str(`${flag}|${key}`)).join(", ")})`,
+  // Each objective: [flag, KEY, target?]; the target is what the HUD marks (npc:<id>, exit, col:<n>:<NAME>, group:<g>).
+  objectives: `PackedStringArray(${(LEVEL.objectives ?? []).map(([flag, key, target]) => str(target ? `${flag}|${key}|${target}` : `${flag}|${key}`)).join(", ")})`,
   known_techniques: `PackedStringArray(${(LEVEL.knownTechniques ?? []).map((t) => str(t)).join(", ")})`,
+  toughness: `Vector2(${(LEVEL.toughness ?? [1, 1]).map((v) => v.toFixed(2)).join(", ")})`,
+  aggression: (LEVEL.aggression ?? 1).toFixed(2),
+  // What is to be found here, for the Journal (pages, guardsmen's tokens, captives under a sabre).
+  manuscript_ids: `PackedStringArray(${(LEVEL.manuscripts ?? []).map((m) => str(m.id)).join(", ")})`,
+  relic_ids: `PackedStringArray(${(LEVEL.relics ?? []).filter((r) => !r.keepsake).map((r) => str(r.id)).join(", ")})`,
+  captive_ids: `PackedStringArray(${(LEVEL.captives ?? []).filter((c) => c.id).map((c) => str(c.id)).join(", ")})`,
 });
 
 // Parallax layers, far to near. A level with a concept painting shows the painted city far off;
@@ -288,6 +295,11 @@ for (const page of LEVEL.manuscripts) {
   node(page.id, null, "Interactables", { position: v2(xOf(page.col), yOf(page.row ?? STREET)),
     manuscript_id: sn(page.id), teaches: sn(page.teaches ?? "") }, resource("PackedScene", "res://features/levels/manuscript.tscn"));
 }
+// Guardsman's tokens and lost keepsakes, off the beaten way.
+for (const relic of LEVEL.relics ?? []) {
+  node(relic.id, null, "Interactables", { position: v2(xOf(relic.col), yOf(relic.row ?? STREET)),
+    relic_id: sn(relic.id), keepsake: sn(relic.keepsake ?? "") }, resource("PackedScene", "res://features/levels/relic.tscn"));
+}
 /** Each kind's [idle, talk, waiting] animations. */
 const NPC_ANIM = {
   scholar: ["idle", "talk"], guard: ["sit", "talk"], mother: ["crouch", "talk"], salim: ["stand", "talk", "kneel"],
@@ -298,7 +310,7 @@ for (const npc of LEVEL.npcs) {
   node(npc.id, null, "Interactables", {
     position: v2(xOf(npc.col), yOf(npc.row ?? STREET)), npc_id: sn(npc.id), dialogue: sn(npc.dialogue),
     requires: sn(npc.requires ?? ""), gives_flag: sn(npc.gives ?? ""), gives_notice: str(npc.notice ?? ""),
-    teaches: sn(npc.teaches ?? ""),
+    teaches: sn(npc.teaches ?? ""), gives_keepsake: sn(npc.keepsake ?? ""),
     idle_animation: sn(idle), talk_animation: sn(talk), waiting_animation: sn(waiting ?? ""),
     face: npc.face.toFixed(1),
     frames: resource("SpriteFrames", `res://assets/npcs/${npc.kind}/${npc.kind}_frames.tres`),
@@ -307,7 +319,9 @@ for (const npc of LEVEL.npcs) {
 const exit = LEVEL.exit;
 const exitProps = { position: v2(exit.col * T, yOf(exit.row ?? STREET)), requires: sn(exit.requires),
   open_prompt: str(exit.prompt), locked_prompt: str(exit.lockedPrompt ?? "PROMPT_GATE_LOCKED"),
-  locked_line: str(exit.lockedLine ?? "GATE_LOCKED_1") };
+  locked_line: str(exit.lockedLine ?? "GATE_LOCKED_1"),
+  // What the hero says at the barred gate by the story so far: [flag, KEY] (first set flag wins; an empty one always fits).
+  locked_lines: `PackedStringArray(${(exit.lockedLines ?? []).map(([flag, key]) => str(`${flag}|${key}`)).join(", ")})` };
 if (exit.art) {
   exitProps.closed_texture = resource("Texture2D", `${SHARED}/props/${exit.art}.png`);
   exitProps.open_texture = resource("Texture2D", `${SHARED}/props/${exit.art}_open.png`);
@@ -327,6 +341,7 @@ if (LEVEL.captives?.length) {
       animation: sn("kneel"), flip_h: (captive.face ?? 1) < 0 ? "true" : "false",
       script: resource("Script", "res://features/levels/captive.gd"), freed_by: sn(captive.freedBy ?? ""),
       run_direction: (captive.run ?? -1).toFixed(1), captive_id: sn(captive.id ?? ""), thanks: str(captive.thanks ?? ""),
+      keepsake: sn(captive.keepsake ?? ""),
       ...(existsSync(join(ROOT, gore)) ? { gore_set: resource("Resource", `res://${gore}`) } : {}),
     });
   });
@@ -360,7 +375,7 @@ for (const t of LEVEL.triggers) {
   node(t.id, "Area2D", "Triggers", {
     position: v2(t.from * T + width / 2, yOf(STREET) - above - height / 2), script: resource("Script", "res://features/levels/story_trigger.gd"),
     trigger_id: str(t.id), hint: str(t.hint ?? ""), event: sn(t.event ?? ""), group: sn(t.group ?? ""),
-    line: str(t.line ?? ""), speaker: str(t.speaker ?? ""),
+    line: str(t.line ?? ""), speaker: str(t.speaker ?? ""), teaches: sn(t.teaches ?? ""),
   });
   node("Shape", "CollisionShape2D", `Triggers/${t.id}`, {
     shape: subResource("RectangleShape2D", { size: v2(width, height) }),

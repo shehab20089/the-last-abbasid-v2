@@ -102,7 +102,9 @@ export function writeFrameHitboxes(path, meta) {
   const blades = [];
   for (const [name, m] of Object.entries(meta)) {
     if (!m.blades || m.blades.every((b) => !b)) continue;
-    const frameSweeps = m.blades.map((blade, i) => (blade ? bladeSweep(i > 0 ? m.blades[i - 1] : null, blade) : null));
+    // A blow all round him is not cut off behind his back.
+    const minX = m.allRound ? -Infinity : -6;
+    const frameSweeps = m.blades.map((blade, i) => (blade ? bladeSweep(i > 0 ? m.blades[i - 1] : null, blade, 2, minX) : null));
     sweeps.push(`&"${name}": [${frameSweeps.map(packed).join(", ")}]`);
     blades.push(`&"${name}": [${m.blades.map((b) => (b ? packed([b.hilt, b.tip]) : packed(null))).join(", ")}]`);
   }
@@ -171,6 +173,7 @@ export function writeFinisherDefinition(path, key, finisher) {
     `slow_from = ${finisher.slow[0]}`,
     `slow_to = ${finisher.slow[1]}`,
     `death_frame = ${finisher.death}`,
+    `ground = ${finisher.ground ? "true" : "false"}`,
     "",
   ].join("\n");
   mkdirSync(dirname(path), { recursive: true });

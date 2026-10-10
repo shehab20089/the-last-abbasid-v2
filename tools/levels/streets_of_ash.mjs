@@ -29,8 +29,8 @@ export const LEVEL = {
   exitCard: "streets_end",
   exitTitle: "LEVEL_SCHOLARS_QUARTER",
   objectives: [
-    ["salim_freed", "OBJ_SCHOLARS_QUARTER"], ["captors_cleared", "OBJ_SPEAK_SALIM"], ["captors", "OBJ_FREE_CAPTIVES"],
-    ["", "OBJ_FOLLOW_CAPTIVES"],
+    ["salim_freed", "OBJ_SCHOLARS_QUARTER", "exit"], ["captors_cleared", "OBJ_SPEAK_SALIM", "npc:salim"],
+    ["captors", "OBJ_FREE_CAPTIVES", "group:captors"], ["", "OBJ_FOLLOW_CAPTIVES", "col:190:MARKER_CAPTIVES"],
   ],
   // Booms with hanging cages and carpets over the balconies dress the houses.
   dress: { cranes: true, carpets: true },
@@ -97,16 +97,28 @@ export const LEVEL = {
     { kind: "tower", col: 277, width: 3, top: 4 },
   ],
   // Techniques the hero has learned before he comes here.
-  knownTechniques: [],
+  knownTechniques: ["sweep", "charge", "kick", "low_cut"],
+  // Soldiers here are tougher than the market's (health, poise): the hero has grown too.
+  toughness: [1.1, 1],
+  aggression: 1.1,
   checkpoints: [
     { id: "lane_lamp", col: 90 },
     { id: "square_lamp", col: 164 },
+  ],
+  // On the balconies over the lane; the Bronze Seal of the Guard on the second collapse's heap; on the
+  // ruins' upper floor.
+  relics: [
+    { id: "token_balcony", col: 72, row: 25 },
+    { id: "bronze_seal", col: 138, row: 19, keepsake: "bronze_seal" },
+    { id: "token_ruins", col: 239, row: 22 },
   ],
   manuscripts: [
     { id: "recipe", col: 82, row: 22 },
     { id: "letter", col: 144, row: 19 },
     // A leaf of a treatise on the arts of war, by the bathhouse: the shield bash.
     { id: "furusiyya_bash", col: 110, teaches: "bash" },
+    // Another, past the square's lamp, before the captors spring: the Storm of Blades (and resolve).
+    { id: "furusiyya_storm", col: 172, teaches: "storm" },
   ],
   enemies: [
     // Stripping a body in the first lanes, his back to the river wall.
@@ -122,6 +134,8 @@ export const LEVEL = {
     { kind: "shieldbearer", col: 118, face: -1, patrol: 30 },
     // On the second collapse.
     { kind: "archer", col: 140, row: 19, face: -1, activity: "watch" },
+    // Among the mosque's dead, a Kipchak outrider: he will not stand for a heavy blow (quick cuts take him).
+    { kind: "skirmisher", col: 158, face: -1, patrol: 0 },
     // The square: a headsman at his work as the captors spring.
     { kind: "swordsman", col: 190, face: 1, activity: "execute", victim: "square_captive", delay: 5.0, patrol: 0 },
     { kind: "swordsman", col: 197, face: -1, dormant: true, group: "captors" },
@@ -136,7 +150,7 @@ export const LEVEL = {
   ],
   npcs: [
     { id: "salim", kind: "salim", col: 205, face: -1, dialogue: "salim", requires: "captors_cleared",
-      gives: "salim_freed", notice: "NOTICE_SALIM", teaches: "knives" },
+      gives: "salim_freed", notice: "NOTICE_SALIM", teaches: "knives", keepsake: "saffron_sash" },
   ],
   // Others roped beside Salim run once the captors fall; two kneel under a headsman's sabre.
   captives: [
@@ -147,15 +161,19 @@ export const LEVEL = {
   ],
   triggers: [
     { id: "streets_start", from: 6, to: 9, line: "STREETS_1" },
+    { id: "lesson_rising_cleave", from: 15, to: 18, teaches: "rising_cleave" },
     { id: "hint_rooftops", from: 40, to: 45, hint: "HINT_ROOFTOPS" },
     { id: "hint_archers", from: 52, to: 56, hint: "HINT_ARCHERS" },
     { id: "hint_execution", from: 63, to: 65, hint: "HINT_EXECUTION" },
     { id: "hint_shieldbearer", from: 112, to: 114, hint: "HINT_SHIELDBEARER" },
+    { id: "lesson_running_slash", from: 126, to: 129, teaches: "running_slash" },
+    { id: "hint_skirmisher", from: 145, to: 147, hint: "HINT_SKIRMISHER" },
     { id: "mosque_dead", from: 149, to: 151, speaker: "SPEAKER_YUSUF", line: "MOSQUE_DEAD_1" },
     { id: "captors", from: 186, to: 188, event: "ambush", group: "captors", line: "CAPTORS_1" },
   ],
   exit: { name: "QuarterGate", col: 270, art: "quarter_gate", prompt: "PROMPT_OPEN_QUARTER_GATE",
-    lockedPrompt: "PROMPT_QUARTER_GATE", lockedLine: "GATE_LOCKED_2", requires: "salim_freed" },
+    lockedPrompt: "PROMPT_QUARTER_GATE", lockedLine: "GATE_LOCKED_2", requires: "salim_freed",
+    lockedLines: [["captors_cleared", "GATE_LOCKED_SALIM"], ["", "GATE_LOCKED_2"]] },
   fires: [
     [11, STREET, "large"], [21, STREET, "medium"], [39, STREET, "small"], [53, 22, "small"], [66, STREET, "large"],
     [86, STREET, "medium"], [108, STREET, "small"], [124, STREET, "large"], [138, 19, "medium"], [152, STREET, "small"],

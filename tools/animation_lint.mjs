@@ -5,7 +5,7 @@
 // planted feet held still exactly as the build holds them), loops whose last frame does not lead
 // into the first, and limbs asked to reach past their length. Prints the ground speeds the game's
 // walk_animation_speed / run_animation_speed should use.
-// Usage: node tools/animation_lint.mjs [character]   (yusuf, swordsman, spearman, archer, captain, veteran, maceman, shieldbearer, engineer)
+// Usage: node tools/animation_lint.mjs [character]   (yusuf, swordsman, spearman, archer, captain, veteran, maceman, shieldbearer, engineer, skirmisher, axeman)
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -35,6 +35,8 @@ const CAST = {
   maceman: { animations: SOLDIERS.MACEMAN, attacks: enemyAttacks, friction: 1600, size: 1.06 },
   shieldbearer: { animations: SOLDIERS.SHIELDBEARER, attacks: enemyAttacks, friction: 1600, size: 1 },
   engineer: { animations: SOLDIERS.ENGINEER, attacks: enemyAttacks, friction: 1600, size: 1 },
+  skirmisher: { animations: SOLDIERS.SKIRMISHER, attacks: enemyAttacks, friction: 1600, size: 1 },
+  axeman: { animations: SOLDIERS.AXEMAN, attacks: enemyAttacks, friction: 1600, size: 1.08 },
 };
 
 /** Key points of a solved pose, in screen pixels: each foot's heel and toe, hands, head, hips. */
@@ -102,7 +104,7 @@ for (const [who, c] of Object.entries(CAST)) {
     }
 
     // Walk and run: planted feet move back at one steady speed; the game must play the cycle at it.
-    if (anim.loop && (name === "walk" || name === "run")) {
+    if (anim.loop && ["walk", "run", "block_walk", "block_back"].includes(name)) {
       const speeds = [];
       for (const side of ["N", "F"]) {
         frames.forEach((k, i) => {
@@ -114,7 +116,7 @@ for (const [who, c] of Object.entries(CAST)) {
         const mean = speeds.reduce((a, b) => a + b, 0) / speeds.length;
         const spread = Math.max(...speeds) - Math.min(...speeds);
         notes.push(`ground speed ${fmt(mean)} px/s (spread ${fmt(spread)})`);
-        if (spread > mean * 0.2) issues.push(`planted feet move unevenly: spread ${fmt(spread)} px/s around ${fmt(mean)}`);
+        if (spread > Math.abs(mean) * 0.2) issues.push(`planted feet move unevenly: spread ${fmt(spread)} px/s around ${fmt(mean)}`);
       }
     }
 

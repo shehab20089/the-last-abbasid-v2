@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="EnemyProfile" format=3]
+
+[ext_resource type="Script" path="res://features/enemies/enemy_profile.gd" id="1_script"]
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="2_attack"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/skirmisher_dash.tres" id="3_dash"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/skirmisher_cut.tres" id="4_cut"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Kipchak Skirmisher"
+max_health = 50.0
+max_poise = 18.0
+walk_speed = 56.0
+run_speed = 128.0
+hurt_time = 0.28
+stagger_time = 0.9
+parried_time = 1.2
+sight_range = 250.0
+hearing_range = 80.0
+alert_time = 0.45
+preferred_range = 74.0
+min_range = 34.0
+attacks = Array[ExtResource("2_attack")]([ExtResource("3_dash"), ExtResource("4_cut")])
+attack_ranges = PackedFloat32Array(124, 46)
+attack_cooldown = Vector2(1.0, 1.7)
+block_chance = 0.0
+reaction_time = 0.18
+retreat_chance = 0.25
+patrol_distance = 60.0

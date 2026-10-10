@@ -19,9 +19,16 @@
 [ext_resource type="Texture2D" path="res://assets/effects/blood_splat.png" id="17_blood_splat"]
 [ext_resource type="Texture2D" path="res://assets/effects/dust.png" id="18_dust"]
 [ext_resource type="Texture2D" path="res://assets/effects/glint.png" id="19_glint"]
-[ext_resource type="Texture2D" path="res://assets/effects/fire_small.png" id="20_fire_small"]
-[ext_resource type="Texture2D" path="res://assets/effects/fire_medium.png" id="21_fire_medium"]
-[ext_resource type="Texture2D" path="res://assets/effects/fire_large.png" id="22_fire_large"]
+[ext_resource type="Texture2D" path="res://assets/effects/glint_low.png" id="20_glint_low"]
+[ext_resource type="Texture2D" path="res://assets/effects/glint_break.png" id="21_glint_break"]
+[ext_resource type="Texture2D" path="res://assets/effects/glint_dire.png" id="22_glint_dire"]
+[ext_resource type="Texture2D" path="res://assets/effects/fire_small.png" id="23_fire_small"]
+[ext_resource type="Texture2D" path="res://assets/effects/fire_medium.png" id="24_fire_medium"]
+[ext_resource type="Texture2D" path="res://assets/effects/fire_large.png" id="25_fire_large"]
+[ext_resource type="Texture2D" path="res://assets/effects/naft_fire.png" id="26_naft_fire"]
+[ext_resource type="Texture2D" path="res://assets/effects/naft_burst.png" id="27_naft_burst"]
+[ext_resource type="Texture2D" path="res://assets/effects/shockwave.png" id="28_shockwave"]
+[ext_resource type="Texture2D" path="res://assets/effects/embers.png" id="29_embers"]
 
 [sub_resource type="AtlasTexture" id="hit_spark_0"]
 atlas = ExtResource("1_hit_spark")
@@ -613,171 +620,439 @@ region = Rect2(240, 0, 48, 24)
 
 [sub_resource type="AtlasTexture" id="glint_0"]
 atlas = ExtResource("19_glint")
-region = Rect2(0, 0, 20, 20)
+region = Rect2(0, 0, 26, 26)
 
 [sub_resource type="AtlasTexture" id="glint_1"]
 atlas = ExtResource("19_glint")
-region = Rect2(20, 0, 20, 20)
+region = Rect2(26, 0, 26, 26)
 
 [sub_resource type="AtlasTexture" id="glint_2"]
 atlas = ExtResource("19_glint")
-region = Rect2(40, 0, 20, 20)
+region = Rect2(52, 0, 26, 26)
 
 [sub_resource type="AtlasTexture" id="glint_3"]
 atlas = ExtResource("19_glint")
-region = Rect2(60, 0, 20, 20)
+region = Rect2(78, 0, 26, 26)
 
 [sub_resource type="AtlasTexture" id="glint_4"]
 atlas = ExtResource("19_glint")
-region = Rect2(80, 0, 20, 20)
+region = Rect2(104, 0, 26, 26)
 
 [sub_resource type="AtlasTexture" id="glint_5"]
 atlas = ExtResource("19_glint")
-region = Rect2(100, 0, 20, 20)
+region = Rect2(130, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_6"]
+atlas = ExtResource("19_glint")
+region = Rect2(156, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_low_0"]
+atlas = ExtResource("20_glint_low")
+region = Rect2(0, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_low_1"]
+atlas = ExtResource("20_glint_low")
+region = Rect2(26, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_low_2"]
+atlas = ExtResource("20_glint_low")
+region = Rect2(52, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_low_3"]
+atlas = ExtResource("20_glint_low")
+region = Rect2(78, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_low_4"]
+atlas = ExtResource("20_glint_low")
+region = Rect2(104, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_low_5"]
+atlas = ExtResource("20_glint_low")
+region = Rect2(130, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_low_6"]
+atlas = ExtResource("20_glint_low")
+region = Rect2(156, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_break_0"]
+atlas = ExtResource("21_glint_break")
+region = Rect2(0, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_break_1"]
+atlas = ExtResource("21_glint_break")
+region = Rect2(26, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_break_2"]
+atlas = ExtResource("21_glint_break")
+region = Rect2(52, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_break_3"]
+atlas = ExtResource("21_glint_break")
+region = Rect2(78, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_break_4"]
+atlas = ExtResource("21_glint_break")
+region = Rect2(104, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_break_5"]
+atlas = ExtResource("21_glint_break")
+region = Rect2(130, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_break_6"]
+atlas = ExtResource("21_glint_break")
+region = Rect2(156, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_dire_0"]
+atlas = ExtResource("22_glint_dire")
+region = Rect2(0, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_dire_1"]
+atlas = ExtResource("22_glint_dire")
+region = Rect2(26, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_dire_2"]
+atlas = ExtResource("22_glint_dire")
+region = Rect2(52, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_dire_3"]
+atlas = ExtResource("22_glint_dire")
+region = Rect2(78, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_dire_4"]
+atlas = ExtResource("22_glint_dire")
+region = Rect2(104, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_dire_5"]
+atlas = ExtResource("22_glint_dire")
+region = Rect2(130, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="glint_dire_6"]
+atlas = ExtResource("22_glint_dire")
+region = Rect2(156, 0, 26, 26)
 
 [sub_resource type="AtlasTexture" id="fire_small_0"]
-atlas = ExtResource("20_fire_small")
+atlas = ExtResource("23_fire_small")
 region = Rect2(0, 0, 20, 30)
 
 [sub_resource type="AtlasTexture" id="fire_small_1"]
-atlas = ExtResource("20_fire_small")
+atlas = ExtResource("23_fire_small")
 region = Rect2(20, 0, 20, 30)
 
 [sub_resource type="AtlasTexture" id="fire_small_2"]
-atlas = ExtResource("20_fire_small")
+atlas = ExtResource("23_fire_small")
 region = Rect2(40, 0, 20, 30)
 
 [sub_resource type="AtlasTexture" id="fire_small_3"]
-atlas = ExtResource("20_fire_small")
+atlas = ExtResource("23_fire_small")
 region = Rect2(60, 0, 20, 30)
 
 [sub_resource type="AtlasTexture" id="fire_small_4"]
-atlas = ExtResource("20_fire_small")
+atlas = ExtResource("23_fire_small")
 region = Rect2(80, 0, 20, 30)
 
 [sub_resource type="AtlasTexture" id="fire_small_5"]
-atlas = ExtResource("20_fire_small")
+atlas = ExtResource("23_fire_small")
 region = Rect2(100, 0, 20, 30)
 
 [sub_resource type="AtlasTexture" id="fire_small_6"]
-atlas = ExtResource("20_fire_small")
+atlas = ExtResource("23_fire_small")
 region = Rect2(120, 0, 20, 30)
 
 [sub_resource type="AtlasTexture" id="fire_small_7"]
-atlas = ExtResource("20_fire_small")
+atlas = ExtResource("23_fire_small")
 region = Rect2(140, 0, 20, 30)
 
 [sub_resource type="AtlasTexture" id="fire_small_8"]
-atlas = ExtResource("20_fire_small")
+atlas = ExtResource("23_fire_small")
 region = Rect2(160, 0, 20, 30)
 
 [sub_resource type="AtlasTexture" id="fire_small_9"]
-atlas = ExtResource("20_fire_small")
+atlas = ExtResource("23_fire_small")
 region = Rect2(180, 0, 20, 30)
 
 [sub_resource type="AtlasTexture" id="fire_small_10"]
-atlas = ExtResource("20_fire_small")
+atlas = ExtResource("23_fire_small")
 region = Rect2(200, 0, 20, 30)
 
 [sub_resource type="AtlasTexture" id="fire_small_11"]
-atlas = ExtResource("20_fire_small")
+atlas = ExtResource("23_fire_small")
 region = Rect2(220, 0, 20, 30)
 
 [sub_resource type="AtlasTexture" id="fire_medium_0"]
-atlas = ExtResource("21_fire_medium")
+atlas = ExtResource("24_fire_medium")
 region = Rect2(0, 0, 34, 52)
 
 [sub_resource type="AtlasTexture" id="fire_medium_1"]
-atlas = ExtResource("21_fire_medium")
+atlas = ExtResource("24_fire_medium")
 region = Rect2(34, 0, 34, 52)
 
 [sub_resource type="AtlasTexture" id="fire_medium_2"]
-atlas = ExtResource("21_fire_medium")
+atlas = ExtResource("24_fire_medium")
 region = Rect2(68, 0, 34, 52)
 
 [sub_resource type="AtlasTexture" id="fire_medium_3"]
-atlas = ExtResource("21_fire_medium")
+atlas = ExtResource("24_fire_medium")
 region = Rect2(102, 0, 34, 52)
 
 [sub_resource type="AtlasTexture" id="fire_medium_4"]
-atlas = ExtResource("21_fire_medium")
+atlas = ExtResource("24_fire_medium")
 region = Rect2(136, 0, 34, 52)
 
 [sub_resource type="AtlasTexture" id="fire_medium_5"]
-atlas = ExtResource("21_fire_medium")
+atlas = ExtResource("24_fire_medium")
 region = Rect2(170, 0, 34, 52)
 
 [sub_resource type="AtlasTexture" id="fire_medium_6"]
-atlas = ExtResource("21_fire_medium")
+atlas = ExtResource("24_fire_medium")
 region = Rect2(204, 0, 34, 52)
 
 [sub_resource type="AtlasTexture" id="fire_medium_7"]
-atlas = ExtResource("21_fire_medium")
+atlas = ExtResource("24_fire_medium")
 region = Rect2(238, 0, 34, 52)
 
 [sub_resource type="AtlasTexture" id="fire_medium_8"]
-atlas = ExtResource("21_fire_medium")
+atlas = ExtResource("24_fire_medium")
 region = Rect2(272, 0, 34, 52)
 
 [sub_resource type="AtlasTexture" id="fire_medium_9"]
-atlas = ExtResource("21_fire_medium")
+atlas = ExtResource("24_fire_medium")
 region = Rect2(306, 0, 34, 52)
 
 [sub_resource type="AtlasTexture" id="fire_medium_10"]
-atlas = ExtResource("21_fire_medium")
+atlas = ExtResource("24_fire_medium")
 region = Rect2(340, 0, 34, 52)
 
 [sub_resource type="AtlasTexture" id="fire_medium_11"]
-atlas = ExtResource("21_fire_medium")
+atlas = ExtResource("24_fire_medium")
 region = Rect2(374, 0, 34, 52)
 
 [sub_resource type="AtlasTexture" id="fire_large_0"]
-atlas = ExtResource("22_fire_large")
+atlas = ExtResource("25_fire_large")
 region = Rect2(0, 0, 56, 96)
 
 [sub_resource type="AtlasTexture" id="fire_large_1"]
-atlas = ExtResource("22_fire_large")
+atlas = ExtResource("25_fire_large")
 region = Rect2(56, 0, 56, 96)
 
 [sub_resource type="AtlasTexture" id="fire_large_2"]
-atlas = ExtResource("22_fire_large")
+atlas = ExtResource("25_fire_large")
 region = Rect2(112, 0, 56, 96)
 
 [sub_resource type="AtlasTexture" id="fire_large_3"]
-atlas = ExtResource("22_fire_large")
+atlas = ExtResource("25_fire_large")
 region = Rect2(168, 0, 56, 96)
 
 [sub_resource type="AtlasTexture" id="fire_large_4"]
-atlas = ExtResource("22_fire_large")
+atlas = ExtResource("25_fire_large")
 region = Rect2(224, 0, 56, 96)
 
 [sub_resource type="AtlasTexture" id="fire_large_5"]
-atlas = ExtResource("22_fire_large")
+atlas = ExtResource("25_fire_large")
 region = Rect2(280, 0, 56, 96)
 
 [sub_resource type="AtlasTexture" id="fire_large_6"]
-atlas = ExtResource("22_fire_large")
+atlas = ExtResource("25_fire_large")
 region = Rect2(336, 0, 56, 96)
 
 [sub_resource type="AtlasTexture" id="fire_large_7"]
-atlas = ExtResource("22_fire_large")
+atlas = ExtResource("25_fire_large")
 region = Rect2(392, 0, 56, 96)
 
 [sub_resource type="AtlasTexture" id="fire_large_8"]
-atlas = ExtResource("22_fire_large")
+atlas = ExtResource("25_fire_large")
 region = Rect2(448, 0, 56, 96)
 
 [sub_resource type="AtlasTexture" id="fire_large_9"]
-atlas = ExtResource("22_fire_large")
+atlas = ExtResource("25_fire_large")
 region = Rect2(504, 0, 56, 96)
 
 [sub_resource type="AtlasTexture" id="fire_large_10"]
-atlas = ExtResource("22_fire_large")
+atlas = ExtResource("25_fire_large")
 region = Rect2(560, 0, 56, 96)
 
 [sub_resource type="AtlasTexture" id="fire_large_11"]
-atlas = ExtResource("22_fire_large")
+atlas = ExtResource("25_fire_large")
 region = Rect2(616, 0, 56, 96)
+
+[sub_resource type="AtlasTexture" id="naft_fire_0"]
+atlas = ExtResource("26_naft_fire")
+region = Rect2(0, 0, 46, 38)
+
+[sub_resource type="AtlasTexture" id="naft_fire_1"]
+atlas = ExtResource("26_naft_fire")
+region = Rect2(46, 0, 46, 38)
+
+[sub_resource type="AtlasTexture" id="naft_fire_2"]
+atlas = ExtResource("26_naft_fire")
+region = Rect2(92, 0, 46, 38)
+
+[sub_resource type="AtlasTexture" id="naft_fire_3"]
+atlas = ExtResource("26_naft_fire")
+region = Rect2(138, 0, 46, 38)
+
+[sub_resource type="AtlasTexture" id="naft_fire_4"]
+atlas = ExtResource("26_naft_fire")
+region = Rect2(184, 0, 46, 38)
+
+[sub_resource type="AtlasTexture" id="naft_fire_5"]
+atlas = ExtResource("26_naft_fire")
+region = Rect2(230, 0, 46, 38)
+
+[sub_resource type="AtlasTexture" id="naft_fire_6"]
+atlas = ExtResource("26_naft_fire")
+region = Rect2(276, 0, 46, 38)
+
+[sub_resource type="AtlasTexture" id="naft_fire_7"]
+atlas = ExtResource("26_naft_fire")
+region = Rect2(322, 0, 46, 38)
+
+[sub_resource type="AtlasTexture" id="naft_fire_8"]
+atlas = ExtResource("26_naft_fire")
+region = Rect2(368, 0, 46, 38)
+
+[sub_resource type="AtlasTexture" id="naft_fire_9"]
+atlas = ExtResource("26_naft_fire")
+region = Rect2(414, 0, 46, 38)
+
+[sub_resource type="AtlasTexture" id="naft_fire_10"]
+atlas = ExtResource("26_naft_fire")
+region = Rect2(460, 0, 46, 38)
+
+[sub_resource type="AtlasTexture" id="naft_fire_11"]
+atlas = ExtResource("26_naft_fire")
+region = Rect2(506, 0, 46, 38)
+
+[sub_resource type="AtlasTexture" id="naft_burst_0"]
+atlas = ExtResource("27_naft_burst")
+region = Rect2(0, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="naft_burst_1"]
+atlas = ExtResource("27_naft_burst")
+region = Rect2(112, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="naft_burst_2"]
+atlas = ExtResource("27_naft_burst")
+region = Rect2(224, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="naft_burst_3"]
+atlas = ExtResource("27_naft_burst")
+region = Rect2(336, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="naft_burst_4"]
+atlas = ExtResource("27_naft_burst")
+region = Rect2(448, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="naft_burst_5"]
+atlas = ExtResource("27_naft_burst")
+region = Rect2(560, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="naft_burst_6"]
+atlas = ExtResource("27_naft_burst")
+region = Rect2(672, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="naft_burst_7"]
+atlas = ExtResource("27_naft_burst")
+region = Rect2(784, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="naft_burst_8"]
+atlas = ExtResource("27_naft_burst")
+region = Rect2(896, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="naft_burst_9"]
+atlas = ExtResource("27_naft_burst")
+region = Rect2(1008, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="naft_burst_10"]
+atlas = ExtResource("27_naft_burst")
+region = Rect2(1120, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="naft_burst_11"]
+atlas = ExtResource("27_naft_burst")
+region = Rect2(1232, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="naft_burst_12"]
+atlas = ExtResource("27_naft_burst")
+region = Rect2(1344, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="naft_burst_13"]
+atlas = ExtResource("27_naft_burst")
+region = Rect2(1456, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="shockwave_0"]
+atlas = ExtResource("28_shockwave")
+region = Rect2(0, 0, 220, 52)
+
+[sub_resource type="AtlasTexture" id="shockwave_1"]
+atlas = ExtResource("28_shockwave")
+region = Rect2(220, 0, 220, 52)
+
+[sub_resource type="AtlasTexture" id="shockwave_2"]
+atlas = ExtResource("28_shockwave")
+region = Rect2(440, 0, 220, 52)
+
+[sub_resource type="AtlasTexture" id="shockwave_3"]
+atlas = ExtResource("28_shockwave")
+region = Rect2(660, 0, 220, 52)
+
+[sub_resource type="AtlasTexture" id="shockwave_4"]
+atlas = ExtResource("28_shockwave")
+region = Rect2(880, 0, 220, 52)
+
+[sub_resource type="AtlasTexture" id="shockwave_5"]
+atlas = ExtResource("28_shockwave")
+region = Rect2(1100, 0, 220, 52)
+
+[sub_resource type="AtlasTexture" id="shockwave_6"]
+atlas = ExtResource("28_shockwave")
+region = Rect2(1320, 0, 220, 52)
+
+[sub_resource type="AtlasTexture" id="shockwave_7"]
+atlas = ExtResource("28_shockwave")
+region = Rect2(1540, 0, 220, 52)
+
+[sub_resource type="AtlasTexture" id="shockwave_8"]
+atlas = ExtResource("28_shockwave")
+region = Rect2(1760, 0, 220, 52)
+
+[sub_resource type="AtlasTexture" id="embers_0"]
+atlas = ExtResource("29_embers")
+region = Rect2(0, 0, 24, 44)
+
+[sub_resource type="AtlasTexture" id="embers_1"]
+atlas = ExtResource("29_embers")
+region = Rect2(24, 0, 24, 44)
+
+[sub_resource type="AtlasTexture" id="embers_2"]
+atlas = ExtResource("29_embers")
+region = Rect2(48, 0, 24, 44)
+
+[sub_resource type="AtlasTexture" id="embers_3"]
+atlas = ExtResource("29_embers")
+region = Rect2(72, 0, 24, 44)
+
+[sub_resource type="AtlasTexture" id="embers_4"]
+atlas = ExtResource("29_embers")
+region = Rect2(96, 0, 24, 44)
+
+[sub_resource type="AtlasTexture" id="embers_5"]
+atlas = ExtResource("29_embers")
+region = Rect2(120, 0, 24, 44)
+
+[sub_resource type="AtlasTexture" id="embers_6"]
+atlas = ExtResource("29_embers")
+region = Rect2(144, 0, 24, 44)
+
+[sub_resource type="AtlasTexture" id="embers_7"]
+atlas = ExtResource("29_embers")
+region = Rect2(168, 0, 24, 44)
+
+[sub_resource type="AtlasTexture" id="embers_8"]
+atlas = ExtResource("29_embers")
+region = Rect2(192, 0, 24, 44)
+
+[sub_resource type="AtlasTexture" id="embers_9"]
+atlas = ExtResource("29_embers")
+region = Rect2(216, 0, 24, 44)
 
 [resource]
 animations = [{
@@ -1330,10 +1605,91 @@ animations = [{
 }, {
 "duration": 1.00,
 "texture": SubResource("glint_5")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_6")
 }],
 "loop": false,
 "name": &"glint",
-"speed": 18.0
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("glint_low_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_low_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_low_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_low_3")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_low_4")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_low_5")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_low_6")
+}],
+"loop": false,
+"name": &"glint_low",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("glint_break_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_break_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_break_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_break_3")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_break_4")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_break_5")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_break_6")
+}],
+"loop": false,
+"name": &"glint_break",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("glint_dire_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_dire_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_dire_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_dire_3")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_dire_4")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_dire_5")
+}, {
+"duration": 1.00,
+"texture": SubResource("glint_dire_6")
+}],
+"loop": false,
+"name": &"glint_dire",
+"speed": 20.0
 }, {
 "frames": [{
 "duration": 1.00,
@@ -1457,4 +1813,159 @@ animations = [{
 "loop": true,
 "name": &"fire_large",
 "speed": 12.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("naft_fire_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_fire_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_fire_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_fire_3")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_fire_4")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_fire_5")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_fire_6")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_fire_7")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_fire_8")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_fire_9")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_fire_10")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_fire_11")
+}],
+"loop": true,
+"name": &"naft_fire",
+"speed": 15.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("naft_burst_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_burst_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_burst_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_burst_3")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_burst_4")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_burst_5")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_burst_6")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_burst_7")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_burst_8")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_burst_9")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_burst_10")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_burst_11")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_burst_12")
+}, {
+"duration": 1.00,
+"texture": SubResource("naft_burst_13")
+}],
+"loop": false,
+"name": &"naft_burst",
+"speed": 18.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("shockwave_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("shockwave_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("shockwave_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("shockwave_3")
+}, {
+"duration": 1.00,
+"texture": SubResource("shockwave_4")
+}, {
+"duration": 1.00,
+"texture": SubResource("shockwave_5")
+}, {
+"duration": 1.00,
+"texture": SubResource("shockwave_6")
+}, {
+"duration": 1.00,
+"texture": SubResource("shockwave_7")
+}, {
+"duration": 1.00,
+"texture": SubResource("shockwave_8")
+}],
+"loop": false,
+"name": &"shockwave",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("embers_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("embers_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("embers_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("embers_3")
+}, {
+"duration": 1.00,
+"texture": SubResource("embers_4")
+}, {
+"duration": 1.00,
+"texture": SubResource("embers_5")
+}, {
+"duration": 1.00,
+"texture": SubResource("embers_6")
+}, {
+"duration": 1.00,
+"texture": SubResource("embers_7")
+}, {
+"duration": 1.00,
+"texture": SubResource("embers_8")
+}, {
+"duration": 1.00,
+"texture": SubResource("embers_9")
+}],
+"loop": false,
+"name": &"embers",
+"speed": 14.0
 }]

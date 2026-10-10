@@ -1,0 +1,108 @@
+[gd_resource type="Resource" script_class="CinematicDefinition" load_steps=20 format=3]
+
+[ext_resource type="Script" path="res://features/cinematics/cinematic_definition.gd" id="1_1"]
+[ext_resource type="Script" path="res://features/cinematics/cinematic_shot.gd" id="2_2"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/gate.png" id="3_3"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/gate_depth.png" id="4_4"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/gate_masks.png" id="5_5"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/ending/palette_0.png" id="6_6"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/river.png" id="7_7"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/river_depth.png" id="8_8"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/river_masks.png" id="9_9"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/ending/palette_1.png" id="10_10"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/ending/ink_1_ink.png" id="11_11"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/ending/ink_1_times.png" id="12_12"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/road.png" id="13_13"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/road_depth.png" id="14_14"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/road_masks.png" id="15_15"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/ending/palette_2.png" id="16_16"]
+
+[sub_resource type="Resource" id="Resource_shot0"]
+script = ExtResource("2_2")
+painting = ExtResource("3_3")
+depth = ExtResource("4_4")
+masks = ExtResource("5_5")
+painting_rect = Rect2(0, 0, 1672, 941)
+palette = ExtResource("6_6")
+camera_keys = Array[Rect2]([Rect2(0, 110, 1672, 700), Rect2(60, 140, 1500, 628)])
+camera_times = PackedFloat32Array(0, 1)
+reference = 0.5
+parallax = 0.4806
+grade_from = PackedFloat32Array(0.85, 1.05, 0.82, 0.86, 0.9, 1)
+grade_to = PackedFloat32Array(1.08, 1.03, 1.02, 1, 0.98, 0.95)
+lines = PackedStringArray("ENDING_1")
+lead = 1.4
+tail = 1
+minimum = 9
+fade_in = 1.6
+fire = 0.3
+water = 0.4
+sway = 0.5
+smoke = 0.3
+smoke_area = Rect2(380, 0, 500, 330)
+ash = 10
+birds = 6
+ambience = &"wind"
+cue_names = Array[StringName]([&"gate_open"])
+cue_times = PackedFloat32Array(0.04)
+
+[sub_resource type="Resource" id="Resource_shot1"]
+script = ExtResource("2_2")
+painting = ExtResource("7_7")
+depth = ExtResource("8_8")
+masks = ExtResource("9_9")
+painting_rect = Rect2(0, 0, 1672, 941)
+palette = ExtResource("10_10")
+camera_keys = Array[Rect2]([Rect2(0, 440, 1200, 502), Rect2(140, 470, 1000, 418)])
+camera_times = PackedFloat32Array(0, 1)
+reference = 0.5
+parallax = 0.2588
+grade_from = PackedFloat32Array(0.72, 1.05, 0.86, 0.94, 0.96, 1.02)
+grade_to = PackedFloat32Array(0.72, 1.05, 0.86, 0.94, 0.96, 1.02)
+lines = PackedStringArray("ENDING_2")
+lead = 1
+tail = 1
+minimum = 8
+dissolve = 1.4
+fire = 0.35
+water = 0.6
+ambience = &"river"
+map_ink = ExtResource("11_11")
+map_times = ExtResource("12_12")
+map_rect = Rect2(0, 300, 1672, 641)
+map_labels = PackedStringArray()
+map_points = PackedVector2Array()
+map_phases = PackedFloat32Array()
+ink_from = 1
+
+[sub_resource type="Resource" id="Resource_shot2"]
+script = ExtResource("2_2")
+painting = ExtResource("13_13")
+depth = ExtResource("14_14")
+masks = ExtResource("15_15")
+painting_rect = Rect2(0, 0, 1672, 941)
+palette = ExtResource("16_16")
+camera_keys = Array[Rect2]([Rect2(0, 120, 1100, 460), Rect2(300, 150, 1100, 460), Rect2(740, 250, 900, 377)])
+camera_times = PackedFloat32Array(0, 0.45, 1)
+reference = 0.5
+parallax = 0.0392
+grade_from = PackedFloat32Array(1.08, 1.03, 1.02, 1, 0.98, 0.95)
+grade_to = PackedFloat32Array(1.08, 1.03, 1.02, 1, 0.98, 0.95)
+lines = PackedStringArray("ENDING_3", "ENDING_4")
+lead = 1
+tail = 2
+minimum = 16
+dissolve = 1.4
+fade_out = 2
+fire = 0.3
+water = 0.5
+sway = 0.5
+smoke = 0.3
+smoke_area = Rect2(780, 0, 892, 300)
+ash = 8
+birds = 6
+
+[resource]
+script = ExtResource("1_1")
+id = &"ending"
+shots = Array[ExtResource("2_2")]([SubResource("Resource_shot0"), SubResource("Resource_shot1"), SubResource("Resource_shot2")])

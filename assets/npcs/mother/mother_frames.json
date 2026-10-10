@@ -13,6 +13,7 @@
    null,
    null
   ],
+  "wounds": null,
   "file": "mother_crouch.png"
  },
  "talk": {
@@ -29,6 +30,7 @@
    null,
    null
   ],
+  "wounds": null,
   "file": "mother_talk.png"
  }
 }

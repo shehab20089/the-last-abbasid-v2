@@ -207,6 +207,12 @@ M.shield = {
 };
 M.boss = { ramp: BRONZE, outline: outlineOf(BRONZE), line: BRONZE[0], rim: 0.3, shade: (s) => metal(BRONZE, s, 0.2, 0.4) };
 M.grip = shaded(LEATHER, -1.2, { rim: 0 });
+/** The naphtha flask: fired clay ringed by its turning, and a rag wick alight. */
+const CLAY = ramp("#1e110b", "#341d12", "#4f2c1a", "#6d3f25", "#8d5633", "#ab6f45");
+M.clay = { ramp: CLAY, outline: outlineOf(CLAY), line: CLAY[0], rim: 0.3,
+  shade: (s) => pick(CLAY, s.light, -0.3 - (frac(s.v / 2.2) < 0.18 ? 1 : 0)) };
+M.wick = { ramp: BRONZE, outline: outlineOf(BRONZE, 0.3), line: BRONZE[0], rim: 0,
+  shade: (s) => (s.glint > 0.3 ? BRONZE[5] : BRONZE[4]) };
 M.gold = { ramp: GOLD, outline: outlineOf(GOLD), line: GOLD[0], rim: 0.2, shade: (s) => metal(GOLD, s, 0, 0.45) };
 
 // --- Model ------------------------------------------------------------------------------------
@@ -304,6 +310,13 @@ function buildParts() {
     { group: "sword", prio: 2.5 });
   add_("guard", onSword(roundedBox([2.8, 0, 0], [1.1, 1.3, 7.2], { roundness: 0.6 })), "sword", M.gold,
     { group: "sword", prio: 2.5 });
+  // A flask of naphtha held in the sword fist with the grip, its wick alight: shown only while he
+  // throws it (the Naft Flask).
+  const flask = { o: [-0.4, 0, 4.6], x: [0, 1, 0], y: [1, 0, 0], z: [0, 0, 1] };
+  add_("flask", onSword(lathe([[0.6, -3.2], [2.7, -2.4], [3.2, -0.4], [2.8, 1.6], [1.3, 2.6], [1.0, 3.6]],
+    { frame: flask, segments: 12 })), "sword", M.clay, { group: "sword", prio: 2.2, optional: true });
+  add_("wick", onSword(ellipsoid([-0.4, 0, 9.0], [1.1, 1.1, 1.6], { rings: 4, segments: 6 })), "sword", M.wick,
+    { group: "sword", prio: 3, optional: true });
   return parts;
 }
 

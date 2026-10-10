@@ -6,31 +6,38 @@
 atlas = ExtResource("1_tex")
 region = Rect2(0, 0, 40, 64)
 
-[sub_resource type="AtlasTexture" id="lit_0"]
+[sub_resource type="AtlasTexture" id="dark_1"]
 atlas = ExtResource("1_tex")
 region = Rect2(40, 0, 40, 64)
 
-[sub_resource type="AtlasTexture" id="lit_1"]
+[sub_resource type="AtlasTexture" id="lit_0"]
 atlas = ExtResource("1_tex")
 region = Rect2(80, 0, 40, 64)
 
-[sub_resource type="AtlasTexture" id="lit_2"]
+[sub_resource type="AtlasTexture" id="lit_1"]
 atlas = ExtResource("1_tex")
 region = Rect2(120, 0, 40, 64)
 
-[sub_resource type="AtlasTexture" id="lit_3"]
+[sub_resource type="AtlasTexture" id="lit_2"]
 atlas = ExtResource("1_tex")
 region = Rect2(160, 0, 40, 64)
+
+[sub_resource type="AtlasTexture" id="lit_3"]
+atlas = ExtResource("1_tex")
+region = Rect2(200, 0, 40, 64)
 
 [resource]
 animations = [{
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("dark_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("dark_1")
 }],
 "loop": true,
 "name": &"dark",
-"speed": 1.0
+"speed": 2.0
 }, {
 "frames": [{
 "duration": 1.0,

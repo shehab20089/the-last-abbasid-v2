@@ -13,6 +13,8 @@
    null,
    null
   ],
+  "allRound": false,
+  "wounds": null,
   "file": "salim_kneel.png"
  },
  "stand": {
@@ -31,6 +33,8 @@
    null,
    null
   ],
+  "allRound": false,
+  "wounds": null,
   "file": "salim_stand.png"
  },
  "talk": {
@@ -47,6 +51,8 @@
    null,
    null
   ],
+  "allRound": false,
+  "wounds": null,
   "file": "salim_talk.png"
  }
 }

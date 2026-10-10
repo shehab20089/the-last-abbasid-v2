@@ -25,5 +25,5 @@ lunge_to = 4
 stamina_cost = 0.0
 use_blade_sweep = false
 fallback_hitbox = Rect2(4, -86, 40, 80)
-swing_cue = &"roll"
+swing_cue = &"enemy_swing_heavy"
 hit_cue = &"guard_break"

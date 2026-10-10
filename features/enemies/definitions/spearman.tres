@@ -4,6 +4,7 @@
 [ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="2_attack"]
 [ext_resource type="Resource" path="res://features/enemies/definitions/spearman_thrust.tres" id="3_thrust"]
 [ext_resource type="Resource" path="res://features/enemies/definitions/spearman_sweep.tres" id="4_sweep"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/spearman_lunge.tres" id="5_lunge"]
 
 [resource]
 script = ExtResource("1_script")
@@ -20,8 +21,8 @@ hearing_range = 70.0
 alert_time = 0.6
 preferred_range = 68.0
 min_range = 42.0
-attacks = Array[ExtResource("2_attack")]([ExtResource("3_thrust"), ExtResource("4_sweep")])
-attack_ranges = PackedFloat32Array(86, 50)
+attacks = Array[ExtResource("2_attack")]([ExtResource("3_thrust"), ExtResource("4_sweep"), ExtResource("5_lunge")])
+attack_ranges = PackedFloat32Array(86, 50, 150)
 attack_cooldown = Vector2(1.4, 2.2)
 block_chance = 0.0
 retreat_chance = 0.35

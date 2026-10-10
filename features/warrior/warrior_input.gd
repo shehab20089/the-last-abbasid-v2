@@ -8,7 +8,7 @@ extends Node
 ## Seconds a press is remembered.
 const BUFFER: float = 0.16
 const ACTIONS: Array[StringName] = [&"jump", &"attack", &"heavy_attack", &"dodge", &"block",
-	&"interact", &"heal", &"throw"]
+	&"interact", &"heal", &"throw", &"art", &"art_2"]
 
 ## Reads the devices when true; when false the fields are left to a script.
 var enabled: bool = true
@@ -18,6 +18,8 @@ var jump_held: bool = false
 var block_held: bool = false
 ## Down held (with jump, it drops him through the planks he stands on).
 var down_held: bool = false
+## The heavy button held (the cleave held back grows into a charged blow).
+var heavy_held: bool = false
 var _buffered: Dictionary[StringName, float] = {}
 var _hold_off: float = 0.0
 
@@ -37,6 +39,7 @@ func poll(delta: float) -> void:
 		jump_held = false
 		block_held = false
 		down_held = false
+		heavy_held = false
 		return
 	move = Input.get_axis(&"move_left", &"move_right")
 	if absf(move) < 0.2:
@@ -44,6 +47,7 @@ func poll(delta: float) -> void:
 	jump_held = Input.is_action_pressed(&"jump")
 	block_held = Input.is_action_pressed(&"block")
 	down_held = Input.is_action_pressed(&"move_down")
+	heavy_held = Input.is_action_pressed(&"heavy_attack")
 	for action: StringName in ACTIONS:
 		if Input.is_action_just_pressed(action):
 			press(action)
@@ -57,6 +61,11 @@ func press(action: StringName) -> void:
 ## True while a press of `action` is remembered.
 func has(action: StringName) -> bool:
 	return _buffered.has(action)
+
+
+## Seconds since `action` was pressed while the press is remembered; INF once it is not.
+func age(action: StringName) -> float:
+	return BUFFER - _buffered[action] if _buffered.has(action) else INF
 
 
 ## Takes a remembered press: true once, then forgotten.
@@ -80,3 +89,4 @@ func clear() -> void:
 	jump_held = false
 	block_held = false
 	down_held = false
+	heavy_held = false

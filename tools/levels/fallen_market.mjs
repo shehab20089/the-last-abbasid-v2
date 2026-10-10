@@ -32,10 +32,11 @@ export const LEVEL = {
   next: "res://features/levels/streets_of_ash/streets_of_ash.tscn",
   exitCard: "market_end",
   exitTitle: "LEVEL_STREETS_OF_ASH",
-  // The objective for the story so far: the first entry whose flag is set (an empty flag is the start).
+  // The objective for the story so far: the first entry whose flag is set (an empty flag is the start), and
+  // what the HUD marks for it.
   objectives: [
-    ["satchel", "OBJ_RIVER_GATE"], ["ambush_cleared", "OBJ_SPEAK_IBRAHIM"], ["ambush", "OBJ_DEFEND_SHOP"],
-    ["", "OBJ_FIND_IBRAHIM"],
+    ["satchel", "OBJ_RIVER_GATE", "exit"], ["ambush_cleared", "OBJ_SPEAK_IBRAHIM", "npc:ibrahim"],
+    ["ambush", "OBJ_DEFEND_SHOP", "group:ambush"], ["", "OBJ_FIND_IBRAHIM", "npc:ibrahim"],
   ],
   stallsUnderPlanks: true,
   cols: COLS,
@@ -102,17 +103,24 @@ export const LEVEL = {
     { id: "potters_lamp", col: 79 },
     { id: "mosque_lamp", col: 193 },
   ],
+  // Tokens of the Caliph's fallen guardsmen, off the beaten way: on a stall's roof, on the khan's roof.
+  relics: [
+    { id: "token_stalls", col: 106, row: 25 },
+    { id: "token_khan_roof", col: 180, row: 19 },
+  ],
   manuscripts: [
     { id: "optics", col: 53, row: 26 },
     // Pulled from the pyre's edge: the burners have to be dealt with to reach it.
     { id: "ledger", col: 167 },
     { id: "verses", col: 218, row: 22 },
+    // A leaf of the treatise by the mosque lamp, just before the ambush closes from both sides: the sweep.
+    { id: "furusiyya_sweep", col: 198, teaches: "sweep" },
   ],
   // Soldiers: activity is what he is busy with until he notices the hero (an animation); guard is
   // how readily he raises his shield; hidden soldiers are out of sight until their group wakes.
   enemies: [
     // 0. At the gate street, a man kneeling under a raised sabre: reach the soldier before it falls.
-    { kind: "swordsman", col: 34, face: 1, activity: "execute", victim: "gate_captive", delay: 3.0, patrol: 0 },
+    { kind: "swordsman", col: 34, face: 1, activity: "execute", victim: "gate_captive", delay: 5.0, patrol: 0 },
     // 1. The looter, kneeling at the chest with his back to the street.
     { kind: "swordsman", col: 66, face: 1, activity: "loot" },
     // 2. Over the mother and her son, sabre raised; her cry turns him.
@@ -138,31 +146,38 @@ export const LEVEL = {
     { id: "gate_captive", kind: "refugee_man", col: 36, face: 1, run: -1, thanks: "SAVED_1" },
   ],
   npcs: [
-    { id: "wounded_guard", kind: "guard", col: 11, face: 1, dialogue: "guard" },
+    // Hamid, who cannot walk: his counsel teaches the charged cleave.
+    { id: "wounded_guard", kind: "guard", col: 11, face: 1, dialogue: "guard", gives: "hamid_counsel", teaches: "charge" },
     // Crouched over her son, her back to the soldier; she speaks once he is dead.
-    { id: "mother", kind: "mother", col: 101, face: 1, dialogue: "mother", requires: "mother_cleared" },
-    { id: "ibrahim", kind: "scholar", col: 248, face: -1, dialogue: "ibrahim", requires: "ambush_cleared",
+    { id: "mother", kind: "mother", col: 101, face: 1, dialogue: "mother", requires: "mother_cleared", keepsake: "red_thread" },
+    { id: "ibrahim", kind: "scholar", col: 248, face: -1, dialogue: "ibrahim", requires: "ambush_cleared", keepsake: "reed_pen",
       gives: "satchel", notice: "NOTICE_SATCHEL" },
   ],
-  // Areas that start story beats, hints and ambushes: [id, col0, col1].
+  // Areas that start story beats, hints and ambushes: [id, col0, col1]. The first street's lessons come one
+  // after another, each a few strides past the last and before the fight that needs it: moving, striking
+  // (before the headsman's clock starts at col 15), the headsman, the charge (Hamid's, if walked past), the lamp
+  // (pointed out as the hero comes near it), the shield, remedies, the roll, the archer, the kick.
   triggers: [
     { id: "hint_move", from: 3, to: 9, hint: "HINT_MOVE" },
-    { id: "hint_jump", from: 14, to: 19, hint: "HINT_JUMP" },
-    { id: "execution", from: 19, to: 21, speaker: "SPEAKER_YUSUF", line: "EXECUTION_1" },
-    { id: "hint_attack", from: 23, to: 26, hint: "HINT_ATTACK" },
+    { id: "hint_attack", from: 12, to: 15, hint: "HINT_ATTACK" },
+    { id: "execution", from: 16, to: 18, hint: "HINT_EXECUTION", speaker: "SPEAKER_YUSUF", line: "EXECUTION_1" },
     { id: "refugees", from: 44, to: 46, event: "refugees", speaker: "SPEAKER_REFUGEE", line: "REFUGEE_1" },
+    // Walked past Hamid: the lesson comes anyway, well before the first lamp.
+    { id: "lesson_charge", from: 50, to: 53, teaches: "charge" },
     { id: "hint_surprise", from: 57, to: 61, hint: "HINT_SURPRISE" },
-    { id: "hint_guard", from: 84, to: 88, hint: "HINT_GUARD" },
+    { id: "hint_guard", from: 86, to: 89, hint: "HINT_GUARD" },
     { id: "mother_cry", from: 92, to: 94, event: "alarm", group: "mother", speaker: "SPEAKER_MOTHER",
       line: "MOTHER_CRY_1" },
-    { id: "hint_roll", from: 110, to: 113, hint: "HINT_ROLL" },
-    { id: "hint_archer", from: 116, to: 119, hint: "HINT_ARCHER_COVER" },
+    { id: "hint_heal", from: 103, to: 106, hint: "HINT_HEAL" },
+    { id: "hint_roll", from: 108, to: 111, hint: "HINT_ROLL" },
+    { id: "hint_archer", from: 117, to: 120, hint: "HINT_ARCHER_COVER" },
+    // Before the terrace: the kick that ends the string, to throw a man back off his ground.
+    { id: "lesson_kick", from: 125, to: 128, teaches: "kick" },
     { id: "hint_climb", from: 146, to: 150, hint: "HINT_CLIMB" },
     { id: "burners", from: 150, to: 152, speaker: "SPEAKER_YUSUF", line: "BURNERS_1" },
     { id: "hint_plunge", from: 153, to: 158, above: 80, height: 120, hint: "HINT_PLUNGE" },
-    { id: "hint_heal", from: 198, to: 202, hint: "HINT_HEAL" },
     { id: "ambush", from: 205, to: 207, event: "ambush", group: "ambush", line: "AMBUSH_1" },
-    { id: "hint_guard_break", from: 270, to: 274, hint: "HINT_GUARD_BREAK" },
+    { id: "lesson_low_cut", from: 270, to: 274, teaches: "low_cut" },
   ],
   exit: { name: "RiverGate", col: 297, prompt: "PROMPT_OPEN_GATE", lockedPrompt: "PROMPT_GATE_LOCKED",
     lockedLine: "GATE_LOCKED_1", requires: "satchel" },

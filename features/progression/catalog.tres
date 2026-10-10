@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="ProgressionCatalog" format=3]
+
+[ext_resource type="Script" path="res://features/progression/progression_catalog.gd" id="1_script"]
+[ext_resource type="Script" path="res://features/progression/technique_definition.gd" id="2_node"]
+[ext_resource type="Script" path="res://features/progression/keepsake_definition.gd" id="3_keepsake"]
+[ext_resource type="Resource" path="res://features/progression/tree/pommel.tres" id="n0_pommel"]
+[ext_resource type="Resource" path="res://features/progression/tree/whirl.tres" id="n1_whirl"]
+[ext_resource type="Resource" path="res://features/progression/tree/delayed_cut.tres" id="n2_delayed_cut"]
+[ext_resource type="Resource" path="res://features/progression/tree/executioner.tres" id="n3_executioner"]
+[ext_resource type="Resource" path="res://features/progression/tree/judgment.tres" id="n4_judgment"]
+[ext_resource type="Resource" path="res://features/progression/tree/steady_guard.tres" id="n5_steady_guard"]
+[ext_resource type="Resource" path="res://features/progression/tree/riposte_mastery.tres" id="n6_riposte_mastery"]
+[ext_resource type="Resource" path="res://features/progression/tree/bash_mastery.tres" id="n7_bash_mastery"]
+[ext_resource type="Resource" path="res://features/progression/tree/iron_will.tres" id="n8_iron_will"]
+[ext_resource type="Resource" path="res://features/progression/tree/wall_of_the_caliph.tres" id="n9_wall_of_the_caliph"]
+[ext_resource type="Resource" path="res://features/progression/tree/quiet_step.tres" id="n10_quiet_step"]
+[ext_resource type="Resource" path="res://features/progression/tree/bandolier.tres" id="n11_bandolier"]
+[ext_resource type="Resource" path="res://features/progression/tree/death_from_above.tres" id="n12_death_from_above"]
+[ext_resource type="Resource" path="res://features/progression/tree/running_thrust.tres" id="n13_running_thrust"]
+[ext_resource type="Resource" path="res://features/progression/tree/unseen.tres" id="n14_unseen"]
+[ext_resource type="Resource" path="res://features/progression/keepsakes/red_thread.tres" id="k0_red_thread"]
+[ext_resource type="Resource" path="res://features/progression/keepsakes/reed_pen.tres" id="k1_reed_pen"]
+[ext_resource type="Resource" path="res://features/progression/keepsakes/saffron_sash.tres" id="k2_saffron_sash"]
+[ext_resource type="Resource" path="res://features/progression/keepsakes/bronze_seal.tres" id="k3_bronze_seal"]
+[ext_resource type="Resource" path="res://features/progression/keepsakes/ink_stone.tres" id="k4_ink_stone"]
+[ext_resource type="Resource" path="res://features/progression/keepsakes/prayer_beads.tres" id="k5_prayer_beads"]
+[ext_resource type="Resource" path="res://features/progression/keepsakes/guard_bracer.tres" id="k6_guard_bracer"]
+[ext_resource type="Resource" path="res://features/progression/keepsakes/ash_ribbon.tres" id="k7_ash_ribbon"]
+
+[resource]
+script = ExtResource("1_script")
+nodes = Array[ExtResource("2_node")]([ExtResource("n0_pommel"), ExtResource("n1_whirl"), ExtResource("n2_delayed_cut"), ExtResource("n3_executioner"), ExtResource("n4_judgment"), ExtResource("n5_steady_guard"), ExtResource("n6_riposte_mastery"), ExtResource("n7_bash_mastery"), ExtResource("n8_iron_will"), ExtResource("n9_wall_of_the_caliph"), ExtResource("n10_quiet_step"), ExtResource("n11_bandolier"), ExtResource("n12_death_from_above"), ExtResource("n13_running_thrust"), ExtResource("n14_unseen")])
+keepsakes = Array[ExtResource("3_keepsake")]([ExtResource("k0_red_thread"), ExtResource("k1_reed_pen"), ExtResource("k2_saffron_sash"), ExtResource("k3_bronze_seal"), ExtResource("k4_ink_stone"), ExtResource("k5_prayer_beads"), ExtResource("k6_guard_bracer"), ExtResource("k7_ash_ribbon")])

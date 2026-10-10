@@ -66,6 +66,128 @@ function death(ready, { sword = 150, shieldFace = 50, arms = {} } = {}) {
   ];
 }
 
+// --- Weight: a second flinch, reeling, thrown open, thrown down, getting up ----------------------
+
+/** On his back on the street, legs out, arms flung wide (the fall's last pose). */
+function supine(ready, { shieldFace = 50, arms = {} } = {}, pitch = -90, z = 6.2, extra = {}) {
+  return pose(ready, {
+    pelvis: [-6, z], hips: { yaw: -10, pitch }, torso: { yaw: 0, pitch: 6 }, head: { yaw: 18, pitch: 8 },
+    footN: [6, -4.6, 3.2], footF: [10, 4.8, 3.6], toeN: 40, toeF: 30, kneeN: [0.2, -0.3, 1], kneeF: [0.2, 0.3, 1],
+    handN: [-18, -13, 6], sword: [210, 60], handF: [-14, 9, 8], shield: [shieldFace + 30, 70], ground: true, ...arms, ...extra,
+  });
+}
+
+/** A second flinch, so a string of blows does not repeat one pose: struck in the body, he doubles over it. */
+function hurtLow(ready, { sword = 150, shieldFace = 50, arms = {} } = {}) {
+  const z = ready.pelvis[1];
+  const struck = pose(ready, { pelvis: [-2.4, z - 1.6], hips: { yaw: -10, pitch: 12 }, torso: { yaw: 12, pitch: 18, roll: -8 },
+    head: { yaw: -4, pitch: 24, roll: -10 }, footN: [-9.5, -4.6, 4.2], footF: [5, 4.8, 6.4], toeF: 14,
+    handN: [9, -12, 36], sword: [sword - 50, 26], handF: [8, 7, 38], shield: [shieldFace + 24, -30], ...arms });
+  const doubled = pose(struck, { pelvis: [-3.2, z - 2.6], torso: { yaw: 14, pitch: 24, roll: -6 }, head: { pitch: 28 },
+    footF: [5, 4.8, 4.2], toeF: 0, handN: [9, -12, 33] });
+  return [struck, doubled, blend(doubled, ready, 0.4), blend(doubled, ready, 0.75), pose(ready, { pelvis: [-1, z] })];
+}
+
+/** A great blow that does not floor him: thrown back, he reels two steps to keep his feet. */
+function reelBack(ready, { sword = 150, shieldFace = 50, arms = {} } = {}) {
+  const z = ready.pelvis[1];
+  const thrown = pose(ready, { pelvis: [-3, z + 0.3], hips: { yaw: -26, pitch: -12 }, torso: { yaw: -18, pitch: -24, roll: 8 },
+    head: { yaw: 24, pitch: -30, roll: 10 }, footN: [-9, -4.6, 4.2], footF: [8, 4.8, LIFT], toeF: 22,
+    handN: [-4, -13, 50], sword: [sword + 24, 34], handF: [0, 7, 54], shield: [shieldFace + 10, 30], ...arms });
+  const back1 = pose(thrown, { pelvis: [-4, z - 0.8], torso: { pitch: -16, roll: 6 }, head: { pitch: -18 },
+    footF: [-1, 4.8, 4.2], toeF: 0, footN: [-12, -4.6, LIFT], toeN: -16 });
+  const back2 = pose(back1, { pelvis: [-4.4, z - 1.8], torso: { pitch: -6, roll: 3 }, head: { pitch: -6 },
+    footN: [-13, -4.6, 4.2], toeN: 0 });
+  return [thrown, back1, back2, blend(back2, ready, 0.5), pose(ready, { pelvis: [-1, z] })];
+}
+
+/** Parried: his blade beaten up and away, he is thrown open, off balance, and stands so a moment. */
+function thrownOpen(ready, { sword = 150, shieldFace = 50, arms = {} } = {}) {
+  const z = ready.pelvis[1];
+  const flung = pose(ready, { pelvis: [-3, z + 0.2], hips: { yaw: -24, pitch: -10 }, torso: { yaw: -26, pitch: -20, roll: 10 },
+    head: { yaw: 26, pitch: -20, roll: 8 }, footN: [-11, -4.6, 4.2], footF: [7, 4.8, 5.6], toeF: 18,
+    handN: [-8, -12, 64], sword: [sword + 70, 20], handF: [6, 7, 46], shield: [shieldFace + 30, 10], ...arms });
+  const wobble = nudge(flung, { pelvis: [-0.6, -0.8], torso: { pitch: 3, roll: -3 }, head: { pitch: 4 }, handN: [1, 0, -2],
+    sword: [-6, 0] });
+  return [flung, wobble, nudge(wobble, { torso: { roll: 3 }, head: { roll: 4 }, handN: [0.6, 0, 1] }), blend(wobble, ready, 0.3),
+    blend(wobble, ready, 0.65)];
+}
+
+/** Thrown off his feet by a great blow: over backwards, onto his back on the street. */
+function thrownDown(ready, { sword = 150, shieldFace = 50, arms = {} } = {}) {
+  const z = ready.pelvis[1];
+  const lie = (pitch, height, extra) => supine(ready, { shieldFace, arms }, pitch, height, extra);
+  const thrown = pose(ready, { pelvis: [-3, z + 1.2], hips: { yaw: -20, pitch: -18 }, torso: { yaw: -12, pitch: -26, roll: 6 },
+    head: { yaw: 22, pitch: -32 }, footN: [-6, -4.6, 7.6], toeN: -10, footF: [9, 4.8, 12], toeF: 20,
+    handN: [-6, -13, 52], sword: [sword + 34, 40], handF: [-2, 7, 56], shield: [shieldFace + 20, 40], ...arms });
+  const over = pose(ready, { pelvis: [-6, 27], hips: { yaw: -16, pitch: -52 }, torso: { yaw: -6, pitch: -10 },
+    head: { yaw: 18, pitch: -14 }, footN: [-2, -4.6, 12], footF: [8, 4.8, 18], toeN: 10, toeF: 20, kneeN: [0.4, -0.3, 1],
+    kneeF: [0.4, 0.3, 1], handN: [-14, -13, 34], sword: [sword + 50, 50], handF: [-10, 8, 38], shield: [shieldFace + 30, 60],
+    ...arms });
+  const landing = lie(-78, 9, { footN: [4, -4.6, 8], footF: [10, 4.8, 10] });
+  return [thrown, blend(thrown, over, 0.5), over, blend(over, landing, 0.5), landing,
+    lie(-92, 6, { head: { yaw: 18, pitch: 14 } }), lie(-88, 6.6, {})];
+}
+
+/** Down on the street, breathing. */
+function lyingDown(ready, { shieldFace = 50, arms = {} } = {}) {
+  const flat = supine(ready, { shieldFace, arms });
+  return [flat, nudge(flat, { torso: { pitch: 2 }, head: { pitch: -4, roll: 6 }, handN: [0, 0, 1] })];
+}
+
+/** Up off the street: he sits up on his hands, gets a knee under him, and rises into his guard. */
+function gettingUp(ready, { sword = 150, shieldFace = 50, arms = {} } = {}) {
+  const flat = supine(ready, { shieldFace, arms });
+  const sit = pose(ready, { pelvis: [-6, 9], hips: { yaw: -10, pitch: -50 }, torso: { yaw: 0, pitch: 30 }, head: { yaw: 14, pitch: 10 },
+    footN: [6, -4.6, 4.2], footF: [9, 4.8, 4.2], kneeN: [0.6, -0.3, 1], kneeF: [0.6, 0.3, 1],
+    handN: [-14, -12, 5], sword: [250, 40], handF: [-8, 9, 8], shield: [shieldFace + 30, 50], ground: true, ...arms });
+  const kneel = pose(ready, { pelvis: [-3, 21], hips: { yaw: -12, pitch: 8 }, torso: { yaw: -4, pitch: 18 }, head: { yaw: 12, pitch: -6 },
+    footN: [-14, -4.6, 3], toeN: -78, kneeN: [1, -0.15, -0.2], footF: [6, 4.8, 4.2],
+    handN: [8, -12, 24], sword: [sword - 120, 30], handF: [3, 8, 26], shield: [shieldFace + 10, -20], ...arms });
+  const rise = pose(ready, { pelvis: [-2, 31], hips: { yaw: -14, pitch: 10 }, torso: { yaw: -2, pitch: 12 }, head: { yaw: 14, pitch: -4 },
+    footN: [-10, -4.6, 4.2], footF: [6, 4.8, 4.2], handN: [8, -12, 36], sword: [sword - 40, 24], handF: [6, 6, 42],
+    shield: [shieldFace, 0], ...arms });
+  return [flat, blend(flat, sit, 0.4), blend(flat, sit, 0.75), sit, blend(sit, kneel, 0.33), blend(sit, kneel, 0.66), kneel,
+    blend(kneel, rise, 0.5), rise, blend(rise, ready, 0.6), ready];
+}
+
+/** Killed where he lies: a last heave, and still. */
+function deathOnGround(ready, { shieldFace = 50, arms = {} } = {}) {
+  const flat = supine(ready, { shieldFace, arms });
+  return [
+    pose(flat, { torso: { pitch: -8 }, head: { pitch: -16, roll: 8 }, handN: [-16, -13, 12], handF: [-12, 9, 14] }),
+    pose(flat, { torso: { pitch: 4 }, head: { pitch: 10 } }),
+    pose(flat, { head: { yaw: 22, pitch: 14, roll: -12 } }),
+  ];
+}
+
+/** Where the ground stroke goes in: the chest of a man on his back. */
+const CHEST = (f) => toParent(f.chest, [3, 0, 4]);
+
+/**
+ * The reactions every soldier shares, for his stance: a second flinch (`hurt_b`), reeling from a great
+ * blow (`reel`), thrown open by a parry (`parried`), and (unless `steadfast`, a man no blow floors) thrown
+ * down (`knockdown`), lying (`down`), getting up (`getup`), killed where he lies (`death_down`).
+ */
+function reactions(ready, size, { sword = 150, shieldFace = 50, arms = {}, steadfast = false } = {}) {
+  const opts = { sword, shieldFace, arms };
+  const out = {
+    hurt_b: { size, fps: 12, loop: false, poses: hurtLow(ready, opts), durations: [1, 1.2, 0.8, 0.8, 1], motion: [-60, 0, 0] },
+    reel: { size, fps: 10, loop: false, poses: reelBack(ready, opts), durations: [1, 1.2, 1.2, 1, 1], motion: [-90, 0, 0] },
+    parried: { size, fps: 8, loop: false, poses: thrownOpen(ready, opts), durations: [1, 1.6, 1.6, 0.6, 0.6], motion: [-30, 0, 0] },
+  };
+  if (steadfast) return out;
+  return {
+    ...out,
+    knockdown: { size, fps: 14, loop: false, poses: thrownDown(ready, opts), durations: [1, 0.8, 0.8, 0.7, 0.8, 1, 1.4],
+      motion: [-140, 0, 0], wind: [-10, 0, -6] },
+    down: { size, fps: 3, loop: true, poses: lyingDown(ready, opts), limp: 0.6 },
+    getup: { size, fps: 14, loop: false, poses: gettingUp(ready, opts), durations: [0.8, 0.7, 0.7, 1.2, 0.8, 0.8, 1.2, 0.8, 1, 1, 1] },
+    death_down: { size, fps: 8, loop: false, poses: deathOnGround(ready, opts), durations: [1, 1.4, 2.4], wound: CHEST,
+      limp: 0.9 },
+  };
+}
+
 // --- Cut down ------------------------------------------------------------------------------------
 // A killing blow can take a man's head, his sword arm, a leg, or cut him through at the waist. Each
 // way of falling hides what was cut away and shows the wound's raw cap; the piece itself is drawn
@@ -73,11 +195,11 @@ function death(ready, { sword = 150, shieldFace = 50, arms = {} } = {}) {
 
 const HEAD = ["skull", "face", "nose", "eye", "mask", "moustache", "beard", "helmet", "helmetBand", "brim", "finial",
   "neckGuard", "plume"];
-const WEAPON_N = ["grip", "pommel", "guard", "book", "shaft", "socket", "tassel", "maceHead", "pot", "wick"];
+const WEAPON_N = ["grip", "pommel", "guard", "book", "shaft", "socket", "tassel", "maceHead", "axeHead", "axeBlade", "pot", "wick"];
 const ARM_N = ["sleeveN", "fistN"];
 const LEG_N = ["trousersN", "bootN", "footN"];
 const UPPER = ["torso", "cuirass", "chestDisc", "collar", "sleeveN", "sleeveF", "shoulderN", "shoulderF", "fistN", "fistF",
-  "neck", ...HEAD, "shield", "boss", "bow", ...WEAPON_N];
+  "neck", ...HEAD, "shield", "boss", "bow", ...WEAPON_N, "dagger", "daggerGrip", "daggerGuard"];
 
 /** What each cut takes away and the wound it leaves. */
 const CUTS = {
@@ -269,7 +391,22 @@ function finishedSet(ready, size, { sword = 150, shieldFace = 50, arms = {} } = 
   const lostArm = from(disarmed, 1, "arm");
   const lostHead = lostArm.map((p, i) => (i >= 4 ? { ...cutAway([p], "head")[0], woundAt: WOUNDS.head } : p));
 
+  // Pinned where he lies (bursts on 3 and 5): the blade goes in, his back arches, he sinks, and is still.
+  const flat = supine(ready, { shieldFace, arms });
+  const arch = pose(flat, { torso: { pitch: -10 }, head: { pitch: -6, roll: 5 }, handN: [-13, -13, 13], handF: [-10, 9, 15] });
+  const pinned = [
+    flat,
+    nudge(flat, { torso: { pitch: 2 }, head: { pitch: -4, roll: 6 } }),
+    flat,
+    arch,
+    pose(arch, { torso: { pitch: -10 }, head: { pitch: -12 }, handN: [-14, -13, 12], handF: [-10, 9, 14] }),
+    pose(flat, { torso: { pitch: -6 }, head: { pitch: -8, roll: -6 }, handN: [-16, -13, 10] }),
+    pose(flat, { head: { yaw: 22, pitch: 14, roll: -12 } }),
+    pose(flat, { head: { yaw: 22, pitch: 14, roll: -12 } }),
+  ];
+
   return {
+    finished_ground: timed("ground", pinned, { wound: CHEST }),
     finished_behead: timed("behead", from(behead, 4, "head"), { wound: WOUNDS.head }),
     finished_impale: timed("impale", impale, { wound: BELLY }),
     finished_spin: timed("spin", spin, { wound: WOUNDS.waist }),
@@ -284,6 +421,8 @@ const TURNS = [0, 45, 90, 135, 180, 225, 270, 315];
 const STAND = { pelvis: [0, 39.9], footN: [0, -4.4, 4.2], footF: [0, 4.4, 4.2] };
 /** The torso's parts are cut at the waist: the piece keeps only what lay above it. */
 const ABOVE_WAIST = (p, name) => !["torso", "cuirass"].includes(name) || p[2] >= 43.5;
+/** A long weapon's parts (spear, mace, axe): a piece of its own when its bearer is cut down. */
+const LONG_ARM = ["shaft", "socket", "tassel", "maceHead", "axeHead", "axeBlade", "pommel"];
 
 function piecesFor(ready, { arm = true, armBlade = true, upperBlade = true, spear = false, headSize = 32 } = {}) {
   const pieces = {
@@ -291,7 +430,7 @@ function piecesFor(ready, { arm = true, armBlade = true, upperBlade = true, spea
     head: { pose: pose(ready, { head: { yaw: 0, pitch: 0, roll: 0 } }), parts: [...HEAD, "stumpNeck"], chains: ["plume"],
       pivot: (f) => toParent(f.head, [0.4, 0, 5.6]), size: [headSize, headSize] },
     leg: { pose: pose(ready, STAND), parts: [...LEG_N, "stumpHipN"], pivot: (f) => f.shinN.o, size: [56, 56] },
-    upper: { pose: ready, parts: [...UPPER.filter((n) => !spear || !["shaft", "socket", "tassel"].includes(n)), "stumpChest"],
+    upper: { pose: ready, parts: [...UPPER.filter((n) => !spear || !LONG_ARM.includes(n)), "stumpChest"],
       pivot: (f) => toParent(f.chest, [0, 0, 2]), clip: ABOVE_WAIST, blade: upperBlade, size: [96, 96] },
   };
   if (arm) {
@@ -300,7 +439,7 @@ function piecesFor(ready, { arm = true, armBlade = true, upperBlade = true, spea
       pivot: (f) => f.forearmN.o, blade: armBlade, size: [80, 80] };
   }
   if (spear) {
-    pieces.spear = { pose: pose(ready, { sword: [90, 0] }), parts: ["shaft", "socket", "maceHead", "pommel"],
+    pieces.spear = { pose: pose(ready, { sword: [90, 0] }), parts: LONG_ARM.filter((n) => n !== "tassel"),
       pivot: (f) => toParent(f.sword, [12, 0, 0]), blade: true, size: [104, 104] };
   }
   return pieces;
@@ -536,6 +675,7 @@ export const SWORDSMAN = {
     poses: stabDown(SWORD_READY, { up: [14, -9, 58], down: [18, -9, 32], sword: [8, 6], grip: [0, 0, 2] }) },
   ...cutDown(SWORD_READY, WIDE),
   ...finishedSet(SWORD_READY, WIDE),
+  ...reactions(SWORD_READY, WIDE),
 };
 
 // --- The spearman -----------------------------------------------------------------------------
@@ -634,6 +774,7 @@ export const SPEARMAN = {
     poses: stabDown(SPEAR_READY, { up: [12, -9, 72], down: [16, -9, 60], sword: [6, 4], grip: [0, 0, 2] }) },
   ...cutDown(SPEAR_READY, LONG, { sword: 130 }),
   ...finishedSet(SPEAR_READY, LONG, { sword: 130 }),
+  ...reactions(SPEAR_READY, LONG, { sword: 130 }),
 };
 
 // --- The archer -------------------------------------------------------------------------------
@@ -668,6 +809,19 @@ function shoot() {
   ];
 }
 
+/** A push kick to drive off a man who has closed on him: the knee up, the sole driven into the belly,
+ * leaning back with the bow held wide, and the foot set down. Telegraph 0, the kick live on 1-2. */
+function kick() {
+  const chamber = br({ pelvis: [-1.6, 38.4], hips: { yaw: -16, pitch: -6 }, torso: { yaw: -10, pitch: -6, roll: 3 },
+    head: { yaw: 20, pitch: -6 }, footN: [-8, -4.6, 4.2], footF: [7, 4.8, 18], toeF: 20, kneeF: [1, 0.2, 0.4],
+    handF: [12, 4, 52], shield: [0, -10], handN: [-6, -9.5, 44] });
+  const thrust = br({ pelvis: [-2.6, 38.8], hips: { yaw: -10, pitch: -16 }, torso: { yaw: -6, pitch: -12, roll: 2 },
+    head: { yaw: 16, pitch: 4 }, footN: [-9, -4.6, 4.2], footF: [24, 4.8, 24], toeF: 70,
+    handF: [6, 6, 56], shield: [0, 10], handN: [-10, -10, 48] });
+  return [chamber, thrust, nudge(thrust, { footF: [0.8, 0, -0.4] }), pose(blend(thrust, BOW_READY, 0.45), { footF: [10, 4.8, 9] }),
+    pose(blend(thrust, BOW_READY, 0.8), { footF: [8, 4.8, 4.2], toeF: 0 }), BOW_READY];
+}
+
 function bowAlert() {
   return [
     br({ pelvis: [-1, 38.8], torso: { pitch: -4 }, head: { yaw: 20, pitch: -10 }, handF: [12, 3.5, 48], shield: [0, -14] }),
@@ -698,6 +852,7 @@ export const ARCHER = {
     handN: [-1 - swing * 6, -10, 41 - Math.abs(swing) * 1.5], sword: [70, 10] })) },
   alert: { size: BODY, fps: 8, loop: false, poses: bowAlert(), durations: [1, 2, 1] },
   shoot: { size: WIDE, fps: 9, loop: false, poses: shoot(), durations: [1, 1.4, 1.2, 1.6, 0.6, 1.2, 1.2] },
+  kick: { size: WIDE, fps: 10, loop: false, poses: kick(), durations: [2.4, 0.8, 1, 1, 1, 1], motion: [20, 0, 0] },
   hurt: { size: WIDE, fps: 12, loop: false, poses: hurt(BOW_READY, { sword: 100, shieldFace: 0 }).map((p) => ({ ...p,
     shield: [0, -20] })), durations: [1, 1.2, 0.8, 0.8, 1], motion: [-80, 0, 0] },
   death: { size: WIDE, fps: 10, loop: false, poses: death(BOW_READY, { sword: 100, shieldFace: 0,
@@ -706,6 +861,7 @@ export const ARCHER = {
   watch: { size: BODY, fps: 4, loop: true, poses: watch(), durations: [2, 1.2, 2.4, 2] },
   ...cutDown(BOW_READY, WIDE, { sword: 100, shieldFace: 0, arms: { shield: [0, 60] } }),
   ...finishedSet(BOW_READY, WIDE, { sword: 100, shieldFace: 0, arms: { shield: [0, 60] } }),
+  ...reactions(BOW_READY, WIDE, { sword: 100, shieldFace: 0, arms: { shield: [0, 60] } }),
 };
 
 // --- The captain ------------------------------------------------------------------------------
@@ -818,6 +974,29 @@ function bash() {
   ];
 }
 
+/**
+ * The sweep (his second phase): dropped low behind the shield, the sabre drawn back along the ground, then
+ * swung flat across the shins with his whole turn behind it, the shield flung out for balance. Amber: no
+ * standing guard stops it (jump it or roll). Telegraph 1 (held on 2), active 3-4.
+ */
+function capSweep() {
+  const coil = cr({ pelvis: [-2.6, 32.6], hips: { yaw: -30, pitch: 14 }, torso: { yaw: -30, pitch: 18, roll: 3 },
+    head: { yaw: 30, pitch: 6 }, footN: [-12, -4.8, 4.2], footF: [10, 5, 4.2], handN: [-9, -9, 32], sword: [-56, 12],
+    handF: [12, 3, 44], shield: [26, 6] });
+  const held = pose(coil, { pelvis: [-2.9, 32.3], torso: { yaw: -32, pitch: 18.5, roll: 3 }, handN: [-10, -9, 31.6] });
+  const across = cr({ pelvis: [3.8, 31.2], hips: { yaw: 6, pitch: 18 }, torso: { yaw: 16, pitch: 24 }, head: { yaw: 6, pitch: 10 },
+    footN: [-11, -4.8, 4.2], footF: [17, 5, 4.2], handN: [18, -9, 26], sword: [76, -6], handF: [4, 6, 42],
+    shield: [44, -14] });
+  const through = cr({ pelvis: [4.6, 31], hips: { yaw: 18, pitch: 18 }, torso: { yaw: 32, pitch: 24, roll: -3 },
+    head: { yaw: 2, pitch: 10 }, footF: [17, 5, 4.2], footN: [-8, -4.8, 6.4], toeN: 6, handN: [13, -2, 24], sword: [52, -36],
+    handF: [1, 6, 41], shield: [40, -16] });
+  return [
+    blend(CAP_READY, coil, 0.55), coil, held, across, through,
+    pose(blend(through, CAP_READY, 0.45), { footF: through.footF, footN: CAP_BACK }),
+    pose(CAP_READY, { pelvis: [3, 37], footF: [14, 5, 4.2] }),
+  ];
+}
+
 /** The roar: chest out, sabre and shield flung wide. */
 function roar() {
   const wide = cr({ pelvis: [-1, 37.6], hips: { yaw: -26, pitch: -4 }, torso: { yaw: -20, pitch: -14 }, head: { yaw: 20, pitch: -24 },
@@ -887,6 +1066,8 @@ export const CAPTAIN = {
     durations: [1.2, 1.8, 2.4, 1, 1.2, 0.7, 1.2, 2.4, 1.8, 1.2], motion: [60, 0, 0] },
   bash: { size: WIDE, fps: 12, loop: false, poses: bash(), durations: [1.4, 3, 0.8, 0.8, 1, 1.8, 1.4, 1], motion: [300, 0, 0],
     skid: true },
+  sweep: { size: WIDE, fps: 13, loop: false, poses: capSweep(), durations: [1, 1.5, 1.7, 0.8, 1, 1.2, 1.2],
+    motion: [50, 0, 0] },
   block: { size: WIDE, fps: 3, loop: true, poses: [CAP_GUARD, nudge(CAP_GUARD, { pelvis: [0, -0.3], torso: { pitch: 0.6 } })] },
   block_hit: { size: WIDE, fps: 12, loop: false, motion: [-50, 0, 0], poses: [
     pose(CAP_GUARD, { pelvis: [-3, 35.4], torso: { yaw: 6, pitch: 3 }, head: { pitch: -6 }, handF: [9, 3, 53], shield: [26, 14] }),
@@ -900,6 +1081,7 @@ export const CAPTAIN = {
   executed: { size: WIDE, fps: 9, loop: false, poses: cutAway(kneelingBeheaded(), "head"),
     durations: [1.2, 1.6, 1.6, 1.2, 0.8, 0.8, 2.6], wind: [-10, 0, -6], limp: 0.9, wound: WOUNDS.head },
   ...cutDown(CAP_READY, WIDE),
+  ...reactions(CAP_READY, WIDE, { steadfast: true }),
 };
 
 // --- The keshig veteran ------------------------------------------------------------------------
@@ -1028,6 +1210,7 @@ export const MACEMAN = {
     durations: [1, 1.2, 1.2, 0.8, 0.8, 0.7, 0.7, 0.6, 0.8, 1, 1.4, 2.4], motion: [-40, 0, 0], wind: [-10, 0, -6], limp: 0.9 },
   ...cutDown(MACE_READY, WIDE, { sword: 140, shieldFace: 0, arms: { shield: [0, 60] } }),
   ...finishedSet(MACE_READY, WIDE, { sword: 140, shieldFace: 0, arms: { shield: [0, 60] } }),
+  ...reactions(MACE_READY, WIDE, { sword: 140, shieldFace: 0, arms: { shield: [0, 60] }, steadfast: true }),
 };
 
 // --- The Georgian shield-bearer ------------------------------------------------------------------
@@ -1114,6 +1297,7 @@ export const SHIELDBEARER = {
     durations: [1, 1, 1, 0.7, 0.7, 0.6, 0.6, 0.6, 0.8, 1, 1.2, 2], motion: [-50, 0, 0], wind: [-10, 0, -6], limp: 0.9 },
   ...cutDown(WALL_READY, WIDE, { sword: 130 }),
   ...finishedSet(WALL_READY, WIDE, { sword: 130 }),
+  ...reactions(WALL_READY, WIDE, { sword: 130 }),
 };
 
 // --- The siege engineer --------------------------------------------------------------------------
@@ -1183,6 +1367,311 @@ export const ENGINEER = {
     durations: [1, 1, 1, 0.7, 0.7, 0.6, 0.6, 0.6, 0.8, 1, 1.2, 2], motion: [-50, 0, 0], wind: [-10, 0, -6], limp: 0.9 },
   ...cutDown(EMPTY_HANDED, WIDE, POT_ARMS),
   ...finishedSet(EMPTY_HANDED, WIDE, POT_ARMS),
+  ...reactions(EMPTY_HANDED, WIDE, POT_ARMS),
+};
+
+// --- The Kipchak skirmisher ----------------------------------------------------------------------
+// A horseman of the steppe fighting on foot: no armour and no shield, a short sabre and a long
+// knife. Light on his feet, he hangs at the edge of reach, dashes in with a cut (the knife may
+// follow it at once), and springs back out of reach of a heavy blow.
+
+const KNIFE = ["dagger", "daggerGrip", "daggerGuard"];
+/** The knife hand's face: up and a little away, so the blade shows its width along the arm. */
+const KNIFE_FACE = [-30, 60];
+const SKIRM_READY = {
+  ...SWORD_READY,
+  pelvis: [0.4, 35.6],
+  hips: { yaw: -22, pitch: 9, roll: 0 },
+  torso: { yaw: 8, pitch: 10, roll: 0 },
+  head: { yaw: 10, pitch: -8, roll: 0 },
+  footN: [-10, -4.8, 4.2],
+  footF: [9, 5, 4.2],
+  footYawN: -36,
+  footYawF: -8,
+  handN: [10, -10, 44],
+  sword: [124, 14],
+  handF: [11, 8, 40],
+  // The knife arm's elbow kept down at his side, so the blade runs on along the forearm toward the enemy.
+  elbowF: [-0.4, 0.15, -1],
+  shield: KNIFE_FACE,
+};
+const kr = (o) => pose(SKIRM_READY, o);
+const SKIRM_BACK = [-10, -4.8, 4.2];
+
+/** The dash: crouched low, the sabre trailing behind; a spring across the street and the blade rising
+ * through the man before him. Telegraph 1, the lunge on 2-3, active 3-4. */
+function dashCut() {
+  const coil = kr({ pelvis: [-3, 31.4], hips: { yaw: -30, pitch: 16 }, torso: { yaw: -18, pitch: 16, roll: 2 },
+    head: { yaw: 38, pitch: -12 }, footN: [-13, -4.8, 4.2], footF: [7, 5, 4.2], handN: [-9, -9, 33], sword: [-66, -8],
+    handF: [13, 5, 41] });
+  const launch = kr({ pelvis: [3, 34.2], hips: { yaw: -22, pitch: 14 }, torso: { yaw: -12, pitch: 16 }, head: { yaw: 34, pitch: -10 },
+    footF: [13.4, 5, LIFT + 1], toeF: 16, footN: [-9, -4.8, 5.8], toeN: -24, handN: [-10, -9, 35], sword: [-78, -6],
+    handF: [15, 5, 44] });
+  const strike = kr({ pelvis: [6, 31.8], hips: { yaw: 6, pitch: 16 }, torso: { yaw: 22, pitch: 14, roll: -3 },
+    head: { yaw: 4, pitch: -4 }, footF: [17, 5, 4.2], toeF: 0, footN: [-7, -4.8, 6.2], toeN: -10, handN: [22, -10, 44],
+    sword: [96, 6], handF: [6, 11, 41], elbowF: [-1, 0.3, -0.4] });
+  const through = kr({ pelvis: [6.6, 32.6], hips: { yaw: 10, pitch: 10 }, torso: { yaw: 26, pitch: 6, roll: -4 },
+    head: { yaw: 2, pitch: -10 }, footF: [17, 5, 4.2], footN: [-6, -4.8, 6.6], toeN: -6, handN: [16, -9, 60],
+    sword: [172, 12], handF: [5, 11, 43], elbowF: [-1, 0.3, -0.4] });
+  return [
+    blend(SKIRM_READY, coil, 0.6),
+    coil,
+    launch,
+    strike,
+    through,
+    pose(blend(through, SKIRM_READY, 0.5), { footF: through.footF, footN: [-8, -4.8, LIFT], toeN: 6 }),
+    pose(SKIRM_READY, { footF: through.footF }),
+  ];
+}
+
+/** The quick cut, close in: a forehand from behind the shoulder. Telegraph 1, active 2-3. */
+function skirmCut() {
+  const back = kr({ pelvis: [-2, 35], hips: { yaw: -30, pitch: 6 }, torso: { yaw: -24, pitch: 2, roll: 4 },
+    head: { yaw: 32, pitch: -6 }, handN: [-4, -8.5, 60], sword: [228, 14], handF: [13, 5, 44] });
+  const strike = kr({ pelvis: [3.4, 34.2], hips: { yaw: 4, pitch: 12 }, torso: { yaw: 16, pitch: 14, roll: -2 }, head: { yaw: 8 },
+    footF: [13, 5, LIFT], toeF: 12, handN: [19, -9, 45], sword: [92, 4], handF: [6, 11, 41], elbowF: [-1, 0.3, -0.4] });
+  const through = kr({ pelvis: [4.2, 33.2], hips: { yaw: 12, pitch: 14 }, torso: { yaw: 28, pitch: 20, roll: -3 },
+    head: { yaw: 2, pitch: 6 }, footF: [15, 5, 4.2], footN: [-8, -4.8, 6.6], toeN: 8, handN: [12, -3, 31], sword: [22, -10],
+    handF: [4, 11, 40], elbowF: [-1, 0.3, -0.4] });
+  return [
+    blend(SKIRM_READY, back, 0.6),
+    back,
+    strike,
+    through,
+    pose(blend(through, SKIRM_READY, 0.45), { footF: through.footF, footN: SKIRM_BACK }),
+    pose(SKIRM_READY, { footF: through.footF }),
+  ];
+}
+
+/** The knife after the cut: the sabre lifted clear, the far shoulder driven round, the point at the
+ * belly. Chained (it comes at once): active 1-2. */
+function knifeStab() {
+  const draw = kr({ pelvis: [-1, 34.4], hips: { yaw: -10, pitch: 10 }, torso: { yaw: 18, pitch: 12 }, head: { yaw: 6 },
+    handF: [3, 10, 42], elbowF: [-1, 0.3, -0.4], handN: [6, -10, 50], sword: [150, 16] });
+  const stab = kr({ pelvis: [4, 33.6], hips: { yaw: -30, pitch: 12 }, torso: { yaw: -26, pitch: 14 }, head: { yaw: 34, pitch: -4 },
+    footF: [14, 5, LIFT], toeF: 12, handF: [33, 3, 45], elbowF: [-1, 0, -0.35], handN: [0, -10, 47], sword: [200, 16] });
+  const home = pose(stab, { pelvis: [4.4, 33.4], footF: [15, 5, 4.2], toeF: 0, handF: [35, 3, 44.5] });
+  return [
+    draw,
+    stab,
+    home,
+    pose(blend(home, SKIRM_READY, 0.5), { footF: home.footF, footN: [-8, -4.8, LIFT], toeN: 6 }),
+    pose(SKIRM_READY, { footF: home.footF }),
+  ];
+}
+
+/** Out of reach in one spring: crouched, off both feet and thrown back with the knees drawn up and both
+ * blades kept toward the enemy, down again in a crouch. Untouchable in the air (the game plays it). */
+function backLeap() {
+  const crouch = kr({ pelvis: [0.6, 30.4], hips: { yaw: -18, pitch: 16 }, torso: { yaw: 4, pitch: 12 }, head: { yaw: 10, pitch: -10 },
+    footN: [-9, -4.8, 4.2], footF: [8, 5, 4.2], handN: [12, -10, 38], sword: [118, 14], handF: [12, 8, 36] });
+  const spring = kr({ pelvis: [-2.4, 37.6], hips: { yaw: -16, pitch: -8 }, torso: { yaw: 2, pitch: 4 }, head: { yaw: 10, pitch: -12 },
+    footN: [-6, -4.8, 8.4], toeN: -34, footF: [7, 5, 10.6], toeF: 6, handN: [10, -10, 46], sword: [112, 14], handF: [10, 8, 44] });
+  const apex = kr({ pelvis: [-4.4, 42.6], hips: { yaw: -16, pitch: -12 }, torso: { yaw: 2, pitch: 10 }, head: { yaw: 10, pitch: -10 },
+    footN: [-3.6, -4.8, 14.8], toeN: 8, footF: [8, 5, 17.6], toeF: 16, handN: [9, -10, 50], sword: [116, 14], handF: [9, 8, 48] });
+  const fall = kr({ pelvis: [-4, 39], hips: { yaw: -18, pitch: -6 }, torso: { yaw: 4, pitch: 8 }, head: { yaw: 10, pitch: -8 },
+    footN: [-6, -4.8, 10], toeN: -18, footF: [5, 5, 11.6], toeF: -8, handN: [10, -10, 47], sword: [118, 14], handF: [10, 8, 45] });
+  const land = kr({ pelvis: [-1.4, 29.8], hips: { yaw: -18, pitch: 20 }, torso: { yaw: 6, pitch: 16 }, head: { yaw: 10, pitch: -12 },
+    footN: [-10, -4.8, 4.2], footF: [7, 5, 4.2], handN: [12, -10, 38], sword: [116, 12], handF: [12, 8, 36] });
+  return [crouch, blend(crouch, spring, 0.5), spring, apex, fall, blend(fall, land, 0.5), land, blend(land, SKIRM_READY, 0.55),
+    SKIRM_READY];
+}
+
+function skirmAlert() {
+  return [
+    kr({ pelvis: [-1, 37.4], torso: { pitch: -2 }, head: { yaw: 20, pitch: -12 }, handN: [6, -10, 44], sword: [130, 14] }),
+    kr({ pelvis: [0.6, 35], torso: { yaw: 12, pitch: 10 }, head: { yaw: 10, pitch: -12 }, handN: [14, -10, 46], sword: [104, 8],
+      handF: [11, 5, 47] }),
+    SKIRM_READY,
+  ];
+}
+
+const SKIRM_ARMS = { sword: 140, shieldFace: -30, arms: { shield: KNIFE_FACE } };
+/** Looting, the sabre and the knife both put away. */
+const SKIRM_LOOT = () => loot().map((p) => ({ ...p, hide: [...(p.hide ?? []), ...KNIFE] }));
+
+export const SKIRMISHER = {
+  idle: { size: BODY, fps: 8, loop: true, poses: breathCycle(SKIRM_READY, 8, (i, breath) => ({ sword: [breath * 3, 0] })) },
+  walk: { size: BODY, fps: 11, loop: true, motion: [52, 0, 0], poses: walkCycle(SKIRM_READY, (i, swing, bob) => ({
+    handN: [10 - swing * 2, -10, 44 + bob], handF: [11 + swing * 2, 8, 40 + bob], sword: [124 - swing * 4, 14] })) },
+  run: { size: BODY, fps: 14, loop: true, motion: [124, 0, 0], poses: runCycle(SKIRM_READY, (i, swing, lift) => ({
+    handF: [9 + swing * 3, 8, 41 + swing + lift * 0.5], handN: [2 - swing * 6, -10, 38 - Math.abs(swing) * 1.5],
+    sword: [236 - swing * 8, 16] }), { lean: 12 }) },
+  alert: { size: BODY, fps: 9, loop: false, poses: skirmAlert(), durations: [1, 2, 1] },
+  // He lands the dash on his front foot and skids on it: the feet travel with him.
+  dash_cut: { size: WIDE, fps: 12, loop: false, poses: dashCut(), durations: [1, 2.8, 0.8, 0.8, 1, 1.2, 1.2],
+    motion: [60, 0, 0], skid: true },
+  quick_cut: { size: WIDE, fps: 12, loop: false, poses: skirmCut(), durations: [1, 2.8, 0.8, 1, 1.4, 1.2],
+    motion: [40, 0, 0] },
+  knife_stab: { size: WIDE, fps: 12, loop: false, poses: knifeStab(), durations: [1, 0.8, 1.2, 1.2, 1.2], motion: [40, 0, 0] },
+  evade: { size: WIDE, fps: 16, loop: false, poses: backLeap(), durations: [1, 0.6, 0.8, 1.2, 0.8, 0.6, 1.2, 1, 1],
+    motion: [-120, 0, 0] },
+  hurt: { size: WIDE, fps: 12, loop: false, poses: hurt(SKIRM_READY, SKIRM_ARMS), durations: [1, 1.2, 0.8, 0.8, 1],
+    motion: [-90, 0, 0] },
+  stagger: { size: WIDE, fps: 6, loop: false, poses: stagger(SKIRM_READY, { sword: 60, shieldFace: -30 }),
+    durations: [0.8, 1.6, 1.6, 1], motion: [-40, 0, 0] },
+  death: { size: WIDE, fps: 10, loop: false, poses: death(SKIRM_READY, SKIRM_ARMS),
+    durations: [1, 1, 1, 0.7, 0.7, 0.6, 0.6, 0.6, 0.8, 1, 1.2, 2], motion: [-50, 0, 0], wind: [-10, 0, -6], limp: 0.9 },
+  loot: { size: BODY, fps: 6, loop: true, poses: SKIRM_LOOT(), durations: [1.6, 1, 1.4, 1, 2.2, 1, 0.8] },
+  ...cutDown(SKIRM_READY, WIDE, SKIRM_ARMS),
+  ...finishedSet(SKIRM_READY, WIDE, SKIRM_ARMS),
+  ...reactions(SKIRM_READY, WIDE, SKIRM_ARMS),
+};
+
+// --- The Georgian axeman --------------------------------------------------------------------------
+// Mail to the knee, a conical helm, a long bearded axe in both hands. He fights for the distance:
+// the hook drags a man in from beyond a sword's reach (and tears a raised shield aside), the butt
+// drives off one who crowds him, and between them the chop (it breaks a guard and floors a man) and
+// the low sweep (amber: jump it or roll).
+
+/** The far hand on the axe's haft, \`along\` px from the near hand (negative: toward the butt). */
+const axeGrip = (hand, [angle], along = -10) => haft(hand, [angle], along);
+/** Which way the axe's edge faces: leading a blow whose angle falls (overhand) or rises (underhand). */
+const overhand = (angle) => { const a = (angle * Math.PI) / 180; return [-Math.cos(a), 0, -Math.sin(a)]; };
+const underhand = (angle) => { const a = (angle * Math.PI) / 180; return [Math.cos(a), 0, Math.sin(a)]; };
+const AXE_READY = {
+  ...SWORD_READY,
+  pelvis: [0, 37],
+  hips: { yaw: -22, pitch: 5, roll: 0 },
+  torso: { yaw: -4, pitch: 7, roll: 0 },
+  head: { yaw: 18, pitch: -2, roll: 0 },
+  footN: [-10, -4.8, 4.2],
+  footF: [9, 5, 4.2],
+  handN: [7, -10, 45],
+  sword: [124, 16],
+  edge: overhand(124),
+  handF: axeGrip([7, -10, 45], [124, 16]),
+  shield: [0, -40],
+};
+/** An axe pose: the far hand follows the near one down the haft, the edge leads an overhand blow. */
+const ar = (o, along = -10) => {
+  const p = pose(AXE_READY, o);
+  return { ...p, handF: o.handF ?? axeGrip(p.handN, p.sword, along), edge: o.edge ?? overhand(p.sword[0]) };
+};
+
+/** The chop: the axe raised high behind, held, then over and down into the street before him, where
+ * it bites and stays a moment. Telegraph 1, active 3-4. */
+function axeChop() {
+  const raised = ar({ pelvis: [-2.4, 38.6], hips: { yaw: -20, pitch: -4 }, torso: { yaw: -12, pitch: -12, roll: 3 },
+    head: { yaw: 18, pitch: -8 }, handN: [-3, -9, 71], sword: [214, 10] });
+  const over = ar({ pelvis: [4, 36.4], hips: { yaw: -2, pitch: 10 }, torso: { yaw: 4, pitch: 14 }, head: { yaw: 8, pitch: 4 },
+    footF: [14, 5, LIFT], toeF: 12, handN: [19, -9, 58], sword: [112, 4] });
+  const impact = ar({ pelvis: [5.6, 28.6], hips: { yaw: 4, pitch: 12 }, torso: { yaw: 10, pitch: 18 }, head: { yaw: 4, pitch: 6 },
+    footF: [18, 5, 4.2], footN: [-6.5, -4.8, 7], toeN: 6, handN: [22, -8, 28], sword: [44, -4] });
+  const wrench = ar({ pelvis: [3, 33.2], hips: { yaw: -8, pitch: 10 }, torso: { yaw: -6, pitch: 12 }, head: { yaw: 12, pitch: 4 },
+    footF: impact.footF, footN: [-6, -4.8, LIFT], toeN: 6, handN: [14, -9, 38], sword: [86, 8] });
+  return [
+    blend(AXE_READY, raised, 0.6),
+    raised,
+    ar({ ...raised, handN: [-3.6, -9, 72], sword: [218, 10], torso: { yaw: -13, pitch: -13.5, roll: 3 } }),
+    over,
+    impact,
+    ar({ ...impact, pelvis: [5.6, 28.2], torso: { yaw: 10, pitch: 19 } }),
+    wrench,
+    pose(AXE_READY, { footF: impact.footF }),
+  ];
+}
+
+/** The hook: the axe reached out level past a man's guard, its beard turned down, and wrenched back
+ * toward him (dragging what it caught). Telegraph 1, the reach on 2, active 3-4. */
+function axeHook() {
+  const down = [0, 0, -1];
+  const cock = ar({ pelvis: [-2.4, 37], hips: { yaw: -28, pitch: 2 }, torso: { yaw: -20, pitch: 0, roll: 2 },
+    head: { yaw: 28, pitch: -4 }, footN: [-12, -4.8, 4.2], handN: [0, -10, 51], sword: [94, 10], edge: down });
+  const reach = ar({ pelvis: [4, 36.2], hips: { yaw: -8, pitch: 9 }, torso: { yaw: 4, pitch: 10 }, head: { yaw: 12 },
+    footF: [15, 5, LIFT], toeF: 12, footN: [-8, -4.8, LIFT], toeN: 4, handN: [18, -9, 52], sword: [98, 6], edge: down });
+  const hooked = ar({ pelvis: [1.4, 35.4], hips: { yaw: -20, pitch: 8 }, torso: { yaw: -18, pitch: 6, roll: 2 },
+    head: { yaw: 22, pitch: -2 }, footF: [15, 5, 4.2], toeF: 0, footN: [-11, -4.8, 4.2], handN: [8, -9, 47], sword: [104, 8],
+    edge: down });
+  return [
+    blend(AXE_READY, cock, 0.6),
+    cock,
+    blend(cock, reach, 0.45),
+    reach,
+    hooked,
+    ar({ ...hooked, pelvis: [0.6, 35.6], handN: [5, -9, 47], sword: [108, 8], edge: down }),
+    pose(blend(hooked, AXE_READY, 0.5), { footF: hooked.footF }),
+    pose(AXE_READY, { footF: hooked.footF }),
+  ];
+}
+
+/** The butt, for a man pressed too close for the head: the haft turned, its end driven into his chest.
+ * Telegraph 0, active 1-2. */
+function axeJab() {
+  const turned = ar({ pelvis: [-1.4, 36.6], hips: { yaw: -14, pitch: 6 }, torso: { yaw: -6, pitch: 6 }, head: { yaw: 18 },
+    handN: [4, -9, 48], sword: [250, 12], edge: [0, 0, 1] }, 10);
+  const jab = ar({ pelvis: [3.4, 35.8], hips: { yaw: -4, pitch: 10 }, torso: { yaw: 8, pitch: 10 }, head: { yaw: 10 },
+    footF: [13, 5, LIFT], toeF: 10, footN: [-8, -4.8, LIFT], toeN: 4, handN: [18, -9, 50], sword: [264, 8],
+    edge: [0, 0, 1] }, 10);
+  const home = ar({ ...jab, footF: [14, 5, 4.2], toeF: 0, footN: [-8, -4.8, 4.2], toeN: 0, handN: [20, -9, 50],
+    edge: [0, 0, 1] }, 10);
+  return [
+    turned,
+    jab,
+    home,
+    pose(blend(home, AXE_READY, 0.5), { footF: home.footF, footN: CAP_BACK, handF: axeGrip(blend(home, AXE_READY, 0.5).handN,
+      blend(home, AXE_READY, 0.5).sword) }),
+    pose(AXE_READY, { footF: home.footF }),
+  ];
+}
+
+/** The low sweep: drawn back low behind, held, then round at the shins. Telegraph 1, active 3-4. */
+function axeSweep() {
+  const coiled = ar({ pelvis: [-3, 33], hips: { yaw: -36, pitch: 10 }, torso: { yaw: -30, pitch: 12, roll: 3 },
+    head: { yaw: 36, pitch: 0 }, footN: [-12, -4.8, 4.2], handN: [-8, -10, 34], sword: [262, 30], edge: underhand(262) });
+  const across = ar({ pelvis: [3.6, 31], hips: { yaw: 6, pitch: 16 }, torso: { yaw: 16, pitch: 20 }, head: { yaw: 6, pitch: 8 },
+    footF: [14, 5, LIFT], toeF: 12, handN: [16, -9, 30], sword: [56, -12], edge: underhand(56) });
+  const through = ar({ pelvis: [4.4, 31], hips: { yaw: 18, pitch: 16 }, torso: { yaw: 34, pitch: 20 }, head: { yaw: 2, pitch: 8 },
+    footF: [15, 5, 4.2], toeF: 0, footN: [-7, -4.8, 6.4], toeN: 6, handN: [12, -2, 27], sword: [74, -60], edge: underhand(74) });
+  return [
+    blend(AXE_READY, coiled, 0.6),
+    coiled,
+    ar({ ...coiled, torso: { yaw: -31.5, pitch: 12, roll: 3 }, handN: [-8.6, -10, 34.3], edge: underhand(262) }),
+    across,
+    through,
+    pose(through, { footN: CAP_BACK, toeN: 0 }),
+    ...[0.42, 0.78].map((k) => {
+      const b = blend(through, AXE_READY, k);
+      return pose(b, { footF: through.footF, footN: CAP_BACK, handF: axeGrip(b.handN, b.sword), edge: overhand(b.sword[0]) });
+    }),
+    pose(AXE_READY, { footF: through.footF }),
+  ];
+}
+
+function axeAlert() {
+  return [
+    ar({ pelvis: [-1, 38.4], torso: { pitch: -4 }, head: { yaw: 22, pitch: -10 }, handN: [3, -10, 50], sword: [158, 16] }),
+    ar({ pelvis: [0.6, 37.2], torso: { yaw: 0, pitch: 8 }, head: { yaw: 12, pitch: -12 }, handN: [9, -10, 50], sword: [118, 10] }),
+    AXE_READY,
+  ];
+}
+
+const AXE_ARMS = { sword: 140, shieldFace: 0, arms: { shield: [0, 60] } };
+const withGrip = (poses) => poses.map((p) => ({ ...p, handF: axeGrip(p.handN, p.sword), edge: overhand(p.sword[0]) }));
+
+export const AXEMAN = {
+  idle: { size: BODY, fps: 6, loop: true, poses: withGrip(breathCycle(AXE_READY, 8, (i, breath) => ({ sword: [breath * 2, 0] }))) },
+  walk: { size: BODY, fps: 8, loop: true, motion: [36, 0, 0], poses: withGrip(walkCycle(AXE_READY, (i, swing, bob) => ({
+    handN: [7 - swing * 1.5, -10, 45 + bob], sword: [124 - swing * 3, 16] }))) },
+  run: { size: BODY, fps: 11, loop: true, motion: [82, 0, 0], poses: withGrip(runCycle(AXE_READY, (i, swing, lift) => ({
+    handN: [5 - swing * 3, -10, 45 - Math.abs(swing)], sword: [132 - swing * 5, 16] }))) },
+  alert: { size: BODY, fps: 8, loop: false, poses: axeAlert(), durations: [1, 2, 1] },
+  axe_chop: { size: LONG, fps: 12, loop: false, poses: axeChop(), durations: [1.2, 2.4, 1.4, 0.8, 1, 2.6, 1.6, 1.2],
+    motion: [50, 0, 0] },
+  axe_hook: { size: LONG, fps: 12, loop: false, poses: axeHook(), durations: [1.2, 2.2, 0.6, 0.6, 0.8, 1, 1.4, 1.2],
+    motion: [50, 0, 0] },
+  axe_jab: { size: WIDE, fps: 12, loop: false, poses: axeJab(), durations: [2.8, 0.8, 1, 1.4, 1.2], motion: [40, 0, 0] },
+  axe_sweep: { size: LONG, fps: 12, loop: false, poses: axeSweep(), durations: [1.2, 2.0, 1.2, 0.8, 1, 1.4, 1, 1, 1],
+    motion: [50, 0, 0] },
+  hurt: { size: WIDE, fps: 12, loop: false, poses: hurt(AXE_READY, { sword: 150, shieldFace: 0 }), durations: [1, 1.2, 0.8, 0.8, 1],
+    motion: [-60, 0, 0] },
+  stagger: { size: WIDE, fps: 6, loop: false, poses: stagger(AXE_READY, { sword: 60, shieldFace: 0 }), durations: [0.8, 1.8, 1.8, 1],
+    motion: [-30, 0, 0] },
+  death: { size: WIDE, fps: 9, loop: false, poses: death(AXE_READY, AXE_ARMS),
+    durations: [1, 1.2, 1.2, 0.8, 0.8, 0.7, 0.7, 0.6, 0.8, 1, 1.4, 2.4], motion: [-40, 0, 0], wind: [-10, 0, -6], limp: 0.9 },
+  ...cutDown(AXE_READY, WIDE, AXE_ARMS),
+  ...finishedSet(AXE_READY, WIDE, AXE_ARMS),
+  ...reactions(AXE_READY, WIDE, AXE_ARMS),
 };
 
 /** The pieces each soldier's cuts throw off (build_characters.mjs renders them into his gore set). */
@@ -1195,4 +1684,6 @@ export const PIECES = {
   maceman: piecesFor(MACE_READY, { armBlade: false, upperBlade: false, spear: true, headSize: 36 }),
   shieldbearer: piecesFor(WALL_READY, { armBlade: false, upperBlade: false, spear: true, headSize: 36 }),
   engineer: piecesFor(EMPTY_HANDED, { armBlade: false, upperBlade: false }),
+  skirmisher: piecesFor(SKIRM_READY),
+  axeman: piecesFor(AXE_READY, { armBlade: false, upperBlade: false, spear: true, headSize: 36 }),
 };

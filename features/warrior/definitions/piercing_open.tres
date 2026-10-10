@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="AttackDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Piercing Line"
+animation = &"art_pierce"
+active_from = 5
+active_to = 5
+recovery_from = 6
+damage = 26.0
+poise_damage = 40.0
+stamina_damage = 40.0
+knockback = 200.0
+knocks_down = true
+hit_stop = 0.1
+camera_shake = 4.0
+unblockable = true
+severs = Array[StringName]([&"head", &"waist", &"arm"])
+sever_chance = 1.0
+stamina_cost = 0.0
+breath_gain = 0.0
+resolve_gain = 0.0
+art = true
+use_blade_sweep = false
+hit_cue = &"sword_hit_heavy"
+impact_effect = &"hit_slash"

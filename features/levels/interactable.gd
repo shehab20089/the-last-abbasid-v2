@@ -25,3 +25,17 @@ func can_interact(_by: Node2D) -> bool:
 
 func interact(by: Node2D) -> void:
 	used.emit(by)
+
+
+## Where its prompt and its sign hang over it (px above its foot): the top of where it can be reached.
+func marker_height() -> float:
+	var shape: CollisionShape2D = get_node_or_null(^"Reach") as CollisionShape2D
+	var rect: RectangleShape2D = shape.shape as RectangleShape2D if shape != null else null
+	if rect == null:
+		return 40.0
+	return -(shape.position.y - rect.size.y * 0.5)
+
+
+## Its name, shown over it as the hero comes near (a translation key), or empty.
+func display_name() -> String:
+	return ""

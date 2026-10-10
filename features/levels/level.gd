@@ -21,6 +21,8 @@ signal group_cleared(group: StringName)
 signal captive_killed(captive: Captive)
 ## A captive got away (their executioner killed or turned from his work, or their captors beaten).
 signal captive_saved(captive: Captive)
+## A guardsman's token or a lost keepsake was picked up.
+signal relic_found(relic: Relic)
 
 @export var level_id: StringName = &"level"
 @export var title_key: String = "LEVEL"
@@ -38,6 +40,15 @@ signal captive_saved(captive: Captive)
 @export var objectives: PackedStringArray = PackedStringArray()
 ## The techniques the hero has learned before he comes here (in the levels before this one).
 @export var known_techniques: PackedStringArray = PackedStringArray()
+## How much tougher its soldiers are than the first level's: health, then poise (a boss excepted).
+@export var toughness: Vector2 = Vector2.ONE
+## How much more eagerly its soldiers fight (MongolSoldier.aggression): shorter pauses between blows, guards
+## raised more readily.
+@export var aggression: float = 1.0
+## What is to be found here (for the Journal): its pages, its guardsmen's tokens, the captives under a sabre.
+@export var manuscript_ids: PackedStringArray = PackedStringArray()
+@export var relic_ids: PackedStringArray = PackedStringArray()
+@export var captive_ids: PackedStringArray = PackedStringArray()
 
 ## The boss's arena, if this level has one.
 var arena: BossArena
@@ -64,6 +75,8 @@ func _ready() -> void:
 			(node as Npc).talk_requested.connect(_on_npc_talk)
 		elif node is LevelExit:
 			(node as LevelExit).exit_requested.connect(_on_exit_requested)
+		elif node is Relic:
+			(node as Relic).taken.connect(_on_relic_taken)
 	for node: Node in triggers.get_children():
 		var trigger: StoryTrigger = node as StoryTrigger
 		if trigger != null:
@@ -106,16 +119,53 @@ func checkpoint(id: StringName) -> Checkpoint:
 
 ## The objective (a translation key) for the story so far.
 func objective(flags: Array[StringName]) -> String:
-	var fallback: String = ""
+	var entry: PackedStringArray = _objective_entry(flags)
+	return entry[1] if entry.size() > 1 else ""
+
+
+## Where the objective points for the story so far: "npc:<id>" (a person), "exit" (the way out),
+## "col:<column>:<NAME_KEY>" (a place on the street), "group:<group>" (the soldiers of a group), or empty.
+func objective_target(flags: Array[StringName]) -> String:
+	var entry: PackedStringArray = _objective_entry(flags)
+	return entry[2] if entry.size() > 2 else ""
+
+
+## The objectives entry ("flag|KEY|target") that holds for the story so far: the first whose flag is set,
+## or the one with an empty flag.
+func _objective_entry(flags: Array[StringName]) -> PackedStringArray:
+	var fallback: PackedStringArray = PackedStringArray()
 	for entry: String in objectives:
 		var parts: PackedStringArray = entry.split("|")
-		if parts.size() != 2:
+		if parts.size() < 2:
 			continue
 		if parts[0] == "":
-			fallback = parts[1]
+			fallback = parts
 		elif StringName(parts[0]) in flags:
-			return parts[1]
+			return parts
 	return fallback
+
+
+## The person here with this id, or null.
+func npc(id: StringName) -> Npc:
+	for node: Node in interactables.get_children():
+		var person: Npc = node as Npc
+		if person != null and person.npc_id == id:
+			return person
+	return null
+
+
+## The way out of the level, or null.
+func exit() -> LevelExit:
+	for node: Node in interactables.get_children():
+		var gate: LevelExit = node as LevelExit
+		if gate != null:
+			return gate
+	return null
+
+
+## The height of the street (where the hero starts).
+func street_y() -> float:
+	return player_start.global_position.y
 
 
 ## Where the hero appears: at a lit lamp, or at the start.
@@ -160,6 +210,9 @@ func apply_progress(lit: Array[StringName], taken: Array[StringName], flags: Arr
 		var npc: Npc = node as Npc
 		if npc != null:
 			npc.refresh(flags)
+		var relic: Relic = node as Relic
+		if relic != null and StringName("relic_%s" % relic.relic_id) in flags:
+			relic.queue_free()
 	for node: Node in triggers.get_children():
 		var trigger: StoryTrigger = node as StoryTrigger
 		if trigger == null:
@@ -246,6 +299,16 @@ func _on_checkpoint_rested(lamp: Checkpoint) -> void:
 
 func _on_manuscript_taken(page: Manuscript) -> void:
 	manuscript_found.emit(page)
+
+
+## A relic set down while the level plays (the beads of a captive who died): it can be picked up too.
+func add_relic(relic: Relic) -> void:
+	interactables.add_child(relic)
+	relic.taken.connect(_on_relic_taken)
+
+
+func _on_relic_taken(relic: Relic) -> void:
+	relic_found.emit(relic)
 
 
 func _on_npc_talk(npc: Npc) -> void:

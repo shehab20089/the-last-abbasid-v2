@@ -15,6 +15,7 @@ damage = 34.0
 poise_damage = 40.0
 stamina_damage = 60.0
 knockback = 240.0
+knocks_down = true
 hit_stop = 0.12
 camera_shake = 6.0
 unblockable = true

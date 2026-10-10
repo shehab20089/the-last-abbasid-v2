@@ -4,6 +4,8 @@
 [ext_resource type="Texture2D" path="res://assets/ui/button.png" id="2_button"]
 [ext_resource type="Texture2D" path="res://assets/ui/button_focus.png" id="3_focus"]
 [ext_resource type="Texture2D" path="res://assets/ui/panel.png" id="4_panel"]
+[ext_resource type="Texture2D" path="res://assets/ui/button_hover.png" id="5_hover"]
+[ext_resource type="Texture2D" path="res://assets/ui/button_disabled.png" id="6_disabled"]
 
 [sub_resource type="SystemFont" id="SystemFont_arabic"]
 font_names = PackedStringArray("Tahoma", "Segoe UI", "Arial")
@@ -37,6 +39,44 @@ texture_margin_top = 4.0
 texture_margin_right = 4.0
 texture_margin_bottom = 4.0
 
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hover"]
+content_margin_left = 8.0
+content_margin_top = 3.0
+content_margin_right = 8.0
+content_margin_bottom = 3.0
+texture = ExtResource("5_hover")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_disabled"]
+content_margin_left = 8.0
+content_margin_top = 3.0
+content_margin_right = 8.0
+content_margin_bottom = 3.0
+texture = ExtResource("6_disabled")
+texture_margin_left = 4.0
+texture_margin_top = 4.0
+texture_margin_right = 4.0
+texture_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_scroll"]
+content_margin_left = 2.0
+content_margin_right = 2.0
+bg_color = Color(0.06, 0.05, 0.07, 0.9)
+border_width_left = 1
+border_color = Color(0.35, 0.25, 0.12, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_grabber"]
+bg_color = Color(0.55, 0.4, 0.17, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_grabber_lit"]
+bg_color = Color(0.86, 0.68, 0.32, 1)
+anti_aliasing = false
+
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_none"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_panel"]
@@ -53,12 +93,14 @@ texture_margin_bottom = 8.0
 [resource]
 default_font = SubResource("FontVariation_body")
 default_font_size = 9
-Button/colors/font_color = Color(0.78, 0.71, 0.58, 1)
+Button/colors/font_color = Color(0.74, 0.67, 0.55, 1)
+Button/colors/font_disabled_color = Color(0.42, 0.38, 0.34, 1)
 Button/colors/font_focus_color = Color(1, 0.93, 0.74, 1)
 Button/colors/font_hover_color = Color(1, 0.93, 0.74, 1)
 Button/colors/font_pressed_color = Color(1, 0.86, 0.55, 1)
 Button/styles/focus = SubResource("StyleBoxTexture_focus")
-Button/styles/hover = SubResource("StyleBoxTexture_focus")
+Button/styles/disabled = SubResource("StyleBoxTexture_disabled")
+Button/styles/hover = SubResource("StyleBoxTexture_hover")
 Button/styles/normal = SubResource("StyleBoxTexture_button")
 Button/styles/pressed = SubResource("StyleBoxTexture_focus")
 Label/colors/font_color = Color(0.91, 0.86, 0.75, 1)
@@ -66,3 +108,8 @@ Label/colors/font_shadow_color = Color(0.02, 0.016, 0.03, 1)
 Label/constants/shadow_offset_x = 1
 Label/constants/shadow_offset_y = 1
 PanelContainer/styles/panel = SubResource("StyleBoxTexture_panel")
+VScrollBar/styles/grabber = SubResource("StyleBoxFlat_grabber")
+VScrollBar/styles/grabber_highlight = SubResource("StyleBoxFlat_grabber_lit")
+VScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_grabber_lit")
+VScrollBar/styles/scroll = SubResource("StyleBoxFlat_scroll")
+VScrollBar/styles/scroll_focus = SubResource("StyleBoxFlat_scroll")

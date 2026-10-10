@@ -18,7 +18,7 @@ import { prepareCharacter, renderPiece, renderPoses } from "./characters/render3
 import { readAttacks, rootMotion } from "./lib/root_motion.mjs";
 
 import { mongol } from "./characters/mongol3d.mjs";
-import { ARCHER, CAPTAIN, ENGINEER, MACEMAN, PIECES, SHIELDBEARER, SPEARMAN, SWORDSMAN, VETERAN }
+import { ARCHER, AXEMAN, CAPTAIN, ENGINEER, MACEMAN, PIECES, SHIELDBEARER, SKIRMISHER, SPEARMAN, SWORDSMAN, VETERAN }
   from "./characters/mongol3d_animations.mjs";
 import { townsperson } from "./characters/townsfolk3d.mjs";
 import { TOWNSFOLK_ANIMATIONS, TOWNSFOLK_PIECES } from "./characters/townsfolk3d_animations.mjs";
@@ -71,6 +71,11 @@ const CHARACTERS = {
     cuts: { ...CUTS, arm: ["arm", "spear"], waist: ["upper", "spear"] } },
   engineer: { render: () => soldier("engineer", ENGINEER), dir: "assets/enemies/engineer", prefix: "engineer",
     pieces: PIECES.engineer, cuts: CUTS },
+  skirmisher: { render: () => soldier("skirmisher", SKIRMISHER), dir: "assets/enemies/skirmisher", prefix: "skirmisher",
+    attacks: "features/enemies/definitions", friction: 1600, pieces: PIECES.skirmisher, cuts: CUTS },
+  axeman: { render: () => soldier("axeman", AXEMAN), dir: "assets/enemies/axeman", prefix: "axeman",
+    attacks: "features/enemies/definitions", friction: 1600, pieces: PIECES.axeman,
+    cuts: { ...CUTS, arm: ["arm", "spear"], waist: ["upper", "spear"] } },
 };
 for (const kind of Object.keys(TOWNSFOLK_ANIMATIONS)) {
   // Those the soldiers kill have a gore set too (a beheading takes the head).
@@ -93,6 +98,8 @@ function writeRendered(path, model, name, animation) {
     loop: Boolean(animation.loop),
     durations: animation.durations ?? null,
     blades: frames.map((f) => (f.blade ? { hilt: f.blade.hilt.map(round), tip: f.blade.tip.map(round) } : null)),
+    // A blow all round him (a whirl, a sweep) cuts behind him too.
+    allRound: Boolean(animation.allRound),
     wounds: frames.some((f) => f.wound) ? frames.map((f) => (f.wound ? f.wound.map(round) : [0, 0])) : null,
     canvases: frames.map((f) => f.canvas),
   };

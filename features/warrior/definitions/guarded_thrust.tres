@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="AttackDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Guarded Thrust"
+animation = &"guarded_thrust"
+active_from = 1
+active_to = 2
+recovery_from = 3
+guarded = true
+damage = 7.0
+poise_damage = 6.0
+stamina_damage = 8.0
+knockback = 60.0
+hit_stop = 0.05
+camera_shake = 1.0
+severs = Array[StringName]([&"head"])
+sever_chance = 1.0
+lunge_speed = 40.0
+lunge_from = 1
+lunge_to = 1
+stamina_cost = 6.0
+breath_gain = 2.0
+swing_cue = &"sword_thrust"
+hit_cue = &"sword_hit"
+impact_effect = &"hit_pierce"

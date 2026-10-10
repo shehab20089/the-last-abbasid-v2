@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="AttackDefinition" format=3]
 
 [ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="1_script"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/maceman_swing_chain.tres" id="2_follow"]
 
 [resource]
 script = ExtResource("1_script")
@@ -23,3 +24,5 @@ lunge_to = 4
 stamina_cost = 0.0
 swing_cue = &"enemy_swing_heavy"
 hit_cue = &"sword_hit_heavy"
+follow_up = ExtResource("2_follow")
+follow_chance = 0.5

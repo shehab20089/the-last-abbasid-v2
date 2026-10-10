@@ -17,6 +17,8 @@ extends Resource
 @export var stagger_time: float = 1.0
 ## Seconds he reels after his blow is parried: the hero's opening for a riposte.
 @export var parried_time: float = 1.35
+## Seconds he lies on the street when a great blow throws him down, before he gets up.
+@export var down_time: float = 1.1
 ## An armoured body shrugs off ordinary blows (no flinch); only broken poise, a riposte or a broken
 ## guard stagger him. Bosses.
 @export var armoured_body: bool = false
@@ -26,6 +28,15 @@ extends Resource
 ## A tall shield turns every blow from the front while he stands or walks, even the heavy cleave;
 ## only an overwhelming blow (the bash, a plunge) breaks it, and a blow from behind gets past it.
 @export var shield_wall: bool = false
+## A hardened man (a veteran, a mace-bearer, a shield-bearer): the Judgment of the Guard finishes him only
+## once he is wounded to half; before that it is a great blow.
+@export var elite: bool = false
+## Something the hero takes from his body the first time he kills one (the engineer's naphtha: the Naft
+## Flask), or nothing.
+@export var drops_technique: StringName = &""
+## How much of an Art's blow he braces against (a share of its damage and poise turned aside): a boss is
+## not ended by a great technique.
+@export_range(0.0, 1.0) var art_resistance: float = 0.0
 
 @export_group("Senses")
 ## How far ahead he sees the hero.
@@ -52,6 +63,11 @@ extends Resource
 ## Chance that he raises his guard when the hero swings at him.
 @export_range(0.0, 1.0) var block_chance: float = 0.0
 @export var block_time: float = 0.9
+## A duellist: behind his raised shield he blocks this many of the hero's blows in a row and parries the
+## next, throwing him open for a riposte (0: never). A blow that breaks guards, or a feint, is not parried.
+@export var parries_after: int = 0
+## The blow he answers a parry of his with at once (one that glints, as every opening blow must).
+@export var riposte: AttackDefinition
 ## Chance that he steps back after one of his attacks.
 @export_range(0.0, 1.0) var retreat_chance: float = 0.3
 @export var retreat_time: float = 0.5

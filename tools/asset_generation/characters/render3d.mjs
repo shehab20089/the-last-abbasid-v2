@@ -67,12 +67,12 @@ function skirtLags(framesList, { dt, loop, motion }) {
   return out;
 }
 
-/** Points along the blade in character space, from the guard to the tip. */
+/** Points along the blade in character space, from the guard to the tip (`lift`: off the haft, an axe's edge). */
 function bladePoints(sword, blade, steps = 24) {
   const pts = [];
   for (let i = 0; i <= steps; i++) {
     const k = i / steps;
-    pts.push(toParent(sword, [blade.from + k * blade.length, 0, -blade.curve * k * k]));
+    pts.push(toParent(sword, [blade.from + k * blade.length, 0, (blade.lift ?? 0) - blade.curve * k * k]));
   }
   return pts;
 }

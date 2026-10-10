@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="TechniqueDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/progression/technique_definition.gd" id="1_script"]
+[ext_resource type="Script" path="res://features/progression/modifiers.gd" id="2_mods"]
+[ext_resource type="Texture2D" path="res://assets/ui/tech_bandolier.png" id="3_icon"]
+
+[sub_resource type="Resource" id="Resource_mods"]
+script = ExtResource("2_mods")
+extra_knives = 2
+
+[resource]
+script = ExtResource("1_script")
+id = &"bandolier"
+demo = &"knives"
+branch = 2
+tier = 2
+cost = 90
+requires = &"quiet_step"
+requires_known = &"knives"
+modifiers = SubResource("Resource_mods")
+name_key = "TECH_BANDOLIER"
+description_key = "TECH_BANDOLIER_DESC"
+icon = ExtResource("3_icon")

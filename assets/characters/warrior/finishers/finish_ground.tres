@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="FinisherDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/finisher_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Pinned"
+hero_animation = &"finish_ground"
+victim_animation = &"finished_ground"
+distance = 2.0
+cut_frames = PackedInt32Array()
+cuts = Array[StringName]([])
+burst_frames = PackedInt32Array(3, 5)
+slow_from = 3
+slow_to = 4
+death_frame = 4
+ground = true

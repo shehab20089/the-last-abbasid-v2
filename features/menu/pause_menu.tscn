@@ -1,6 +1,6 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://features/menu/menu_screen.gd" id="1_menu"]
+[ext_resource type="Script" path="res://features/menu/pause_menu.gd" id="1_menu"]
 [ext_resource type="Theme" path="res://features/ui/ui_theme.tres" id="2_theme"]
 [ext_resource type="FontVariation" path="res://assets/fonts/abbasid_title.tres" id="3_title"]
 
@@ -24,9 +24,9 @@ color = Color(0.02, 0.015, 0.03, 0.62)
 [node name="Panel" type="PanelContainer" parent="."]
 layout_mode = 0
 offset_left = 230.0
-offset_top = 100.0
+offset_top = 70.0
 offset_right = 410.0
-offset_bottom = 250.0
+offset_bottom = 290.0
 
 [node name="List" type="VBoxContainer" parent="Panel"]
 layout_mode = 2
@@ -44,6 +44,26 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "MENU_RESUME"
 metadata/action = &"resume"
+
+[node name="Guide" type="Button" parent="Panel/List"]
+layout_mode = 2
+text = "MENU_GUIDE"
+metadata/action = &"guide"
+
+[node name="Journal" type="Button" parent="Panel/List"]
+layout_mode = 2
+text = "MENU_JOURNAL"
+metadata/action = &"journal"
+
+[node name="Codex" type="Button" parent="Panel/List"]
+layout_mode = 2
+text = "MENU_CODEX"
+metadata/action = &"codex"
+
+[node name="Techniques" type="Button" parent="Panel/List"]
+layout_mode = 2
+text = "MENU_TECHNIQUES"
+metadata/action = &"techniques"
 
 [node name="Settings" type="Button" parent="Panel/List"]
 layout_mode = 2

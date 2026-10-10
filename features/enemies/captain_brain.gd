@@ -4,7 +4,9 @@ extends EnemyBrain
 ## the fight wears on, a leaping overhead smash no shield can stop (it glints red: roll), and a
 ## charge behind his shield that throws any guard aside and cannot be parried. He raises his guard
 ## against the hero's combos. Below half his strength he roars and fights harder: shorter pauses,
-## longer chains, more charges, less guarding.
+## longer chains, more charges, less guarding, and a low sweep under a guard held up before him (amber:
+## jump it or roll). A plan he cannot carry out soon he thinks again; thrown off his stroke, he forgets
+## the chain he meant to follow it with.
 
 signal phase_changed(phase: int)
 ## The fight has begun (his entrance roar).
@@ -16,17 +18,24 @@ const SLASH_B: int = 1
 const SLASH_C: int = 2
 const SMASH: int = 3
 const BASH: int = 4
+const SWEEP: int = 5
 ## Fraction of his health below which the second phase begins.
 const SECOND_PHASE_AT: float = 0.55
 const ROAR_TIME: float = 1.5
 
 ## The closest he wants to be to start each attack (the charge needs a run-up).
-const MIN_DISTANCE: Array[float] = [0.0, 0.0, 0.0, 40.0, 90.0]
+const MIN_DISTANCE: Array[float] = [0.0, 0.0, 0.0, 40.0, 90.0, 0.0]
+## How long (s) he follows a plan he cannot yet carry out (the hero keeps moving) before he thinks again.
+const PLAN_PATIENCE: float = 0.8
+## How near the hero must be, in his second phase, for the sweep (and how often he chooses it unprovoked).
+const SWEEP_RANGE: float = 70.0
+const SWEEP_CHANCE: float = 0.22
 
 var phase: int = 1
 var _chain: Array[int] = []
-## The attack he has decided on next, or -1.
+## The attack he has decided on next, or -1, and how long he has followed it.
 var _plan: int = -1
+var _plan_age: float = 0.0
 ## The second phase began during a stagger or a swing; he roars as soon as he is free to.
 var _roar_pending: bool = false
 
@@ -34,6 +43,8 @@ var _roar_pending: bool = false
 func _ready() -> void:
 	super._ready()
 	soldier.health_changed.connect(_on_health_changed)
+	soldier.staggered.connect(_forget_chain)
+	soldier.knocked_down.connect(_forget_chain)
 
 
 ## The arena closes behind the hero: he roars, untouchable, and the fight begins.
@@ -48,7 +59,7 @@ func begin_fight() -> void:
 	fight_begun.emit()
 
 
-func engage(_delta: float) -> void:
+func engage(delta: float) -> void:
 	if _roar_pending:
 		_roar_pending = false
 		_chain.clear()
@@ -67,8 +78,10 @@ func engage(_delta: float) -> void:
 		return
 	# Once his pause is over he decides on his next attack, then closes in (or gives ground) to
 	# the distance it wants and strikes.
-	if _plan < 0:
+	_plan_age += delta
+	if _plan < 0 or _plan_age > PLAN_PATIENCE:
 		_plan = _choose(distance)
+		_plan_age = 0.0
 	var reach: float = p.attack_ranges[_plan]
 	var nearest: float = MIN_DISTANCE[_plan]
 	if distance > reach:
@@ -78,21 +91,23 @@ func engage(_delta: float) -> void:
 	else:
 		stand()
 		if try_attack(p.attacks[_plan]):
-			if _plan == SLASH_A:
-				_chain.clear()
-				if phase == 2 or rng().randf() < 0.55:
-					_chain.append(SLASH_B)
-					if rng().randf() < (0.75 if phase == 2 else 0.35):
-						_chain.append(SLASH_C)
+			_chain.clear()
+			if _plan == SLASH_A and (phase == 2 or rng().randf() < 0.55):
+				_chain.append(SLASH_B)
+				if rng().randf() < (0.75 if phase == 2 else 0.35):
+					_chain.append(SLASH_C)
 			_plan = -1
 
 
-## His next attack: the charge when the hero keeps his distance, now and then the falling blow,
-## otherwise his combo.
+## His next attack: the charge when the hero keeps his distance, now and then the falling blow; in his
+## second phase the sweep under a guard held up before him (and now and then besides); otherwise his combo.
 func _choose(distance: float) -> int:
 	var roll: float = rng().randf()
 	if distance > 120.0:
 		return BASH if roll < (0.6 if phase == 2 else 0.4) else SLASH_A
+	if (phase == 2 and soldier.profile.attacks.size() > SWEEP and distance < SWEEP_RANGE
+			and (target.is_guarding() or roll > 1.0 - SWEEP_CHANCE)):
+		return SWEEP
 	if roll < (0.3 if phase == 2 else 0.2):
 		return SMASH
 	if phase == 2 and roll < 0.42:
@@ -117,6 +132,19 @@ func after_attack() -> void:
 		return
 	_chain.clear()
 	super.after_attack()
+
+
+## Thrown off his stroke (staggered, thrown down, beaten back while he swings): the chain he meant to
+## follow it with, and his plan, are gone.
+func _forget_chain() -> void:
+	_chain.clear()
+	_plan = -1
+
+
+func _on_struck(hit: HitData, outcome: HitData.Outcome) -> void:
+	super._on_struck(hit, outcome)
+	if soldier.is_reeling():
+		_forget_chain()
 
 
 func block_scale() -> float:

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="KeepsakeDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/progression/keepsake_definition.gd" id="1_script"]
+[ext_resource type="Script" path="res://features/progression/modifiers.gd" id="2_mods"]
+[ext_resource type="Texture2D" path="res://assets/ui/keep_guard_bracer.png" id="3_icon"]
+
+[sub_resource type="Resource" id="Resource_mods"]
+script = ExtResource("2_mods")
+low_health_damage = 0.20
+low_health_at = 0.30
+
+[resource]
+script = ExtResource("1_script")
+id = &"guard_bracer"
+modifiers = SubResource("Resource_mods")
+name_key = "KEEPSAKE_GUARD_BRACER"
+description_key = "KEEPSAKE_GUARD_BRACER_DESC"
+source_key = "KEEPSAKE_SOURCE_RAMPART"
+icon = ExtResource("3_icon")

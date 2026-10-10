@@ -40,6 +40,8 @@ func _run() -> void:
 	var highest: float = hero.global_position.y
 	var frame: int = 0
 	var boss_fought: bool = false
+	# Which way he walks to find the edge when his goal is straight below him.
+	var drop_dir: float = 1.0
 	while frame < LIMIT_FRAMES:
 		await physics_frame
 		frame += 1
@@ -48,6 +50,12 @@ func _run() -> void:
 			continue
 		if game.state == AbbasidGame.State.READING:
 			game.reader.chosen.emit(&"close")
+			continue
+		if game.state == AbbasidGame.State.LAMP:
+			game.lamp_menu.chosen.emit(&"leave")
+			continue
+		if game.state == AbbasidGame.State.LESSON:
+			game.lesson_screen.chosen.emit(&"lesson_done")
 			continue
 		if game.state == AbbasidGame.State.ENDING or game.state == AbbasidGame.State.COMPLETE:
 			break
@@ -88,9 +96,14 @@ func _run() -> void:
 		# Where to go: the soldiers of a sprung ambush, whoever has something to give, then the exit.
 		var target: Node2D = _goal(hero, exit)
 		var goal: float = target.global_position.x
-		# A goal straight below (a soldier under a gallery): walk on until the floor ends and drop.
+		# A goal straight below (a soldier under a gallery): walk on until the floor ends and drop; if a wall
+		# stops him first, the other way.
 		if absf(goal - hero.global_position.x) < 30.0 and target.global_position.y - hero.global_position.y > 40.0:
-			goal = hero.global_position.x + 200.0
+			if stuck > 90:
+				drop_dir = -drop_dir
+				stuck = 0
+				best_x = hero.global_position.x
+			goal = hero.global_position.x + 200.0 * drop_dir
 		if absf(goal - hero.global_position.x) < 30.0:
 			hero.input.move = 0.0
 			var npc: Npc = target as Npc

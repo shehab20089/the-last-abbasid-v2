@@ -10,23 +10,15 @@ size = Vector2(44, 18)
 
 [node name="BurningGround" type="Area2D"]
 collision_layer = 0
-collision_mask = 8
+collision_mask = 24
 monitorable = false
 script = ExtResource("1_fire")
 
 [node name="Flames" type="AnimatedSprite2D" parent="."]
 sprite_frames = ExtResource("2_frames")
-animation = &"fire_small"
-autoplay = "fire_small"
-offset = Vector2(-11, -14)
-
-[node name="FlamesB" type="AnimatedSprite2D" parent="."]
-sprite_frames = ExtResource("2_frames")
-animation = &"fire_small"
-autoplay = "fire_small"
-frame_progress = 0.5
-offset = Vector2(10, -13)
-flip_h = true
+animation = &"naft_fire"
+autoplay = "naft_fire"
+offset = Vector2(0, -19)
 
 [node name="Light" type="PointLight2D" parent="."]
 position = Vector2(0, -12)

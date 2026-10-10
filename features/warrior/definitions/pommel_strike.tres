@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="AttackDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Pommel Strike"
+animation = &"pommel_strike"
+active_from = 1
+active_to = 2
+recovery_from = 3
+damage = 6.0
+poise_damage = 26.0
+stamina_damage = 34.0
+knockback = 130.0
+hit_stop = 0.085
+camera_shake = 2.4
+guard_break = true
+lunge_speed = 50.0
+seeks = 24.0
+strike_at = 22.0
+lunge_from = 0
+lunge_to = 0
+stamina_cost = 8.0
+breath_gain = 4.0
+resolve_gain = 4.0
+use_blade_sweep = false
+fallback_hitbox = Rect2(6, -74, 30, 36)
+swing_cue = &"sword_swing"
+hit_cue = &"pommel_crack"
+impact_effect = &"hit_pierce"

@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="AttackDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Running Thrust"
+animation = &"running_thrust"
+active_from = 2
+active_to = 4
+recovery_from = 5
+damage = 22.0
+poise_damage = 24.0
+stamina_damage = 24.0
+knockback = 270.0
+guard_break = true
+hit_stop = 0.11
+camera_shake = 3.2
+severs = Array[StringName]([&"arm", &"head", &"leg"])
+sever_chance = 1.0
+lunge_speed = 280.0
+lunge_from = 0
+lunge_to = 4
+stops_on_hit = true
+stamina_cost = 16.0
+breath_gain = 6.0
+resolve_gain = 6.0
+swing_cue = &"sword_thrust"
+hit_cue = &"sword_hit_heavy"
+impact_effect = &"hit_pierce"

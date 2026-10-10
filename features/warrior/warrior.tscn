@@ -15,6 +15,7 @@
 [ext_resource type="Resource" path="res://assets/characters/warrior/finishers/finish_impale.tres" id="12_impale"]
 [ext_resource type="Resource" path="res://assets/characters/warrior/finishers/finish_spin.tres" id="13_spin"]
 [ext_resource type="Resource" path="res://assets/characters/warrior/finishers/finish_disarm.tres" id="14_disarm"]
+[ext_resource type="Resource" path="res://assets/characters/warrior/finishers/finish_ground.tres" id="14_ground"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_trail"]
 
@@ -40,7 +41,7 @@ floor_snap_length = 6.0
 safe_margin = 0.5
 script = ExtResource("1_warrior")
 profile = ExtResource("2_profile")
-finishers = Array[ExtResource("10_finisher")]([ExtResource("11_behead"), ExtResource("12_impale"), ExtResource("13_spin"), ExtResource("14_disarm")])
+finishers = Array[ExtResource("10_finisher")]([ExtResource("11_behead"), ExtResource("12_impale"), ExtResource("13_spin"), ExtResource("14_disarm"), ExtResource("14_ground")])
 max_poise = 40.0
 hitboxes = ExtResource("3_hitboxes")
 

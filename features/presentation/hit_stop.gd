@@ -7,6 +7,8 @@ extends Node
 
 const SLOW: float = 0.05
 
+## Off (a setting): no blow stops time and nothing slows it.
+var enabled: bool = true
 var _left: float = 0.0
 var _slow_left: float = 0.0
 var _slow_scale: float = 1.0
@@ -18,7 +20,7 @@ func _ready() -> void:
 
 ## Holds the freeze for `seconds`; a longer stop replaces a shorter one.
 func trigger(seconds: float) -> void:
-	if seconds <= 0.0:
+	if seconds <= 0.0 or not enabled:
 		return
 	_left = maxf(_left, seconds)
 	_apply()
@@ -26,6 +28,8 @@ func trigger(seconds: float) -> void:
 
 ## Slows everything to `scale` for `seconds` (a boss's fall, a finisher's blow).
 func slow(scale: float, seconds: float) -> void:
+	if not enabled:
+		return
 	_slow_left = maxf(_slow_left, seconds)
 	_slow_scale = scale
 	_apply()

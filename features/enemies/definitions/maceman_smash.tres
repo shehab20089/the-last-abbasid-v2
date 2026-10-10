@@ -15,6 +15,7 @@ damage = 26.0
 poise_damage = 30.0
 stamina_damage = 50.0
 knockback = 240.0
+knocks_down = true
 hit_stop = 0.13
 camera_shake = 4.5
 guard_break = true

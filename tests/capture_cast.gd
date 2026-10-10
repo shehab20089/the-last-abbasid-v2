@@ -7,17 +7,19 @@ extends SceneTree
 const LEVELS: Array[String] = ["fallen_market", "streets_of_ash", "scholars_quarter", "last_gate"]
 ## [scene or npc kind, animation, frame, x offset from the hero, facing]
 const LINEUP: Array = [
-	["npc:scholar", &"idle", 0, -292.0, 1.0],
-	["npc:refugee_woman", &"run", 2, -240.0, -1.0],
-	["engineer", &"idle", 0, -184.0, 1.0],
-	["veteran", &"idle", 0, -128.0, 1.0],
-	["shieldbearer", &"idle", 0, -68.0, 1.0],
+	["npc:scholar", &"idle", 0, -294.0, 1.0],
+	["npc:refugee_woman", &"run", 2, -244.0, -1.0],
+	["engineer", &"idle", 0, -196.0, 1.0],
+	["skirmisher", &"idle", 0, -148.0, 1.0],
+	["veteran", &"idle", 0, -100.0, 1.0],
+	["shieldbearer", &"idle", 0, -52.0, 1.0],
 	["hero", &"idle", 0, 0.0, 1.0],
-	["swordsman", &"idle", 0, 58.0, -1.0],
-	["spearman", &"idle", 0, 118.0, -1.0],
-	["archer", &"idle", 0, 178.0, -1.0],
-	["maceman", &"idle", 0, 234.0, -1.0],
-	["captain", &"idle", 0, 292.0, -1.0],
+	["swordsman", &"idle", 0, 50.0, -1.0],
+	["spearman", &"idle", 0, 98.0, -1.0],
+	["archer", &"idle", 0, 146.0, -1.0],
+	["axeman", &"idle", 0, 196.0, -1.0],
+	["maceman", &"idle", 0, 246.0, -1.0],
+	["captain", &"idle", 0, 296.0, -1.0],
 ]
 
 var destination: String

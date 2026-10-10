@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="KeepsakeDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/progression/keepsake_definition.gd" id="1_script"]
+[ext_resource type="Script" path="res://features/progression/modifiers.gd" id="2_mods"]
+[ext_resource type="Texture2D" path="res://assets/ui/keep_saffron_sash.png" id="3_icon"]
+
+[sub_resource type="Resource" id="Resource_mods"]
+script = ExtResource("2_mods")
+extra_knives = 1
+knife_returns = true
+
+[resource]
+script = ExtResource("1_script")
+id = &"saffron_sash"
+modifiers = SubResource("Resource_mods")
+name_key = "KEEPSAKE_SAFFRON_SASH"
+description_key = "KEEPSAKE_SAFFRON_SASH_DESC"
+source_key = "KEEPSAKE_SOURCE_SALIM"
+icon = ExtResource("3_icon")

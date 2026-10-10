@@ -24,7 +24,7 @@ const DIALOGUES: Dictionary[StringName, Array] = {
 	],
 	&"guard": [
 		["guard", "GUARD_1"], ["yusuf", "GUARD_2"], ["guard", "GUARD_3"], ["guard", "GUARD_4"],
-		["yusuf", "GUARD_5"],
+		["yusuf", "GUARD_5"], ["guard", "GUARD_6"],
 	],
 	&"guard_after": [
 		["guard", "GUARD_AFTER_1"],
@@ -94,6 +94,7 @@ const DIALOGUES: Dictionary[StringName, Array] = {
 	],
 	&"hamid": [
 		["guard", "HAMID_1"], ["yusuf", "HAMID_2"], ["guard", "HAMID_3"], ["guard", "HAMID_4"], ["yusuf", "HAMID_5"],
+		["guard", "HAMID_6"],
 	],
 	&"hamid_after": [
 		["guard", "HAMID_AFTER_1"],
@@ -122,3 +123,11 @@ static func lines(id: StringName) -> Array[PackedStringArray]:
 			speaker_key = SPEAKERS[StringName(speaker)]
 		out.append(PackedStringArray([speaker_key, line]))
 	return out
+
+
+## Who speaks a conversation besides Yusuf (the speaker's translation key), or empty: the name shown over them.
+static func speaker_of(id: StringName) -> String:
+	for line: PackedStringArray in lines(id):
+		if line[0] != "" and line[0] != SPEAKERS[&"yusuf"]:
+			return line[0]
+	return ""

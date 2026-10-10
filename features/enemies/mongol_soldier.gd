@@ -10,6 +10,16 @@ extends Combatant
 signal state_changed(state: State)
 signal guarded_hit(hit: HitData)
 signal staggered
+## Flinched twice close together, he steels himself: blows still wound him but no longer stop him.
+signal steeled
+## Set ablaze (he burns, and a common soldier runs burning).
+signal ignited
+## Thrown off his feet by a great blow.
+signal knocked_down
+## Behind his shield he beat the hero's blade aside (a duellist's parry): his brain answers with a riposte.
+signal parried_blow
+## He leapt back out of reach.
+signal evaded
 ## The first blow landed on him before he knew the hero was there (it killed him).
 signal surprised
 ## The stroke of an execution fell: the captive kneeling before him is beheaded.
@@ -19,7 +29,9 @@ signal beaten
 ## A projectile left its hands (an arrow); the session hooks up its sounds and sparks.
 signal projectile_spawned(projectile: Node2D)
 
-enum State {READY, ATTACK, GUARD, HURT, STAGGER, ACTING, DEAD}
+enum State {READY, ATTACK, GUARD, HURT, STAGGER, ACTING, DEAD, DOWN}
+## Thrown down: falling, lying on the street, getting up (untouchable as he rises).
+enum DownPhase {FALL, LIE, RISE}
 
 ## A staggered soldier this badly hurt (a fraction of his health) can be finished.
 const FINISH_HEALTH: float = 0.5
@@ -27,13 +39,38 @@ const FRICTION: float = 900.0
 ## Braking once an attack's lunge ends: he plants his feet rather than skating on.
 const ATTACK_FRICTION: float = 1600.0
 ## Friction while reeling from a blow, low enough that the knockback reads as a slide.
-const REEL_FRICTION: float = 620.0
-const SEPARATION: float = 20.0
+const REEL_FRICTION: float = 820.0
+const SEPARATION: float = 24.0
+## How hard comrades standing inside one another are pushed apart (px/s/s).
+const SEPARATION_PUSH: float = 1400.0
+## A knife thrown at a man who never saw it: this many times its harm (it takes a blade to kill unseen).
+const THROWN_SURPRISE: float = 2.0
 ## How brightly a killing blow flashes him (a living one flashes fully).
 const KILL_FLASH: float = 0.25
 ## The frame of the behead animation on which the stroke falls, and how long the stroke takes.
 const BEHEAD_STRIKE: int = 2
 const BEHEAD_TIME: float = 0.95
+## A blow this heavy that does not floor him makes him reel back instead of flinching.
+const REEL_KNOCKBACK: float = 240.0
+## A man left open to a finisher is shoved no faster than this (px/s): never out of the hero's reach.
+const FINISHABLE_PUSH: float = 150.0
+## Blows on his shield further apart than this (s) are not one string: the row starts again.
+const BLOCK_MEMORY: float = 1.4
+## Burning: harm every BURN_TICK s; how far (px) a burning man sets alight a comrade he runs into.
+## A blow that draws men in leaves a man this near the striker (px) where he is.
+const PULL_STOP: float = 26.0
+const BURN_TICK: float = 0.35
+const BURN_DAMAGE: float = 6.0
+const BURN_SPREAD: float = 18.0
+## A man thrown down slides back with this share of the blow's force, and this friction stops him.
+const DOWN_PUSH: float = 0.7
+const DOWN_FRICTION: float = 900.0
+## A man struck again where he lies stays down this much longer.
+const DOWN_STRUCK: float = 0.35
+## Flinches close together (within FLINCH_WINDOW s) before he steels himself for STEELED_TIME s.
+const FLINCH_LIMIT: int = 2
+const FLINCH_WINDOW: float = 1.2
+const STEELED_TIME: float = 1.0
 
 @export var profile: EnemyProfile
 ## The way he faces when the level starts: +1 right, -1 left.
@@ -50,6 +87,9 @@ const BEHEAD_TIME: float = 0.95
 
 ## -1..1: where the brain wants to go.
 var move_intent: float = 0.0
+## How eagerly he fights (the level's): his pauses between blows shortened by it, his guard raised more
+## readily. A boss keeps his own measure.
+var aggression: float = 1.0
 ## What he does while he stands: his guard, or a task he is busy with (looting, burning books).
 var rest_animation: StringName = &"idle"
 ## True while he has not noticed the hero (the brain says so).
@@ -77,6 +117,29 @@ var _finishing: bool = false
 var in_finisher: bool = false
 ## Set by his brain while he is in the fight (he has seen the hero and not given up on him).
 var engaged: bool = false
+var _down_phase: DownPhase = DownPhase.FALL
+## Each flinch takes the other pose, so a string of blows does not repeat one.
+var _flinch_alt: bool = false
+## The hero's blows blocked in a row behind his raised shield (a duellist parries the next), and the time
+## since the last (a pause ends the row).
+var _blocked_in_row: int = 0
+var _since_blocked: float = 0.0
+## Burning: the time left, the next harm, the way he runs, whether he runs (a boss burns but fights on), and
+## whether he has set a comrade alight yet.
+var _burning: float = 0.0
+var _burn_tick: float = 0.0
+var _burn_away: float = 1.0
+var _panicking: bool = false
+var _spread: bool = false
+## Flinches in the current window, the window's time left, and how long he stays steeled.
+var _flinches: int = 0
+var _flinch_window: float = 0.0
+var _steeled: float = 0.0
+## Struck once where he lies already (that keeps him down a moment longer, once a fall).
+var _down_struck: bool = false
+## The hurtbox standing (it lies low while he is down).
+var _stand_size: Vector2 = Vector2.ZERO
+var _stand_at: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
@@ -94,6 +157,11 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	tick_poise(delta)
+	_flinch_window = maxf(0.0, _flinch_window - delta)
+	_steeled = maxf(0.0, _steeled - delta)
+	_since_blocked += delta
+	if _burning > 0.0 and not dead:
+		_burn(delta)
 	match state:
 		State.READY:
 			var speed: float = profile.run_speed if running else profile.walk_speed
@@ -105,6 +173,12 @@ func _physics_process(delta: float) -> void:
 				velocity.x = lunge
 			else:
 				velocity.x = move_toward(velocity.x, 0.0, ATTACK_FRICTION * delta)
+		State.DOWN:
+			velocity.x = move_toward(velocity.x, 0.0, DOWN_FRICTION * delta)
+			if _down_phase == DownPhase.LIE:
+				_timer -= delta
+				if _timer <= 0.0:
+					_rise()
 		_:
 			var friction: float = REEL_FRICTION if state == State.HURT or state == State.STAGGER else FRICTION
 			velocity.x = move_toward(velocity.x, 0.0, friction * delta)
@@ -112,6 +186,12 @@ func _physics_process(delta: float) -> void:
 				_timer -= delta
 				if _timer <= 0.0:
 					_recover()
+	# Running burning, blind: away from the fire's heart, turning back at a drop.
+	if _panicking and state == State.ACTING and not dead:
+		if not _floor_ahead(_burn_away):
+			_burn_away = -_burn_away
+			set_facing(_burn_away)
+		velocity.x = _burn_away * profile.run_speed * 0.9
 	if state != State.DEAD and not in_finisher:
 		_separate(delta)
 	if not is_on_floor():
@@ -166,6 +246,16 @@ func act(animation: StringName, seconds: float, protected: bool = false) -> void
 	play_action(animation)
 
 
+## Springs back out of reach (a skirmisher's leap): untouchable in the air, carried back at `speed`.
+func evade(speed: float, seconds: float) -> bool:
+	if not can_act() or not sprite.sprite_frames.has_animation(&"evade"):
+		return false
+	act(&"evade", seconds, true)
+	velocity.x = -facing * speed
+	evaded.emit()
+	return true
+
+
 ## A boss does not die of the blow that would have killed him: it brings him to his knee, his
 ## guard gone, and the session plays the finishing stroke. True when it did.
 func _beaten_by(damage: float) -> bool:
@@ -195,11 +285,105 @@ func stagger(seconds: float) -> void:
 		_stagger(seconds)
 
 
+## Tougher than the first level's soldiers (the level says how much); a boss is as his profile made him.
+## The level's eagerness for the fight (see `aggression`); a boss in his armour keeps his own.
+func set_aggression(value: float) -> void:
+	if not profile.armoured_body:
+		aggression = maxf(value, 0.1)
+
+
+func toughen(health_scale: float, poise_scale: float) -> void:
+	if profile.armoured_body:
+		return
+	max_health = profile.max_health * health_scale
+	health = max_health
+	max_poise = profile.max_poise * poise_scale
+	poise = max_poise
+	health_changed.emit(health, max_health)
+
+
+## A heavy blow lands beside him: thrown off his stroke for a moment. Not a man nothing stops (a
+## mace-bearer, a boss in his armour), nor one already reeling, nor one in an armoured swing.
+func flinch(away: float) -> void:
+	if dead or untouchable or in_finisher or profile.armoured_body or profile.unflinching:
+		return
+	if state == State.STAGGER or state == State.ACTING or state == State.HURT:
+		return
+	if (state == State.ATTACK and current_attack != null and current_attack.super_armor
+			and sprite.frame < current_attack.recovery_from):
+		return
+	velocity.x = away * 110.0
+	_hurt()
+
+
 ## A staggered soldier can be finished once his wounds have brought him this low (a fraction of his
 ## health): a parry on a fresh man opens him to the riposte, not to the finisher.
 func can_be_finished() -> bool:
-	return (not dead and not in_finisher and state == State.STAGGER and not profile.armoured_body and not is_beaten
-		and health <= max_health * FINISH_HEALTH)
+	return (not dead and not in_finisher and (state == State.STAGGER or is_down()) and not profile.armoured_body
+		and not is_beaten and health <= max_health * FINISH_HEALTH)
+
+
+## Lying on the street (falling or lying, not yet rising).
+func is_down() -> bool:
+	return state == State.DOWN and _down_phase != DownPhase.RISE and not dead
+
+
+func is_guarding() -> bool:
+	return not dead and state == State.GUARD
+
+
+func is_reeling() -> bool:
+	return not dead and (state == State.HURT or state == State.STAGGER or state == State.DOWN)
+
+
+## Thrown off his feet: he falls, lies a moment, and gets up.
+func knock_down() -> void:
+	cancel_attack()
+	_down_struck = false
+	_set_state(State.DOWN)
+	_down_phase = DownPhase.FALL
+	_timer = profile.down_time
+	sprite.play(&"knockdown")
+	_lie_low(true)
+	knocked_down.emit()
+
+
+## A man no blow floors (a captain in his armour, a mace-bearer), or one with no fall drawn.
+func _steadfast() -> bool:
+	return profile.armoured_body or profile.unflinching or not sprite.sprite_frames.has_animation(&"knockdown")
+
+
+func _rise() -> void:
+	_down_phase = DownPhase.RISE
+	untouchable = true
+	sprite.play(&"getup")
+
+
+## While he is down his hurtbox lies along the street behind him, so only a blow driven down finds him.
+func _lie_low(down: bool) -> void:
+	var shape: CollisionShape2D = hurtbox.get_node_or_null(^"Shape") as CollisionShape2D
+	if shape == null or not shape.shape is RectangleShape2D:
+		return
+	if _stand_size == Vector2.ZERO:
+		# His own shape (scenes share theirs).
+		shape.shape = shape.shape.duplicate()
+		var standing: RectangleShape2D = shape.shape as RectangleShape2D
+		_stand_size = standing.size
+		_stand_at = shape.position
+	var rect: RectangleShape2D = shape.shape as RectangleShape2D
+	if down:
+		rect.size = Vector2(56, 18)
+		shape.position = Vector2(-facing * 16.0, -9.0)
+	else:
+		rect.size = _stand_size
+		shape.position = _stand_at
+
+
+## The Judgment of the Guard finishes a common soldier at once, a hardened one only once wounded to
+## half; never a boss in his armour.
+func can_be_judged() -> bool:
+	return (not dead and not in_finisher and not profile.armoured_body and not is_beaten and not untouchable
+		and (not profile.elite or health <= max_health * FINISH_HEALTH))
 
 
 func in_fight() -> bool:
@@ -266,14 +450,93 @@ func _on_action_frame() -> void:
 		executed.emit()
 
 
-## Puts the soldier back at its post, alive and whole (a level reset).
-func reset_to_spawn() -> void:
-	revive(spawn_point)
-	killing_hit = null
-	severed = &""
+## The guard's cry breaks his nerve: whatever he was doing is broken off and he is thrown back, staggered.
+## A boss in his armour only gives ground; a man down, in a finisher or already dead hears nothing.
+func frighten(away: float, knockback: float, seconds: float) -> void:
+	if dead or untouchable or in_finisher or state == State.DOWN:
+		return
+	if profile.armoured_body:
+		velocity.x = away * knockback * 0.35
+		return
+	cancel_attack()
+	velocity.x = away * knockback
+	_stagger(seconds)
+
+
+## Set ablaze: he burns `seconds`, harmed every BURN_TICK; a common soldier panics and runs burning `away`
+## (no blow, no guard) and sets alight the first comrade he blunders into; a boss burns but fights on.
+func ignite(seconds: float, away: float) -> void:
+	if dead or in_finisher:
+		return
+	var fresh: bool = _burning <= 0.0
+	_burning = maxf(_burning, seconds)
+	if away != 0.0:
+		_burn_away = away
+	if fresh:
+		_burn_tick = 0.12
+		_spread = false
+		ignited.emit()
+	if not profile.armoured_body and state != State.DOWN:
+		_panic()
+
+
+func is_untouchable() -> bool:
+	return untouchable
+
+
+func is_burning() -> bool:
+	return _burning > 0.0 and not dead
+
+
+## Seconds he has yet to burn.
+func burn_left() -> float:
+	return _burning
+
+
+func _panic() -> void:
+	cancel_attack()
+	unaware = false
+	_panicking = true
+	_timer = _burning
+	_set_state(State.ACTING)
+	set_facing(_burn_away)
+	sprite.play(&"run" if sprite.sprite_frames.has_animation(&"run") else &"hurt")
+
+
+func _burn(delta: float) -> void:
+	_burning = maxf(0.0, _burning - delta)
+	_burn_tick -= delta
+	if _burn_tick <= 0.0:
+		_burn_tick = BURN_TICK
+		flash(0.45, Color(1.0, 0.55, 0.2))
+		take_damage(BURN_DAMAGE)
+		if dead:
+			_panicking = false
+			return
+	if not _spread:
+		for node: Node in get_tree().get_nodes_in_group(&"enemies"):
+			var other: MongolSoldier = node as MongolSoldier
+			if (other != null and other != self and not other.dead and not other.is_burning()
+					and absf(other.global_position.x - global_position.x) <= BURN_SPREAD
+					and absf(other.global_position.y - global_position.y) <= 30.0):
+				_spread = true
+				other.ignite(_burning * 0.7, signf(other.global_position.x - global_position.x))
+				break
+	if _burning <= 0.0:
+		_panicking = false
+
+
+## The street goes on a step ahead (a burning man turns back at a drop).
+func _floor_ahead(direction: float) -> bool:
+	var space: PhysicsDirectSpaceState2D = get_world_2d().direct_space_state
+	var ahead: Vector2 = global_position + Vector2(direction * 16.0, -6.0)
+	return not space.intersect_ray(PhysicsRayQueryParameters2D.create(ahead, ahead + Vector2(0, 30), 1)).is_empty()
+
+
+## His blow broken off before it was thrown (a feint): ready again, free to raise his guard.
+func break_off() -> void:
+	cancel_attack()
 	_set_state(State.READY)
-	hurtbox.set_deferred(&"monitorable", true)
-	sprite.play(&"idle")
 
 
 # --- Being struck --------------------------------------------------------------------------------
@@ -281,20 +544,49 @@ func reset_to_spawn() -> void:
 func judge_hit(hit: HitData) -> HitData.Outcome:
 	if dead or untouchable:
 		return HitData.Outcome.IGNORED
+	# A blow no shield can stop (the fully charged cleave) goes through any guard, a wall's too.
+	if hit.unblockable:
+		return HitData.Outcome.HIT
 	# A shield wall stands guard whenever he is not swinging or reeling.
 	var walled: bool = profile.shield_wall and (state == State.READY or state == State.GUARD)
-	if (state == State.GUARD or walled) and is_frontal(hit):
-		if hit.unblockable or hit.overwhelms or (hit.guard_break and not walled):
+	if (state == State.GUARD or walled) and is_frontal(hit) and not (hit.low and not walled):
+		if hit.overwhelms or (hit.guard_break and not walled):
+			_blocked_in_row = 0
 			return HitData.Outcome.GUARD_BROKEN
+		# A duellist reads a string beaten on his shield, and turns the next blow of it.
+		if (profile.parries_after > 0 and state == State.GUARD and hit.parryable and not hit.projectile
+				and (hit.attack == null or not hit.attack.feint)):
+			if _since_blocked > BLOCK_MEMORY:
+				_blocked_in_row = 0
+			_since_blocked = 0.0
+			_blocked_in_row += 1
+			if _blocked_in_row > profile.parries_after:
+				_blocked_in_row = 0
+				return HitData.Outcome.PARRIED
 		return HitData.Outcome.BLOCKED
+	_blocked_in_row = 0
 	return HitData.Outcome.HIT
 
 
 func on_struck(hit: HitData, outcome: HitData.Outcome) -> void:
+	# A blow that takes a share of any man, however strong (the Judgment's great blow).
+	if hit.attack != null and hit.attack.health_share > 0.0:
+		hit.damage = maxf(hit.damage, max_health * hit.attack.health_share)
+	# Braced against a great technique (a boss), he takes only part of it.
+	if hit.attack != null and hit.attack.art and profile.art_resistance > 0.0:
+		hit.damage *= 1.0 - profile.art_resistance
+		hit.poise_damage *= 1.0 - profile.art_resistance
 	match outcome:
+		HitData.Outcome.PARRIED:
+			# His shield beat the blade aside: his guard comes down for the riposte.
+			flash(0.3)
+			release_guard()
+			parried_blow.emit()
 		HitData.Outcome.BLOCKED:
-			velocity.x = hit.direction * hit.knockback * 0.5
+			velocity.x = hit.shove(0.0, 0.5)
+			_drawn(hit)
 			poise -= hit.poise_damage * 0.5
+			_poise_timer = poise_recovery_delay
 			flash(0.35)
 			guarded_hit.emit(hit)
 			if poise <= 0.0:
@@ -308,15 +600,24 @@ func on_struck(hit: HitData, outcome: HitData.Outcome) -> void:
 			take_damage(hit.damage * 0.5)
 			flash(KILL_FLASH if dead else 1.0)
 			if not dead:
-				velocity.x = hit.direction * hit.knockback
-				_stagger(profile.stagger_time)
+				velocity.x = hit.shove()
+				if hit.attack != null and hit.attack.knocks_down and not _steadfast():
+					velocity.x *= DOWN_PUSH
+					knock_down()
+				else:
+					_stagger(profile.stagger_time * hit.stagger_scale)
+				_keep_in_reach()
 		HitData.Outcome.HIT:
-			if unaware and not profile.armoured_body:
+			if unaware and not profile.armoured_body and hit.projectile:
+				# A knife out of the dark wounds him badly and turns him; it takes a blade to kill unseen.
+				unaware = false
+				hit.damage *= THROWN_SURPRISE
+			elif unaware and not profile.armoured_body:
 				# Caught at his plunder, he never sees the blade.
 				unaware = false
 				hit.surprise = true
 				killing_hit = hit
-				velocity.x = hit.direction * hit.knockback * 0.5
+				velocity.x = hit.shove(0.0, 0.5)
 				take_damage(health)
 				surprised.emit()
 				return
@@ -327,24 +628,43 @@ func on_struck(hit: HitData, outcome: HitData.Outcome) -> void:
 			# A killing blow barely flashes: the cut is the thing to see.
 			flash(KILL_FLASH if dead else 1.0)
 			poise -= hit.poise_damage
+			_poise_timer = poise_recovery_delay
 			if dead:
-				velocity.x = hit.direction * hit.knockback * 0.8
+				velocity.x = hit.shove(0.0, 0.8)
+				return
+			# Struck where he lies: a blow driven down rouses him (once a fall); any other keeps him down a
+			# moment longer, once.
+			if state == State.DOWN:
+				if hit.attack != null and hit.attack.rouses and _down_phase == DownPhase.LIE:
+					_rise()
+				elif not _down_struck:
+					_down_struck = true
+					_timer += DOWN_STRUCK
 				return
 			var armoured: bool = (state == State.ATTACK and current_attack != null
 				and current_attack.super_armor and sprite.frame < current_attack.recovery_from)
-			if hit.riposte or poise <= 0.0:
-				velocity.x = hit.direction * hit.knockback
-				_stagger(profile.stagger_time)
-			elif armoured or profile.armoured_body or profile.unflinching:
-				velocity.x = hit.direction * hit.knockback * 0.25
+			if hit.attack != null and hit.attack.knocks_down and not _steadfast():
+				velocity.x = hit.shove(0.0, DOWN_PUSH)
+				knock_down()
+			elif state == State.STAGGER:
+				# Staggered, he stays as open as he was: a blow neither ends the opening nor stretches it, though
+				# a great one (the thrust, the kick) still drives him back.
+				velocity.x = hit.shove(0.0, 1.0 if hit.knockback >= REEL_KNOCKBACK else 0.25)
+			elif hit.riposte or poise <= 0.0:
+				velocity.x = hit.shove()
+				_stagger(profile.stagger_time * hit.stagger_scale)
+			elif armoured or profile.armoured_body or profile.unflinching or _steeled > 0.0:
+				velocity.x = hit.shove(0.0, 0.25)
 			else:
-				velocity.x = hit.direction * hit.knockback
-				_hurt()
+				velocity.x = hit.shove()
+				_flinch(hit.knockback >= REEL_KNOCKBACK)
+			_keep_in_reach()
+			_drawn(hit)
 
 
 func on_hit_landed(_target: Combatant, _hit: HitData, outcome: HitData.Outcome) -> void:
 	if outcome == HitData.Outcome.PARRIED:
-		_stagger(profile.parried_time)
+		_stagger(profile.parried_time, &"parried")
 
 
 func on_attack_finished(_attack: AttackDefinition) -> void:
@@ -355,14 +675,25 @@ func on_attack_finished(_attack: AttackDefinition) -> void:
 func on_animation_finished(animation: StringName) -> void:
 	if animation == &"block_hit" and state == State.GUARD:
 		sprite.play(&"block")
+	elif animation == &"knockdown" and state == State.DOWN and _down_phase == DownPhase.FALL:
+		_down_phase = DownPhase.LIE
+		sprite.play(&"down")
+	elif animation == &"getup" and state == State.DOWN:
+		_lie_low(false)
+		_recover()
 
 
 func on_died() -> void:
+	var lying: bool = state == State.DOWN
 	move_intent = 0.0
 	_set_state(State.DEAD)
 	hurtbox.set_deferred(&"monitorable", false)
 	if in_finisher:
 		# His half of the finisher plays on to its end; what it cut off is already cut.
+		return
+	if lying and sprite.sprite_frames.has_animation(&"death_down"):
+		# Killed where he lay.
+		sprite.play(&"death_down")
 		return
 	severed = _severed_by(killing_hit)
 	if _finishing and sprite.sprite_frames.has_animation(&"executed"):
@@ -396,26 +727,71 @@ func _can_lose(part: StringName) -> bool:
 
 # --- Internals -----------------------------------------------------------------------------------
 
-func _hurt() -> void:
+## A blow that draws men in (the Storm's turns) stops drawing a man already at the striker's side: none is
+## dragged through him.
+func _drawn(hit: HitData) -> void:
+	if (hit.pulls and hit.attacker != null and is_instance_valid(hit.attacker)
+			and absf(hit.attacker.global_position.x - global_position.x) < PULL_STOP):
+		velocity.x = 0.0
+
+
+## Left open to a finisher (staggered or down, wounded enough), a blow does not throw him out of reach.
+func _keep_in_reach() -> void:
+	if can_be_finished():
+		velocity.x = clampf(velocity.x, -FINISHABLE_PUSH, FINISHABLE_PUSH)
+
+
+## Struck and flinching. The FLINCH_LIMIT-th flinch close together steels him for STEELED_TIME: blows
+## still wound him and can still break his poise, but no longer stop what he is doing.
+func _flinch(heavy: bool) -> void:
+	if _flinch_window <= 0.0:
+		_flinches = 0
+	_flinch_window = FLINCH_WINDOW
+	_flinches += 1
+	if _flinches >= FLINCH_LIMIT:
+		_flinches = 0
+		_steeled = STEELED_TIME
+		steeled.emit()
+	_hurt(heavy)
+
+
+## A flinch: the two poses taken in turn, or, from a great blow that does not floor him, a reel back.
+func _hurt(heavy: bool = false) -> void:
 	cancel_attack()
 	_timer = profile.hurt_time
 	_set_state(State.HURT)
-	sprite.play(&"hurt")
+	var frames: SpriteFrames = sprite.sprite_frames
+	if heavy and frames.has_animation(&"reel"):
+		_timer = profile.hurt_time * 1.4
+		sprite.play(&"reel")
+		return
+	_flinch_alt = not _flinch_alt
+	sprite.play(&"hurt_b" if _flinch_alt and frames.has_animation(&"hurt_b") else &"hurt")
 
 
-func _stagger(seconds: float) -> void:
+## Staggered, open: thrown open by a parry (parried), or his poise broken.
+func _stagger(seconds: float, animation: StringName = &"stagger") -> void:
 	cancel_attack()
 	_timer = seconds
 	_set_state(State.STAGGER)
-	sprite.play(&"stagger" if sprite.sprite_frames.has_animation(&"stagger") else &"hurt")
+	var frames: SpriteFrames = sprite.sprite_frames
+	if not frames.has_animation(animation):
+		animation = &"stagger" if frames.has_animation(&"stagger") else &"hurt"
+	sprite.play(animation)
 	staggered.emit()
 
 
 func _recover() -> void:
 	if dead:
 		return
-	if state == State.STAGGER:
+	if _burning > 0.0 and not profile.armoured_body and state != State.DOWN:
+		_panic()
+		return
+	_panicking = false
+	if state == State.STAGGER or state == State.DOWN:
 		poise = max_poise
+	if state == State.DOWN:
+		_lie_low(false)
 	untouchable = false
 	cancel_attack()
 	_set_state(State.READY)
@@ -462,7 +838,7 @@ func _separate(delta: float) -> void:
 			var push: float = 1.0 if dx >= 0.0 else -1.0
 			if is_zero_approx(dx):
 				push = 1.0 if get_instance_id() > other.get_instance_id() else -1.0
-			velocity.x += push * 520.0 * delta
+			velocity.x += push * SEPARATION_PUSH * delta
 
 
 func _update_attack_frame() -> void:

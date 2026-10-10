@@ -17,6 +17,8 @@ signal entered(trigger: StoryTrigger)
 ## translation key, or empty for narration).
 @export var line: String = ""
 @export var speaker: String = ""
+## A technique the hero learns here if no one has taught it to him yet (a lesson he walked past).
+@export var teaches: StringName = &""
 @export var once: bool = true
 
 var _fired: bool = false

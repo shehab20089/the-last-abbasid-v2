@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="AttackDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Full Charged Cleave"
+animation = &"cleave_charged"
+active_from = 1
+active_to = 2
+recovery_from = 3
+damage = 56.0
+poise_damage = 70.0
+stamina_damage = 70.0
+knockback = 360.0
+knocks_down = true
+hit_stop = 0.2
+camera_shake = 7.0
+guard_break = true
+overwhelms = true
+unblockable = true
+flinch_radius = 64.0
+severs = Array[StringName]([&"waist", &"head", &"waist"])
+sever_chance = 1.0
+lunge_speed = 120.0
+seeks = 40.0
+strike_at = 30.0
+lunge_from = 0
+lunge_to = 0
+stamina_cost = 34.0
+breath_gain = 12.0
+resolve_gain = 8.0
+swing_cue = &"charge_release"
+hit_cue = &"sword_hit_heavy"

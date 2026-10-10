@@ -38,26 +38,30 @@
 [ext_resource type="Texture2D" path="res://assets/environments/market/props/corpse_headless.png" id="36_corpse_headless_png"]
 [ext_resource type="PackedScene" path="res://features/levels/checkpoint.tscn" id="37_checkpoint_tscn"]
 [ext_resource type="PackedScene" path="res://features/levels/manuscript.tscn" id="38_manuscript_tscn"]
-[ext_resource type="SpriteFrames" path="res://assets/npcs/guard/guard_frames.tres" id="39_guard_frames_tres"]
-[ext_resource type="PackedScene" path="res://features/levels/npc.tscn" id="40_npc_tscn"]
-[ext_resource type="Texture2D" path="res://assets/environments/market/props/last_gate.png" id="41_last_gate_png"]
-[ext_resource type="Texture2D" path="res://assets/environments/market/props/last_gate_open.png" id="42_last_gate_open_png"]
-[ext_resource type="PackedScene" path="res://features/levels/level_exit.tscn" id="43_level_exit_tscn"]
-[ext_resource type="SpriteFrames" path="res://assets/npcs/refugee_woman/refugee_woman_frames.tres" id="44_refugee_woman_frames_tres"]
-[ext_resource type="Script" path="res://features/levels/captive.gd" id="45_captive_gd"]
-[ext_resource type="Resource" path="res://assets/npcs/refugee_woman/refugee_woman_gore.tres" id="46_refugee_woman_gore_tres"]
-[ext_resource type="SpriteFrames" path="res://assets/npcs/refugee_man/refugee_man_frames.tres" id="47_refugee_man_frames_tres"]
-[ext_resource type="Resource" path="res://assets/npcs/refugee_man/refugee_man_gore.tres" id="48_refugee_man_gore_tres"]
-[ext_resource type="PackedScene" path="res://features/enemies/swordsman.tscn" id="49_swordsman_tscn"]
-[ext_resource type="PackedScene" path="res://features/enemies/spearman.tscn" id="50_spearman_tscn"]
-[ext_resource type="PackedScene" path="res://features/enemies/archer.tscn" id="51_archer_tscn"]
-[ext_resource type="PackedScene" path="res://features/enemies/maceman.tscn" id="52_maceman_tscn"]
-[ext_resource type="PackedScene" path="res://features/enemies/shieldbearer.tscn" id="53_shieldbearer_tscn"]
-[ext_resource type="PackedScene" path="res://features/enemies/captain.tscn" id="54_captain_tscn"]
-[ext_resource type="Script" path="res://features/levels/story_trigger.gd" id="55_story_trigger_gd"]
-[ext_resource type="Script" path="res://features/levels/boss_arena.gd" id="56_boss_arena_gd"]
-[ext_resource type="Texture2D" path="res://assets/environments/market/props/cart.png" id="57_cart_png"]
-[ext_resource type="Texture2D" path="res://assets/environments/market/props/fg_rubble.png" id="58_fg_rubble_png"]
+[ext_resource type="PackedScene" path="res://features/levels/relic.tscn" id="39_relic_tscn"]
+[ext_resource type="SpriteFrames" path="res://assets/npcs/guard/guard_frames.tres" id="40_guard_frames_tres"]
+[ext_resource type="PackedScene" path="res://features/levels/npc.tscn" id="41_npc_tscn"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/last_gate.png" id="42_last_gate_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/last_gate_open.png" id="43_last_gate_open_png"]
+[ext_resource type="PackedScene" path="res://features/levels/level_exit.tscn" id="44_level_exit_tscn"]
+[ext_resource type="SpriteFrames" path="res://assets/npcs/refugee_woman/refugee_woman_frames.tres" id="45_refugee_woman_frames_tres"]
+[ext_resource type="Script" path="res://features/levels/captive.gd" id="46_captive_gd"]
+[ext_resource type="Resource" path="res://assets/npcs/refugee_woman/refugee_woman_gore.tres" id="47_refugee_woman_gore_tres"]
+[ext_resource type="SpriteFrames" path="res://assets/npcs/refugee_man/refugee_man_frames.tres" id="48_refugee_man_frames_tres"]
+[ext_resource type="Resource" path="res://assets/npcs/refugee_man/refugee_man_gore.tres" id="49_refugee_man_gore_tres"]
+[ext_resource type="PackedScene" path="res://features/enemies/swordsman.tscn" id="50_swordsman_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/spearman.tscn" id="51_spearman_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/veteran.tscn" id="52_veteran_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/archer.tscn" id="53_archer_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/skirmisher.tscn" id="54_skirmisher_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/maceman.tscn" id="55_maceman_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/shieldbearer.tscn" id="56_shieldbearer_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/axeman.tscn" id="57_axeman_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/captain.tscn" id="58_captain_tscn"]
+[ext_resource type="Script" path="res://features/levels/story_trigger.gd" id="59_story_trigger_gd"]
+[ext_resource type="Script" path="res://features/levels/boss_arena.gd" id="60_boss_arena_gd"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/cart.png" id="61_cart_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/fg_rubble.png" id="62_fg_rubble_png"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_1"]
 blend_mode = 1
@@ -147,35 +151,41 @@ offsets = PackedFloat32Array(0, 0.15, 0.7, 1)
 colors = PackedColorArray(1, 0.95, 0.6, 0, 1, 0.8, 0.4, 1, 1, 0.45, 0.15, 0.85, 0.6, 0.15, 0.05, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_23"]
-size = Vector2(48, 120)
+size = Vector2(48, 320)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_24"]
-size = Vector2(32, 320)
+size = Vector2(48, 120)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_25"]
+size = Vector2(48, 320)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_26"]
+size = Vector2(32, 320)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_27"]
 size = Vector2(16, 320)
 
-[sub_resource type="Curve" id="Curve_26"]
+[sub_resource type="Curve" id="Curve_28"]
 _data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 1.6), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="Gradient" id="Gradient_27"]
+[sub_resource type="Gradient" id="Gradient_29"]
 offsets = PackedFloat32Array(0, 0.2, 1)
 colors = PackedColorArray(0.9, 0.55, 0.3, 0, 0.55, 0.5, 0.5, 0.75, 0.3, 0.28, 0.32, 0)
 
-[sub_resource type="Gradient" id="Gradient_28"]
+[sub_resource type="Gradient" id="Gradient_30"]
 offsets = PackedFloat32Array(0, 0.15, 0.7, 1)
 colors = PackedColorArray(1, 0.95, 0.6, 0, 1, 0.8, 0.4, 1, 1, 0.45, 0.15, 0.85, 0.6, 0.15, 0.05, 0)
 
-[sub_resource type="Curve" id="Curve_29"]
+[sub_resource type="Curve" id="Curve_31"]
 _data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 1.6), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="Gradient" id="Gradient_30"]
+[sub_resource type="Gradient" id="Gradient_32"]
 offsets = PackedFloat32Array(0, 0.2, 1)
 colors = PackedColorArray(0.9, 0.55, 0.3, 0, 0.55, 0.5, 0.5, 0.75, 0.3, 0.28, 0.32, 0)
 
-[sub_resource type="Gradient" id="Gradient_31"]
+[sub_resource type="Gradient" id="Gradient_33"]
 offsets = PackedFloat32Array(0, 0.15, 0.7, 1)
 colors = PackedColorArray(1, 0.95, 0.6, 0, 1, 0.8, 0.4, 1, 1, 0.45, 0.15, 0.85, 0.6, 0.15, 0.05, 0)
 
@@ -189,8 +199,13 @@ ambience = &"wind"
 next_level = ""
 exit_card = &"ending"
 exit_title = ""
-objectives = PackedStringArray("captain_cleared|OBJ_OPEN_GATE", "|OBJ_REACH_GATE")
-known_techniques = PackedStringArray("bash", "plunge", "knives")
+objectives = PackedStringArray("captain_cleared|OBJ_OPEN_GATE|exit", "|OBJ_REACH_GATE|exit")
+known_techniques = PackedStringArray("sweep", "bash", "plunge", "knives", "charge", "storm", "pierce", "naft", "kick", "low_cut", "rising_cleave", "running_slash", "guarded_thrust", "down_stab")
+toughness = Vector2(1.30, 1.20)
+aggression = 1.30
+manuscript_ids = PackedStringArray("route", "oath", "furusiyya_roll")
+relic_ids = PackedStringArray("token_wagon", "token_rampart")
+captive_ids = PackedStringArray("road_captive", "siege_captive")
 
 [node name="Distant" type="Parallax2D" parent="."]
 scroll_scale = Vector2(0.06, 0)
@@ -850,7 +865,13 @@ position = Vector2(3448, 449)
 offset = Vector2(0, -16)
 flip_h = false
 
-[node name="corpse_man_front_29" type="Sprite2D" parent="Props"]
+[node name="corpse_guard_29" type="Sprite2D" parent="Props"]
+texture = ExtResource("31_corpse_guard_png")
+position = Vector2(2152, 353)
+offset = Vector2(0, -16)
+flip_h = false
+
+[node name="corpse_man_front_30" type="Sprite2D" parent="Props"]
 texture = ExtResource("32_corpse_man_front_png")
 position = Vector2(1436, 449)
 offset = Vector2(0, -11.5)
@@ -881,138 +902,169 @@ position = Vector2(1624, 448)
 manuscript_id = &"furusiyya_roll"
 teaches = &"roll_cut"
 
-[node name="hamid" parent="Interactables" instance=ExtResource("40_npc_tscn")]
+[node name="token_wagon" parent="Interactables" instance=ExtResource("39_relic_tscn")]
+position = Vector2(1160, 400)
+relic_id = &"token_wagon"
+keepsake = &""
+
+[node name="token_rampart" parent="Interactables" instance=ExtResource("39_relic_tscn")]
+position = Vector2(1864, 352)
+relic_id = &"token_rampart"
+keepsake = &""
+
+[node name="guard_bracer" parent="Interactables" instance=ExtResource("39_relic_tscn")]
+position = Vector2(2136, 352)
+relic_id = &"guard_bracer"
+keepsake = &"guard_bracer"
+
+[node name="ash_ribbon" parent="Interactables" instance=ExtResource("39_relic_tscn")]
+position = Vector2(2584, 416)
+relic_id = &"ash_ribbon"
+keepsake = &"ash_ribbon"
+
+[node name="hamid" parent="Interactables" instance=ExtResource("41_npc_tscn")]
 position = Vector2(232, 448)
 npc_id = &"hamid"
 dialogue = &"hamid"
 requires = &""
-gives_flag = &""
+gives_flag = &"hamid_breath"
 gives_notice = ""
-teaches = &""
+teaches = &"second_wind"
+gives_keepsake = &""
 idle_animation = &"sit"
 talk_animation = &"talk"
 waiting_animation = &""
 face = 1.0
-frames = ExtResource("39_guard_frames_tres")
+frames = ExtResource("40_guard_frames_tres")
 
-[node name="LastGate" parent="Interactables" instance=ExtResource("43_level_exit_tscn")]
+[node name="LastGate" parent="Interactables" instance=ExtResource("44_level_exit_tscn")]
 position = Vector2(3648, 448)
 requires = &"captain_cleared"
 open_prompt = "PROMPT_OPEN_LAST_GATE"
 locked_prompt = "PROMPT_LAST_GATE"
 locked_line = "GATE_LOCKED_4"
-closed_texture = ExtResource("41_last_gate_png")
-open_texture = ExtResource("42_last_gate_open_png")
+locked_lines = PackedStringArray()
+closed_texture = ExtResource("42_last_gate_png")
+open_texture = ExtResource("43_last_gate_open_png")
 
 [node name="People" type="Node2D" parent="."]
 
 [node name="Captive0" type="AnimatedSprite2D" parent="People"]
 position = Vector2(296, 448)
-sprite_frames = ExtResource("44_refugee_woman_frames_tres")
+sprite_frames = ExtResource("45_refugee_woman_frames_tres")
 animation = &"kneel"
 flip_h = true
-script = ExtResource("45_captive_gd")
+script = ExtResource("46_captive_gd")
 freed_by = &"captain_cleared"
 run_direction = 1.0
 captive_id = &""
 thanks = ""
-gore_set = ExtResource("46_refugee_woman_gore_tres")
+keepsake = &""
+gore_set = ExtResource("47_refugee_woman_gore_tres")
 
 [node name="Captive1" type="AnimatedSprite2D" parent="People"]
 position = Vector2(344, 448)
-sprite_frames = ExtResource("47_refugee_man_frames_tres")
+sprite_frames = ExtResource("48_refugee_man_frames_tres")
 animation = &"kneel"
 flip_h = true
-script = ExtResource("45_captive_gd")
+script = ExtResource("46_captive_gd")
 freed_by = &"captain_cleared"
 run_direction = 1.0
 captive_id = &""
 thanks = ""
-gore_set = ExtResource("48_refugee_man_gore_tres")
+keepsake = &""
+gore_set = ExtResource("49_refugee_man_gore_tres")
 
 [node name="road_captive" type="AnimatedSprite2D" parent="People"]
 position = Vector2(616, 448)
-sprite_frames = ExtResource("47_refugee_man_frames_tres")
+sprite_frames = ExtResource("48_refugee_man_frames_tres")
 animation = &"kneel"
 flip_h = false
-script = ExtResource("45_captive_gd")
+script = ExtResource("46_captive_gd")
 freed_by = &""
 run_direction = -1.0
 captive_id = &"road_captive"
 thanks = "SAVED_6"
-gore_set = ExtResource("48_refugee_man_gore_tres")
+keepsake = &""
+gore_set = ExtResource("49_refugee_man_gore_tres")
 
 [node name="siege_captive" type="AnimatedSprite2D" parent="People"]
 position = Vector2(2728, 448)
-sprite_frames = ExtResource("44_refugee_woman_frames_tres")
+sprite_frames = ExtResource("45_refugee_woman_frames_tres")
 animation = &"kneel"
 flip_h = false
-script = ExtResource("45_captive_gd")
+script = ExtResource("46_captive_gd")
 freed_by = &""
 run_direction = -1.0
 captive_id = &"siege_captive"
 thanks = "SAVED_2"
-gore_set = ExtResource("46_refugee_woman_gore_tres")
+keepsake = &""
+gore_set = ExtResource("47_refugee_woman_gore_tres")
 
 [node name="Enemies" type="Node2D" parent="."]
 
-[node name="swordsman_0" parent="Enemies" instance=ExtResource("49_swordsman_tscn")]
+[node name="swordsman_0" parent="Enemies" instance=ExtResource("50_swordsman_tscn")]
 position = Vector2(584, 448)
 start_facing = 1.0
 metadata/patrol = 0.0
 metadata/activity = &"execute"
 metadata/victim = &"road_captive"
-metadata/delay = 3.00
+metadata/delay = 4.00
 
-[node name="spearman_1" parent="Enemies" instance=ExtResource("50_spearman_tscn")]
+[node name="spearman_1" parent="Enemies" instance=ExtResource("51_spearman_tscn")]
 position = Vector2(824, 448)
 start_facing = 1.0
 metadata/patrol = 0.0
 metadata/activity = &"chat"
 
-[node name="spearman_2" parent="Enemies" instance=ExtResource("50_spearman_tscn")]
+[node name="spearman_2" parent="Enemies" instance=ExtResource("51_spearman_tscn")]
 position = Vector2(920, 448)
 start_facing = -1.0
 metadata/patrol = 0.0
 metadata/activity = &"chat"
 
-[node name="swordsman_3" parent="Enemies" instance=ExtResource("49_swordsman_tscn")]
+[node name="veteran_3" parent="Enemies" instance=ExtResource("52_veteran_tscn")]
 position = Vector2(1016, 448)
 start_facing = 1.0
 metadata/patrol = 0.0
 metadata/activity = &"loot"
 
-[node name="archer_4" parent="Enemies" instance=ExtResource("51_archer_tscn")]
+[node name="archer_4" parent="Enemies" instance=ExtResource("53_archer_tscn")]
 position = Vector2(1160, 400)
 start_facing = -1.0
 metadata/activity = &"watch"
 
-[node name="spearman_5" parent="Enemies" instance=ExtResource("50_spearman_tscn")]
+[node name="spearman_5" parent="Enemies" instance=ExtResource("51_spearman_tscn")]
 position = Vector2(1416, 448)
 start_facing = 1.0
 metadata/patrol = 0.0
 metadata/activity = &"stab"
 
-[node name="archer_6" parent="Enemies" instance=ExtResource("51_archer_tscn")]
+[node name="skirmisher_6" parent="Enemies" instance=ExtResource("54_skirmisher_tscn")]
+position = Vector2(1288, 448)
+start_facing = -1.0
+metadata/patrol = 16.0
+
+[node name="archer_7" parent="Enemies" instance=ExtResource("53_archer_tscn")]
 position = Vector2(1944, 352)
 start_facing = -1.0
 metadata/activity = &"watch"
 
-[node name="maceman_7" parent="Enemies" instance=ExtResource("52_maceman_tscn")]
+[node name="maceman_8" parent="Enemies" instance=ExtResource("55_maceman_tscn")]
 position = Vector2(2056, 352)
 start_facing = -1.0
 
-[node name="archer_8" parent="Enemies" instance=ExtResource("51_archer_tscn")]
+[node name="archer_9" parent="Enemies" instance=ExtResource("53_archer_tscn")]
 position = Vector2(2184, 352)
 start_facing = -1.0
 metadata/activity = &"watch"
 
-[node name="shieldbearer_9" parent="Enemies" instance=ExtResource("53_shieldbearer_tscn")]
+[node name="shieldbearer_10" parent="Enemies" instance=ExtResource("56_shieldbearer_tscn")]
 position = Vector2(2504, 448)
 start_facing = -1.0
 metadata/patrol = 0.0
 
-[node name="swordsman_10" parent="Enemies" instance=ExtResource("49_swordsman_tscn")]
+[node name="swordsman_11" parent="Enemies" instance=ExtResource("50_swordsman_tscn")]
 position = Vector2(2696, 448)
 start_facing = 1.0
 metadata/patrol = 0.0
@@ -1020,12 +1072,12 @@ metadata/activity = &"execute"
 metadata/victim = &"siege_captive"
 metadata/delay = 3.00
 
-[node name="maceman_11" parent="Enemies" instance=ExtResource("52_maceman_tscn")]
+[node name="axeman_12" parent="Enemies" instance=ExtResource("57_axeman_tscn")]
 position = Vector2(2856, 448)
 start_facing = -1.0
 metadata/patrol = 20.0
 
-[node name="captain_12" parent="Enemies" instance=ExtResource("54_captain_tscn")]
+[node name="captain_13" parent="Enemies" instance=ExtResource("58_captain_tscn")]
 position = Vector2(3560, 448)
 start_facing = -1.0
 metadata/group = &"captain"
@@ -1033,36 +1085,66 @@ metadata/dormant = true
 
 [node name="Triggers" type="Node2D" parent="."]
 
+[node name="lesson_breath" type="Area2D" parent="Triggers"]
+position = Vector2(408, 288)
+script = ExtResource("59_story_trigger_gd")
+trigger_id = "lesson_breath"
+hint = ""
+event = &""
+group = &""
+line = ""
+speaker = ""
+teaches = &"second_wind"
+
+[node name="Shape" type="CollisionShape2D" parent="Triggers/lesson_breath"]
+shape = SubResource("RectangleShape2D_23")
+
 [node name="hint_maceman" type="Area2D" parent="Triggers"]
 position = Vector2(1816, 308)
-script = ExtResource("55_story_trigger_gd")
+script = ExtResource("59_story_trigger_gd")
 trigger_id = "hint_maceman"
 hint = "HINT_MACEMAN"
 event = &""
 group = &""
 line = ""
 speaker = ""
+teaches = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_maceman"]
-shape = SubResource("RectangleShape2D_23")
+shape = SubResource("RectangleShape2D_24")
+
+[node name="lesson_windmill" type="Area2D" parent="Triggers"]
+position = Vector2(2264, 288)
+script = ExtResource("59_story_trigger_gd")
+trigger_id = "lesson_windmill"
+hint = ""
+event = &""
+group = &""
+line = ""
+speaker = ""
+teaches = &"windmill"
+
+[node name="Shape" type="CollisionShape2D" parent="Triggers/lesson_windmill"]
+shape = SubResource("RectangleShape2D_25")
 
 [node name="boss" type="Area2D" parent="Triggers"]
 position = Vector2(3152, 288)
-script = ExtResource("55_story_trigger_gd")
+script = ExtResource("59_story_trigger_gd")
 trigger_id = "boss"
 hint = "HINT_BOSS"
 event = &"boss"
 group = &""
 line = "TOQTO_INTRO"
 speaker = "SPEAKER_TOQTO"
+teaches = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/boss"]
-shape = SubResource("RectangleShape2D_24")
+shape = SubResource("RectangleShape2D_26")
 
 [node name="Arena" type="Node2D" parent="."]
-script = ExtResource("56_boss_arena_gd")
+script = ExtResource("60_boss_arena_gd")
 camera_bounds = Rect2(3056, 0, 784, 512)
-boss_path = NodePath("../Enemies/captain_12")
+boss_path = NodePath("../Enemies/captain_13")
 
 [node name="Barriers" type="Node2D" parent="Arena"]
 
@@ -1071,7 +1153,7 @@ position = Vector2(3080, 448)
 
 [node name="Shape" type="CollisionShape2D" parent="Arena/Barriers/Barrier0"]
 position = Vector2(0, -160)
-shape = SubResource("RectangleShape2D_25")
+shape = SubResource("RectangleShape2D_27")
 
 [node name="Flames" type="Node2D" parent="Arena/Barriers/Barrier0"]
 
@@ -1107,8 +1189,8 @@ initial_velocity_min = 14
 initial_velocity_max = 24
 scale_amount_min = 0.6
 scale_amount_max = 1
-scale_amount_curve = SubResource("Curve_26")
-color_ramp = SubResource("Gradient_27")
+scale_amount_curve = SubResource("Curve_28")
+color_ramp = SubResource("Gradient_29")
 
 [node name="Embers" type="CPUParticles2D" parent="Arena/Barriers/Barrier0/Flames/FireA"]
 position = Vector2(0, -52.8)
@@ -1129,7 +1211,7 @@ angular_velocity_min = -90
 angular_velocity_max = 90
 scale_amount_min = 0.5
 scale_amount_max = 1
-color_ramp = SubResource("Gradient_28")
+color_ramp = SubResource("Gradient_30")
 
 [node name="FireB" type="AnimatedSprite2D" parent="Arena/Barriers/Barrier0/Flames"]
 position = Vector2(12, 0)
@@ -1163,8 +1245,8 @@ initial_velocity_min = 14
 initial_velocity_max = 24
 scale_amount_min = 0.6
 scale_amount_max = 1
-scale_amount_curve = SubResource("Curve_29")
-color_ramp = SubResource("Gradient_30")
+scale_amount_curve = SubResource("Curve_31")
+color_ramp = SubResource("Gradient_32")
 
 [node name="Embers" type="CPUParticles2D" parent="Arena/Barriers/Barrier0/Flames/FireB"]
 position = Vector2(0, -28.6)
@@ -1185,10 +1267,10 @@ angular_velocity_min = -90
 angular_velocity_max = 90
 scale_amount_min = 0.5
 scale_amount_max = 1
-color_ramp = SubResource("Gradient_31")
+color_ramp = SubResource("Gradient_33")
 
 [node name="Barricade" type="Sprite2D" parent="Arena/Barriers/Barrier0/Flames"]
-texture = ExtResource("57_cart_png")
+texture = ExtResource("61_cart_png")
 position = Vector2(0, 1)
 offset = Vector2(0, -18)
 flip_h = false
@@ -1200,49 +1282,49 @@ position = Vector2(88, 448)
 scroll_scale = Vector2(1.25, 1)
 
 [node name="Rubble0" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("58_fg_rubble_png")
+texture = ExtResource("62_fg_rubble_png")
 centered = false
 position = Vector2(120, 472)
 flip_h = false
 
 [node name="Rubble1" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("58_fg_rubble_png")
+texture = ExtResource("62_fg_rubble_png")
 centered = false
 position = Vector2(640, 472)
 flip_h = true
 
 [node name="Rubble2" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("58_fg_rubble_png")
+texture = ExtResource("62_fg_rubble_png")
 centered = false
 position = Vector2(1297, 472)
 flip_h = false
 
 [node name="Rubble3" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("58_fg_rubble_png")
+texture = ExtResource("62_fg_rubble_png")
 centered = false
 position = Vector2(1831, 472)
 flip_h = true
 
 [node name="Rubble4" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("58_fg_rubble_png")
+texture = ExtResource("62_fg_rubble_png")
 centered = false
 position = Vector2(2502, 472)
 flip_h = false
 
 [node name="Rubble5" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("58_fg_rubble_png")
+texture = ExtResource("62_fg_rubble_png")
 centered = false
 position = Vector2(3050, 472)
 flip_h = true
 
 [node name="Rubble6" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("58_fg_rubble_png")
+texture = ExtResource("62_fg_rubble_png")
 centered = false
 position = Vector2(3735, 472)
 flip_h = false
 
 [node name="Rubble7" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("58_fg_rubble_png")
+texture = ExtResource("62_fg_rubble_png")
 centered = false
 position = Vector2(4297, 472)
 flip_h = true

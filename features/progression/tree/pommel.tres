@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="TechniqueDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/progression/technique_definition.gd" id="1_script"]
+[ext_resource type="Script" path="res://features/progression/modifiers.gd" id="2_mods"]
+[ext_resource type="Texture2D" path="res://assets/ui/tech_pommel.png" id="3_icon"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"pommel"
+demo = &"pommel"
+branch = 0
+tier = 1
+cost = 60
+grants = &"pommel"
+name_key = "TECH_POMMEL"
+description_key = "TECH_POMMEL_DESC"
+icon = ExtResource("3_icon")

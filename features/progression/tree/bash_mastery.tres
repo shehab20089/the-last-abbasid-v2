@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="TechniqueDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/progression/technique_definition.gd" id="1_script"]
+[ext_resource type="Script" path="res://features/progression/modifiers.gd" id="2_mods"]
+[ext_resource type="Texture2D" path="res://assets/ui/tech_bash_mastery.png" id="3_icon"]
+
+[sub_resource type="Resource" id="Resource_mods"]
+script = ExtResource("2_mods")
+bash_cost = 0.50
+bash_staggers = true
+
+[resource]
+script = ExtResource("1_script")
+id = &"bash_mastery"
+demo = &"bash"
+branch = 1
+tier = 3
+cost = 90
+requires = &"riposte_mastery"
+requires_known = &"bash"
+modifiers = SubResource("Resource_mods")
+name_key = "TECH_BASH_MASTERY"
+description_key = "TECH_BASH_MASTERY_DESC"
+icon = ExtResource("3_icon")

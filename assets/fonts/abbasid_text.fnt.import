@@ -1,0 +1,17 @@
+[remap]
+
+importer="font_data_bmfont"
+type="FontFile"
+uid="uid://b2po11t058a6f"
+path="res://.godot/imported/abbasid_text.fnt-db617633f915e3c37d8df410d89e0bef.fontdata"
+
+[deps]
+
+source_file="res://assets/fonts/abbasid_text.fnt"
+dest_files=["res://.godot/imported/abbasid_text.fnt-db617633f915e3c37d8df410d89e0bef.fontdata"]
+
+[params]
+
+fallbacks=[]
+compress=true
+scaling_mode=2

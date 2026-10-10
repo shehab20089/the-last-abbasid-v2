@@ -29,8 +29,8 @@ export const LEVEL = {
   exitCard: "scholars_end",
   exitTitle: "LEVEL_LAST_GATE",
   objectives: [
-    ["codex", "OBJ_LAST_GATE"], ["library_cleared", "OBJ_SPEAK_LIBRARIAN"], ["library", "OBJ_SAVE_LIBRARY"],
-    ["", "OBJ_FIND_LIBRARIAN"],
+    ["codex", "OBJ_GARDEN_DOOR", "exit"], ["library_cleared", "OBJ_SPEAK_LIBRARIAN", "npc:librarian"],
+    ["library", "OBJ_SAVE_LIBRARY", "group:library"], ["", "OBJ_FIND_LIBRARIAN", "npc:librarian"],
   ],
   // The river and its far bank, seen over the river wall.
   river: { height: 150 },
@@ -85,17 +85,28 @@ export const LEVEL = {
     { kind: "tower", col: 0, width: 3, top: 4 },
     { kind: "tower", col: 297, width: 3, top: 4 },
   ],
-  knownTechniques: ["bash", "knives"],
+  knownTechniques: ["sweep", "bash", "knives", "charge", "storm", "kick", "low_cut", "rising_cleave",
+    "running_slash"],
+  // Soldiers here are tougher than the market's (health, poise): the hero has grown too.
+  toughness: [1.2, 1.1],
+  aggression: 1.2,
   checkpoints: [
     { id: "courtyard_lamp", col: 84 },
     { id: "river_lamp", col: 160 },
     { id: "hall_lamp", col: 220 },
+  ],
+  // On the arcade's raised walk, and along the library's gallery.
+  relics: [
+    { id: "token_arcade", col: 71, row: 25 },
+    { id: "token_gallery", col: 112, row: 22 },
   ],
   manuscripts: [
     { id: "astronomy", col: 120, row: 22 },
     // At the top of the library's crates, over the soldiers at their work below: the plunge.
     { id: "furusiyya_plunge", col: 103, row: 22, teaches: "plunge" },
     { id: "poem", col: 207 },
+    // In the lecture hall, before the line of men at its far end: the Piercing Line.
+    { id: "furusiyya_pierce", col: 226, teaches: "pierce" },
     { id: "algebra", col: 236, row: 22 },
   ],
   enemies: [
@@ -106,7 +117,7 @@ export const LEVEL = {
     { kind: "swordsman", col: 54, face: 1, activity: "execute", victim: "fountain_captive", delay: 3.5, patrol: 0 },
     { kind: "archer", col: 76, row: 25, face: -1, activity: "watch" },
     // Rifling a fallen shelf at the library door.
-    { kind: "swordsman", col: 92, face: 1, activity: "loot", patrol: 0 },
+    { kind: "skirmisher", col: 92, face: 1, activity: "loot", patrol: 0 },
     // In the library, at their work until the hero walks in.
     { kind: "swordsman", col: 112, face: -1, dormant: true, group: "library", activity: "loot" },
     { kind: "archer", col: 117, row: 22, face: -1, dormant: true, group: "library", activity: "watch" },
@@ -117,6 +128,8 @@ export const LEVEL = {
     { kind: "swordsman", col: 183, face: 1, activity: "execute", victim: "river_captive", delay: 3.0, patrol: 0 },
     // A siege engineer on the mooring steps, lobbing fire to cover the execution.
     { kind: "engineer", col: 195, row: 25, face: -1 },
+    // A Georgian axeman keeps the hall's door: he fights for the distance (the hook, the butt, the chop).
+    { kind: "axeman", col: 212, face: -1, patrol: 14 },
     // The lecture hall's chest; the far end of the hall; the garden wall.
     { kind: "swordsman", col: 232, face: 1, activity: "loot", patrol: 0 },
     // An engineer on the hall's balcony; a shield-bearer at the hall's far end; a veteran at the garden wall.
@@ -126,21 +139,26 @@ export const LEVEL = {
   ],
   // Those kneeling under a headsman's sabre.
   captives: [
-    { id: "fountain_captive", kind: "refugee_man", col: 56, face: 1, run: -1, thanks: "SAVED_4" },
+    { id: "fountain_captive", kind: "refugee_man", col: 56, face: 1, run: -1, thanks: "SAVED_4", keepsake: "prayer_beads" },
     { id: "river_captive", kind: "refugee_woman", col: 185, face: 1, run: -1, thanks: "SAVED_5" },
   ],
   npcs: [
     { id: "copyist", kind: "copyist", col: 40, face: 1, dialogue: "copyist" },
     { id: "librarian", kind: "librarian", col: 146, face: -1, dialogue: "librarian", requires: "library_cleared",
-      gives: "codex", notice: "NOTICE_CODEX" },
+      gives: "codex", notice: "NOTICE_CODEX", keepsake: "ink_stone" },
   ],
   triggers: [
-    { id: "library", from: 102, to: 104, event: "ambush", group: "library", line: "LIBRARY_1" },
+    // Before the headsman's clock starts (300 px short of him, col 35): the guarded thrust.
+    { id: "lesson_guarded_thrust", from: 18, to: 21, teaches: "guarded_thrust" },
+    { id: "lesson_down_stab", from: 64, to: 67, teaches: "down_stab" },
+    { id: "library", from: 102, to: 104, height: 64, event: "ambush", group: "library", line: "LIBRARY_1" },
     { id: "river", from: 154, to: 157, line: "RIVER_1" },
     { id: "hint_engineer", from: 172, to: 175, hint: "HINT_ENGINEER" },
+    { id: "hint_axeman", from: 199, to: 201, hint: "HINT_AXEMAN" },
   ],
   exit: { name: "GardenDoor", col: 292, art: "garden_door", prompt: "PROMPT_OPEN_GARDEN_DOOR",
-    lockedPrompt: "PROMPT_GARDEN_DOOR", lockedLine: "GATE_LOCKED_3", requires: "codex" },
+    lockedPrompt: "PROMPT_GARDEN_DOOR", lockedLine: "GATE_LOCKED_3", requires: "codex",
+    lockedLines: [["library_cleared", "GATE_LOCKED_LIBRARIAN"], ["", "GATE_LOCKED_3"]] },
   fires: [
     [12, STREET, "medium"], [44, STREET, "small"], [97, STREET, "large"], [124, STREET, "medium"],
     [PYRE - 0.125, STREET, "medium"],

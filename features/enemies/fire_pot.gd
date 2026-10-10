@@ -2,7 +2,8 @@ class_name FirePot
 extends Area2D
 ## A clay pot of burning naphtha, lobbed in an arc at where the hero is going. It breaks on whatever
 ## it meets: on the hero (a shield takes the blow, not the fire), or on the street, and where it
-## breaks the naphtha burns (BurningGround) for a while. Rolling carries the hero through it.
+## breaks the naphtha burns (BurningGround) for a while. Rolling carries the hero through it. The
+## hero's own flasks (his Naft Flask) are the same pot thrown the other way, at the nearest soldier.
 
 ## Where it broke: on a body (that body's HitData.Outcome) or on the street (-1).
 signal burst(at: Vector2, outcome: int)
@@ -16,6 +17,10 @@ signal burst(at: Vector2, outcome: int)
 @export var knockback: float = 70.0
 @export var lifetime: float = 3.0
 @export var fire_scene: PackedScene
+## The side that threw it (0 the hero's, 1 the soldiers'): it breaks on the other side's bodies.
+@export var team: int = 1
+## The hero's flask: how far ahead it lands when no soldier is near before him (px).
+@export var lob_distance: float = 110.0
 
 ## +1 thrown to the right, -1 to the left. Set before the pot enters the tree.
 var direction: float = 1.0
@@ -33,14 +38,15 @@ func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 
 
-## The lob that lands where the hero will be: his place, led by his speed over the flight.
+## The lob that lands where its mark will be: his place, led by his speed over the flight. A soldier's
+## pot is thrown at the hero; the hero's at the nearest soldier before him, or a little way ahead.
 func _aim() -> Vector2:
-	var hero: Node2D = get_tree().get_first_node_in_group(&"player") as Node2D
-	if hero == null:
-		return Vector2(direction * speed, -180.0)
-	var hero_body: CharacterBody2D = hero as CharacterBody2D
-	var lead: Vector2 = hero_body.velocity * 0.35 if hero_body != null else Vector2.ZERO
-	var goal: Vector2 = hero.global_position + Vector2(lead.x, -6.0)
+	var mark: Node2D = _mark()
+	var goal: Vector2 = global_position + Vector2(direction * lob_distance, 40.0)
+	if mark != null:
+		var body: CharacterBody2D = mark as CharacterBody2D
+		var lead: Vector2 = body.velocity * 0.35 if body != null else Vector2.ZERO
+		goal = mark.global_position + Vector2(lead.x, -6.0)
 	var dx: float = goal.x - global_position.x
 	# Thrown the way he faces, however close the hero is.
 	if signf(dx) != direction:
@@ -48,6 +54,23 @@ func _aim() -> Vector2:
 	var time: float = clampf(absf(dx) / speed, 0.45, 1.3)
 	var dy: float = goal.y - global_position.y
 	return Vector2(dx / time, (dy - 0.5 * fall * time * time) / time)
+
+
+## Who it is thrown at: the hero, or (thrown by him) the nearest soldier before him.
+func _mark() -> Node2D:
+	if team == 1:
+		return get_tree().get_first_node_in_group(&"player") as Node2D
+	var best: Node2D = null
+	var nearest: float = 220.0
+	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var soldier: Combatant = node as Combatant
+		if soldier == null or soldier.dead:
+			continue
+		var dx: float = (soldier.global_position.x - global_position.x) * direction
+		if dx > 12.0 and dx < nearest and absf(soldier.global_position.y - global_position.y) < 90.0:
+			nearest = dx
+			best = soldier
+	return best
 
 
 func _physics_process(delta: float) -> void:
@@ -69,7 +92,7 @@ func _on_area_entered(area: Area2D) -> void:
 	if _broken or hurtbox == null:
 		return
 	var target: Combatant = hurtbox.owner_body
-	if target == null or target.dead or target.team == 1:
+	if target == null or target.dead or target.team == team:
 		return
 	var hit: HitData = HitData.new()
 	hit.attacker = shooter if is_instance_valid(shooter) else null

@@ -12,14 +12,55 @@
 [ext_resource type="Resource" path="res://features/warrior/definitions/bash.tres" id="9_bash"]
 [ext_resource type="Resource" path="res://features/warrior/definitions/roll_cut.tres" id="10_roll_cut"]
 [ext_resource type="PackedScene" path="res://features/warrior/thrown_knife.tscn" id="11_knife"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/pommel_strike.tres" id="12_pommel"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/whirling_cut.tres" id="13_whirl"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/executioner.tres" id="14_executioner"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/delayed_cut.tres" id="15_delayed"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/cleave_charged_2.tres" id="16_charged_2"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/cleave_charged_3.tres" id="17_charged_3"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/running_thrust.tres" id="18_running"]
+[ext_resource type="Script" path="res://features/warrior/art_definition.gd" id="19_art"]
+[ext_resource type="Resource" path="res://features/warrior/arts/storm.tres" id="20_storm"]
+[ext_resource type="Resource" path="res://features/warrior/arts/pierce.tres" id="21_pierce"]
+[ext_resource type="Resource" path="res://features/warrior/arts/naft.tres" id="22_naft"]
+[ext_resource type="Resource" path="res://features/warrior/arts/second_wind.tres" id="23_second_wind"]
+[ext_resource type="Resource" path="res://features/warrior/arts/judgment.tres" id="24_judgment"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/ground_stab.tres" id="25_ground"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/light_4.tres" id="40_kick"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/low_cut.tres" id="41_low"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/sweep.tres" id="42_sweep"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/heavy_2.tres" id="43_heavy2"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/heavy_3.tres" id="44_heavy3"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/running_slash.tres" id="45_runslash"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/guarded_thrust.tres" id="46_guarded"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/riposte.tres" id="47_riposte"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/air_slash_2.tres" id="48_air2"]
+[ext_resource type="Resource" path="res://features/warrior/definitions/down_stab.tres" id="49_downstab"]
 
 [resource]
 script = ExtResource("1_script")
-combo = Array[ExtResource("1_attack")]([ExtResource("2_l1"), ExtResource("3_l2"), ExtResource("4_l3")])
+combo = Array[ExtResource("1_attack")]([ExtResource("2_l1"), ExtResource("3_l2"), ExtResource("4_l3"), ExtResource("40_kick")])
 heavy = ExtResource("5_heavy")
 air_attack = ExtResource("6_air")
 plunge = ExtResource("7_plunge")
 plunge_landing = ExtResource("8_landing")
 bash = ExtResource("9_bash")
 roll_cut = ExtResource("10_roll_cut")
+ground_stab = ExtResource("25_ground")
+pommel_strike = ExtResource("12_pommel")
+whirling_cut = ExtResource("13_whirl")
+executioner = ExtResource("14_executioner")
+delayed_cut = ExtResource("15_delayed")
+charged_cleaves = Array[ExtResource("1_attack")]([ExtResource("16_charged_2"), ExtResource("17_charged_3")])
+running_thrust = ExtResource("18_running")
+arts = Array[ExtResource("19_art")]([ExtResource("20_storm"), ExtResource("21_pierce"), ExtResource("22_naft"), ExtResource("23_second_wind"), ExtResource("24_judgment")])
 knife_scene = ExtResource("11_knife")
+low_cut = ExtResource("41_low")
+sweep = ExtResource("42_sweep")
+heavy_string = Array[ExtResource("1_attack")]([ExtResource("43_heavy2"), ExtResource("44_heavy3")])
+running_slash = ExtResource("45_runslash")
+shield_thrust = ExtResource("46_guarded")
+riposte_attack = ExtResource("47_riposte")
+air_slash_2 = ExtResource("48_air2")
+down_stab = ExtResource("49_downstab")
+block_chip = 0.15

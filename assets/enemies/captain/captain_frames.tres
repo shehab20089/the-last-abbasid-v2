@@ -9,17 +9,21 @@
 [ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_slash_c.png" id="7_slash_c"]
 [ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_smash.png" id="8_smash"]
 [ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_bash.png" id="9_bash"]
-[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_block.png" id="10_block"]
-[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_block_hit.png" id="11_block_hit"]
-[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_hurt.png" id="12_hurt"]
-[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_stagger.png" id="13_stagger"]
-[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_death.png" id="14_death"]
-[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_beaten.png" id="15_beaten"]
-[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_executed.png" id="16_executed"]
-[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_death_head.png" id="17_death_head"]
-[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_death_arm.png" id="18_death_arm"]
-[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_death_leg.png" id="19_death_leg"]
-[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_death_waist.png" id="20_death_waist"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_sweep.png" id="10_sweep"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_block.png" id="11_block"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_block_hit.png" id="12_block_hit"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_hurt.png" id="13_hurt"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_stagger.png" id="14_stagger"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_death.png" id="15_death"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_beaten.png" id="16_beaten"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_executed.png" id="17_executed"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_death_head.png" id="18_death_head"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_death_arm.png" id="19_death_arm"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_death_leg.png" id="20_death_leg"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_death_waist.png" id="21_death_waist"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_hurt_b.png" id="22_hurt_b"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_reel.png" id="23_reel"]
+[ext_resource type="Texture2D" path="res://assets/enemies/captain/captain_parried.png" id="24_parried"]
 
 [sub_resource type="AtlasTexture" id="idle_0"]
 atlas = ExtResource("1_idle")
@@ -301,321 +305,409 @@ region = Rect2(1056, 0, 176, 128)
 atlas = ExtResource("9_bash")
 region = Rect2(1232, 0, 176, 128)
 
+[sub_resource type="AtlasTexture" id="sweep_0"]
+atlas = ExtResource("10_sweep")
+region = Rect2(0, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="sweep_1"]
+atlas = ExtResource("10_sweep")
+region = Rect2(176, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="sweep_2"]
+atlas = ExtResource("10_sweep")
+region = Rect2(352, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="sweep_3"]
+atlas = ExtResource("10_sweep")
+region = Rect2(528, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="sweep_4"]
+atlas = ExtResource("10_sweep")
+region = Rect2(704, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="sweep_5"]
+atlas = ExtResource("10_sweep")
+region = Rect2(880, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="sweep_6"]
+atlas = ExtResource("10_sweep")
+region = Rect2(1056, 0, 176, 128)
+
 [sub_resource type="AtlasTexture" id="block_0"]
-atlas = ExtResource("10_block")
+atlas = ExtResource("11_block")
 region = Rect2(0, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="block_1"]
-atlas = ExtResource("10_block")
+atlas = ExtResource("11_block")
 region = Rect2(176, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="block_hit_0"]
-atlas = ExtResource("11_block_hit")
+atlas = ExtResource("12_block_hit")
 region = Rect2(0, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="block_hit_1"]
-atlas = ExtResource("11_block_hit")
+atlas = ExtResource("12_block_hit")
 region = Rect2(176, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="hurt_0"]
-atlas = ExtResource("12_hurt")
+atlas = ExtResource("13_hurt")
 region = Rect2(0, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="hurt_1"]
-atlas = ExtResource("12_hurt")
+atlas = ExtResource("13_hurt")
 region = Rect2(176, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="hurt_2"]
-atlas = ExtResource("12_hurt")
+atlas = ExtResource("13_hurt")
 region = Rect2(352, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="hurt_3"]
-atlas = ExtResource("12_hurt")
+atlas = ExtResource("13_hurt")
 region = Rect2(528, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="hurt_4"]
-atlas = ExtResource("12_hurt")
+atlas = ExtResource("13_hurt")
 region = Rect2(704, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="stagger_0"]
-atlas = ExtResource("13_stagger")
+atlas = ExtResource("14_stagger")
 region = Rect2(0, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="stagger_1"]
-atlas = ExtResource("13_stagger")
+atlas = ExtResource("14_stagger")
 region = Rect2(176, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="stagger_2"]
-atlas = ExtResource("13_stagger")
+atlas = ExtResource("14_stagger")
 region = Rect2(352, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="stagger_3"]
-atlas = ExtResource("13_stagger")
+atlas = ExtResource("14_stagger")
 region = Rect2(528, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_0"]
-atlas = ExtResource("14_death")
+atlas = ExtResource("15_death")
 region = Rect2(0, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_1"]
-atlas = ExtResource("14_death")
+atlas = ExtResource("15_death")
 region = Rect2(176, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_2"]
-atlas = ExtResource("14_death")
+atlas = ExtResource("15_death")
 region = Rect2(352, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_3"]
-atlas = ExtResource("14_death")
+atlas = ExtResource("15_death")
 region = Rect2(528, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_4"]
-atlas = ExtResource("14_death")
+atlas = ExtResource("15_death")
 region = Rect2(704, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_5"]
-atlas = ExtResource("14_death")
+atlas = ExtResource("15_death")
 region = Rect2(880, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_6"]
-atlas = ExtResource("14_death")
+atlas = ExtResource("15_death")
 region = Rect2(1056, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_7"]
-atlas = ExtResource("14_death")
+atlas = ExtResource("15_death")
 region = Rect2(1232, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_8"]
-atlas = ExtResource("14_death")
+atlas = ExtResource("15_death")
 region = Rect2(1408, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_9"]
-atlas = ExtResource("14_death")
+atlas = ExtResource("15_death")
 region = Rect2(1584, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_10"]
-atlas = ExtResource("14_death")
+atlas = ExtResource("15_death")
 region = Rect2(1760, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_11"]
-atlas = ExtResource("14_death")
+atlas = ExtResource("15_death")
 region = Rect2(1936, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="beaten_0"]
-atlas = ExtResource("15_beaten")
+atlas = ExtResource("16_beaten")
 region = Rect2(0, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="beaten_1"]
-atlas = ExtResource("15_beaten")
+atlas = ExtResource("16_beaten")
 region = Rect2(176, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="beaten_2"]
-atlas = ExtResource("15_beaten")
+atlas = ExtResource("16_beaten")
 region = Rect2(352, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="beaten_3"]
-atlas = ExtResource("15_beaten")
+atlas = ExtResource("16_beaten")
 region = Rect2(528, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="executed_0"]
-atlas = ExtResource("16_executed")
+atlas = ExtResource("17_executed")
 region = Rect2(0, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="executed_1"]
-atlas = ExtResource("16_executed")
+atlas = ExtResource("17_executed")
 region = Rect2(176, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="executed_2"]
-atlas = ExtResource("16_executed")
+atlas = ExtResource("17_executed")
 region = Rect2(352, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="executed_3"]
-atlas = ExtResource("16_executed")
+atlas = ExtResource("17_executed")
 region = Rect2(528, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="executed_4"]
-atlas = ExtResource("16_executed")
+atlas = ExtResource("17_executed")
 region = Rect2(704, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="executed_5"]
-atlas = ExtResource("16_executed")
+atlas = ExtResource("17_executed")
 region = Rect2(880, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="executed_6"]
-atlas = ExtResource("16_executed")
+atlas = ExtResource("17_executed")
 region = Rect2(1056, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_head_0"]
-atlas = ExtResource("17_death_head")
+atlas = ExtResource("18_death_head")
 region = Rect2(0, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_head_1"]
-atlas = ExtResource("17_death_head")
+atlas = ExtResource("18_death_head")
 region = Rect2(176, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_head_2"]
-atlas = ExtResource("17_death_head")
+atlas = ExtResource("18_death_head")
 region = Rect2(352, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_head_3"]
-atlas = ExtResource("17_death_head")
+atlas = ExtResource("18_death_head")
 region = Rect2(528, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_head_4"]
-atlas = ExtResource("17_death_head")
+atlas = ExtResource("18_death_head")
 region = Rect2(704, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_head_5"]
-atlas = ExtResource("17_death_head")
+atlas = ExtResource("18_death_head")
 region = Rect2(880, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_head_6"]
-atlas = ExtResource("17_death_head")
+atlas = ExtResource("18_death_head")
 region = Rect2(1056, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_head_7"]
-atlas = ExtResource("17_death_head")
+atlas = ExtResource("18_death_head")
 region = Rect2(1232, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_head_8"]
-atlas = ExtResource("17_death_head")
+atlas = ExtResource("18_death_head")
 region = Rect2(1408, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_head_9"]
-atlas = ExtResource("17_death_head")
+atlas = ExtResource("18_death_head")
 region = Rect2(1584, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_head_10"]
-atlas = ExtResource("17_death_head")
+atlas = ExtResource("18_death_head")
 region = Rect2(1760, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_arm_0"]
-atlas = ExtResource("18_death_arm")
+atlas = ExtResource("19_death_arm")
 region = Rect2(0, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_arm_1"]
-atlas = ExtResource("18_death_arm")
+atlas = ExtResource("19_death_arm")
 region = Rect2(176, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_arm_2"]
-atlas = ExtResource("18_death_arm")
+atlas = ExtResource("19_death_arm")
 region = Rect2(352, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_arm_3"]
-atlas = ExtResource("18_death_arm")
+atlas = ExtResource("19_death_arm")
 region = Rect2(528, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_arm_4"]
-atlas = ExtResource("18_death_arm")
+atlas = ExtResource("19_death_arm")
 region = Rect2(704, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_arm_5"]
-atlas = ExtResource("18_death_arm")
+atlas = ExtResource("19_death_arm")
 region = Rect2(880, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_arm_6"]
-atlas = ExtResource("18_death_arm")
+atlas = ExtResource("19_death_arm")
 region = Rect2(1056, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_arm_7"]
-atlas = ExtResource("18_death_arm")
+atlas = ExtResource("19_death_arm")
 region = Rect2(1232, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_arm_8"]
-atlas = ExtResource("18_death_arm")
+atlas = ExtResource("19_death_arm")
 region = Rect2(1408, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_arm_9"]
-atlas = ExtResource("18_death_arm")
+atlas = ExtResource("19_death_arm")
 region = Rect2(1584, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_arm_10"]
-atlas = ExtResource("18_death_arm")
+atlas = ExtResource("19_death_arm")
 region = Rect2(1760, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_arm_11"]
-atlas = ExtResource("18_death_arm")
+atlas = ExtResource("19_death_arm")
 region = Rect2(1936, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_leg_0"]
-atlas = ExtResource("19_death_leg")
+atlas = ExtResource("20_death_leg")
 region = Rect2(0, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_leg_1"]
-atlas = ExtResource("19_death_leg")
+atlas = ExtResource("20_death_leg")
 region = Rect2(176, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_leg_2"]
-atlas = ExtResource("19_death_leg")
+atlas = ExtResource("20_death_leg")
 region = Rect2(352, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_leg_3"]
-atlas = ExtResource("19_death_leg")
+atlas = ExtResource("20_death_leg")
 region = Rect2(528, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_leg_4"]
-atlas = ExtResource("19_death_leg")
+atlas = ExtResource("20_death_leg")
 region = Rect2(704, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_leg_5"]
-atlas = ExtResource("19_death_leg")
+atlas = ExtResource("20_death_leg")
 region = Rect2(880, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_leg_6"]
-atlas = ExtResource("19_death_leg")
+atlas = ExtResource("20_death_leg")
 region = Rect2(1056, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_leg_7"]
-atlas = ExtResource("19_death_leg")
+atlas = ExtResource("20_death_leg")
 region = Rect2(1232, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_leg_8"]
-atlas = ExtResource("19_death_leg")
+atlas = ExtResource("20_death_leg")
 region = Rect2(1408, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_leg_9"]
-atlas = ExtResource("19_death_leg")
+atlas = ExtResource("20_death_leg")
 region = Rect2(1584, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_leg_10"]
-atlas = ExtResource("19_death_leg")
+atlas = ExtResource("20_death_leg")
 region = Rect2(1760, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_leg_11"]
-atlas = ExtResource("19_death_leg")
+atlas = ExtResource("20_death_leg")
 region = Rect2(1936, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_waist_0"]
-atlas = ExtResource("20_death_waist")
+atlas = ExtResource("21_death_waist")
 region = Rect2(0, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_waist_1"]
-atlas = ExtResource("20_death_waist")
+atlas = ExtResource("21_death_waist")
 region = Rect2(176, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_waist_2"]
-atlas = ExtResource("20_death_waist")
+atlas = ExtResource("21_death_waist")
 region = Rect2(352, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_waist_3"]
-atlas = ExtResource("20_death_waist")
+atlas = ExtResource("21_death_waist")
 region = Rect2(528, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_waist_4"]
-atlas = ExtResource("20_death_waist")
+atlas = ExtResource("21_death_waist")
 region = Rect2(704, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_waist_5"]
-atlas = ExtResource("20_death_waist")
+atlas = ExtResource("21_death_waist")
 region = Rect2(880, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_waist_6"]
-atlas = ExtResource("20_death_waist")
+atlas = ExtResource("21_death_waist")
 region = Rect2(1056, 0, 176, 128)
 
 [sub_resource type="AtlasTexture" id="death_waist_7"]
-atlas = ExtResource("20_death_waist")
+atlas = ExtResource("21_death_waist")
 region = Rect2(1232, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="hurt_b_0"]
+atlas = ExtResource("22_hurt_b")
+region = Rect2(0, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="hurt_b_1"]
+atlas = ExtResource("22_hurt_b")
+region = Rect2(176, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="hurt_b_2"]
+atlas = ExtResource("22_hurt_b")
+region = Rect2(352, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="hurt_b_3"]
+atlas = ExtResource("22_hurt_b")
+region = Rect2(528, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="hurt_b_4"]
+atlas = ExtResource("22_hurt_b")
+region = Rect2(704, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="reel_0"]
+atlas = ExtResource("23_reel")
+region = Rect2(0, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="reel_1"]
+atlas = ExtResource("23_reel")
+region = Rect2(176, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="reel_2"]
+atlas = ExtResource("23_reel")
+region = Rect2(352, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="reel_3"]
+atlas = ExtResource("23_reel")
+region = Rect2(528, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="reel_4"]
+atlas = ExtResource("23_reel")
+region = Rect2(704, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="parried_0"]
+atlas = ExtResource("24_parried")
+region = Rect2(0, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="parried_1"]
+atlas = ExtResource("24_parried")
+region = Rect2(176, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="parried_2"]
+atlas = ExtResource("24_parried")
+region = Rect2(352, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="parried_3"]
+atlas = ExtResource("24_parried")
+region = Rect2(528, 0, 176, 128)
+
+[sub_resource type="AtlasTexture" id="parried_4"]
+atlas = ExtResource("24_parried")
+region = Rect2(704, 0, 176, 128)
 
 [resource]
 animations = [{
@@ -873,6 +965,32 @@ animations = [{
 "loop": false,
 "name": &"bash",
 "speed": 12.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("sweep_0")
+}, {
+"duration": 1.50,
+"texture": SubResource("sweep_1")
+}, {
+"duration": 1.70,
+"texture": SubResource("sweep_2")
+}, {
+"duration": 0.80,
+"texture": SubResource("sweep_3")
+}, {
+"duration": 1.00,
+"texture": SubResource("sweep_4")
+}, {
+"duration": 1.20,
+"texture": SubResource("sweep_5")
+}, {
+"duration": 1.20,
+"texture": SubResource("sweep_6")
+}],
+"loop": false,
+"name": &"sweep",
+"speed": 13.0
 }, {
 "frames": [{
 "duration": 1.00,
@@ -1165,4 +1283,64 @@ animations = [{
 "loop": false,
 "name": &"death_waist",
 "speed": 10.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("hurt_b_0")
+}, {
+"duration": 1.20,
+"texture": SubResource("hurt_b_1")
+}, {
+"duration": 0.80,
+"texture": SubResource("hurt_b_2")
+}, {
+"duration": 0.80,
+"texture": SubResource("hurt_b_3")
+}, {
+"duration": 1.00,
+"texture": SubResource("hurt_b_4")
+}],
+"loop": false,
+"name": &"hurt_b",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("reel_0")
+}, {
+"duration": 1.20,
+"texture": SubResource("reel_1")
+}, {
+"duration": 1.20,
+"texture": SubResource("reel_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("reel_3")
+}, {
+"duration": 1.00,
+"texture": SubResource("reel_4")
+}],
+"loop": false,
+"name": &"reel",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("parried_0")
+}, {
+"duration": 1.60,
+"texture": SubResource("parried_1")
+}, {
+"duration": 1.60,
+"texture": SubResource("parried_2")
+}, {
+"duration": 0.60,
+"texture": SubResource("parried_3")
+}, {
+"duration": 0.60,
+"texture": SubResource("parried_4")
+}],
+"loop": false,
+"name": &"parried",
+"speed": 8.0
 }]

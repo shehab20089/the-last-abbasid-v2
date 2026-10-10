@@ -129,6 +129,18 @@ layer = 20
 
 [node name="Card" parent="Menus" instance=${id(res("features/menu/story_card.tscn"))}]
 
+[node name="Lamp" parent="Menus" instance=${id(res("features/menu/lamp_menu.tscn"))}]
+
+[node name="Techniques" parent="Menus" instance=${id(res("features/menu/techniques_screen.tscn"))}]
+
+[node name="Guide" parent="Menus" instance=${id(res("features/menu/guide_screen.tscn"))}]
+
+[node name="Journal" parent="Menus" instance=${id(res("features/menu/journal_screen.tscn"))}]
+
+[node name="Codex" parent="Menus" instance=${id(res("features/menu/codex_screen.tscn"))}]
+
+[node name="Lesson" parent="Menus" instance=${id(res("features/menu/lesson_screen.tscn"))}]
+
 [node name="Fade" type="CanvasLayer" parent="."]
 layer = 30
 

@@ -19,6 +19,12 @@ func try_attack(attack: AttackDefinition) -> bool:
 	return true
 
 
+## A veteran knows a held blow when he sees one: he steps back out of its reach.
+func answer_charge() -> bool:
+	retreat(0.6)
+	return true
+
+
 ## The backhand follows at once, turned on wherever the hero has gone.
 func after_attack() -> void:
 	if _chain and soldier.can_act() and target != null and not target.dead:

@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="AttackDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Hook"
+animation = &"axe_hook"
+active_from = 3
+active_to = 4
+recovery_from = 5
+telegraph_frame = 1
+damage = 8.0
+poise_damage = 14.0
+stamina_damage = 30.0
+knockback = 240.0
+strike_at = 62.0
+seeks = 30.0
+pulls = true
+hit_stop = 0.08
+camera_shake = 2.2
+guard_break = true
+lunge_speed = 110.0
+lunge_from = 2
+lunge_to = 2
+stamina_cost = 0.0
+swing_cue = &"enemy_swing_heavy"
+hit_cue = &"shield_bash"

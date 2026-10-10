@@ -1,0 +1,229 @@
+[gd_resource type="Resource" script_class="CinematicDefinition" load_steps=41 format=3]
+
+[ext_resource type="Script" path="res://features/cinematics/cinematic_definition.gd" id="1_1"]
+[ext_resource type="Script" path="res://features/cinematics/cinematic_shot.gd" id="2_2"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/peace.png" id="3_3"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/peace_depth.png" id="4_4"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/peace_masks.png" id="5_5"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/intro/palette_0.png" id="6_6"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/library.png" id="7_7"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/library_depth.png" id="8_8"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/library_masks.png" id="9_9"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/intro/palette_1.png" id="10_10"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/map.png" id="11_11"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/map_depth.png" id="12_12"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/map_masks.png" id="13_13"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/intro/palette_2.png" id="14_14"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/intro/map_ink.png" id="15_15"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/intro/map_times.png" id="16_16"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/host.png" id="17_17"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/host_depth.png" id="18_18"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/host_masks.png" id="19_19"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/intro/palette_3.png" id="20_20"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/siege.png" id="21_21"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/siege_depth.png" id="22_22"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/siege_masks.png" id="23_23"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/intro/palette_4.png" id="24_24"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/keyart.png" id="25_25"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/keyart_depth.png" id="26_26"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/keyart_masks.png" id="27_27"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/intro/palette_5.png" id="28_28"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/hero.png" id="29_29"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/hero_depth.png" id="30_30"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/paintings/hero_masks.png" id="31_31"]
+[ext_resource type="Texture2D" path="res://assets/cinematics/intro/palette_6.png" id="32_32"]
+
+[sub_resource type="Resource" id="Resource_shot0"]
+script = ExtResource("2_2")
+painting = ExtResource("3_3")
+depth = ExtResource("4_4")
+masks = ExtResource("5_5")
+painting_rect = Rect2(0, 0, 1672, 941)
+palette = ExtResource("6_6")
+camera_keys = Array[Rect2]([Rect2(0, 110, 1672, 700), Rect2(420, 150, 1100, 460)])
+camera_times = PackedFloat32Array(0, 1)
+reference = 0.5
+parallax = 0.0958
+grade_from = PackedFloat32Array(0.9, 1, 0.9, 1, 1, 1)
+grade_to = PackedFloat32Array(0.9, 1, 0.9, 1, 1, 1)
+caption = "CINE_PLACE_BAGHDAD"
+lines = PackedStringArray("INTRO_4", "CINE_INTRO_SEAT")
+lead = 1.4
+tail = 1
+minimum = 12
+fade_in = 1.2
+fire = 0.3
+water = 0.7
+sway = 0.6
+drift = Vector2(10, 0)
+birds = 3
+ambience = &"river"
+
+[sub_resource type="Resource" id="Resource_shot1"]
+script = ExtResource("2_2")
+painting = ExtResource("7_7")
+depth = ExtResource("8_8")
+masks = ExtResource("9_9")
+painting_rect = Rect2(0, 0, 1672, 941)
+palette = ExtResource("10_10")
+camera_keys = Array[Rect2]([Rect2(130, 160, 1300, 544), Rect2(520, 250, 820, 343)])
+camera_times = PackedFloat32Array(0, 1)
+reference = 0.5
+parallax = 0.0823
+grade_from = PackedFloat32Array(0.9, 1, 0.9, 1, 1, 1)
+grade_to = PackedFloat32Array(0.9, 1, 0.9, 1, 1, 1)
+lines = PackedStringArray("CINE_INTRO_LEARNING")
+lead = 1
+tail = 1
+minimum = 7
+dissolve = 1.4
+fire = 0.35
+water = 0.5
+sway = 0.4
+motes = 26
+
+[sub_resource type="Resource" id="Resource_shot2"]
+script = ExtResource("2_2")
+painting = ExtResource("11_11")
+depth = ExtResource("12_12")
+masks = ExtResource("13_13")
+painting_rect = Rect2(0, 0, 1672, 941)
+palette = ExtResource("14_14")
+camera_keys = Array[Rect2]([Rect2(46, 110, 1578, 660), Rect2(90, 128, 1490, 623), Rect2(400, 330, 700, 293)])
+camera_times = PackedFloat32Array(0, 0.72, 1)
+reference = 0.5
+parallax = 0.0342
+grade_from = PackedFloat32Array(1, 1.04, 0.98, 1, 0.98, 0.94)
+grade_to = PackedFloat32Array(1, 1.04, 0.98, 1, 0.98, 0.94)
+lines = PackedStringArray("CINE_INTRO_EAST", "CINE_INTRO_HULEGU")
+lead = 2.8
+tail = 2.8
+minimum = 14
+dissolve = 1.2
+fire = 0.4
+ambience = &"wind"
+cue_names = Array[StringName]([&"manuscript"])
+cue_times = PackedFloat32Array(0.01)
+map_ink = ExtResource("15_15")
+map_times = ExtResource("16_16")
+map_rect = Rect2(262, 136, 1146, 630)
+map_labels = PackedStringArray("MAP_EUPHRATES", "MAP_TIGRIS", "MAP_EGYPT", "MAP_SYRIA", "MAP_ARABIA", "MAP_CASPIAN", "MAP_BAGHDAD", "MAP_CALIPH", "MAP_MONGOLS", "MAP_PERSIA", "MAP_SAMARKAND", "1256", "MAP_ALAMUT", "MAP_HAMADAN", "1257")
+map_points = PackedVector2Array(590.3731, 401.125, 634.45, 356.5, 341.3385, 619, 502.2192, 477.25, 647.6731, 661, 823.9808, 259.375, 667.5077, 485.375, 669.7115, 540.25, 1055.3846, 227.875, 923.1538, 516.625, 1165.5769, 286.6875, 1077.4231, 361.75, 803.7054, 368.95, 787.8654, 440, 804.1462, 469.375)
+map_phases = PackedFloat32Array(0.55, 0.6, 0.6, 0.65, 0.7, 0.75, 0.8, 0.88, 1.35, 1.6, 2.03, 2.25, 2.5, 2.82, 2.9)
+
+[sub_resource type="Resource" id="Resource_shot3"]
+script = ExtResource("2_2")
+painting = ExtResource("17_17")
+depth = ExtResource("18_18")
+masks = ExtResource("19_19")
+painting_rect = Rect2(0, 0, 1672, 941)
+palette = ExtResource("20_20")
+camera_keys = Array[Rect2]([Rect2(0, 60, 1672, 700), Rect2(180, 210, 1100, 460)])
+camera_times = PackedFloat32Array(0, 1)
+reference = 0.5
+parallax = 0.1071
+grade_from = PackedFloat32Array(0.95, 1.04, 0.97, 1, 1, 1)
+grade_to = PackedFloat32Array(0.95, 1.04, 0.97, 1, 1, 1)
+caption = "CINE_PLACE_ROAD"
+lines = PackedStringArray("CINE_INTRO_WINTER", "CINE_INTRO_REFUSAL")
+lead = 1.2
+tail = 1
+minimum = 11
+dissolve = 1.2
+sway = 0.8
+snow = 90
+
+[sub_resource type="Resource" id="Resource_shot4"]
+script = ExtResource("2_2")
+painting = ExtResource("21_21")
+depth = ExtResource("22_22")
+masks = ExtResource("23_23")
+painting_rect = Rect2(0, 0, 1672, 941)
+palette = ExtResource("24_24")
+camera_keys = Array[Rect2]([Rect2(200, 250, 1000, 418), Rect2(0, 120, 1672, 700)])
+camera_times = PackedFloat32Array(0, 1)
+reference = 0.5
+parallax = 0.0841
+grade_from = PackedFloat32Array(1.22, 1.06, 1, 1, 1, 1)
+grade_to = PackedFloat32Array(1.22, 1.06, 1, 1, 1, 1)
+caption = "CINE_PLACE_WALLS"
+lines = PackedStringArray("CINE_INTRO_SIEGE")
+lead = 1.2
+tail = 1.2
+minimum = 9
+dissolve = 1
+fire = 0.5
+sway = 0.5
+smoke = 0.35
+smoke_area = Rect2(0, 0, 1672, 360)
+embers = 40
+ash = 26
+impact_points = PackedVector2Array(1185, 430, 1430, 410)
+impact_times = PackedFloat32Array(0.36, 0.72)
+ambience = &"fire_wind"
+cue_names = Array[StringName]([&"siege_impact", &"siege_impact"])
+cue_times = PackedFloat32Array(0.355, 0.715)
+
+[sub_resource type="Resource" id="Resource_shot5"]
+script = ExtResource("2_2")
+painting = ExtResource("25_25")
+depth = ExtResource("26_26")
+masks = ExtResource("27_27")
+painting_rect = Rect2(0, 0, 1672, 941)
+palette = ExtResource("28_28")
+camera_keys = Array[Rect2]([Rect2(880, 40, 760, 318), Rect2(250, 120, 1000, 418)])
+camera_times = PackedFloat32Array(0, 1)
+reference = 0.5
+parallax = 0.0441
+grade_from = PackedFloat32Array(1.22, 1.06, 1, 1, 1, 1)
+grade_to = PackedFloat32Array(1.22, 1.06, 1, 1, 1, 1)
+lines = PackedStringArray("INTRO_1", "INTRO_2")
+lead = 1
+tail = 1
+minimum = 11
+dissolve = 1
+fire = 0.5
+sway = 0.5
+smoke = 0.3
+smoke_area = Rect2(700, 0, 972, 230)
+embers = 50
+ash = 30
+
+[sub_resource type="Resource" id="Resource_shot6"]
+script = ExtResource("2_2")
+painting = ExtResource("29_29")
+depth = ExtResource("30_30")
+masks = ExtResource("31_31")
+painting_rect = Rect2(0, 0, 765, 1402)
+palette = ExtResource("32_32")
+camera_keys = Array[Rect2]([Rect2(0, 500, 760, 318), Rect2(0, 40, 760, 318)])
+camera_times = PackedFloat32Array(0, 1)
+reference = 0.5
+parallax = 0.062
+grade_from = PackedFloat32Array(1.22, 1.06, 1, 1, 1, 1)
+grade_to = PackedFloat32Array(1.22, 1.06, 1, 1, 1, 1)
+lines = PackedStringArray("INTRO_3")
+lead = 1
+tail = 1.2
+minimum = 8
+dissolve = 1
+fire = 0.45
+sway = 0.6
+smoke = 0.3
+smoke_area = Rect2(450, 0, 315, 500)
+embers = 40
+ash = 20
+
+[sub_resource type="Resource" id="Resource_shot7"]
+script = ExtResource("2_2")
+title = "GAME_TITLE"
+lead = 0.8
+tail = 0.6
+minimum = 4.5
+dissolve = 1.2
+embers = 34
+
+[resource]
+script = ExtResource("1_1")
+id = &"intro"
+shots = Array[ExtResource("2_2")]([SubResource("Resource_shot0"), SubResource("Resource_shot1"), SubResource("Resource_shot2"), SubResource("Resource_shot3"), SubResource("Resource_shot4"), SubResource("Resource_shot5"), SubResource("Resource_shot6"), SubResource("Resource_shot7")])

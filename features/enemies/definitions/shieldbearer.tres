@@ -7,7 +7,8 @@
 
 [resource]
 script = ExtResource("1_script")
-display_name = "Georgian Shield-bearer"
+display_name = "ENEMY_SHIELDBEARER"
+elite = true
 max_health = 80.0
 max_poise = 60.0
 walk_speed = 34.0

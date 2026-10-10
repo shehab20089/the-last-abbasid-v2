@@ -23,6 +23,13 @@ export const FINISHERS = {
     durations: [1.4, 1, 1, 0.8, 1.6, 1.2, 1.2, 2.4],
     cuts: { 3: "waist" }, bursts: [], slow: [3, 5], death: 3,
   },
+  // Pinned where he lies: a man thrown to the ground, the blade driven down into his chest and wrenched
+  // out. Played on a man down (`ground`), not on one standing.
+  ground: {
+    name: "Pinned", distance: 2, fps: 12, ground: true,
+    durations: [1.0, 1.2, 1.0, 2.2, 1.2, 1.2, 1.4, 2.4],
+    cuts: {}, bursts: [3, 5], slow: [3, 4], death: 4,
+  },
   // His sword arm, then, as he reels, his head.
   disarm: {
     name: "Disarm", distance: 34, fps: 12,

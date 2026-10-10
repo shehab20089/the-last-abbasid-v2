@@ -28,7 +28,7 @@
 - [Features](#features)
 - [How it plays](#how-it-plays)
   - [Your moves](#your-moves)
-  - [Learning on the road](#learning-on-the-road)
+  - [Growing stronger](#growing-stronger)
   - [Hulegu's army](#hulegus-army)
   - [Reading a blow](#reading-a-blow)
   - [Finishers](#finishers)
@@ -65,7 +65,7 @@ The characters and events are fiction set amid real history (see [The history be
 | 3 | **The Scholars' Quarter** | A college's tiled portal, its fountain, a library being torn apart and a river wall where the Tigris runs dark. Siege engineers lob burning naphtha. Save the keeper of the library and his catalogue. |
 | 4 | **The Last Gate** | First light along the southern wall: past the Mongols' camp, up onto the rampart where mace-bearers hold the walk, down through the wreck of the siege to the gate square, where **Toqto Noyan, captain of a thousand**, holds the last gate. |
 
-A story card carries you between levels, and the chapter ends with a tally of the lives you saved and the pages you rescued.
+The chapter opens on a **painted cinematic** that tells the world of 1258 without a narrator: the City of Peace before the war, its libraries, an ink map on which the Mongol advance spreads from the east and Hülegü's road draws itself to Hamadan, the army in the snow, the siege, the fall, and Yusuf on the wall. Between the levels and at the end the story goes on the same way (the river running black with ink, the library burning, the column of survivors at sunrise), and the chapter ends with a tally of the lives you saved and the pages you rescued.
 
 ---
 
@@ -77,13 +77,19 @@ A story card carries you between levels, and the chapter ends with a tally of th
 
 *The title screen, and the four levels of Chapter I (the distant cities are painted from the project's concept art).*
 
+<img src="docs/media/cinematic_city.png" alt="The opening cinematic: Baghdad at peace" width="49%"> <img src="docs/media/cinematic_map.png" alt="The opening cinematic: the ink map" width="49%">
+
+<img src="docs/media/cinematic_siege.png" alt="The opening cinematic: the siege" width="49%"> <img src="docs/media/cinematic_dawn.png" alt="The ending: the column at dawn" width="49%">
+
+*The cinematics: the City of Peace before the war, the ink map of Hülegü's road, the siege, and the column of survivors at dawn.*
+
 <img src="docs/media/fight.png" alt="A fight in the Fallen Market" width="49%"> <img src="docs/media/dialogue.png" alt="A conversation at the market's gate" width="49%">
 
 *Sword and shield in the Booksellers' Market; Hamid, a wounded guard, at the gate.*
 
 <img src="docs/media/cast.png" alt="The whole cast lined up in the Fallen Market" width="98%">
 
-*The cast: a refugee, the siege engineer, the keshig veteran, the Georgian shield-bearer, Yusuf, the swordsman, the spearman, the archer, the mace-bearer and Toqto Noyan.*
+*The cast: a refugee, the siege engineer, the Kipchak skirmisher, the keshig veteran, the Georgian shield-bearer, Yusuf, the swordsman, the spearman, the archer, the Georgian axeman, the mace-bearer and Toqto Noyan.*
 
 <img src="docs/media/shieldbearer.png" alt="A Georgian shield-bearer on the bathhouse street" width="32%"> <img src="docs/media/wall_walk.png" alt="A mace-bearer between two archers on the wall walk" width="32%"> <img src="docs/media/engineer.png" alt="A siege engineer above an execution on the river wall" width="32%">
 
@@ -103,13 +109,18 @@ A story card carries you between levels, and the chapter ends with a tally of th
 
 ## Features
 
-- **Combat built on reading and answering.** Every enemy blow glints before it lands, in white, amber or red, telling you whether to parry, jump or roll. Hits land with hit-stop, trauma shake, sparks and blood. A full move set: a three-cut combo, a guard-breaking cleave, a parry and riposte, a shield bash, a dodge roll and a rolling cut, an air slash, a plunging strike, throwing knives, and four scripted finishers.
-- **Seven kinds of soldier and a two-phase boss**, each asking a different question: the swordsman's guard, the spearman's reach and low sweep, the archer's arrows, the keshig veteran's delayed second cut, the unflinching mace-bearer, the Georgian shield-bearer's wall, the siege engineer's fire, and Toqto Noyan.
+- **Combat built on reading and answering.** Every enemy blow glints before it lands, in white, amber, violet or red, telling you whether to block, jump, parry or roll. Hits land with hit-stop, a camera kick, sparks and blood; great blows **throw men off their feet**, and a man down can be finished where he lies. **Breath** pays for everything and is earned back by fighting well: blows that land, parries, a guard raised in the glint at a blow's end (**Steady Breath**) and a roll timed to the last instant (a **Close Call**: time slows and your next blow is a counter). A deep move set: a light string of three cuts and a **kick** that branches into an **ender** on the heavy button at each step (a pommel strike, a whirling cut all round, an executioner's cleave), a **heavy string** of three (the cleave, a rising cleave, a windmill of the blade), a **low cut** under a raised shield and a **reaping sweep** that floors every man about you, a **guarded thrust** from behind the shield, a **riposte** of its own, a **running slash**, a **down-stab** that springs you off whatever it strikes, a **delayed cut** that catches a guard as it drops, a guard-breaking cleave you can **hold to charge** in three levels, a **running thrust**, a parry and riposte, a shield bash, a dodge roll and a rolling cut, an air slash, a plunging strike, throwing knives, and four scripted finishers. The newer moves are taught two a level, each just before the soldiers who call for it.
+- **Resolve and five Arts.** Fighting well (parries, finishers, landed blows) fills a meter that being struck drains. Spend it on great techniques on their own button: the **Storm of Blades**, the **Piercing Line**, the **Naft Flask**, the **Second Wind** and the **Judgment of the Guard**.
+- **A guardsman who grows the way you choose.** **Honour**, earned by saving captives, rescuing pages, finding the tokens of fallen guardsmen and fighting well, buys techniques at the lamps from a tree of fifteen in three branches (Blade, Shield, Shadow), unlearned for free. **Eight keepsakes**, most given by the people you save, change how you fight. Soldiers grow tougher level by level and learn to answer the new moves, so the stronger hero still meets resistance.
+- **Nine kinds of soldier and a two-phase boss**, each asking a different question, and fighting with more than one move: the swordsman's guard, feint and chained cut, the spearman's reach, running lunge and low sweep, the archer's arrows and kick, the keshig veteran's delayed second cut and his parry, the unflinching mace-bearer, the Georgian shield-bearer's wall, the siege engineer's fire, the **Kipchak skirmisher** who dashes in and leaps clear of heavy blows, the **Georgian axeman** who hooks your shield aside and drags you in, and Toqto Noyan.
 - **Encounters that are designed, not scattered.** Soldiers are about their business when you find them: looting, burning books, stabbing at the dead, holding a sabre over a kneeling captive. A blow they never see coming kills them. Executions run on a clock you can beat or lose, and ambushes spring from behind.
-- **A technique learned in each level.** Pages of a treatise on the arts of war teach the shield bash, the plunging strike and the rolling cut just before the soldiers who call for them, and a freed captive gives you knives.
+- **Something new every few minutes.** Pages of a treatise on the arts of war teach techniques and Arts just before the soldiers who call for them; Hamid, a freed captive and a dead engineer give you others; the lamps sell the rest.
 - **A brutal, historical world.** Dismemberment with tumbling pieces, pumping wounds and pooling blood, all derived from the same 3D models as the bodies; refugees cut down as they run; the dead lying in the streets. A Gore setting tones it down.
 - **Every picture and sound generated by code.** Characters are 3D models built, rigged and animated in Node.js and rendered into pixel art by the project's own rasterizer and shader. The distant cities are resampled from concept paintings, the nearer streets are painted procedurally in the same palette, and the effects, UI and fonts are drawn by script. The music is synthesized: an oud over a drone in a maqam for each place.
-- **English and Arabic**, switchable in Settings.
+- **Never lost, taught where you look.** A speech sign hangs over everyone with something to say (gold over the one your objective needs), their name and the button to speak over them as you come near; they call to you as you approach. The objective is marked over its target, or by an arrow at the screen's edge with how far it is, and every change is announced. Unlit lamps glow and carry their sign from afar. Lessons wait their turn on a card at the top of the screen, timed to be read, never lost; a new technique, the first lamp and the first warning of each colour stop the game on a card that shows the move performed; every lesson is kept in the pause menu's **Guide**, beside a **Journal** (the objective, the people met, what is left to find on this street) and a **Codex** of the pages you rescued. Buttons are drawn as keys, for whichever keyboard or pad you hold.
+- **Settings for the player you are**: every action rebindable (keyboard and pad), lessons full, short or off, window size, vsync and brightness, screen shake, flashes, hit-stop and slow motion, and warning colours for colour-blind eyes.
+- **Cinematics painted in motion.** The story between the levels is told in letterboxed shots of concept paintings, cut into depths that drift apart as a slow camera moves, with fire that breathes, water that ripples, banners that stir, smoke, embers, snow and birds, stones that strike the walls, and a map drawn in ink before your eyes; every frame is mapped to the shot's own palette, so it stays pixel art. One short line at a time, timed to be read in either language; Enter hurries it on, Esc skips it (at a press once seen).
+- **English and Arabic**, switchable in Settings (the system's language at first), every screen laid out right to left in Arabic.
 - **Tested end to end.** Headless suites cover the hero, every soldier, finishers and the whole chapter played through the real session, and an autoplayer finishes all four levels with real physics.
 
 ---
@@ -126,31 +137,87 @@ A story card carries you between levels, and the chapter ends with a tally of th
 
 | Move | How | What it does |
 | --- | --- | --- |
-| **Light combo** | Attack, up to three times | A forehand cut, a rising backhand and a lunging thrust. The thrust's poise damage staggers most soldiers. |
+| **Light string** | Attack, up to four times | A forehand cut, a rising backhand, a lunging thrust (its poise damage staggers most soldiers) and a **kick** that throws a man back: into a fire, off a ledge, out of a crowd. A light blow on a raised shield **glances off** and breaks the string: go under it, break it, or bash it. |
+| **Low cut** | Down + Attack | A crouching cut at the shins that passes under a raised round shield (not a shield wall). Attack again for the rising backhand. |
+| **Enders** | Heavy as a cut goes live | After the first cut, the **pommel strike** (knocks a guard aside; the cuts go on); after the second, the **whirling cut** (a full turn that strikes men on both sides and throws them back); after the thrust, the **executioner's cleave** (breaks any guard). |
+| **Delayed cut** | Attack, attack, a beat, attack | A heavy cut that comes as a soldier lowers the shield he raised against your string. |
 | **Heavy cleave** | Heavy | A slow overhead blow that **breaks a raised guard**. |
-| **Block / parry** | Hold Block | Blocks frontal blows for stamina. Raised just as a blow lands (a 0.17 s window), it **parries**: the soldier staggers and your next blow is a **riposte** at 1.8× damage. |
+| **Heavy string** | Heavy, twice more | The **rising cleave**, ripped up out of the street (it sends a man reeling), then the **windmill**, a whole circle of the blade that strikes each time it passes and throws men down. |
+| **Reaping sweep** | Down + Heavy | A whole turn at the shins that throws every man about you off his feet. Taught by a page in the Fallen Market. |
+| **Charged cleave** | Hold Heavy | The blade held raised: at the second glint it breaks shield walls; at the third no guard stops it and the men beside him flinch. A blow or a roll breaks it off. Settings can make it a toggle (press to begin, press to strike). |
+| **Running thrust** | Heavy on the run | The point driven forward in a 110 px dash that ends in the first man. |
+| **Running slash** | Attack on the run | A leaping cut that closes the gap; the string carries on from it. |
+| **Block / parry** | Hold Block | Blocks frontal blows for breath. Raised just as a blow lands (a 0.17 s window), it **parries**: the soldier is thrown open, you draw breath, and your next blow is a **riposte** at 1.8× damage. |
+| **Steady Breath** | Block in the glint as your blow ends | Steel glints on Yusuf for an instant as each blow finishes; raise the shield in it and you draw breath (+20) and go straight into your guard. |
+| **Close Call** | Dodge just as a blow comes | A roll in its first instant under a blow that would have landed: time slows, you draw breath (+20), and for a second your next blow is a counter. |
 | **Shield bash** | Hold Block + Heavy | Fast and cheap. Breaks any raised guard, even a shield-bearer's wall, and shoves a man back. |
+| **Guarded thrust** | Hold Block + Attack | A stab over the shield's rim with the shield still up. Fast and cheap; again and again. |
+| **Riposte** | Attack after a parry or a close call | A lunge at the throat of the man you threw open. |
 | **Dodge roll** | Dodge | Invulnerable for most of its length. You roll **through** soldiers. |
 | **Rolling cut** | Attack late in a roll | Up out of the roll in a rising cut, turned on the man you rolled past. Attack again for the thrust. |
-| **Air slash** | Attack in the air | Two per jump, each checking your fall a moment. |
+| **Air slash** | Attack in the air | Two per jump, a forehand and a backhand, each checking your fall a moment. |
+| **Down-stab** | Down + Attack in the air | The point driven down beneath you; strike a man or his shield and you spring back up, ready to slash again. |
 | **Plunging strike** | Heavy in the air | The blade turned point-down; you drop on the man below and land on it. Breaks guards and shield walls; kills a man who never saw it. |
 | **Drop through planks** | Down + Jump on a plank | Drop from a gallery onto whoever is below. |
 | **Throwing knife** | Throw | Fast and flat. Three, refilled at lamps. A raised shield turns them. |
-| **Finisher** | Heavy, on a staggered soldier glowing red | One of four scripted kills ([below](#finishers)). |
+| **Finisher** | Heavy, on a staggered soldier glowing pale blue | One of four scripted kills ([below](#finishers)). |
+| **Ground stroke** | Heavy over a man thrown down | The blade driven down into him where he lies; wounded to half, it pins him for good. |
 | **Remedy** | Heal | Drinks a remedy (+45 health). Three, refilled at lamps. |
 
-Stamina pays for attacks, blocks and rolls and recovers when you pause. Run dry and your guard breaks.
+**Breath** (the bar under your health) pays for attacks, blocks and rolls: a full string and a roll fit in one bar. It comes back quickly once you pause, and **every blow that lands gives some back** (more for heavier ones), as do parries, Steady Breath and close calls, so fighting well keeps you breathing while flailing leaves you winded: at zero you gasp and wait a moment, and an action you cannot pay for is refused. Run dry behind the shield and your guard breaks. The great blows (the charged cleave, the executioner's cleave, the plunge) **throw men down**; a heavy blow that does not makes them reel. The heaviest enemy blows (the mace-bearer's and the axeman's overheads, the Captain's smash) throw you down too: roll out of it, or get up untouched.
 
-### Learning on the road
+You do not have to remember any of this. A move you learn stops the game once to show itself, performed, with its buttons; then, when it can be made, its button and name float over Yusuf (*K Pommel Strike* as a cut lands, *Hold K* as the cleave rises, *I Storm of Blades* once the resolve is there), until you have used it three times; **Settings → Move Prompts** keeps them always or turns them off. The pause menu's **Techniques** page shows every move performed on a small stage while its buttons light up in order (for the keyboard or the gamepad, whichever you last touched), and the moves still ahead with where they come from. The lamp menu shows each technique the same way before you buy it, and a page of a treatise shows the move it teaches.
 
-You start with the cuts, the cleave, the shield, the roll, the air slash and the drop through planks. The rest is learned in the story, each just before it is needed:
+### Growing stronger
+
+<div align="center">
+<img src="docs/media/storm.png" alt="The Storm of Blades among three soldiers" width="98%">
+
+*The Storm of Blades: two full turns among three soldiers, every man cut again and again.*
+
+<img src="docs/media/lamp_tree.png" alt="The technique tree by a lamp" width="49%"> <img src="docs/media/techniques.png" alt="The Techniques page" width="49%">
+
+*By a lamp, the technique tree; in the pause menu, every move and where those still ahead come from.*
+</div>
+
+**The story teaches**, each just before it is needed:
 
 | Where | What | From |
 | --- | --- | --- |
+| The Fallen Market | **Charged cleave** | Hamid's counsel at the start (or a lesson before the first lamp, if you walk past him) |
+| The Fallen Market | **Reaping sweep** | A page of a treatise on arms, by the mosque lamp, before the ambush closes from both sides |
 | Streets of Ash | **Shield bash** | A page of a treatise on arms, by the bathhouse, before the first shield-bearer |
 | Streets of Ash | **Throwing knives** | Salim, freed with the captives at the square |
+| Streets of Ash | **Resolve** and the **Storm of Blades** | A page past the square's lamp, before the captors spring |
 | The Scholars' Quarter | **Plunging strike** | A page on the library's gallery, above the soldiers at their work |
+| The Scholars' Quarter | **Naft Flask** | The flasks of the first siege engineer you kill |
+| The Scholars' Quarter | **Piercing Line** | A page in the lecture hall, before the line of men at its end |
 | The Last Gate | **Rolling cut** | A page by the camp lamp, before the mace-bearers |
+| The Last Gate | **Second Wind** | Hamid, waiting at the camp |
+
+**Resolve and the Arts.** The amber bar under your breath fills as you fight well: each blow that lands (more for heavier ones), a parry (15), a riposte, a finisher (20), a kill (more for one taken unawares or from above), a captive saved (25). Each blow you take costs 10, and out of the fight anything above half ebbs back to half. You carry two Arts, chosen at a lamp: the first on the **Art** button, the second on its own button or the Art button behind your shield. Spending one stops the world for a heartbeat: the street drains to ash grey around Yusuf and the Art's name crosses the screen in gold, its Arabic above it.
+
+| Art | Resolve | What it does |
+| --- | --- | --- |
+| **Storm of Blades** | 50 | Three turns low with the blade out, steered as you go, every pass striking all round you and drawing men in; then a rising cut that throws them all down. Common soldiers caught in it die in it; nothing staggers you while you turn |
+| **Piercing Line** | 50 | Drawn low, then across the street in a blink (about 200 px), through every man in the line; as you flick the blade clean, all their wounds open at once and throw them down. No blow touches you in it, and it breaks shield walls |
+| **Naft Flask** | 50 | Greek fire: a fireball and a sheet of burning naphtha 150 px wide. Men caught are set ablaze and run burning (no blow, no guard), harmed as they go and setting alight the comrades they run into; no soldier walks into the fire. It burns you too |
+| **Second Wind** | 100 | The guard's cry throws back and staggers every man near you (the Captain only gives ground); then ten seconds of fury: health and breath back, blows that cost nothing and come a quarter faster, light blows that do not stop you, a little blood back with every blow that lands, each kill holding the fury a second longer |
+| **Judgment of the Guard** | 100 | Up to three men near you executed one after another, Yusuf crossing to each in a blink; a captain, or a hardened man still fresh, takes one great blow instead (40% of his strength, a fifth of the Captain's) |
+
+**Honour** is earned, never looted: a captive saved from the headsman (30), someone freed from their captors (10), a page rescued (15, a treatise page 20), a fallen guardsman's token found (25, two hidden in each level), a soldier killed (4, more for a finisher, a surprise, a plunge, a riposte or an Art; once per man), a level left behind (40). It is kept when you fall. Spend it by the lamps on the **technique tree**; unlearning it all costs nothing:
+
+| | The Blade | The Shield | The Shadow |
+| --- | --- | --- | --- |
+| 1 | Pommel Strike (60) | Steady Guard (60): blocking costs less | Quiet Step (60): busy soldiers hear you less |
+| 2 | Whirling Cut (90) | Riposte Mastery (90): a wider parry, a harder riposte | Bandolier (90): two more knives |
+| 3 | Delayed Cut (90) | Bash Mastery (90): a cheaper bash that staggers | Death from Above (90): a harder plunge that shakes men |
+| 4 | Executioner's Cleave (140) | Iron Will (140): reel a third less long | Running Thrust (140) |
+| 5 | Judgment of the Guard (200) | Wall of the Caliph (200): a parry restores, a third keepsake | Unseen (200): a surprise kill restores |
+
+**Keepsakes**, most given by those you save, change how you fight while worn (two at once, three with the Wall of the Caliph): the mother's red thread (remedies heal more), Ibrahim's reed pen (pages give twice the Honour), Salim's saffron sash (another knife, and a knife that kills comes back), the Bronze Seal of the Guard (a parry gives back breath), the librarian's ink-stone (a staggered man stays staggered longer), the prayer beads of the scholar by the fountain (finishers heal), a fallen guardsman's bracer (harder blows near the end of your strength) and an ash-black ribbon (resolve gathers faster, blows hurt more).
+
+**The road hardens you too:** each level left behind adds 10 health, while the soldiers ahead grow tougher (a Last Gate swordsman has 30% more health than a market one) and learn your moves: a veteran steps back from a cleave held back, a spearman thrusts into it, a man twice caught by a whirl keeps out of its reach, those near you give ground when you let an Art loose, and the Captain braces against the Arts.
 
 ### Hulegu's army
 
@@ -162,25 +229,28 @@ You start with the cuts, the cleave, the shield, the roll, the air slash and the
 
 | Soldier | How he fights | How to beat him |
 | --- | --- | --- |
-| **Swordsman** | Closes to sword's length; a quick cut and an armoured rising slash; raises his guard against combos. | Parry and riposte, or break his guard with the cleave or the bash. |
-| **Spearman** | Keeps you at spear's length; a long thrust, and a **low sweep** (amber) when you slip inside. | Get past the point; jump or roll the sweep, which no shield stops. |
-| **Archer** | Keeps his distance and shoots from rooftops and wagons; flees when his comrades fall. | A raised shield stops arrows; close in, or throw a knife. |
-| **Keshig veteran** | A guardsman of the khan, masked, white-plumed. His quick cut is often followed by a backhand after a held beat. | Don't parry in a panic: the second cut comes late. |
-| **Mace-bearer** | Armoured to the collar. Light blows wound him but **do not stop him**; his overhead blow **breaks a raised shield**. | Parry it or roll through, and punish his long recovery from behind. |
+| **Swordsman** | Closes to sword's length; a quick cut and a rising slash, often followed at once by the cut; raises his guard against combos. Sometimes he **feints**: the slash glints, then he breaks it off behind his shield and cuts after a beat. | Parry and riposte, or break his guard with the cleave or the bash. Don't parry the first glint in a panic. |
+| **Spearman** | Keeps you at spear's length; a long thrust, a **running lunge** across the street when you hang back, and a **low sweep** (amber) when you slip inside. | Get past the point; jump or roll the sweep, which no shield stops. |
+| **Archer** | Keeps his distance and shoots from rooftops and wagons; **kicks** you off when you press him close; flees when his comrades fall. | A raised shield stops arrows; close in, or throw a knife. |
+| **Keshig veteran** | A guardsman of the khan, masked, white-plumed. His quick cut is often followed by a backhand after a held beat. Behind his shield he reads a string: two blows turned, the third **parried**, and a riposte. | Don't parry in a panic: the second cut comes late. Don't hammer his shield: break it with the cleave. |
+| **Mace-bearer** | Armoured to the collar. Light blows wound him but **do not stop him**; his overhead blow **breaks a raised shield** and throws you down; his sweep may come twice. | Parry it or roll through, and punish his long recovery from behind. |
 | **Georgian shield-bearer** | Hulegu's Christian allies, in mail behind a tall crimson shield. The shield turns **every blow from the front**, the cleave and knives too. He jabs over its rim and shoves. He turns slowly. | The **shield bash** or a **plunge** breaks the wall; or roll behind him. Parry his shove to open him. |
-| **Siege engineer** | Keeps his distance and lobs pots of burning naphtha at where you are going. They leave fire on the ground. | Keep moving: **no shield keeps out the fire**. Close fast or plunge from above. |
-| **Toqto Noyan** | Captain of a thousand, behind a gold-worked shield. A chained three-cut combo, a leaping smash no shield stops, a shield charge no parry turns. Below half his strength he roars into a faster second phase. | Read the red glints and roll; ripostes and broken poise stagger him. |
+| **Siege engineer** | Keeps his distance and lobs pots of burning naphtha at where you are going. They leave fire on the ground. | Keep moving: **no shield keeps out the fire**. Close fast or plunge from above, and throw his comrades into his fire: it burns them too. |
+| **Kipchak skirmisher** | A horseman of the steppe on foot, no armour, a short sabre and a long knife. He hangs at the edge of reach, **dashes in** with a rising cut (the knife may follow at once) and often springs straight back out. Wind up a heavy blow near him and he **leaps clear**, untouchable in the air. | Quick cuts, not cleaves. Catch him as his dash ends or as he lands. |
+| **Georgian axeman** | Mail to the knee and a long bearded axe. He fights for the distance: from beyond a sword's reach his **hook** tears a raised shield aside and drags you in; crowd him and the butt drives you off; between the two he **chops** (breaks a guard, the axe stuck a moment in the street; a low sweep may follow at once) or **sweeps low** (amber). | Parry or roll, never wait behind your shield; punish the chop while the axe is in the street. |
+| **Toqto Noyan** | Captain of a thousand, behind a gold-worked shield. A chained three-cut combo, a leaping smash no shield stops, a shield charge no parry turns. Below half his strength he roars into a faster second phase and sweeps low (amber) under a shield held up before him. | Read the red glints and roll, jump the amber sweep; ripostes and broken poise stagger him. |
 
-All soldiers obey fairness rules (tested): every blow is telegraphed, at most two swing at once, and none starts an attack on you while you are invulnerable or just after you were hit.
+All soldiers obey fairness rules (tested): every blow is telegraphed, at most two near you swing at once (the others wait their turn a step off), none swings a blade at you on a ledge above him, and none starts an attack on you while you are invulnerable or just after you were hit. Soldiers in later levels fight more eagerly (shorter pauses, readier guards).
 
 ### Reading a blow
 
-Each enemy attack winds up with a **glint** on the weapon at least **0.22 seconds** before it lands:
+Each enemy attack winds up with a **glint** on the weapon at least **0.22 seconds** before it lands. All but the white also hang their own sign over the soldier's head (a flare over a chevron, a cracking diamond, a ringed burst), tint him until the blow lands, and have their own sound:
 
 | Glint | Meaning | Answer |
 | --- | --- | --- |
 | ⚪ **White** | An ordinary blow | Block it, or parry it as it lands |
 | 🟠 **Amber** (the soldier flushes amber) | A low sweep at the legs: no standing guard stops it | **Jump** over it or roll |
+| 🟣 **Violet** (the soldier flushes violet) | A blow that breaks a raised shield (the mace's overhead, the axe's hook and chop, the shield-bearer's shove) | **Parry** it as it lands, or roll |
 | 🔴 **Red** (the soldier flushes red) | Nothing stops it (the Captain's smash, his charge) | **Roll** |
 
 ### Finishers
@@ -191,11 +261,11 @@ Each enemy attack winds up with a **glint** on the weapon at least **0.22 second
 *Headsman, Run Through, Spin Cleave and Disarm.*
 </div>
 
-A soldier who is **staggered** (by a parry, a broken guard, broken poise or the bash) and **wounded to half his strength or less** glows red, and the prompt reads *Finish him*. Press Heavy and Yusuf plays one of four scripted kills, frame-locked with the soldier's own animation: **Headsman** (a kick to the knees, then the head), **Run Through** (lifted on the blade, kicked off it), **Spin Cleave** (a full turn through the waist) and **Disarm** (the sword arm, then the head). You are untouchable while it plays, and it gives back stamina. The last soldier standing gets the full treatment (black bars, a sting and slow time); while others are still fighting it plays quicker. The Captain has an ending of his own.
+A soldier who is **staggered** (by a parry, a broken guard, broken poise or the bash) and **wounded to half his strength or less** glows pale blue, and the prompt reads *Finish him*. Press Heavy and Yusuf plays one of four scripted kills, frame-locked with the soldier's own animation: **Headsman** (a kick to the knees, then the head), **Run Through** (lifted on the blade, kicked off it), **Spin Cleave** (a full turn through the waist) and **Disarm** (the sword arm, then the head). You are untouchable while it plays, and it gives back breath. The last soldier standing gets the full treatment (black bars, a sting and slow time); while others are still fighting it plays quicker. The Captain has an ending of his own.
 
 ### The streets: stealth, executions and ambushes
 
-- **Soldiers at their business** see half as far and hear a quarter as well. Strike one who has not noticed you and he dies of the blow; one who hears you behind him is startled for a moment before he turns.
+- **Soldiers at their business** see half as far and hear a quarter as well. Strike one who has not noticed you and he dies of the blow (a thrown knife only wounds him badly and turns him); one who hears you behind him is startled for a moment before he turns.
 - **The alarm:** a soldier who notices you shouts, and comrades within earshot join the fight.
 - **Executions:** once you are near enough to see a captive kneeling under a sabre, a count begins. Reach the headsman in time and the captive runs free with thanks; arrive too late and Yusuf knows it. The chapter counts the lives you saved.
 - **Ambushes** spring from ahead and behind, and a sprung ambusher follows you however far you run.
@@ -203,9 +273,9 @@ A soldier who is **staggered** (by a parry, a broken guard, broken poise or the 
 
 ### Lamps, remedies, pages and saves
 
-- **Lamps** in prayer niches are checkpoints: lighting one saves, heals you and refills your remedies and knives. Fall, and you return to the last lamp, and so do the soldiers.
-- **Manuscripts:** thirteen pages and codices to rescue from the fires, readable in full (three of them pages of the treatise that teach techniques). You keep them even if you fall.
-- **Continue** resumes at the last lamp of the level you reached.
+- **Lamps** in prayer niches are checkpoints. Unlit, an ember breathes in the niche and its sign hangs over it. Lighting one saves, heals you and refills your remedies and knives, and opens the lamp menu (the technique tree, keepsakes and Arts). Fall, and you return to the last lamp, and so do the soldiers; the game-over screen says where you will rise, and what to do about the blow that felled you.
+- **Manuscripts:** sixteen pages and codices to rescue from the fires, readable in full (six of them pages of the treatise that teach techniques and Arts). You keep them even if you fall.
+- **Continue** resumes at the last lamp of the level you reached (the title says where, and how long you have played). A small lamp turns in the corner whenever the game saves.
 
 ---
 
@@ -216,17 +286,20 @@ A soldier who is **staggered** (by a parry, a broken guard, broken poise or the 
 | Move (tilt the stick lightly to walk) | A / D or ← / → | | Left stick / D-pad |
 | Jump (hold for higher) | Space | | A |
 | Drop through planks | S / ↓ + Space | | Stick ↓ / D-pad ↓ + A |
-| Light attack · in the air, a slash | J | Left button | X |
-| Heavy cleave · in the air, the plunge · on a glowing soldier, a finisher | K or F | Middle button | Y / RT |
+| Light attack · in the air, a slash · after a parry, the riposte · behind the shield, the guarded thrust | J | Left button | X |
+| Low cut (Attack) · reaping sweep (Heavy) · in the air, the down-stab (Attack) | S / ↓ held + J or K | | Stick ↓ / D-pad ↓ + X or Y |
+| Heavy cleave (hold to charge) · after a cut, its ender · on the run, the running thrust · in the air, the plunge · on a glowing soldier, a finisher | K or F | Middle button | Y |
 | Block (hold) / parry (raise as the blow lands) | L | Right button | RB |
 | Shield bash | L held + K | Right + middle button | RB held + Y |
 | Dodge roll · then attack for the rolling cut | Ctrl or C | | B |
 | Throw a knife | U | | LT |
+| Art (behind the shield: the second Art) | I | | RT |
+| Second Art | O | | RB held + RT |
 | Interact / talk / light a lamp | E, W or ↑ | | D-pad ↑ |
 | Drink a remedy | Q | | LB |
 | Pause | Esc | | Start |
 
-Menus take arrows/WASD, Enter/Space and Esc, or the D-pad, A and B. On-screen hints show the button for whichever device you last touched.
+Every action can be bound to another key or button in **Settings → Controls**. Menus take arrows/WASD, Enter/Space and Esc, or the D-pad, A and B; story cards and cinematics are hurried on with Enter (or A) and skipped by holding Esc (or B), or at a press once seen. On-screen keys follow whichever device you last touched (Xbox, PlayStation and Nintendo pads are named their own way).
 
 ---
 
@@ -272,6 +345,7 @@ the-last-abbasid/
 │   │                    arena, and the four generated level scenes
 │   ├── presentation/    camera (look-ahead, trauma shake), hit-stop, post-process shader
 │   ├── story/           DialogueLibrary (who says what; the words live in the strings table)
+│   ├── cinematics/      CinematicDefinition and CinematicShot (generated), the player and its shader
 │   ├── ui/, menu/       HUD, dialogue box, input glyphs; title, pause, settings, story card, reader
 ├── shared/              sound, music and VFX directors, the gore director, SaveGame, GameSettings
 ├── assets/              generated art, audio, fonts and the English/Arabic strings table
@@ -306,7 +380,8 @@ flowchart LR
 ```
 
 - **Controllers drive bodies.** `WarriorInput` drives the `Warrior`; an `EnemyBrain` subclass drives each `MongolSoldier`. Bodies carry the rules (health, poise, guarding, staggers); brains only decide.
-- **Data in read-only resources.** `WarriorProfile`, `EnemyProfile`, `AttackDefinition` and `FinisherDefinition` hold the tuning; mutable state belongs to the actor.
+- **Data in read-only resources.** `WarriorProfile`, `EnemyProfile`, `AttackDefinition`, `FinisherDefinition`, `ArtDefinition`, and the technique tree's `TechniqueDefinition`, `KeepsakeDefinition`, `Modifiers` and `ProgressionCatalog` hold the tuning; mutable state belongs to the actor.
+- **Growth is rules over the save.** `Progression` (`features/progression/`) keeps Honour, the nodes bought, the keepsakes owned and worn and the Arts carried in the `SaveGame`; the session applies the result to the hero (`Warrior.set_techniques`, `set_modifiers`), and the lamp menu shows it.
 - **Animation-driven timing.** An attack's active, recovery and telegraph frames index its animation strip, and the hitbox on each active frame is the blade's swept polygon, generated with the sprites.
 - **Gameplay never depends on presentation.** Effects, gore, sound and the HUD are wired in `app/main.gd` from signals; the directors know no gameplay types.
 - **The story is data.** Each level's terrain, props, soldiers and their activities, people, captives, triggers, objectives, exit and boss arena are a JavaScript file in `tools/levels/`, built into a scene. `main.gd` holds no level-specific story.
@@ -357,6 +432,7 @@ node tools/asset_generation/build_ui.mjs                                # panels
 node tools/asset_generation/build_font.mjs                              # the pixel fonts
 node tools/asset_generation/audio/build_sounds.mjs                      # effects, ambiences and music
 node tools/levels/build_level.mjs streets_of_ash                        # assemble a level scene from its data
+node tools/cinematics/build_cinematics.mjs                              # the cinematics from their shot lists (--only intro)
 node tools/write_main_scene.mjs                                         # wire every sound and track into app/main.tscn
 ```
 
@@ -370,16 +446,16 @@ The levels are `fallen_market`, `streets_of_ash`, `scholars_quarter` and `last_g
 ./tools/run_tests.ps1
 ```
 
-The runner imports the project, then runs the headless suites with fixed 1/60 s frames, so timings are identical on any machine:
+The runner imports the project, then runs the headless suites with fixed 1/60 s frames, so timings are identical on any machine. Godot 4.7.2 now and then crashes in its own shutdown after the gameplay suite has reported; the runner then runs that suite once more, and it must pass and exit cleanly:
 
 | Suite | Checks | What it proves |
 | --- | --- | --- |
-| `tests/gameplay_test.gd` | 86 | Movement, jumps and coyote time, the combo, cleave, block, parry and riposte, roll, hurt, heal and death; the air slash, the plunge, dropping through planks, the rolling cut, knives; real keyboard and gamepad input |
-| `tests/enemy_test.gd` | 179 | Every soldier's behaviour and attacks; surprise kills, dismemberment, executions, the alarm; finishers and their rules; that every blow glints at least 0.22 s ahead; the low sweep, the slow guard, the shield wall, the mace-bearer, the fire pots; the Captain's phases |
-| `tests/session_test.gd` | 79 | The chapter played through the real session: dialogue, lamps, pages, death and return, rescues, ambushes, learning a technique from a page, saving and loading, the boss and the ending |
+| `tests/gameplay_test.gd` | 220 | Movement, jumps and coyote time, the combo and its enders, the delayed cut, the charge, the running thrust, cleave, block, parry and riposte, roll, hurt, heal and death; the air slash, the plunge, dropping through planks, the rolling cut, knives; resolve and every Art; what bought nodes and keepsakes do; breath (costs, momentum, refusal, Steady Breath, close calls); the hero thrown down; the second move set (the kick, the low cut, the glance, the heavy string, the running slash, the guarded thrust, the riposte, the down-stab, the sweep) and what is not yet learned; presses kept through a blow and the string carried on a beat after it; breath refused and winded, the parry's cooldown; the string reaching a man giving ground; real keyboard and gamepad input |
+| `tests/enemy_test.gd` | 301 | Every soldier's behaviour and attacks; surprise kills, dismemberment, executions, the alarm; finishers and their rules; that every blow glints at least 0.22 s ahead; the low sweep, the slow guard, the shield wall, the mace-bearer, the fire pots; the new moves and Arts against soldiers, the Judgment; soldiers answering the charge, the whirl and the Arts; tougher soldiers and the time a swordsman takes to fall; knockdowns, the ground stroke and the reactions; the soldiers' chains, feint, lunge, kick and parry; the skirmisher's dash and leap; the axeman's hook, butt, chop and sweep; fire that burns a man thrown into it; poise that builds, the flinch limit, a stagger kept open; guards raised a beat late; the attackers' places and the waiting, no blade at a hero on a ledge, arrows from a roof; the Judgment's share; the Captain's phases, his sweep and his chain |
+| `tests/session_test.gd` | 135 | The chapter played through the real session: dialogue, lamps and the lamp menu, pages, death and return, rescues, ambushes, learning techniques and Arts, Honour, buying and unlearning, keepsakes and tokens, the Techniques page, saving and loading, the boss and the ending |
 | `tests/traversal_test.gd` | 4 levels | An autoplayer that finishes every level with real physics, fighting every soldier it meets |
 
-Godot's path comes from the `GODOT_PATH` environment variable (or the `-GodotPath` parameter). `./tools/run_tests.ps1 -Visual` also renders review screenshots, and `tests/capture_*.gd` render encounters, finishers, moves, soldiers, the cast and a tour of every level into `captures/` (these need a window).
+Godot's path comes from the `GODOT_PATH` environment variable (or the `-GodotPath` parameter). `./tools/run_tests.ps1 -Visual` also renders review screenshots, and `tests/capture_*.gd` render encounters, finishers, moves, the new moves and Arts (`capture_combat.gd`), the lamp menu and Techniques page (`capture_lamp.gd`), soldiers, the cast and a tour of every level into `captures/` (these need a window).
 
 ---
 
@@ -395,13 +471,13 @@ Godot's path comes from the `GODOT_PATH` environment variable (or the `-GodotPat
 
 ## Status and roadmap
 
-**Chapter I is complete**: four levels and the Captain, every system above, verified by the automated suites and rendered captures. It has not yet had extended human playtesting, so difficulty, combat feel and the audio mix are the next things to tune.
+**Chapter I is complete**: four levels and the Captain, every system above (including the combat and progression plan in [`docs/combat_progression_plan.md`](docs/combat_progression_plan.md) and the combat overhaul in [`docs/combat_overhaul_plan.md`](docs/combat_overhaul_plan.md)), verified by the automated suites and rendered captures. It has not yet had extended human playtesting, so difficulty, combat feel, the Honour economy and the audio mix are the next things to tune.
 
 Next:
 
-- Playtest-driven tuning: soldier aggression, the new soldiers' difficulty, the engineers' aim, finisher reach and length.
+- Playtest-driven tuning: breath costs and what earns it back, soldier aggression, the new soldiers' difficulty (the skirmisher's leaps, the axeman's hook), the engineers' aim, finisher reach and length, the prices on the technique tree and what Honour each deed pays.
 - The gate square's backdrop and other art polish (see [`PROGRESS.md`](PROGRESS.md)).
-- Release work: export presets and builds, input rebinding, a pixel Arabic font, performance and audio passes.
+- Release work: a pixel Arabic font, performance and audio passes, the 4.7.2 export templates.
 - Chapter II.
 
 ---

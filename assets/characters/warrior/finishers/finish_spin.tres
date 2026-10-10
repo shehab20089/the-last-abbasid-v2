@@ -14,3 +14,4 @@ burst_frames = PackedInt32Array()
 slow_from = 3
 slow_to = 5
 death_frame = 3
+ground = false

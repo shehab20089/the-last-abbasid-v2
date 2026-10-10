@@ -1,0 +1,25 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/enemies/fire_pot.gd" id="1_pot"]
+[ext_resource type="Texture2D" path="res://assets/effects/fire_pot.png" id="2_texture"]
+[ext_resource type="PackedScene" path="res://features/warrior/naft_fire.tscn" id="3_fire"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_flask"]
+radius = 4.0
+
+[node name="NaftFlask" type="Area2D"]
+collision_layer = 32
+collision_mask = 17
+script = ExtResource("1_pot")
+speed = 230.0
+damage = 10.0
+stamina_damage = 20.0
+poise_damage = 20.0
+fire_scene = ExtResource("3_fire")
+team = 0
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_texture")
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_flask")

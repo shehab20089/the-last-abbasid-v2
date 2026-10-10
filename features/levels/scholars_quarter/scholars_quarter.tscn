@@ -43,25 +43,28 @@
 [ext_resource type="Texture2D" path="res://assets/environments/market/props/corpse_man_back.png" id="41_corpse_man_back_png"]
 [ext_resource type="PackedScene" path="res://features/levels/checkpoint.tscn" id="42_checkpoint_tscn"]
 [ext_resource type="PackedScene" path="res://features/levels/manuscript.tscn" id="43_manuscript_tscn"]
-[ext_resource type="SpriteFrames" path="res://assets/npcs/copyist/copyist_frames.tres" id="44_copyist_frames_tres"]
-[ext_resource type="PackedScene" path="res://features/levels/npc.tscn" id="45_npc_tscn"]
-[ext_resource type="SpriteFrames" path="res://assets/npcs/librarian/librarian_frames.tres" id="46_librarian_frames_tres"]
-[ext_resource type="Texture2D" path="res://assets/environments/market/props/garden_door.png" id="47_garden_door_png"]
-[ext_resource type="Texture2D" path="res://assets/environments/market/props/garden_door_open.png" id="48_garden_door_open_png"]
-[ext_resource type="PackedScene" path="res://features/levels/level_exit.tscn" id="49_level_exit_tscn"]
-[ext_resource type="SpriteFrames" path="res://assets/npcs/refugee_man/refugee_man_frames.tres" id="50_refugee_man_frames_tres"]
-[ext_resource type="Script" path="res://features/levels/captive.gd" id="51_captive_gd"]
-[ext_resource type="Resource" path="res://assets/npcs/refugee_man/refugee_man_gore.tres" id="52_refugee_man_gore_tres"]
-[ext_resource type="SpriteFrames" path="res://assets/npcs/refugee_woman/refugee_woman_frames.tres" id="53_refugee_woman_frames_tres"]
-[ext_resource type="Resource" path="res://assets/npcs/refugee_woman/refugee_woman_gore.tres" id="54_refugee_woman_gore_tres"]
-[ext_resource type="PackedScene" path="res://features/enemies/swordsman.tscn" id="55_swordsman_tscn"]
-[ext_resource type="PackedScene" path="res://features/enemies/spearman.tscn" id="56_spearman_tscn"]
-[ext_resource type="PackedScene" path="res://features/enemies/archer.tscn" id="57_archer_tscn"]
-[ext_resource type="PackedScene" path="res://features/enemies/engineer.tscn" id="58_engineer_tscn"]
-[ext_resource type="PackedScene" path="res://features/enemies/shieldbearer.tscn" id="59_shieldbearer_tscn"]
-[ext_resource type="PackedScene" path="res://features/enemies/veteran.tscn" id="60_veteran_tscn"]
-[ext_resource type="Script" path="res://features/levels/story_trigger.gd" id="61_story_trigger_gd"]
-[ext_resource type="Texture2D" path="res://assets/environments/market/props/fg_rubble.png" id="62_fg_rubble_png"]
+[ext_resource type="PackedScene" path="res://features/levels/relic.tscn" id="44_relic_tscn"]
+[ext_resource type="SpriteFrames" path="res://assets/npcs/copyist/copyist_frames.tres" id="45_copyist_frames_tres"]
+[ext_resource type="PackedScene" path="res://features/levels/npc.tscn" id="46_npc_tscn"]
+[ext_resource type="SpriteFrames" path="res://assets/npcs/librarian/librarian_frames.tres" id="47_librarian_frames_tres"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/garden_door.png" id="48_garden_door_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/garden_door_open.png" id="49_garden_door_open_png"]
+[ext_resource type="PackedScene" path="res://features/levels/level_exit.tscn" id="50_level_exit_tscn"]
+[ext_resource type="SpriteFrames" path="res://assets/npcs/refugee_man/refugee_man_frames.tres" id="51_refugee_man_frames_tres"]
+[ext_resource type="Script" path="res://features/levels/captive.gd" id="52_captive_gd"]
+[ext_resource type="Resource" path="res://assets/npcs/refugee_man/refugee_man_gore.tres" id="53_refugee_man_gore_tres"]
+[ext_resource type="SpriteFrames" path="res://assets/npcs/refugee_woman/refugee_woman_frames.tres" id="54_refugee_woman_frames_tres"]
+[ext_resource type="Resource" path="res://assets/npcs/refugee_woman/refugee_woman_gore.tres" id="55_refugee_woman_gore_tres"]
+[ext_resource type="PackedScene" path="res://features/enemies/swordsman.tscn" id="56_swordsman_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/spearman.tscn" id="57_spearman_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/archer.tscn" id="58_archer_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/skirmisher.tscn" id="59_skirmisher_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/engineer.tscn" id="60_engineer_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/axeman.tscn" id="61_axeman_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/shieldbearer.tscn" id="62_shieldbearer_tscn"]
+[ext_resource type="PackedScene" path="res://features/enemies/veteran.tscn" id="63_veteran_tscn"]
+[ext_resource type="Script" path="res://features/levels/story_trigger.gd" id="64_story_trigger_gd"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/fg_rubble.png" id="65_fg_rubble_png"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_1"]
 blend_mode = 1
@@ -199,13 +202,22 @@ offsets = PackedFloat32Array(0, 0.15, 0.7, 1)
 colors = PackedColorArray(1, 0.95, 0.6, 0, 1, 0.8, 0.4, 1, 1, 0.45, 0.15, 0.85, 0.6, 0.15, 0.05, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_35"]
-size = Vector2(32, 320)
+size = Vector2(48, 320)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_36"]
 size = Vector2(48, 320)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_37"]
+size = Vector2(32, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_38"]
 size = Vector2(48, 320)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_39"]
+size = Vector2(48, 320)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_40"]
+size = Vector2(32, 320)
 
 [node name="ScholarsQuarter" type="Node2D"]
 script = ExtResource("1_level_gd")
@@ -217,8 +229,13 @@ ambience = &"river"
 next_level = "res://features/levels/last_gate/last_gate.tscn"
 exit_card = &"scholars_end"
 exit_title = "LEVEL_LAST_GATE"
-objectives = PackedStringArray("codex|OBJ_LAST_GATE", "library_cleared|OBJ_SPEAK_LIBRARIAN", "library|OBJ_SAVE_LIBRARY", "|OBJ_FIND_LIBRARIAN")
-known_techniques = PackedStringArray("bash", "knives")
+objectives = PackedStringArray("codex|OBJ_GARDEN_DOOR|exit", "library_cleared|OBJ_SPEAK_LIBRARIAN|npc:librarian", "library|OBJ_SAVE_LIBRARY|group:library", "|OBJ_FIND_LIBRARIAN|npc:librarian")
+known_techniques = PackedStringArray("sweep", "bash", "knives", "charge", "storm", "kick", "low_cut", "rising_cleave", "running_slash")
+toughness = Vector2(1.20, 1.10)
+aggression = 1.20
+manuscript_ids = PackedStringArray("astronomy", "furusiyya_plunge", "poem", "furusiyya_pierce", "algebra")
+relic_ids = PackedStringArray("token_arcade", "token_gallery")
+captive_ids = PackedStringArray("fountain_captive", "river_captive")
 
 [node name="Distant" type="Parallax2D" parent="."]
 scroll_scale = Vector2(0.06, 0)
@@ -1215,12 +1232,27 @@ position = Vector2(3320, 448)
 manuscript_id = &"poem"
 teaches = &""
 
+[node name="furusiyya_pierce" parent="Interactables" instance=ExtResource("43_manuscript_tscn")]
+position = Vector2(3624, 448)
+manuscript_id = &"furusiyya_pierce"
+teaches = &"pierce"
+
 [node name="algebra" parent="Interactables" instance=ExtResource("43_manuscript_tscn")]
 position = Vector2(3784, 352)
 manuscript_id = &"algebra"
 teaches = &""
 
-[node name="copyist" parent="Interactables" instance=ExtResource("45_npc_tscn")]
+[node name="token_arcade" parent="Interactables" instance=ExtResource("44_relic_tscn")]
+position = Vector2(1144, 400)
+relic_id = &"token_arcade"
+keepsake = &""
+
+[node name="token_gallery" parent="Interactables" instance=ExtResource("44_relic_tscn")]
+position = Vector2(1800, 352)
+relic_id = &"token_gallery"
+keepsake = &""
+
+[node name="copyist" parent="Interactables" instance=ExtResource("46_npc_tscn")]
 position = Vector2(648, 448)
 npc_id = &"copyist"
 dialogue = &"copyist"
@@ -1228,13 +1260,14 @@ requires = &""
 gives_flag = &""
 gives_notice = ""
 teaches = &""
+gives_keepsake = &""
 idle_animation = &"crouch"
 talk_animation = &"talk"
 waiting_animation = &""
 face = 1.0
-frames = ExtResource("44_copyist_frames_tres")
+frames = ExtResource("45_copyist_frames_tres")
 
-[node name="librarian" parent="Interactables" instance=ExtResource("45_npc_tscn")]
+[node name="librarian" parent="Interactables" instance=ExtResource("46_npc_tscn")]
 position = Vector2(2344, 448)
 npc_id = &"librarian"
 dialogue = &"librarian"
@@ -1242,62 +1275,66 @@ requires = &"library_cleared"
 gives_flag = &"codex"
 gives_notice = "NOTICE_CODEX"
 teaches = &""
+gives_keepsake = &"ink_stone"
 idle_animation = &"idle"
 talk_animation = &"talk"
 waiting_animation = &""
 face = -1.0
-frames = ExtResource("46_librarian_frames_tres")
+frames = ExtResource("47_librarian_frames_tres")
 
-[node name="GardenDoor" parent="Interactables" instance=ExtResource("49_level_exit_tscn")]
+[node name="GardenDoor" parent="Interactables" instance=ExtResource("50_level_exit_tscn")]
 position = Vector2(4672, 448)
 requires = &"codex"
 open_prompt = "PROMPT_OPEN_GARDEN_DOOR"
 locked_prompt = "PROMPT_GARDEN_DOOR"
 locked_line = "GATE_LOCKED_3"
-closed_texture = ExtResource("47_garden_door_png")
-open_texture = ExtResource("48_garden_door_open_png")
+locked_lines = PackedStringArray("library_cleared|GATE_LOCKED_LIBRARIAN", "|GATE_LOCKED_3")
+closed_texture = ExtResource("48_garden_door_png")
+open_texture = ExtResource("49_garden_door_open_png")
 
 [node name="People" type="Node2D" parent="."]
 
 [node name="fountain_captive" type="AnimatedSprite2D" parent="People"]
 position = Vector2(904, 448)
-sprite_frames = ExtResource("50_refugee_man_frames_tres")
+sprite_frames = ExtResource("51_refugee_man_frames_tres")
 animation = &"kneel"
 flip_h = false
-script = ExtResource("51_captive_gd")
+script = ExtResource("52_captive_gd")
 freed_by = &""
 run_direction = -1.0
 captive_id = &"fountain_captive"
 thanks = "SAVED_4"
-gore_set = ExtResource("52_refugee_man_gore_tres")
+keepsake = &"prayer_beads"
+gore_set = ExtResource("53_refugee_man_gore_tres")
 
 [node name="river_captive" type="AnimatedSprite2D" parent="People"]
 position = Vector2(2968, 448)
-sprite_frames = ExtResource("53_refugee_woman_frames_tres")
+sprite_frames = ExtResource("54_refugee_woman_frames_tres")
 animation = &"kneel"
 flip_h = false
-script = ExtResource("51_captive_gd")
+script = ExtResource("52_captive_gd")
 freed_by = &""
 run_direction = -1.0
 captive_id = &"river_captive"
 thanks = "SAVED_5"
-gore_set = ExtResource("54_refugee_woman_gore_tres")
+keepsake = &""
+gore_set = ExtResource("55_refugee_woman_gore_tres")
 
 [node name="Enemies" type="Node2D" parent="."]
 
-[node name="swordsman_0" parent="Enemies" instance=ExtResource("55_swordsman_tscn")]
+[node name="swordsman_0" parent="Enemies" instance=ExtResource("56_swordsman_tscn")]
 position = Vector2(270, 448)
 start_facing = 1.0
 metadata/patrol = 0.0
 metadata/activity = &"burn"
 
-[node name="spearman_1" parent="Enemies" instance=ExtResource("56_spearman_tscn")]
+[node name="spearman_1" parent="Enemies" instance=ExtResource("57_spearman_tscn")]
 position = Vector2(344, 448)
 start_facing = -1.0
 metadata/patrol = 0.0
 metadata/activity = &"chat"
 
-[node name="swordsman_2" parent="Enemies" instance=ExtResource("55_swordsman_tscn")]
+[node name="swordsman_2" parent="Enemies" instance=ExtResource("56_swordsman_tscn")]
 position = Vector2(872, 448)
 start_facing = 1.0
 metadata/patrol = 0.0
@@ -1305,52 +1342,52 @@ metadata/activity = &"execute"
 metadata/victim = &"fountain_captive"
 metadata/delay = 3.50
 
-[node name="archer_3" parent="Enemies" instance=ExtResource("57_archer_tscn")]
+[node name="archer_3" parent="Enemies" instance=ExtResource("58_archer_tscn")]
 position = Vector2(1224, 400)
 start_facing = -1.0
 metadata/activity = &"watch"
 
-[node name="swordsman_4" parent="Enemies" instance=ExtResource("55_swordsman_tscn")]
+[node name="skirmisher_4" parent="Enemies" instance=ExtResource("59_skirmisher_tscn")]
 position = Vector2(1480, 448)
 start_facing = 1.0
 metadata/patrol = 0.0
 metadata/activity = &"loot"
 
-[node name="swordsman_5" parent="Enemies" instance=ExtResource("55_swordsman_tscn")]
+[node name="swordsman_5" parent="Enemies" instance=ExtResource("56_swordsman_tscn")]
 position = Vector2(1800, 448)
 start_facing = -1.0
 metadata/group = &"library"
 metadata/dormant = true
 metadata/activity = &"loot"
 
-[node name="archer_6" parent="Enemies" instance=ExtResource("57_archer_tscn")]
+[node name="archer_6" parent="Enemies" instance=ExtResource("58_archer_tscn")]
 position = Vector2(1880, 352)
 start_facing = -1.0
 metadata/group = &"library"
 metadata/dormant = true
 metadata/activity = &"watch"
 
-[node name="spearman_7" parent="Enemies" instance=ExtResource("56_spearman_tscn")]
+[node name="spearman_7" parent="Enemies" instance=ExtResource("57_spearman_tscn")]
 position = Vector2(2056, 448)
 start_facing = 1.0
 metadata/group = &"library"
 metadata/dormant = true
 metadata/activity = &"stab"
 
-[node name="swordsman_8" parent="Enemies" instance=ExtResource("55_swordsman_tscn")]
+[node name="swordsman_8" parent="Enemies" instance=ExtResource("56_swordsman_tscn")]
 position = Vector2(2312, 448)
 start_facing = 1.0
 metadata/group = &"library"
 metadata/dormant = true
 metadata/activity = &"menace"
 
-[node name="spearman_9" parent="Enemies" instance=ExtResource("56_spearman_tscn")]
+[node name="spearman_9" parent="Enemies" instance=ExtResource("57_spearman_tscn")]
 position = Vector2(2728, 448)
 start_facing = 1.0
 metadata/patrol = 0.0
 metadata/activity = &"stab"
 
-[node name="swordsman_10" parent="Enemies" instance=ExtResource("55_swordsman_tscn")]
+[node name="swordsman_10" parent="Enemies" instance=ExtResource("56_swordsman_tscn")]
 position = Vector2(2936, 448)
 start_facing = 1.0
 metadata/patrol = 0.0
@@ -1358,70 +1395,120 @@ metadata/activity = &"execute"
 metadata/victim = &"river_captive"
 metadata/delay = 3.00
 
-[node name="engineer_11" parent="Enemies" instance=ExtResource("58_engineer_tscn")]
+[node name="engineer_11" parent="Enemies" instance=ExtResource("60_engineer_tscn")]
 position = Vector2(3128, 400)
 start_facing = -1.0
 
-[node name="swordsman_12" parent="Enemies" instance=ExtResource("55_swordsman_tscn")]
+[node name="axeman_12" parent="Enemies" instance=ExtResource("61_axeman_tscn")]
+position = Vector2(3400, 448)
+start_facing = -1.0
+metadata/patrol = 14.0
+
+[node name="swordsman_13" parent="Enemies" instance=ExtResource("56_swordsman_tscn")]
 position = Vector2(3720, 448)
 start_facing = 1.0
 metadata/patrol = 0.0
 metadata/activity = &"loot"
 
-[node name="engineer_13" parent="Enemies" instance=ExtResource("58_engineer_tscn")]
+[node name="engineer_14" parent="Enemies" instance=ExtResource("60_engineer_tscn")]
 position = Vector2(3784, 352)
 start_facing = -1.0
 
-[node name="shieldbearer_14" parent="Enemies" instance=ExtResource("59_shieldbearer_tscn")]
+[node name="shieldbearer_15" parent="Enemies" instance=ExtResource("62_shieldbearer_tscn")]
 position = Vector2(4136, 448)
 start_facing = -1.0
 metadata/patrol = 20.0
 
-[node name="veteran_15" parent="Enemies" instance=ExtResource("60_veteran_tscn")]
+[node name="veteran_16" parent="Enemies" instance=ExtResource("63_veteran_tscn")]
 position = Vector2(4488, 448)
 start_facing = -1.0
 metadata/patrol = 24.0
 
 [node name="Triggers" type="Node2D" parent="."]
 
+[node name="lesson_guarded_thrust" type="Area2D" parent="Triggers"]
+position = Vector2(312, 288)
+script = ExtResource("64_story_trigger_gd")
+trigger_id = "lesson_guarded_thrust"
+hint = ""
+event = &""
+group = &""
+line = ""
+speaker = ""
+teaches = &"guarded_thrust"
+
+[node name="Shape" type="CollisionShape2D" parent="Triggers/lesson_guarded_thrust"]
+shape = SubResource("RectangleShape2D_35")
+
+[node name="lesson_down_stab" type="Area2D" parent="Triggers"]
+position = Vector2(1048, 288)
+script = ExtResource("64_story_trigger_gd")
+trigger_id = "lesson_down_stab"
+hint = ""
+event = &""
+group = &""
+line = ""
+speaker = ""
+teaches = &"down_stab"
+
+[node name="Shape" type="CollisionShape2D" parent="Triggers/lesson_down_stab"]
+shape = SubResource("RectangleShape2D_36")
+
 [node name="library" type="Area2D" parent="Triggers"]
-position = Vector2(1648, 288)
-script = ExtResource("61_story_trigger_gd")
+position = Vector2(1648, 416)
+script = ExtResource("64_story_trigger_gd")
 trigger_id = "library"
 hint = ""
 event = &"ambush"
 group = &"library"
 line = "LIBRARY_1"
 speaker = ""
+teaches = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/library"]
-shape = SubResource("RectangleShape2D_35")
+shape = SubResource("RectangleShape2D_37")
 
 [node name="river" type="Area2D" parent="Triggers"]
 position = Vector2(2488, 288)
-script = ExtResource("61_story_trigger_gd")
+script = ExtResource("64_story_trigger_gd")
 trigger_id = "river"
 hint = ""
 event = &""
 group = &""
 line = "RIVER_1"
 speaker = ""
+teaches = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/river"]
-shape = SubResource("RectangleShape2D_36")
+shape = SubResource("RectangleShape2D_38")
 
 [node name="hint_engineer" type="Area2D" parent="Triggers"]
 position = Vector2(2776, 288)
-script = ExtResource("61_story_trigger_gd")
+script = ExtResource("64_story_trigger_gd")
 trigger_id = "hint_engineer"
 hint = "HINT_ENGINEER"
 event = &""
 group = &""
 line = ""
 speaker = ""
+teaches = &""
 
 [node name="Shape" type="CollisionShape2D" parent="Triggers/hint_engineer"]
-shape = SubResource("RectangleShape2D_37")
+shape = SubResource("RectangleShape2D_39")
+
+[node name="hint_axeman" type="Area2D" parent="Triggers"]
+position = Vector2(3200, 288)
+script = ExtResource("64_story_trigger_gd")
+trigger_id = "hint_axeman"
+hint = "HINT_AXEMAN"
+event = &""
+group = &""
+line = ""
+speaker = ""
+teaches = &""
+
+[node name="Shape" type="CollisionShape2D" parent="Triggers/hint_axeman"]
+shape = SubResource("RectangleShape2D_40")
 
 [node name="PlayerStart" type="Marker2D" parent="."]
 position = Vector2(88, 448)
@@ -1430,61 +1517,61 @@ position = Vector2(88, 448)
 scroll_scale = Vector2(1.25, 1)
 
 [node name="Rubble0" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("62_fg_rubble_png")
+texture = ExtResource("65_fg_rubble_png")
 centered = false
 position = Vector2(120, 472)
 flip_h = false
 
 [node name="Rubble1" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("62_fg_rubble_png")
+texture = ExtResource("65_fg_rubble_png")
 centered = false
 position = Vector2(640, 472)
 flip_h = true
 
 [node name="Rubble2" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("62_fg_rubble_png")
+texture = ExtResource("65_fg_rubble_png")
 centered = false
 position = Vector2(1297, 472)
 flip_h = false
 
 [node name="Rubble3" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("62_fg_rubble_png")
+texture = ExtResource("65_fg_rubble_png")
 centered = false
 position = Vector2(1831, 472)
 flip_h = true
 
 [node name="Rubble4" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("62_fg_rubble_png")
+texture = ExtResource("65_fg_rubble_png")
 centered = false
 position = Vector2(2502, 472)
 flip_h = false
 
 [node name="Rubble5" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("62_fg_rubble_png")
+texture = ExtResource("65_fg_rubble_png")
 centered = false
 position = Vector2(3050, 472)
 flip_h = true
 
 [node name="Rubble6" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("62_fg_rubble_png")
+texture = ExtResource("65_fg_rubble_png")
 centered = false
 position = Vector2(3735, 472)
 flip_h = false
 
 [node name="Rubble7" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("62_fg_rubble_png")
+texture = ExtResource("65_fg_rubble_png")
 centered = false
 position = Vector2(4297, 472)
 flip_h = true
 
 [node name="Rubble8" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("62_fg_rubble_png")
+texture = ExtResource("65_fg_rubble_png")
 centered = false
 position = Vector2(4996, 472)
 flip_h = false
 
 [node name="Rubble9" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("62_fg_rubble_png")
+texture = ExtResource("65_fg_rubble_png")
 centered = false
 position = Vector2(5572, 472)
 flip_h = true

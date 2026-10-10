@@ -437,22 +437,25 @@ function ladderBroken() {
 /** A wall fragment with a prayer-niche recess and an oil lamp: frame 0 dark, 1..4 lit (flicker). */
 function lampNiche() {
   const frames = [];
-  for (let f = 0; f < 5; f++) {
+  // Frames 0-1: not yet lit, an ember breathing on the wick so the lamp reads as one waiting for a flame;
+  // frames 2-5: alight.
+  for (let f = 0; f < 6; f++) {
     const c = new Canvas(40, 64);
+    const lit = f > 1;
     brickWall(c, 0, 4, 40, 60, { base: 3, seed: 61, light: 1 });
     fillShape(c, 0, 0, 39, 4, () => true, P.plaster[4]);
     archway(c, 20, 56, 20, 40, { ring: 2, ringTone: 5, interior: (x, y) => {
-      const lit = f > 0;
-      if (!lit) return y > 44 ? P.night[1] : P.night[0];
       const d = Math.hypot(x - 20, y - 44);
+      if (!lit) return d < 3.5 ? P.glow[f === 0 ? 2 : 1] : d < 7.5 ? P.glow[0] : y > 44 ? P.night[1] : P.night[0];
       return d < 6 ? P.fire[3] : d < 11 ? P.glow[4] : d < 16 ? P.glow[2] : P.glow[0];
     } });
     // A stone shelf and a bronze lamp.
     fillShape(c, 9, 50, 31, 52, () => true, P.stone[4]);
     fillShape(c, 15, 47, 25, 49, () => true, (x, y) => (y === 47 ? P.bronze[4] : P.bronze[2]));
     fillShape(c, 24, 46, 27, 47, () => true, P.bronze[3]);
-    if (f > 0) {
-      const flicker = [0, 0, 1, -1, 1][f];
+    if (!lit) c.set(20, 45, f === 0 ? P.fire[3] : P.fire[2]);
+    if (lit) {
+      const flicker = [0, 1, -1, 1][f - 2];
       const flame = [[19, 45], [20, 45], [19, 44], [20, 44], [20, 43 + flicker], [20, 42 + flicker]];
       flame.forEach(([x, y], i) => c.set(x, y, i < 2 ? P.fire[5] : i < 4 ? P.fire[6] : P.fire[4]));
     }
@@ -625,8 +628,8 @@ export function buildProps(OUT, REVIEW) {
   strip(niche).save(join(OUT, "props", "lamp_niche.png"));
   const nicheTexture = "res://assets/environments/market/props/lamp_niche.png";
   writeSpriteFramesRegions(join(OUT, "props", "lamp_niche_frames.tres"), [
-    { name: "dark", texture: nicheTexture, frames: [[0, 0, 40, 64]], fps: 1, loop: true },
-    { name: "lit", texture: nicheTexture, frames: [1, 2, 3, 4].map((i) => [i * 40, 0, 40, 64]), fps: 8, loop: true },
+    { name: "dark", texture: nicheTexture, frames: [0, 1].map((i) => [i * 40, 0, 40, 64]), fps: 2, loop: true },
+    { name: "lit", texture: nicheTexture, frames: [2, 3, 4, 5].map((i) => [i * 40, 0, 40, 64]), fps: 8, loop: true },
   ]);
   sheet.push(...niche);
   save("river_gate", riverGate(false));

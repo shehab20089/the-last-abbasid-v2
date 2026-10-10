@@ -12,22 +12,25 @@ export const ROWS = 32;
 
 const ENEMIES = [
   // On the wall road, a man kneels under a sabre.
-  { kind: "swordsman", col: 36, face: 1, activity: "execute", victim: "road_captive", delay: 3.0, patrol: 0 },
+  // The road's headsman waits a little longer: his clock starts just past Hamid and the Second Wind's lesson.
+  { kind: "swordsman", col: 36, face: 1, activity: "execute", victim: "road_captive", delay: 4.0, patrol: 0 },
   // The camp: talking round a brazier, sorting plunder, an archer on the wagon, stabbing at prisoners.
   { kind: "spearman", col: 51, face: 1, activity: "chat", patrol: 0 },
   { kind: "spearman", col: 57, face: -1, activity: "chat", patrol: 0 },
-  { kind: "swordsman", col: 63, face: 1, activity: "loot", patrol: 0 },
+  { kind: "veteran", col: 63, face: 1, activity: "loot", patrol: 0 },
   { kind: "archer", col: 72, row: 25, face: -1, activity: "watch" },
   { kind: "spearman", col: 88, face: 1, activity: "stab", patrol: 0 },
+  // A Kipchak outrider between the wagon and the prisoners.
+  { kind: "skirmisher", col: 80, face: -1, patrol: 16 },
   // On the wall walk.
   { kind: "archer", col: 121, row: 22, face: -1, activity: "watch" },
   // A mace-bearer holds the wall walk between the archers.
   { kind: "maceman", col: 128, row: 22, face: -1 },
   { kind: "archer", col: 136, row: 22, face: -1, activity: "watch" },
-  // In the wreck of the siege: a sentry, a woman under a sabre, a patrol.
+  // In the wreck of the siege: a sentry, a woman under a sabre, an axeman on patrol.
   { kind: "shieldbearer", col: 156, face: -1, patrol: 0 },
   { kind: "swordsman", col: 168, face: 1, activity: "execute", victim: "siege_captive", delay: 3.0, patrol: 0 },
-  { kind: "maceman", col: 178, face: -1, patrol: 20 },
+  { kind: "axeman", col: 178, face: -1, patrol: 20 },
   // The captain at his gate.
   { kind: "captain", col: 222, face: -1, dormant: true, group: "captain" },
 ];
@@ -46,7 +49,7 @@ export const LEVEL = {
   next: "",
   exitCard: "ending",
   exitTitle: "",
-  objectives: [["captain_cleared", "OBJ_OPEN_GATE"], ["", "OBJ_REACH_GATE"]],
+  objectives: [["captain_cleared", "OBJ_OPEN_GATE", "exit"], ["", "OBJ_REACH_GATE", "exit"]],
   cols: COLS,
   rows: ROWS,
   start: [5, STREET],
@@ -82,6 +85,8 @@ export const LEVEL = {
     ["corpse_guard", 6.5], ["corpse_man_front", 29], ["corpse_woman_back", 47.5], ["corpse_man_arrows", 76.5],
     ["corpse_guard", 150], ["corpse_guard", 158.5], ["corpse_man_back", 177], ["corpse_headless", 184.5],
     ["corpse_guard", 203], ["corpse_guard", 215.5],
+    // A guardsman who died on the rampart, his bracer beside him.
+    ["corpse_guard", 134.5, 22],
     // The prisoner the spearman in the camp stabs at.
     ["corpse_man_front", 89.75],
   ],
@@ -90,10 +95,22 @@ export const LEVEL = {
     { kind: "rampart", col: 110, width: 31, top: 22 },
     { kind: "tower", col: 237, width: 3, top: 4 },
   ],
-  knownTechniques: ["bash", "plunge", "knives"],
+  knownTechniques: ["sweep", "bash", "plunge", "knives", "charge", "storm", "pierce", "naft", "kick", "low_cut",
+    "rising_cleave", "running_slash", "guarded_thrust", "down_stab"],
+  // Soldiers here are tougher than the market's (health, poise): the hero has grown too.
+  toughness: [1.3, 1.2],
+  aggression: 1.3,
   checkpoints: [
     { id: "camp_lamp", col: 98 },
     { id: "gate_lamp", col: 186 },
+  ],
+  // On the wagon's load; on the rampart, the bracer of a guardsman who died there; in the siege camp, a
+  // black ribbon; further along the wall walk.
+  relics: [
+    { id: "token_wagon", col: 72, row: 25 },
+    { id: "token_rampart", col: 116, row: 22 },
+    { id: "guard_bracer", col: 133, row: 22, keepsake: "guard_bracer" },
+    { id: "ash_ribbon", col: 161, row: 26, keepsake: "ash_ribbon" },
   ],
   manuscripts: [
     { id: "route", col: 26 },
@@ -103,7 +120,8 @@ export const LEVEL = {
   ],
   enemies: ENEMIES,
   npcs: [
-    { id: "hamid", kind: "guard", col: 14, face: 1, dialogue: "hamid" },
+    // Hamid again, at the camp: his breath, the Second Wind.
+    { id: "hamid", kind: "guard", col: 14, face: 1, dialogue: "hamid", gives: "hamid_breath", teaches: "second_wind" },
   ],
   // People waiting by the wall road for the gate to open; two kneel under a headsman's sabre.
   captives: [
@@ -113,7 +131,11 @@ export const LEVEL = {
     { id: "siege_captive", kind: "refugee_woman", col: 170, face: 1, run: -1, thanks: "SAVED_2" },
   ],
   triggers: [
+    // Walked past Hamid: his breath comes to him anyway, on the road.
+    { id: "lesson_breath", from: 24, to: 27, teaches: "second_wind" },
     { id: "hint_maceman", from: 112, to: 115, above: 80, height: 120, hint: "HINT_MACEMAN" },
+    // Past the wall's archers, before the shield-bearer and the axeman: the heavy string's last blow.
+    { id: "lesson_windmill", from: 140, to: 143, teaches: "windmill" },
     { id: "boss", from: 196, to: 198, event: "boss", hint: "HINT_BOSS", speaker: "SPEAKER_TOQTO", line: "TOQTO_INTRO" },
   ],
   // The gate square: burning barricades close behind the hero, and the camera keeps to the square.

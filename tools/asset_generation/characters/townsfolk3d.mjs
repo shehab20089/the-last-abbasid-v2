@@ -95,7 +95,9 @@ function robed(options) {
   const robe = robeMaterial(options.robe, options.trim, { pattern: options.pattern });
   add_("torso", tube(rings, { sides: 20 }), torsoWeights, robe, { group: "torso" });
   if (options.sash) {
-    add_("sash", band(rings, [42.6, 44.0, 45.4], 0.6), torsoWeights,
+    // A sash the story names (Salim's) is wide and bright enough to pick him out by it.
+    const sashBand = options.wideSash ? [40.6, 43.4, 46.2] : [42.6, 44.0, 45.4];
+    add_("sash", band(rings, sashBand, 0.6), torsoWeights,
       { ...shaded(options.sash, -0.2), shade: (s) => pick(options.sash, s.light, -0.2 - (frac(s.v / 1.4) < 0.3 ? 1 : 0)) },
       { group: "torso" });
   }
@@ -217,7 +219,7 @@ const PEOPLE = {
   mother: { robe: WOOL, trim: MADDER, head: "scarf", headCloth: DUSK_RED, child: true, scale: 0.94 },
   refugee_man: { robe: LINEN, trim: WOOL, sash: MADDER, head: "cap", headCloth: WOOL, beard: "dark" },
   refugee_woman: { robe: MADDER, trim: SAFFRON, sash: SAFFRON, head: "scarf", headCloth: WOOL, scale: 0.94 },
-  salim: { robe: LINEN, trim: MADDER, sash: SAFFRON, head: "turban", headCloth: CREAM, beard: "dark", tail: true },
+  salim: { robe: LINEN, trim: MADDER, sash: P.saffron, wideSash: true, head: "turban", headCloth: CREAM, beard: "dark", tail: true },
   librarian: { robe: DEEP_GREEN, trim: P.gold, sash: P.gold, head: "turban", headCloth: CREAM, beard: "white", satchel: true,
     pattern: true },
   copyist: { robe: INDIGO, trim: LINEN, sash: LINEN, head: "cap", headCloth: LINEN, scale: 0.95 },

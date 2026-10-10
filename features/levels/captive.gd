@@ -18,6 +18,8 @@ signal escaped(captive: Captive)
 @export var captive_id: StringName = &""
 ## What they cry as they run (a translation key), or nothing.
 @export var thanks: String = ""
+## A keepsake they press on the hero if he saves them (and that lies where they fall if he does not).
+@export var keepsake: StringName = &""
 ## What a beheading cuts from them and where they bleed (generated with their sprites).
 @export var gore_set: GoreSet
 

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="TechniqueDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/progression/technique_definition.gd" id="1_script"]
+[ext_resource type="Script" path="res://features/progression/modifiers.gd" id="2_mods"]
+[ext_resource type="Texture2D" path="res://assets/ui/tech_unseen.png" id="3_icon"]
+
+[sub_resource type="Resource" id="Resource_mods"]
+script = ExtResource("2_mods")
+stealth_heal = 10.0
+stealth_resolve = 20.0
+
+[resource]
+script = ExtResource("1_script")
+id = &"unseen"
+branch = 2
+tier = 5
+cost = 200
+requires = &"running_thrust"
+modifiers = SubResource("Resource_mods")
+name_key = "TECH_UNSEEN"
+description_key = "TECH_UNSEEN_DESC"
+icon = ExtResource("3_icon")

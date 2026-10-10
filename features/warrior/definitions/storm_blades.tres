@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="AttackDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Storm of Blades"
+animation = &"art_storm"
+active_from = 1
+active_to = 12
+recovery_from = 12
+rehit = true
+damage = 6.0
+poise_damage = 8.0
+stamina_damage = 14.0
+knockback = 50.0
+pulls = true
+hit_stop = 0.02
+camera_shake = 0.8
+radial = true
+severs = Array[StringName]([&"head", &"arm", &"waist"])
+sever_chance = 1.0
+stamina_cost = 0.0
+breath_gain = 0.0
+resolve_gain = 0.0
+art = true
+use_blade_sweep = false
+fallback_hitbox = Rect2(-58, -66, 116, 58)
+swing_cue = &"whirl"
+hit_cue = &"sword_hit"

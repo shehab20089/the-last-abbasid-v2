@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="AttackDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Whirling Cut"
+animation = &"whirling_cut"
+active_from = 1
+active_to = 3
+recovery_from = 4
+damage = 22.0
+poise_damage = 26.0
+stamina_damage = 18.0
+knockback = 230.0
+hit_stop = 0.08
+camera_shake = 2.6
+radial = true
+severs = Array[StringName]([&"head", &"arm", &"waist"])
+sever_chance = 1.0
+stamina_cost = 14.0
+breath_gain = 5.0
+resolve_gain = 6.0
+use_blade_sweep = false
+fallback_hitbox = Rect2(-58, -66, 116, 50)
+swing_cue = &"whirl"
+hit_cue = &"sword_hit_heavy"
+impact_effect = &"hit_slash"

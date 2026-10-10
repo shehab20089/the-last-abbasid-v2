@@ -1,4 +1,4 @@
-﻿// The game's master palette. Every ramp runs darkest to lightest and shifts hue as it goes
+// The game's master palette. Every ramp runs darkest to lightest and shifts hue as it goes
 // (shadows cool toward violet, lights warm toward the firelight), so characters, props and
 // architecture all read as one dark, burning world.
 import { hex } from "./canvas.mjs";

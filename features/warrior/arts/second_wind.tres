@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="ArtDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/warrior/art_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/art_second_wind.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"second_wind"
+cost = 100.0
+animation = &"art_second_wind"
+invulnerable = true
+heal = 30.0
+restores_stamina = true
+steel_time = 10.0
+steel_threshold = 18.0
+effect_frame = 2
+cry_radius = 130.0
+cry_knockback = 260.0
+cry_stagger = 1.3
+fury_speed = 1.25
+fury_heal = 2.0
+fury_kill_time = 1.0
+name_key = "ART_SECOND_WIND"
+description_key = "ART_SECOND_WIND_DESC"
+icon = ExtResource("2_icon")
+cue = &"war_cry"

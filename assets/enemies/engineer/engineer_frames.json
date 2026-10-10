@@ -514,6 +514,69 @@
   ],
   "file": "engineer_death_waist.png"
  },
+ "finished_ground": {
+  "name": "finished_ground",
+  "frames": 8,
+  "width": 176,
+  "height": 128,
+  "fps": 12,
+  "loop": false,
+  "durations": [
+   1,
+   1.2,
+   1,
+   2.2,
+   1.2,
+   1.2,
+   1.4,
+   2.4
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": [
+   [
+    -17.1,
+    -16.5
+   ],
+   [
+    -17,
+    -16.5
+   ],
+   [
+    -17.1,
+    -16.5
+   ],
+   [
+    -17.8,
+    -13
+   ],
+   [
+    -17.8,
+    -13.5
+   ],
+   [
+    -17.7,
+    -13
+   ],
+   [
+    -17.1,
+    -16.5
+   ],
+   [
+    -17.1,
+    -16.5
+   ]
+  ],
+  "file": "engineer_finished_ground.png"
+ },
  "finished_behead": {
   "name": "finished_behead",
   "frames": 9,
@@ -783,5 +846,189 @@
    ]
   ],
   "file": "engineer_finished_disarm.png"
+ },
+ "hurt_b": {
+  "name": "hurt_b",
+  "frames": 5,
+  "width": 176,
+  "height": 128,
+  "fps": 12,
+  "loop": false,
+  "durations": [
+   1,
+   1.2,
+   0.8,
+   0.8,
+   1
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": null,
+  "file": "engineer_hurt_b.png"
+ },
+ "reel": {
+  "name": "reel",
+  "frames": 5,
+  "width": 176,
+  "height": 128,
+  "fps": 10,
+  "loop": false,
+  "durations": [
+   1,
+   1.2,
+   1.2,
+   1,
+   1
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": null,
+  "file": "engineer_reel.png"
+ },
+ "parried": {
+  "name": "parried",
+  "frames": 5,
+  "width": 176,
+  "height": 128,
+  "fps": 8,
+  "loop": false,
+  "durations": [
+   1,
+   1.6,
+   1.6,
+   0.6,
+   0.6
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": null,
+  "file": "engineer_parried.png"
+ },
+ "knockdown": {
+  "name": "knockdown",
+  "frames": 7,
+  "width": 176,
+  "height": 128,
+  "fps": 14,
+  "loop": false,
+  "durations": [
+   1,
+   0.8,
+   0.8,
+   0.7,
+   0.8,
+   1,
+   1.4
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": null,
+  "file": "engineer_knockdown.png"
+ },
+ "down": {
+  "name": "down",
+  "frames": 2,
+  "width": 176,
+  "height": 128,
+  "fps": 3,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null
+  ],
+  "wounds": null,
+  "file": "engineer_down.png"
+ },
+ "getup": {
+  "name": "getup",
+  "frames": 11,
+  "width": 176,
+  "height": 128,
+  "fps": 14,
+  "loop": false,
+  "durations": [
+   0.8,
+   0.7,
+   0.7,
+   1.2,
+   0.8,
+   0.8,
+   1.2,
+   0.8,
+   1,
+   1,
+   1
+  ],
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "wounds": null,
+  "file": "engineer_getup.png"
+ },
+ "death_down": {
+  "name": "death_down",
+  "frames": 3,
+  "width": 176,
+  "height": 128,
+  "fps": 8,
+  "loop": false,
+  "durations": [
+   1,
+   1.4,
+   2.4
+  ],
+  "blades": [
+   null,
+   null,
+   null
+  ],
+  "wounds": [
+   [
+    -17.7,
+    -13.2
+   ],
+   [
+    -17.2,
+    -16.5
+   ],
+   [
+    -17.1,
+    -16.5
+   ]
+  ],
+  "file": "engineer_death_down.png"
  }
 }

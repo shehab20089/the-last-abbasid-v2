@@ -1,6 +1,7 @@
 class_name Arrow
 extends Area2D
-## An arrow in flight: fast, nearly level, dropping a little. It strikes the first body of the
+## An arrow in flight: fast, nearly level, dropping a little (loosed from a roof, or up at one, it is
+## aimed at the hero, as steeply as it must, up to MAX_ANGLE). It strikes the first body of the
 ## other side it reaches, which may block it on a shield, parry it aside or roll through it, and
 ## otherwise sticks in the first wall it meets.
 
@@ -16,6 +17,10 @@ signal impacted(at: Vector2, outcome: int)
 @export var hit_stop: float = 0.05
 @export var lifetime: float = 2.4
 
+## The steepest an arrow is loosed (radians), and the height (px) below which it flies level.
+const MAX_ANGLE: float = 0.9
+const LEVEL_HEIGHT: float = 28.0
+
 ## +1 flying right, -1 flying left. Set before the arrow enters the tree.
 var direction: float = 1.0
 var shooter: Combatant
@@ -27,10 +32,24 @@ var _fade: float = 0.0
 
 
 func _ready() -> void:
-	_velocity = Vector2(direction * speed, -12.0)
+	_velocity = _loosed()
 	sprite.flip_h = direction < 0.0
 	area_entered.connect(_on_area_entered)
 	body_entered.connect(_on_body_entered)
+
+
+## Level and fast, as a rule; at a hero well above or below, aimed at his chest (a little high, for the
+## drop), never steeper than MAX_ANGLE, and never back over the archer's shoulder.
+func _loosed() -> Vector2:
+	var level: Vector2 = Vector2(direction * speed, -12.0)
+	var hero: Node2D = get_tree().get_first_node_in_group(&"player") as Node2D
+	if hero == null:
+		return level
+	var to: Vector2 = hero.global_position + Vector2(0.0, -40.0) - global_position
+	if absf(to.y) < LEVEL_HEIGHT or signf(to.x) != direction:
+		return level
+	var angle: float = clampf(atan2(to.y, absf(to.x)), -MAX_ANGLE, MAX_ANGLE)
+	return Vector2(direction * cos(angle), sin(angle)) * speed
 
 
 func _physics_process(delta: float) -> void:

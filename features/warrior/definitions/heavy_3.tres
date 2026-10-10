@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="AttackDefinition" format=3]
+
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "Windmill"
+animation = &"heavy_3"
+active_from = 3
+active_to = 7
+recovery_from = 8
+rehit = true
+damage = 24.0
+poise_damage = 32.0
+stamina_damage = 30.0
+knockback = 240.0
+strike_at = 36.0
+seeks = 24.0
+knocks_down = true
+hit_stop = 0.12
+camera_shake = 4.5
+guard_break = true
+severs = Array[StringName]([&"waist", &"head"])
+sever_chance = 1.0
+lunge_speed = 80.0
+lunge_from = 6
+lunge_to = 7
+stamina_cost = 22.0
+breath_gain = 8.0
+resolve_gain = 7.0
+swing_cue = &"sword_heavy"
+hit_cue = &"sword_hit_heavy"

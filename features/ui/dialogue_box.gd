@@ -24,6 +24,10 @@ var _blink: float = 0.0
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	root.visible = false
+	# The story is read in the text face.
+	for label: Label in [speaker, text]:
+		label.add_theme_font_override(&"font", KeyText.FONT)
+		label.add_theme_font_size_override(&"font_size", 12)
 
 
 func is_open() -> bool:

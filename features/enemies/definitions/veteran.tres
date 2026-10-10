@@ -8,7 +8,8 @@
 
 [resource]
 script = ExtResource("1_script")
-display_name = "Keshig Veteran"
+display_name = "ENEMY_VETERAN"
+elite = true
 max_health = 75.0
 max_poise = 32.0
 walk_speed = 48.0
@@ -24,6 +25,9 @@ min_range = 22.0
 attack_ranges = PackedFloat32Array(60, 44, 0)
 attack_cooldown = Vector2(1.0, 1.6)
 block_chance = 0.5
+reaction_time = 0.17
+parries_after = 2
+riposte = ExtResource("4_a")
 block_time = 0.8
 retreat_chance = 0.25
 patrol_distance = 56.0

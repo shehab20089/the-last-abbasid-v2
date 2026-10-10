@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="EnemyProfile" format=3]
+
+[ext_resource type="Script" path="res://features/enemies/enemy_profile.gd" id="1_script"]
+[ext_resource type="Script" path="res://features/combat/attack_definition.gd" id="2_attack"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/axeman_chop.tres" id="3_chop"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/axeman_sweep.tres" id="4_sweep"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/axeman_hook.tres" id="5_hook"]
+[ext_resource type="Resource" path="res://features/enemies/definitions/axeman_jab.tres" id="6_jab"]
+
+[resource]
+script = ExtResource("1_script")
+display_name = "ENEMY_AXEMAN"
+elite = true
+max_health = 150.0
+max_poise = 56.0
+walk_speed = 36.0
+run_speed = 82.0
+hurt_time = 0.26
+stagger_time = 1.3
+parried_time = 1.7
+sight_range = 240.0
+hearing_range = 70.0
+alert_time = 0.6
+preferred_range = 56.0
+min_range = 30.0
+attacks = Array[ExtResource("2_attack")]([ExtResource("3_chop"), ExtResource("4_sweep"), ExtResource("5_hook"), ExtResource("6_jab")])
+attack_ranges = PackedFloat32Array(68, 66, 86, 36)
+attack_cooldown = Vector2(1.5, 2.3)
+block_chance = 0.0
+retreat_chance = 0.1
+patrol_distance = 40.0

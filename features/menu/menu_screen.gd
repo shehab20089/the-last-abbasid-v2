@@ -9,6 +9,9 @@ signal chosen(action: StringName)
 ## The action Back reports, or empty when Back does nothing here.
 @export var back_action: StringName = &"back"
 
+## The button last in focus: coming back to the screen (from a page it opened), focus returns to it.
+var _remembered: Button
+
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -38,6 +41,9 @@ func opened() -> void:
 
 
 func focus_first() -> void:
+	if _remembered != null and is_instance_valid(_remembered) and _remembered.is_visible_in_tree() and not _remembered.disabled:
+		_remembered.grab_focus()
+		return
 	for button: Button in _buttons(self):
 		if button.is_visible_in_tree() and not button.disabled:
 			button.grab_focus()
@@ -56,7 +62,15 @@ func _on_button(action: StringName) -> void:
 	chosen.emit(action)
 
 
+## Opened afresh (not come back to): focus starts at the first button again.
+func forget_focus() -> void:
+	_remembered = null
+
+
 func _on_focus() -> void:
+	var owner: Control = get_viewport().gui_get_focus_owner() if is_inside_tree() else null
+	if owner is Button and is_ancestor_of(owner):
+		_remembered = owner as Button
 	chosen.emit(&"focus")
 
 
