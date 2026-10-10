@@ -103,7 +103,7 @@ func wanted_technique() -> StringName:
 		_linger = 0.0
 		return &""
 	var learning: bool = settings == null or settings.move_prompts == GameSettings.Prompts.LEARNING
-	for technique: StringName in hero.open_techniques():
+	for technique: StringName in hero.moves.open_techniques():
 		if move_of(technique).is_empty():
 			continue
 		if (learning and save != null and (save.times_used(technique) >= LEARNED_AFTER

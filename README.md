@@ -346,7 +346,8 @@ the-last-abbasid/
 │                        combat presentation (combat_presentation.gd: how the fighting looks and sounds)
 ├── features/
 │   ├── combat/          Combatant, HitData, AttackDefinition, FinisherDefinition, hitboxes, hit-flash shader
-│   ├── warrior/         the hero: state machine, input, animator, profile and attack definitions
+│   ├── warrior/         the hero: state machine, input, the choice of move (WarriorMoves), animator,
+│   │                    profile and attack definitions
 │   ├── enemies/         MongolSoldier (the body), EnemyBrain and one brain per kind, profiles,
 │   │                    attacks, arrows, fire pots and burning ground
 │   ├── levels/          Level, lamps, manuscripts, people, captives, triggers, the exit, the boss
@@ -376,7 +377,7 @@ Further reading: [`AGENTS.md`](AGENTS.md) (the technical briefing), [`PROGRESS.m
 
 ```mermaid
 flowchart LR
-    A["Input<br/>(WarriorInput)"] --> W["Warrior<br/>state machine"]
+    A["Input<br/>(WarriorInput;<br/>WarriorMoves chooses<br/>the move)"] --> W["Warrior<br/>state machine"]
     B["AI<br/>(EnemyBrain subclasses)"] --> S["MongolSoldier<br/>body"]
     W --> C["Combatant.begin_attack"]
     S --> C
@@ -389,7 +390,7 @@ flowchart LR
     M --> P["VFX · gore · sound ·<br/>shake · hit-stop · HUD"]
 ```
 
-- **Controllers drive bodies.** `WarriorInput` drives the `Warrior`; an `EnemyBrain` subclass drives each `MongolSoldier`. Bodies carry the rules (health, poise, guarding, staggers); brains only decide.
+- **Controllers drive bodies.** `WarriorInput` drives the `Warrior`, and its `WarriorMoves` says what each press makes of the moment (the move, the string's memory, the coach's reading) while the body pays for the move and plays it; an `EnemyBrain` subclass drives each `MongolSoldier`. Bodies carry the rules (health, poise, guarding, staggers); brains only decide.
 - **Data in read-only resources.** `WarriorProfile`, `EnemyProfile`, `AttackDefinition`, `FinisherDefinition`, `ArtDefinition`, and the technique tree's `TechniqueDefinition`, `KeepsakeDefinition`, `Modifiers` and `ProgressionCatalog` hold the tuning; mutable state belongs to the actor.
 - **Growth is rules over the save.** `Progression` (`features/progression/`) keeps Honour, the nodes bought, the keepsakes owned and worn and the Arts carried in the `SaveGame`; the session applies the result to the hero (`Warrior.set_techniques`, `set_modifiers`), and the lamp menu shows it.
 - **Animation-driven timing.** An attack's active, recovery and telegraph frames index its animation strip, and the hitbox on each active frame is the blade's swept polygon, generated with the sprites.

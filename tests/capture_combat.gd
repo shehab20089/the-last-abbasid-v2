@@ -125,7 +125,7 @@ func _delayed() -> void:
 	soldier.guard(3.0)
 	await _wait(0.2)
 	var cells: Array[Image] = [await _crop()]
-	hero._delay_window = 0.3
+	hero.moves.delay_window = 0.3
 	hero.input.press(&"attack")
 	await _follow(cells, 1.2, "delayed_cut")
 	_sheet(cells, "delayed_cut")

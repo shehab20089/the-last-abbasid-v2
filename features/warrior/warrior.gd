@@ -6,8 +6,9 @@ extends Combatant
 ## cleave) and its delayed cut, the heavy cleave and its charge, the running thrust, the air slash and
 ## the plunge, the shield (a block, a parry in the first moments of raising it, a bash), the dodge
 ## roll, finishers, remedies and interaction. What he can do is what he has learned (`techniques`).
-## Input comes from WarriorInput, animation choice from WarriorAnimator, and every timing from the
-## profile and the animation frames.
+## Input comes from WarriorInput, what each button makes of the moment from WarriorMoves (which also keeps
+## the string's memory and names open moves for the coach), animation choice from WarriorAnimator, and every
+## timing from the profile and the animation frames.
 
 signal stamina_changed(current: float, maximum: float)
 signal remedies_changed(count: int, maximum: int)
@@ -131,13 +132,6 @@ const GROUND_FINISH_AT: float = 2.0
 const GROUND_FINISH_SLACK: float = 26.0
 ## No move: nothing follows.
 const NO_INDEX: int = -100
-## How near a soldier must be for the run, the roll and the leap to be named as moves (open_techniques).
-const COACH_REACH: float = 200.0
-## How near a raised guard (the low cut), a crowd (the sweep) and a man (the guarded thrust) must be for the
-## coach to name the move.
-const LOW_CUT_COACH: float = 72.0
-const SWEEP_COACH: float = 72.0
-const GUARDED_COACH: float = 80.0
 ## The technique each learned move's combo index stands for.
 const INDEX_TECHNIQUES: Dictionary[int, StringName] = {
 	BASH_INDEX: &"bash", POMMEL_INDEX: &"pommel", WHIRL_INDEX: &"whirl", DELAYED_INDEX: &"delayed_cut",
@@ -150,8 +144,6 @@ const INDEX_TECHNIQUES: Dictionary[int, StringName] = {
 const ROLL_CUT_INDEX: int = 1
 ## How far (px) the rolling cut looks for a man to turn on when the stick is not held.
 const ROLL_CUT_SEEK: float = 90.0
-## How far ahead (px) a man must be for a run to end in a running blow (else the button is the plain one).
-const RUN_REACH: float = 170.0
 ## How far down (px) he slips to drop through the planks under him.
 const DROP_THROUGH: float = 9.0
 
@@ -208,15 +200,8 @@ var _landed: bool = false
 var _riposte: float = 0.0
 var _invulnerable: float = 0.0
 var _since_hurt: float = 100.0
-var _queued_attack: AttackDefinition
-var _queued_index: int = 0
 ## How the held cleave has grown (0 while nothing is held; see charge_changed).
 var charge_level: int = 0
-## Counting down after the rising cut ends: a light press now is the delayed cut.
-var _delay_window: float = 0.0
-## A beat after a step of the string ends in which the light button still carries it on, and the step.
-var _string_grace: float = 0.0
-var _string_next: int = -1
 ## How long he has been running (the running thrust needs a run behind it).
 var _run_time: float = 0.0
 ## The attack's lunge has ended in the man it struck.
@@ -251,6 +236,8 @@ var _steel: float = 0.0
 var _steel_threshold: float = 0.0
 ## What the techniques bought at lamps and the keepsakes he wears do to him (the session sets it).
 var mods: Modifiers = Modifiers.new()
+## What his buttons make of the moment: the choice of move (see WarriorMoves).
+var moves: WarriorMoves = WarriorMoves.new(self)
 var _action_done: bool = false
 var _interact_target: Interactable
 var _interactables: Array[Interactable] = []
@@ -343,9 +330,7 @@ func respawn(at: Vector2, face: float = 1.0) -> void:
 	remedies = profile.max_remedies
 	_refill_knives()
 	combo_index = 0
-	_queued_attack = null
-	_delay_window = 0.0
-	_string_grace = 0.0
+	moves.clear()
 	_run_time = 0.0
 	_since_combat = 0.0
 	if _steel > 0.0:
@@ -447,76 +432,30 @@ func recently_hurt(seconds: float) -> bool:
 	return _since_hurt < seconds
 
 
+## He has run long enough for a running blow (`profile.running_thrust_after`).
+func in_full_run() -> bool:
+	return _run_time >= profile.running_thrust_after
+
+
+## The blow playing has met a man (struck him, or his shield).
+func blow_met() -> bool:
+	return _landed
+
+
+## The cleave playing has reached its raised blade, and whether he holds it back is decided.
+func charge_decided() -> bool:
+	return _charge_checked
+
+
+## Seconds he has been in his present state.
+func time_in_state() -> float:
+	return _state_time
+
+
 func nearest_interactable() -> Interactable:
 	return _nearest
 
 
-## The learned techniques a button would make of this moment, for a coach to name (nothing is decided
-## here): the ender while a cut plays, the delayed cut a beat after the rising cut, the charge as the
-## cleave's blade rises, the running thrust on the run, the bash behind the shield, the rolling cut late
-## in a roll, the plunge in the air (those three with a soldier near, not on every run or leap), and in a
-## fight each Art he carries and can pay for. The heavy button finishes a man who stands open, so no
-## ender is named then.
-func open_techniques() -> Array[StringName]:
-	var out: Array[StringName] = []
-	match state:
-		State.ATTACK:
-			if current_attack != null and _queued_attack == null and finisher_target == null:
-				var ender: int = _ender_index()
-				var live: bool = sprite.frame >= current_attack.active_from
-				# The heavy string's next blow is named once this one is live (the charge comes first).
-				if ender != NO_INDEX and (live or not ender in [HEAVY_2_INDEX, HEAVY_3_INDEX]):
-					out.append(INDEX_TECHNIQUES[ender])
-				# After the thrust, the kick (the light button).
-				if live and _light_follow() == KICK_INDEX:
-					out.append(&"kick")
-				if (combo_index == HEAVY_INDEX and current_attack == profile.heavy and not _charge_checked
-						and knows(&"charge") and not profile.charged_cleaves.is_empty()):
-					out.append(&"charge")
-				# Short of breath, the shield raised as the blow ends draws it back.
-				if (out.is_empty() and _landed and stamina < profile.max_stamina * 0.5
-						and sprite.frame >= current_attack.active_from):
-					out.append(&"steady_breath")
-		State.IDLE, State.MOVE:
-			if finisher_target == null and profile.ground_stab != null and _downed_foe(GROUND_REACH) != null:
-				out.append(&"ground_stab")
-			if _riposte > 0.0 and profile.riposte_attack != null:
-				out.append(&"riposte")
-			if knows(&"low_cut") and profile.low_cut != null and _guard_ahead(LOW_CUT_COACH):
-				out.append(&"low_cut")
-			if knows(&"sweep") and profile.sweep != null and _foes_near(SWEEP_COACH) >= 2:
-				out.append(&"sweep")
-			if _delay_window > 0.0 and knows(&"delayed_cut") and profile.delayed_cut != null:
-				out.append(&"delayed_cut")
-			if _running_at_foe() and knows(&"running_thrust") and profile.running_thrust != null:
-				out.append(&"running_thrust")
-			if _running_at_foe() and knows(&"running_slash") and profile.running_slash != null:
-				out.append(&"running_slash")
-			if has_resolve() and _foe_still_fighting(null):
-				for art: ArtDefinition in carried_arts():
-					if resolve >= art.cost:
-						out.append(art.id)
-		State.BLOCK:
-			if knows(&"guarded_thrust") and profile.shield_thrust != null and _foe_near(GUARDED_COACH):
-				out.append(&"guarded_thrust")
-			if knows(&"bash") and profile.bash != null:
-				out.append(&"bash")
-		State.PARRY:
-			if profile.riposte_attack != null:
-				out.append(&"riposte")
-		State.ROLL:
-			if (_state_time >= profile.roll_cut_from and knows(&"roll_cut") and profile.roll_cut != null
-					and _foe_near(COACH_REACH)):
-				out.append(&"roll_cut")
-		State.AIR:
-			if knows(&"down_stab") and profile.down_stab != null and _foe_below():
-				out.append(&"down_stab")
-			if knows(&"plunge") and profile.plunge != null and velocity.y > -60.0 and _foe_near(COACH_REACH):
-				out.append(&"plunge")
-	return out
-
-
-## Whether a living soldier stands within `reach` px of him (and not far above or below).
 ## A blow that reaches for a man: its lunge carries him to striking distance of the nearest one before
 ## him (no farther than the blow reaches), so it lands after a knockback and never runs him through.
 func _aim_lunge(attack: AttackDefinition) -> void:
@@ -536,21 +475,9 @@ func _aim_lunge(attack: AttackDefinition) -> void:
 		aim_lunge(gap, ATTACK_FRICTION)
 
 
-## A soldier lying on the street within `reach` px of him (a great blow threw him down), or null.
-func _downed_foe(reach: float) -> Combatant:
-	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
-		var other: Combatant = node as Combatant
-		if other == null or not other.is_down():
-			continue
-		var offset: Vector2 = other.global_position - global_position
-		if absf(offset.y) <= FINISH_LEVEL and absf(offset.x) <= reach:
-			return other
-	return null
-
-
 ## The ground stroke on a man lying before him (or just behind: he turns to it). True when it began.
 func _ground_stroke() -> bool:
-	var target: Combatant = _downed_foe(GROUND_REACH) if profile.ground_stab != null else null
+	var target: Combatant = moves.downed_foe(GROUND_REACH) if profile.ground_stab != null else null
 	if target == null:
 		return false
 	input.consume(&"heavy_attack")
@@ -560,65 +487,6 @@ func _ground_stroke() -> bool:
 	_start_attack(profile.ground_stab, GROUND_INDEX)
 	set_facing(turn)
 	return true
-
-
-## A soldier before him within `reach` px, standing behind a raised guard.
-func _guard_ahead(reach: float) -> bool:
-	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
-		var other: Combatant = node as Combatant
-		if other == null or other.dead or not other.is_guarding():
-			continue
-		var ahead: float = (other.global_position.x - global_position.x) * facing
-		if ahead > 0.0 and ahead <= reach and absf(other.global_position.y - global_position.y) <= 30.0:
-			return true
-	return false
-
-
-## How many living soldiers stand within `reach` px of him.
-func _foes_near(reach: float) -> int:
-	var count: int = 0
-	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
-		var other: Combatant = node as Combatant
-		if (other != null and not other.dead and absf(other.global_position.x - global_position.x) <= reach
-				and absf(other.global_position.y - global_position.y) <= 30.0):
-			count += 1
-	return count
-
-
-## A living soldier under him, near enough below his feet for the down-stab.
-func _foe_below() -> bool:
-	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
-		var other: Combatant = node as Combatant
-		if other == null or other.dead:
-			continue
-		var below: float = other.global_position.y - global_position.y
-		if absf(other.global_position.x - global_position.x) <= 28.0 and below > 16.0 and below < 150.0:
-			return true
-	return false
-
-
-## Running (long enough) at a living soldier before him, within RUN_REACH and level with him: the run's
-## light and heavy buttons are its running blows only then.
-func _running_at_foe() -> bool:
-	if _run_time < profile.running_thrust_after:
-		return false
-	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
-		var other: Combatant = node as Combatant
-		if other == null or other.dead:
-			continue
-		var ahead: float = (other.global_position.x - global_position.x) * facing
-		if ahead > 0.0 and ahead <= RUN_REACH and absf(other.global_position.y - global_position.y) <= 40.0:
-			return true
-	return false
-
-
-func _foe_near(reach: float) -> bool:
-	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
-		var other: Combatant = node as Combatant
-		if (other != null and not other.dead and absf(other.global_position.x - global_position.x) <= reach
-				and absf(other.global_position.y - global_position.y) <= 120.0):
-			return true
-	return false
 
 
 # --- Free movement --------------------------------------------------------------------------------
@@ -663,7 +531,8 @@ func _free(delta: float) -> void:
 	animator.locomotion(on_floor, velocity, delta)
 
 
-## Starts whichever grounded action was pressed. Returns true when one started.
+## Starts whichever grounded action was pressed (the blow each button makes of the moment is `moves`' to
+## choose). Returns true when one started.
 func _try_action() -> bool:
 	if input.has(&"dodge") and _try_roll():
 		return true
@@ -671,42 +540,17 @@ func _try_action() -> bool:
 		return true
 	if input.has(&"attack") and not profile.combo.is_empty():
 		input.consume(&"attack")
-		# Out of a parry or a close call, the riposte; down, the low cut; running at a man, the running
-		# slash; a beat after the rising cut, the delayed cut; a beat after any step of the string, the
-		# next step; else the string's first cut.
-		if _riposte > 0.0 and profile.riposte_attack != null:
-			_start_attack(profile.riposte_attack, RIPOSTE_INDEX)
-		elif input.down_held and knows(&"low_cut") and profile.low_cut != null:
-			_start_attack(profile.low_cut, LOW_INDEX)
-		elif _running_at_foe() and knows(&"running_slash") and profile.running_slash != null:
-			_start_attack(profile.running_slash, RUN_SLASH_INDEX)
-		elif _delay_window > 0.0 and profile.delayed_cut != null:
-			_start_attack(profile.delayed_cut, DELAYED_INDEX)
-		elif _string_grace > 0.0 and _string_next >= 0:
-			_start_attack(profile.combo[_string_next], _string_next)
-		else:
-			_start_attack(profile.combo[0], 0)
+		var light: int = moves.light_move()
+		_start_attack(moves.attack_of(light), light)
 		return true
 	if input.has(&"heavy_attack") and _start_finisher():
 		return true
 	if input.has(&"heavy_attack") and _ground_stroke():
 		return true
-	if input.has(&"heavy_attack") and input.down_held and profile.sweep != null and knows(&"sweep"):
+	var heavy: int = moves.heavy_move() if input.has(&"heavy_attack") else NO_INDEX
+	if heavy != NO_INDEX:
 		input.consume(&"heavy_attack")
-		_start_attack(profile.sweep, SWEEP_INDEX)
-		return true
-	if input.has(&"heavy_attack") and input.block_held and profile.bash != null and knows(&"bash"):
-		input.consume(&"heavy_attack")
-		_start_attack(profile.bash, BASH_INDEX)
-		return true
-	if (input.has(&"heavy_attack") and _running_at_foe() and profile.running_thrust != null
-			and knows(&"running_thrust")):
-		input.consume(&"heavy_attack")
-		_start_attack(profile.running_thrust, RUNNING_INDEX)
-		return true
-	if input.has(&"heavy_attack") and profile.heavy != null:
-		input.consume(&"heavy_attack")
-		_start_attack(profile.heavy, HEAVY_INDEX)
+		_start_attack(moves.attack_of(heavy), heavy)
 		return true
 	if input.block_held:
 		_start_block()
@@ -804,11 +648,9 @@ func _start_attack(attack: AttackDefinition, index: int) -> void:
 	if input.move != 0.0:
 		set_facing(input.move)
 	combo_index = index
-	_queued_attack = null
-	_delay_window = 0.0
+	moves.clear()
 	_steady_left = -1.0
 	_landed = false
-	_string_grace = 0.0
 	_run_time = 0.0
 	_lunge_stopped = false
 	_flinched = false
@@ -855,26 +697,16 @@ func _attacking(delta: float) -> void:
 			return
 	# From the live frames on, a press waits for the moment the move gives way: the light button
 	# carries the string on, the heavy one turns it into the step's ender.
-	if _queued_attack == null and frame >= current_attack.active_from:
-		var follow: int = _light_next()
-		if follow != NO_INDEX and input.has(&"attack"):
-			input.consume(&"attack")
-			_queued_attack = _index_attack(follow)
-			_queued_index = follow
-		elif input.has(&"heavy_attack") and finisher_target == null:
-			var ender: int = _ender_index()
-			if ender != NO_INDEX:
-				input.consume(&"heavy_attack")
-				_queued_attack = _ender_attack(ender)
-				_queued_index = ender
+	if frame >= current_attack.active_from:
+		moves.keep_press()
 	if frame < current_attack.recovery_from:
 		return
 	# A cut turned by a raised shield glances off as it gives way, unless what was called for next breaks
 	# guards (the pommel, the cleave).
 	if _glance_pending:
 		_glance_pending = false
-		var breaker: bool = (_queued_attack != null
-			and (_queued_attack.guard_break or _queued_attack.overwhelms or _queued_attack.unblockable))
+		var called: AttackDefinition = moves.queued_attack
+		var breaker: bool = called != null and (called.guard_break or called.overwhelms or called.unblockable)
 		if not breaker:
 			_glance()
 			return
@@ -882,7 +714,7 @@ func _attacking(delta: float) -> void:
 	# for); the shield raised in the glint, or a moment before it, draws breath and takes the guard.
 	if _steady_left < 0.0:
 		_steady_left = 0.0
-		if _queued_attack == null and not current_attack.guarded and _landed:
+		if moves.queued_attack == null and not current_attack.guarded and _landed:
 			_steady_left = profile.steady_window
 			breath_glint.emit()
 	if (_steady_left > 0.0 and input.has(&"block")
@@ -895,10 +727,10 @@ func _attacking(delta: float) -> void:
 		steady_breath.emit()
 		technique_used.emit(&"steady_breath")
 		return
-	if _queued_attack != null:
-		var next: AttackDefinition = _queued_attack
+	if moves.queued_attack != null:
+		var next: AttackDefinition = moves.queued_attack
 		cancel_attack()
-		_start_attack(next, _queued_index)
+		_start_attack(next, moves.queued_index)
 	elif input.has(&"dodge") and _try_roll():
 		pass
 	elif _try_arts(false):
@@ -906,10 +738,10 @@ func _attacking(delta: float) -> void:
 	elif input.has(&"heavy_attack") and finisher_target != null:
 		cancel_attack()
 		_start_finisher()
-	elif input.has(&"heavy_attack") and _downed_foe(GROUND_REACH) != null:
+	elif input.has(&"heavy_attack") and moves.downed_foe(GROUND_REACH) != null:
 		cancel_attack()
 		_ground_stroke()
-	elif input.has(&"heavy_attack") and _cleave_follows() and profile.heavy != null:
+	elif input.has(&"heavy_attack") and moves.cleave_follows() and profile.heavy != null:
 		input.consume(&"heavy_attack")
 		cancel_attack()
 		_start_attack(profile.heavy, HEAVY_INDEX)
@@ -917,108 +749,14 @@ func _attacking(delta: float) -> void:
 		cancel_attack()
 		_start_block()
 	elif input.move != 0.0 and frame > current_attack.recovery_from:
-		_open_delay()
-		_open_string()
+		moves.gave_way()
 		cancel_attack()
 		_set_state(State.MOVE)
 
 
-## What the light button makes of the move playing, once it gives way: the low cut (down held, once
-## learned), the string's next step, or the string from its first cut. NO_INDEX behind the shield after the
-## guarded thrust (the button repeats that).
-func _light_next() -> int:
-	if profile.combo.is_empty() or (combo_index == GUARDED_INDEX and input.block_held):
-		return NO_INDEX
-	if input.down_held and knows(&"low_cut") and profile.low_cut != null:
-		return LOW_INDEX
-	var follow: int = _light_follow()
-	return follow if follow >= 0 else 0
-
-
-## The step of the combo the light button carries on to from the move playing, or -1 (none: the string
-## starts again).
-func _light_follow() -> int:
-	match combo_index:
-		0, POMMEL_INDEX, RUNNING_INDEX, LOW_INDEX, RUN_SLASH_INDEX, RIPOSTE_INDEX:
-			return 1 if profile.combo.size() > 1 else -1
-		1, DELAYED_INDEX:
-			return 2 if profile.combo.size() > 2 else -1
-		2:
-			return KICK_INDEX if profile.combo.size() > KICK_INDEX and knows(&"kick") else -1
-	return -1
-
-
-## The attack a move's index stands for: a step of the string, the low cut, or an ender.
-func _index_attack(index: int) -> AttackDefinition:
-	if index >= 0:
-		return profile.combo[index]
-	if index == LOW_INDEX:
-		return profile.low_cut
-	return _ender_attack(index)
-
-
-## The string has given way (its blow ended, or he stepped out of it): for a moment the light button still
-## carries it on from where it was.
-func _open_string() -> void:
-	_string_next = _light_follow()
-	_string_grace = profile.string_grace if _string_next >= 0 else 0.0
-
-
-## The ender the heavy button makes of the move playing, once learned: the pommel strike after the
-## cut, the whirling cut after the rising cut (or the rolling or delayed cut), the executioner's
-## cleave after the thrust. NO_INDEX when there is none.
-func _ender_index() -> int:
-	match combo_index:
-		0:
-			if knows(&"pommel") and profile.pommel_strike != null:
-				return POMMEL_INDEX
-		1, DELAYED_INDEX:
-			if knows(&"whirl") and profile.whirling_cut != null:
-				return WHIRL_INDEX
-		2:
-			if knows(&"executioner") and profile.executioner != null:
-				return EXECUTIONER_INDEX
-		HEAVY_INDEX, CHARGED_INDEX:
-			if knows(&"rising_cleave") and profile.heavy_string.size() > 0:
-				return HEAVY_2_INDEX
-		HEAVY_2_INDEX:
-			if knows(&"windmill") and profile.heavy_string.size() > 1:
-				return HEAVY_3_INDEX
-	return NO_INDEX
-
-
-func _ender_attack(index: int) -> AttackDefinition:
-	match index:
-		POMMEL_INDEX:
-			return profile.pommel_strike
-		WHIRL_INDEX:
-			return profile.whirling_cut
-		EXECUTIONER_INDEX:
-			return profile.executioner
-		HEAVY_2_INDEX:
-			return profile.heavy_string[0]
-		HEAVY_3_INDEX:
-			return profile.heavy_string[1]
-	return null
-
-
-## Whether the plain cleave may follow the move playing (once it gives way): after a cut with no
-## ender learned, a bash, the pommel strike, the delayed cut or the running thrust.
-func _cleave_follows() -> bool:
-	return combo_index >= 0 or combo_index in [BASH_INDEX, POMMEL_INDEX, DELAYED_INDEX, RUNNING_INDEX, LOW_INDEX,
-		RUN_SLASH_INDEX, RIPOSTE_INDEX, GUARDED_INDEX]
-
-
-## The rising cut (or the rolling cut) has ended: for a moment, the light button is the delayed cut.
-func _open_delay() -> void:
-	if combo_index == 1 and knows(&"delayed_cut") and profile.delayed_cut != null:
-		_delay_window = profile.delay_window
-
-
 func on_attack_finished(attack: AttackDefinition) -> void:
 	if state == State.ATTACK:
-		_open_delay()
-		_open_string()
+		moves.gave_way()
 		_set_state(State.IDLE)
 		animator.play(&"idle")
 	elif state == State.AIR_ATTACK:
@@ -1035,7 +773,7 @@ func on_attack_finished(attack: AttackDefinition) -> void:
 ## The cleave's blade raised and held: the blow grows while the button stays down.
 func _start_charge() -> void:
 	cancel_attack()
-	_queued_attack = null
+	moves.forget()
 	_set_state(State.CHARGE)
 	charge_level = 1
 	animator.play(&"charge_hold")
@@ -1182,9 +920,7 @@ func _begin_art(art: ArtDefinition, pay: bool = true) -> void:
 	if pay:
 		set_resolve(resolve - art.cost)
 	cancel_attack()
-	_queued_attack = null
-	_delay_window = 0.0
-	_string_grace = 0.0
+	moves.clear()
 	_lunge_stopped = false
 	_flinched = false
 	_action_done = false
@@ -1317,22 +1053,6 @@ func _clear_path(from: Vector2, to: Vector2) -> bool:
 	return space.intersect_ray(query).is_empty()
 
 
-## The nearest living soldier before him (or just behind) within `reach` px and level with him.
-func _nearest_foe(reach: float) -> Combatant:
-	var best: Combatant = null
-	var nearest: float = reach
-	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
-		var other: Combatant = node as Combatant
-		if other == null or other.dead:
-			continue
-		var offset: Vector2 = other.global_position - global_position
-		if absf(offset.y) > 24.0 or absf(offset.x) > nearest or offset.x * facing < -12.0:
-			continue
-		best = other
-		nearest = absf(offset.x)
-	return best
-
-
 ## The flask leaves his hand.
 func _release_art(art: ArtDefinition) -> void:
 	var flask: Node2D = art.projectile.instantiate() as Node2D
@@ -1384,7 +1104,7 @@ func _start_throw() -> bool:
 	if input.move != 0.0:
 		set_facing(input.move)
 	cancel_attack()
-	_queued_attack = null
+	moves.forget()
 	_action_done = false
 	_set_state(State.THROW)
 	animator.play(&"throw")
@@ -1422,7 +1142,7 @@ func _start_air_attack() -> bool:
 		set_facing(input.move)
 	_bounce_pending = false
 	_air_slashes += 1
-	_queued_attack = null
+	moves.forget()
 	_jump_rising = false
 	# A slash checks his fall for a moment, so it can find a man standing below.
 	velocity.y = minf(velocity.y, 30.0)
@@ -1438,7 +1158,7 @@ func _start_down_stab() -> bool:
 		return false
 	if input.move != 0.0:
 		set_facing(input.move)
-	_queued_attack = null
+	moves.forget()
 	_jump_rising = false
 	_bounce_pending = false
 	velocity.y = maxf(velocity.y, 60.0)
@@ -1491,7 +1211,7 @@ func _start_plunge() -> bool:
 	_clear_pending()
 	input.consume(&"heavy_attack")
 	cancel_attack()
-	_queued_attack = null
+	moves.forget()
 	_jump_rising = false
 	if input.move != 0.0:
 		set_facing(input.move)
@@ -1524,7 +1244,7 @@ func _land_plunge() -> void:
 	_plunge_dropping = false
 	velocity = Vector2.ZERO
 	combo_index = PLUNGE_INDEX
-	_queued_attack = null
+	moves.forget()
 	_set_state(State.ATTACK)
 	begin_attack(profile.plunge_landing)
 	# Death from above: the men about the landing flinch.
@@ -1600,8 +1320,7 @@ func on_hit_landed(target: Combatant, hit: HitData, outcome: HitData.Outcome) ->
 # --- The shield ---------------------------------------------------------------------------------
 
 func _start_block() -> void:
-	_delay_window = 0.0
-	_string_grace = 0.0
+	moves.break_string()
 	_set_state(State.BLOCK)
 	if _parry_cooldown <= 0.0 and (_steel > 0.0 or stamina >= profile.parry_cost):
 		_drain(0.0 if _steel > 0.0 else profile.parry_cost)
@@ -1703,7 +1422,7 @@ func on_struck(hit: HitData, outcome: HitData.Outcome) -> void:
 			# gives way to the plain guard, so nothing waits on frames the recoil will never show.
 			if state != State.BLOCK:
 				cancel_attack()
-				_queued_attack = null
+				moves.forget()
 				_glance_pending = false
 				_parry_window = 0.0
 				_set_state(State.BLOCK)
@@ -1772,7 +1491,7 @@ func _hurt(hit: HitData, time: float) -> void:
 ## moment he can only raise his own shield or roll (no blow taken, nothing to recover from).
 func _glance() -> void:
 	cancel_attack()
-	_queued_attack = null
+	moves.forget()
 	_set_state(State.HURT)
 	_glancing = true
 	_hurt_left = profile.glance_time
@@ -1786,7 +1505,7 @@ func _glance() -> void:
 func _thrown_open(hit: HitData) -> void:
 	_clear_pending()
 	cancel_attack()
-	_queued_attack = null
+	moves.forget()
 	_parry_window = 0.0
 	_set_state(State.HURT)
 	_hurt_left = profile.thrown_open_time
@@ -1861,8 +1580,7 @@ func _try_roll() -> bool:
 		set_facing(input.move)
 	cancel_attack()
 	_parry_window = 0.0
-	_delay_window = 0.0
-	_string_grace = 0.0
+	moves.break_string()
 	_set_state(State.ROLL)
 	animator.play(&"roll")
 	rolled.emit()
@@ -2095,7 +1813,7 @@ func _start_finisher(forced: Combatant = null, quick: bool = false) -> bool:
 		next_finisher = null
 	input.consume(&"heavy_attack")
 	cancel_attack()
-	_queued_attack = null
+	moves.forget()
 	set_facing(signf(target.global_position.x - global_position.x) if target.global_position.x != global_position.x else facing)
 	_finisher = chosen
 	_finished = target
@@ -2103,7 +1821,7 @@ func _start_finisher(forced: Combatant = null, quick: bool = false) -> bool:
 	_finisher_frame = -1
 	velocity = Vector2.ZERO
 	# The full one when he is the last (or it is a judgment); a quick one while others still fight.
-	finisher_cinematic = not quick and (forced != null or not _foe_still_fighting(target))
+	finisher_cinematic = not quick and (forced != null or not foe_still_fighting(target))
 	var speed: float = 1.0 if finisher_cinematic else QUICK_FINISHER
 	# A kill like that steels him (a judgment was already paid for).
 	if forced == null:
@@ -2143,7 +1861,7 @@ func _finisher_step() -> void:
 
 
 ## True while another soldier near him is still in the fight.
-func _foe_still_fighting(except: Combatant) -> bool:
+func foe_still_fighting(except: Combatant) -> bool:
 	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
 		var other: Combatant = node as Combatant
 		if (other != null and other != except and other.in_fight()
@@ -2233,8 +1951,7 @@ func _tick(delta: float) -> void:
 	_state_time += delta
 	_since_hurt += delta
 	_coyote = maxf(0.0, _coyote - delta)
-	_delay_window = maxf(0.0, _delay_window - delta)
-	_string_grace = maxf(0.0, _string_grace - delta)
+	moves.tick(delta)
 	_riposte = maxf(0.0, _riposte - delta)
 	_since_combat += delta
 	if _since_combat > profile.resolve_idle and resolve > profile.resolve_kept:

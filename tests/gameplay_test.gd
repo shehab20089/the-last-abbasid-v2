@@ -905,7 +905,7 @@ func _test_move_routing() -> void:
 	await _plays(&"heavy", 60, warrior.profile.heavy.active_from)
 	warrior.input.press(&"attack")
 	await frames(2)
-	var kept: bool = warrior._queued_attack == warrior.profile.combo[0]
+	var kept: bool = warrior.moves.queued_attack == warrior.profile.combo[0]
 	await _plays(&"attack_1", 60)
 	check(kept and warrior.current_attack == warrior.profile.combo[0],
 		"a light press in the cleave's live frames is kept, and the cut follows")
@@ -918,7 +918,7 @@ func _test_move_routing() -> void:
 	warrior.input.press(&"attack")
 	await frames(2)
 	warrior.input.down_held = false
-	var next: AttackDefinition = warrior._queued_attack
+	var next: AttackDefinition = warrior.moves.queued_attack
 	await frames(40)
 	check(next == warrior.profile.low_cut, "down and the light button in a cut's live frames: the low cut follows")
 	await frames(40)
@@ -947,10 +947,10 @@ func _test_open_techniques() -> void:
 	await _reset()
 	var used: Array[StringName] = []
 	warrior.technique_used.connect(func(technique: StringName) -> void: used.append(technique))
-	check(warrior.open_techniques().is_empty(), "standing still, nothing is open")
+	check(warrior.moves.open_techniques().is_empty(), "standing still, nothing is open")
 	warrior.input.press(&"attack")
 	await _plays(&"attack_1", 20, 1)
-	check(&"pommel" in warrior.open_techniques(), "while the cut plays, the heavy button is the pommel strike")
+	check(&"pommel" in warrior.moves.open_techniques(), "while the cut plays, the heavy button is the pommel strike")
 	warrior.input.press(&"heavy_attack")
 	await _plays(&"pommel_strike", 30)
 	check(used.size() == 1 and used[0] == &"pommel", "and making it counts a use of the pommel strike (%s)" % [used])
@@ -960,13 +960,13 @@ func _test_open_techniques() -> void:
 	warrior.techniques = [&"bash"]
 	warrior.input.press(&"attack")
 	await _plays(&"attack_1", 20, 1)
-	check(not &"pommel" in warrior.open_techniques(), "a move not yet learned is never named")
+	check(not &"pommel" in warrior.moves.open_techniques(), "a move not yet learned is never named")
 	await frames(40)
 	warrior.techniques = all
 	# A run with no soldier near is only a run.
 	warrior.input.move = 1.0
 	await frames(24)
-	check(not &"running_thrust" in warrior.open_techniques(), "with no soldier near, a run is not named a thrust")
+	check(not &"running_thrust" in warrior.moves.open_techniques(), "with no soldier near, a run is not named a thrust")
 	warrior.input.move = 0.0
 	await frames(30)
 	# With one ahead: on the run, the running thrust; behind the shield, the bash; late in a roll, the
@@ -975,19 +975,19 @@ func _test_open_techniques() -> void:
 	_place_dummy_in_front(170.0)
 	warrior.input.move = 1.0
 	await frames(24)
-	check(&"running_thrust" in warrior.open_techniques(), "on the run toward a soldier, the running thrust is open")
+	check(&"running_thrust" in warrior.moves.open_techniques(), "on the run toward a soldier, the running thrust is open")
 	warrior.input.move = 0.0
 	await frames(30)
 	warrior.input.block_held = true
 	await frames(20)
-	check(&"bash" in warrior.open_techniques(), "behind the shield, the bash is open")
+	check(&"bash" in warrior.moves.open_techniques(), "behind the shield, the bash is open")
 	warrior.input.block_held = false
 	await frames(10)
 	warrior.input.press(&"dodge")
 	var late: bool = false
 	for i: int in 30:
 		await physics_frame
-		if &"roll_cut" in warrior.open_techniques():
+		if &"roll_cut" in warrior.moves.open_techniques():
 			late = true
 			break
 	check(late, "late in a roll, the rolling cut is open")
@@ -995,7 +995,7 @@ func _test_open_techniques() -> void:
 	# As the cleave's blade rises, the charge.
 	warrior.input.press(&"heavy_attack")
 	await frames(2)
-	check(&"charge" in warrior.open_techniques(), "as the cleave begins, holding it is open")
+	check(&"charge" in warrior.moves.open_techniques(), "as the cleave begins, holding it is open")
 	await frames(60)
 	dummy.remove_from_group(&"enemies")
 

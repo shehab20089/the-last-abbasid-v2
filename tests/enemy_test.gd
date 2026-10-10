@@ -444,7 +444,7 @@ func _test_knockdown() -> void:
 	warrior.global_position.x = soldier.global_position.x - 40.0
 	await frames(1)
 	var health: float = soldier.health
-	check(&"ground_stab" in warrior.open_techniques(), "over a man down, the coach can name the ground stroke")
+	check(&"ground_stab" in warrior.moves.open_techniques(), "over a man down, the coach can name the ground stroke")
 	warrior.input.press(&"heavy_attack")
 	await frames(3)
 	check(warrior.current_attack == warrior.profile.ground_stab, "the heavy button over a man down is the ground stroke")
@@ -1812,7 +1812,7 @@ func _test_delayed_cut_on_guard() -> void:
 		var outcomes: Array[HitData.Outcome] = []
 		warrior.hit_landed.connect(func(_t: Combatant, _h: HitData, outcome: HitData.Outcome) -> void: outcomes.append(outcome))
 		if feint:
-			warrior._delay_window = 0.3
+			warrior.moves.delay_window = 0.3
 		warrior.input.press(&"attack")
 		await frames(2)
 		var played: AttackDefinition = warrior.current_attack
@@ -2200,7 +2200,7 @@ func _time_to_kill(toughness: float, grown: bool) -> int:
 		var attack: AttackDefinition = warrior.current_attack
 		if warrior.state == Warrior.State.IDLE:
 			warrior.input.press(&"attack")
-		elif attack != null and warrior.sprite.frame >= attack.active_from and warrior._queued_attack == null:
+		elif attack != null and warrior.sprite.frame >= attack.active_from and warrior.moves.queued_attack == null:
 			var ender: bool = grown and attack == warrior.profile.combo[2]
 			warrior.input.press(&"heavy_attack" if ender else &"attack")
 		# He stays where the blade can find him, however the blows throw him.
