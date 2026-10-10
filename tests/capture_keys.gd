@@ -38,13 +38,13 @@ func _run() -> void:
 	game._apply_growth()
 	await _wait(0.3)
 	# A new technique's card: the whirl, its buttons in order.
-	game._show_card({"kind": "technique", "id": &"whirl"})
+	game.teaching.show_card({"kind": "technique", "id": &"whirl"})
 	await _wait(1.6)
 	await _save("01_card_whirl")
 	game.lesson_screen.chosen.emit(&"lesson_done")
 	await _wait(0.3)
 	# Hamid's counsel: the parry and the riposte, performed.
-	game._show_card({"kind": "counsel", "id": &"riposte"})
+	game.teaching.show_card({"kind": "counsel", "id": &"riposte"})
 	await _wait(2.2)
 	await _save("01b_counsel_riposte")
 	game.lesson_screen.chosen.emit(&"lesson_done")

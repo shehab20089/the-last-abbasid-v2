@@ -125,8 +125,8 @@ func _first_street() -> void:
 	check(game.hud.markers.objective_node == ibrahim and game.hud.markers.objective_mark() == &"arrow",
 		"the objective points to Ibrahim, off the screen: an arrow at its edge")
 	# Lessons wait for each other; none is cut off by the next.
-	game._hint("HINT_ATTACK")
-	game._hint("HINT_GUARD")
+	game.teaching.hint("HINT_ATTACK")
+	game.teaching.hint("HINT_GUARD")
 	await frames(2)
 	check(lessons.current() == "HINT_MOVE" and lessons.waiting() >= 3, "lessons raised together wait their turn")
 	# While the game waits, the lesson's clock stops.
@@ -642,7 +642,7 @@ func _coach() -> void:
 	lessons.clear()
 	soldier.engaged = true
 	await frames(2)
-	game._hint("HINT_ATTACK")
+	game.teaching.hint("HINT_ATTACK")
 	await frames(3)
 	var cut_short: String = lessons.current_text()
 	check(cut_short.ends_with(".") and cut_short.length() < tr("HINT_ATTACK").length(),
@@ -783,13 +783,13 @@ func _settings_and_access() -> void:
 	var lessons: LessonCard = game.hud.lessons
 	lessons.clear()
 	settings.set_lessons(GameSettings.LessonMode.SHORT)
-	game._hint("HINT_ATTACK")
+	game.teaching.hint("HINT_ATTACK")
 	await frames(3)
 	check(lessons.current_text() != "" and lessons.current_text().length() < tr("HINT_ATTACK").length(),
 		"lessons set short: the first sentence only (%s)" % lessons.current_text())
 	lessons.clear()
 	settings.set_lessons(GameSettings.LessonMode.OFF)
-	game._hint("HINT_GUARD")
+	game.teaching.hint("HINT_GUARD")
 	await frames(3)
 	check(lessons.current() == "" and game.save.lessons.has(&"HINT_GUARD"), "set off, none is shown, but each is kept")
 	settings.set_lessons(GameSettings.LessonMode.FULL)

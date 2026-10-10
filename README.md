@@ -342,8 +342,9 @@ The game renders at **640×360** and scales by whole multiples: a 1280×720 wind
 
 ```
 the-last-abbasid/
-├── app/                 the session: main.tscn (generated) + main.gd (AbbasidGame), and its
-│                        combat presentation (combat_presentation.gd: how the fighting looks and sounds)
+├── app/                 the session: main.tscn (generated) + main.gd (AbbasidGame), and its parts:
+│                        combat_presentation.gd (how the fighting looks and sounds), boss_fight.gd (the
+│                        boss fight's moments), teaching.gd (lessons, cards, first warnings and meetings)
 ├── features/
 │   ├── combat/          Combatant, HitData, AttackDefinition, FinisherDefinition, hitboxes, hit-flash shader
 │   ├── warrior/         the hero: state machine, input, the choice of move (WarriorMoves), animator,

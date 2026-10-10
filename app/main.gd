@@ -2,11 +2,12 @@ class_name AbbasidGame
 extends Node
 ## The session: the front door (title, pause, settings, results), the level in play and the hero
 ## in it, the camera, the HUD and conversations, saving and loading, death and return, and the
-## story of Chapter I. How the fighting looks and sounds is its CombatPresentation's (app/combat_presentation.gd),
-## which it binds to each fighter; it never decides a blow. The story itself is data: each level names its objectives,
-## its ambushes, who gives what, where its exit leads and the card told on the way. It keeps the
-## hero's growth too (a Progression over the save): the Honour his deeds earn, the lamp menu where he
-## spends it, the keepsakes given to him, and applies what he has become to the hero.
+## story of Chapter I. How the fighting looks and sounds is its CombatPresentation's
+## (app/combat_presentation.gd), which it binds to each fighter; it never decides a blow. A boss fight's
+## moments are its BossFight's (app/boss_fight.gd), begun by the story's `boss` trigger. The story itself is
+## data: each level names its objectives, its ambushes, who gives what, where its exit leads and the card told
+## on the way. It keeps the hero's growth too (a Progression over the save): the Honour his deeds earn, the
+## lamp menu where he spends it, the keepsakes given to him, and applies what he has become to the hero.
 
 enum State {TITLE, CARD, PLAYING, PAUSED, DIALOGUE, READING, DEAD, ENDING, COMPLETE, LAMP, LESSON}
 
@@ -32,34 +33,12 @@ const TECHNIQUES: Array[StringName] = [&"sweep", &"bash", &"plunge", &"roll_cut"
 ## Townspeople in the chapter kneeling under a headsman's sabre, who can be saved.
 const CAPTIVES_TOTAL: int = 7
 const DEATH_DELAY: float = 2.4
-## How near a soldier's first warning of a colour must be for its lesson to stop the game.
-const WARNING_LESSON_RANGE: float = 300.0
-## How near the first unlit lamp and the first person with something to say must be to be pointed out, and how
-## long into a street before they are (its first moment is for moving).
-const FIRST_MEETING_RANGE: float = 150.0
-const FIRST_MEETING_DELAY: float = 1.5
-## How near someone with something to say must be to call out to him.
-const CALL_RANGE: float = 230.0
-## What each warning's card shows: its title, its words, the move that answers it (MoveDemos).
-const WARNING_LESSONS: Array[Array] = [
-	["LESSON_WARN_WHITE", "HINT_WARN_WHITE", &"guard"],
-	["LESSON_WARN_AMBER", "HINT_WARN_AMBER", &"roll"],
-	["LESSON_WARN_VIOLET", "HINT_WARN_VIOLET", &"roll"],
-	["LESSON_WARN_RED", "HINT_WARN_RED", &"roll"],
-]
-## The lamp's card shows the niche alight.
-const LAMP_PICTURE: Texture2D = preload("res://assets/environments/market/props/lamp_niche.png")
 const FADE_TIME: float = 0.6
 
 ## Checks start straight in a level, without the title, the intro or fades.
 static var start_in_level: String = ""
 static var start_checkpoint: StringName = &""
 
-## Lessons that stop the game, waiting for a quiet moment: {"kind": "technique", "id": ...}, {"kind": "lamp"},
-## {"kind": "warning", "tell": ...}.
-var _cards: Array[Dictionary] = []
-## What to do once the lesson on the screen is read (the first lamp's card opens the lamp menu), or nothing.
-var _after_card: Callable = Callable()
 ## The objective shown (a translation key), to announce it when it changes.
 var _last_objective: String = ""
 ## The person the interact button would speak to now (glowing softly), or null.
@@ -68,8 +47,6 @@ var _near_npc: Npc
 var _last_blow: HitData
 ## The remedies he had when last told, so one drunk is told to the playtest log (a lamp refills them).
 var _remedies_seen: int = 0
-## Seconds in play since the level was entered.
-var _level_time: float = 0.0
 var state: State = State.TITLE
 var level: Level
 var level_path: String = ""
@@ -77,13 +54,17 @@ var hero: Warrior
 var save: SaveGame = SaveGame.new()
 var _settings_return: MenuScreen
 var _talking: Npc
-var _boss: MongolSoldier
 ## The hero's growth, kept in the save.
 var progression: Progression
 ## How the game is played, written for playtests (shared/playtest/play_log.gd).
 var play_log: PlayLog
 ## How the fighting looks and sounds (app/combat_presentation.gd), bound to each fighter as he enters.
 var presentation: CombatPresentation
+## The boss fight's moments (app/boss_fight.gd), begun by a `boss` trigger.
+var boss_fight: BossFight
+## How the player is taught (app/teaching.gd): lessons at the top, the cards that stop the game, the first
+## warnings and meetings.
+var teaching: Teaching
 ## The nodes bought before the lamp menu opened (those bought by it are taught as he rises).
 var _bought_before: Array[StringName] = []
 
@@ -119,10 +100,20 @@ func _ready() -> void:
 	play_log = PlayLog.new()
 	play_log.name = "PlayLog"
 	add_child(play_log)
+	# Added before the presentation, so each frame it looks for a card's quiet moment first (as the session did).
+	teaching = Teaching.new()
+	teaching.name = "Teaching"
+	add_child(teaching)
+	teaching.setup(self)
 	presentation = CombatPresentation.new()
 	presentation.name = "Presentation"
 	add_child(presentation)
 	presentation.setup(self)
+	boss_fight = BossFight.new()
+	boss_fight.name = "BossFight"
+	add_child(boss_fight)
+	boss_fight.setup(self)
+	boss_fight.ended.connect(_refresh_story)
 	world.process_mode = Node.PROCESS_MODE_PAUSABLE
 	vfx.process_mode = Node.PROCESS_MODE_PAUSABLE
 	gore.process_mode = Node.PROCESS_MODE_PAUSABLE
@@ -141,7 +132,6 @@ func _ready() -> void:
 	game_over.glyphs = glyphs
 	card.glyphs = glyphs
 	Input.joy_connection_changed.connect(_on_joy_connection_changed)
-	hud.lessons.shown.connect(_on_lesson_shown)
 	for screen: MenuScreen in [title, pause_menu, settings_screen, game_over, complete, reader, lamp_menu,
 			techniques_screen, guide_screen, lesson_screen, journal_screen, codex_screen]:
 		screen.chosen.connect(_on_menu)
@@ -166,7 +156,9 @@ func _process(delta: float) -> void:
 	var cursor: Input.MouseMode = Input.MOUSE_MODE_HIDDEN if state == State.PLAYING else Input.MOUSE_MODE_VISIBLE
 	if Input.mouse_mode != cursor and DisplayServer.get_name() != "headless":
 		Input.mouse_mode = cursor
-	_update_messages()
+	# Where the objective points, for the signs over the world.
+	if state == State.PLAYING and hero != null and level != null:
+		_refresh_objective_target()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -176,7 +168,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed(&"pause") and state == State.PAUSED and pause_menu.visible:
 		# The button that paused the game takes it out of the pause again.
 		get_viewport().set_input_as_handled()
-		_resume_play()
+		resume_play()
 	elif event.is_action_pressed(&"pause") and state == State.LAMP:
 		# Whatever the lamp menu shows, the pause button always lets him rise.
 		get_viewport().set_input_as_handled()
@@ -237,13 +229,13 @@ func _on_menu(action: StringName) -> void:
 		&"quit":
 			get_tree().quit()
 		&"resume":
-			_resume_play()
+			resume_play()
 		&"return_lamp", &"rise":
 			_respawn()
 		&"quit_title":
 			_quit_to_title()
 		&"close":
-			_resume_play()
+			resume_play()
 		&"leave":
 			_leave_lamp()
 		&"techniques":
@@ -271,7 +263,7 @@ func _on_menu(action: StringName) -> void:
 			codex_screen.close()
 			pause_menu.open()
 		&"lesson_done":
-			_close_card()
+			teaching.close_card()
 
 
 func _new_game() -> void:
@@ -386,11 +378,9 @@ func _enter_level(path: String, checkpoint: StringName, fade_in: bool, announce:
 	level_path = path
 	world.add_child(level)
 	hud.clear_messages()
-	_cards.clear()
-	_after_card = Callable()
+	teaching.clear()
 	_last_objective = ""
 	_near_npc = null
-	_level_time = 0.0
 	_last_blow = null
 	_setup_level(checkpoint)
 	state = State.PLAYING
@@ -432,8 +422,7 @@ func _setup_level(checkpoint: StringName) -> void:
 	level.relic_found.connect(_on_relic_found)
 	_lay_lost_keepsakes()
 	_refresh_story()
-	_boss = null
-	hud.hide_boss()
+	boss_fight.clear()
 	camera.set_bounds(level.bounds)
 	camera.target = hero
 	camera.snap()
@@ -551,7 +540,7 @@ func _save_game() -> bool:
 	return true
 
 
-func _pause_for(next: State) -> void:
+func pause_for(next: State) -> void:
 	state = next
 	get_tree().paused = true
 	hud.suspend_prompt(true)
@@ -560,7 +549,7 @@ func _pause_for(next: State) -> void:
 
 
 ## Back to play; the devices are ignored for `hold` seconds (so the button that closed a menu does not act).
-func _resume_play(hold: float = 0.2) -> void:
+func resume_play(hold: float = 0.2) -> void:
 	_close_menus()
 	get_tree().paused = false
 	state = State.PLAYING
@@ -643,7 +632,7 @@ func _on_captive_killed(captive: Captive) -> void:
 	camera.shake(1.5)
 	if captive.captive_id != &"":
 		save.set_flag(StringName("lost_%s" % captive.captive_id))
-	_say("SPEAKER_YUSUF", "YUSUF_TOO_LATE")
+	say("SPEAKER_YUSUF", "YUSUF_TOO_LATE")
 
 
 ## Someone the soldiers would have killed got away.
@@ -660,7 +649,7 @@ func _on_captive_saved(captive: Captive) -> void:
 	if hero != null:
 		hero.gain_resolve(hero.profile.resolve_saved)
 	if captive.thanks != "":
-		_say("SPEAKER_CAPTIVE", captive.thanks)
+		say("SPEAKER_CAPTIVE", captive.thanks)
 
 
 ## A soldier the hero killed: resolve for it (a finisher has already paid its own), and whatever the
@@ -714,7 +703,7 @@ func _earn(amount: int, once: StringName = &"", announce: bool = true) -> void:
 		hud.notice(tr("NOTICE_HONOUR") % amount)
 
 
-# --- In the fight: lessons, messages and the log -------------------------------------------------
+# --- In the fight: the log, the first lessons and the fall ---------------------------------------
 
 ## A scripted kill begins, for the playtest log (how it plays is the presentation's).
 func _on_finisher_started(_target: Combatant, finisher: FinisherDefinition) -> void:
@@ -747,21 +736,21 @@ func _on_close_call(_hit: HitData) -> void:
 	play_log.count("breath", "close call")
 	if not save.has_flag(&"seen_close_call"):
 		save.set_flag(&"seen_close_call")
-		_hint("HINT_CLOSE_CALL")
+		teaching.hint("HINT_CLOSE_CALL")
 
 
 ## A light blow glanced off a raised shield: the first time, the answers are named.
 func _on_glanced() -> void:
 	if not save.has_flag(&"seen_glance"):
 		save.set_flag(&"seen_glance")
-		_hint("HINT_GLANCE")
+		teaching.hint("HINT_GLANCE")
 
 
 ## A man thrown off his feet: the first soldier, what the heavy button does over a man down.
 func _on_knocked_down(body: Combatant) -> void:
 	if body != hero and not save.has_flag(&"seen_ground_stroke"):
 		save.set_flag(&"seen_ground_stroke")
-		_hint("HINT_GROUND_STAB")
+		teaching.hint("HINT_GROUND_STAB")
 
 
 ## The blows the session keeps track of (the playtest log, what felled him, the first warnings' lessons).
@@ -813,110 +802,7 @@ func _on_swung(attack: AttackDefinition, combatant: Combatant) -> void:
 
 ## A soldier winds up a blow (its warning is the presentation's): the first of each colour is taught.
 func _on_telegraphed(attack: AttackDefinition, combatant: Combatant) -> void:
-	_first_warning(attack.tell(), combatant)
-
-
-## The first warning of each colour the hero meets stops the game: what it means and how to answer it, with the
-## sign beside it (the soldier's wind-up waits; the answer is still in time once the card is read).
-func _first_warning(tell: int, combatant: Combatant) -> void:
-	if combatant == hero or hero == null or state != State.PLAYING:
-		return
-	if absf(combatant.global_position.x - hero.global_position.x) > WARNING_LESSON_RANGE:
-		return
-	var seen: StringName = StringName("seen_warning_%d" % tell)
-	if save.has_flag(seen):
-		return
-	save.set_flag(seen)
-	if settings.lessons != GameSettings.LessonMode.FULL:
-		var lesson: Array = WARNING_LESSONS[tell]
-		var key: String = lesson[1]
-		_hint(key)
-		return
-	_show_card({"kind": "warning", "tell": tell})
-
-
-## A lesson: it waits its turn at the top of the screen (in a fight its first sentence, the rest after), and
-## is kept for the Guide.
-func _hint(key: String) -> void:
-	if key == "":
-		return
-	save.note_lesson(StringName(key))
-	# Lessons set off are only kept (in the Guide); set short, only their first sentence is shown.
-	if settings.lessons == GameSettings.LessonMode.OFF:
-		return
-	hud.lessons.fighting = _fighting()
-	hud.lessons.push(key, settings.lessons == GameSettings.LessonMode.SHORT)
-
-
-## A lesson came onto the screen: a soft sound.
-func _on_lesson_shown(key: String) -> void:
-	play_log.event("lesson", key)
-	sounds.play(&"lesson", -8.0)
-
-
-## Every frame: the time on this street counts; the lessons and the signs know whether he fights; a lesson card waiting for the quiet shows;
-## the first lamp and the first person with something to say are pointed out as he comes near them.
-func _update_messages() -> void:
-	if hero == null or level == null:
-		return
-	if state == State.PLAYING:
-		_level_time += get_process_delta_time() / maxf(Engine.time_scale, 0.001)
-	var fighting: bool = state == State.PLAYING and _fighting()
-	hud.lessons.fighting = fighting
-	hud.markers.fighting = fighting
-	if state != State.PLAYING:
-		return
-	_refresh_objective_target()
-	if not fighting and not _cards.is_empty() and hero.is_on_floor():
-		var card: Dictionary = _cards.pop_front()
-		_show_card(card)
-		return
-	_first_meetings()
-
-
-## The first unlit lamp and the first person with something to say he comes near: what they are (not in his first
-## moment on a street, which is for moving).
-func _first_meetings() -> void:
-	if _level_time < FIRST_MEETING_DELAY:
-		return
-	for node: Node in level.interactables.get_children():
-		var thing: Interactable = node as Interactable
-		if thing == null:
-			continue
-		var distance: float = absf(thing.global_position.x - hero.global_position.x)
-		var npc: Npc = thing as Npc
-		if npc != null and npc.has_news() and distance < CALL_RANGE:
-			_call_out(npc)
-		if distance > FIRST_MEETING_RANGE:
-			continue
-		var lamp: Checkpoint = thing as Checkpoint
-		if lamp != null and not lamp.lit and not save.has_flag(&"seen_lamp_lesson"):
-			save.set_flag(&"seen_lamp_lesson")
-			_hint("HINT_LAMP")
-		if npc != null and npc.has_news() and not save.has_flag(&"seen_people_lesson"):
-			save.set_flag(&"seen_people_lesson")
-			_hint("HINT_PEOPLE")
-
-
-## Someone with something to say calls to him as he first comes near (once): "Yusuf! Here, by the cart!"
-func _call_out(npc: Npc) -> void:
-	var called: StringName = StringName("called_%s" % npc.npc_id)
-	if save.has_flag(called):
-		return
-	save.set_flag(called)
-	var line: String = "%s_CALL" % String(npc.dialogue).to_upper()
-	if tr(line) != line:
-		_say(npc.display_name(), line)
-
-
-## A soldier near the hero is in the fight.
-func _fighting() -> bool:
-	if hero == null or level == null:
-		return false
-	for soldier: MongolSoldier in level.soldiers():
-		if soldier.in_fight() and absf(soldier.global_position.x - hero.global_position.x) < 320.0:
-			return true
-	return false
+	teaching.first_warning(attack.tell(), combatant)
 
 
 ## An arrow loosed or a pot thrown, for the playtest log.
@@ -980,10 +866,9 @@ func _on_checkpoint(lamp: Checkpoint) -> void:
 	if not save.has_flag(&"seen_lamp_card"):
 		save.set_flag(&"seen_lamp_card")
 		if settings.lessons == GameSettings.LessonMode.FULL:
-			_after_card = _open_lamp
-			_show_card({"kind": "lamp"})
+			teaching.show_card({"kind": "lamp"}, _open_lamp)
 			return
-		_hint("HINT_LAMP_CARD")
+		teaching.hint("HINT_LAMP_CARD")
 	_open_lamp()
 
 
@@ -992,7 +877,7 @@ func _open_lamp() -> void:
 	_sync_progression()
 	progression.known = _story_techniques()
 	_bought_before = save.bought.duplicate()
-	_pause_for(State.LAMP)
+	pause_for(State.LAMP)
 	lamp_menu.open_for(progression, _known_arts())
 
 
@@ -1007,15 +892,15 @@ func _leave_lamp() -> void:
 			continue
 		hud.notice(tr("NOTICE_BOUGHT") % tr(bought.name_key))
 		if bought.grants != &"":
-			_hint("HINT_LEARNED_%s" % String(bought.grants).to_upper())
+			teaching.hint("HINT_LEARNED_%s" % String(bought.grants).to_upper())
 	hero.rest()
 	if _save_game():
 		hud.notice(tr(&"NOTICE_SAVED"))
-	_resume_play()
+	resume_play()
 	# The first rest: what Honour is, and how it is spent.
 	if not save.has_flag(&"seen_lamp_menu"):
 		save.set_flag(&"seen_lamp_menu")
-		_hint("HINT_LAMP_MENU")
+		teaching.hint("HINT_LAMP_MENU")
 
 
 ## Each level of the chapter left behind has hardened him: more health.
@@ -1075,7 +960,7 @@ func _give_keepsake(id: StringName) -> void:
 		hero.set_modifiers(progression.modifiers())
 	if not save.has_flag(&"seen_keepsake"):
 		save.set_flag(&"seen_keepsake")
-		_hint("HINT_KEEPSAKE")
+		teaching.hint("HINT_KEEPSAKE")
 
 
 ## A token or a keepsake picked up.
@@ -1152,23 +1037,7 @@ func _learn(technique: StringName, card: bool = true) -> void:
 			hero.set_resolve(maxf(hero.resolve, hero.profile.resolve_kept))
 		hud.set_arts(hero.carried_arts(), true)
 	hud.notice(tr(StringName("NOTICE_LEARNED_%s" % String(technique).to_upper())))
-	var lesson: StringName = StringName("HINT_LEARNED_%s" % String(technique).to_upper())
-	save.note_lesson(lesson)
-	if card and settings.lessons == GameSettings.LessonMode.FULL:
-		_cards.append({"kind": "technique", "id": technique})
-	elif card:
-		_hint(String(lesson))
-
-
-## Someone explains a move he already has (Hamid: the parry and the riposte): a card that shows it performed, or
-## its words at the top of the screen when lessons are short; kept for the Guide either way.
-func _counsel(move: StringName) -> void:
-	var lesson: StringName = StringName("HINT_COUNSEL_%s" % String(move).to_upper())
-	save.note_lesson(lesson)
-	if settings.lessons == GameSettings.LessonMode.FULL:
-		_cards.append({"kind": "counsel", "id": move})
-	else:
-		_hint(String(lesson))
+	teaching.learned(technique, card)
 
 
 ## A new Art is carried at once: into an empty hand, or in place of the second (a lamp lets him choose).
@@ -1192,7 +1061,7 @@ func _on_manuscript(page: Manuscript) -> void:
 	_save_game()
 	hud.set_manuscripts(save.manuscripts.size(), MANUSCRIPTS_TOTAL)
 	sounds.play(&"manuscript")
-	_pause_for(State.READING)
+	pause_for(State.READING)
 	reader.read(page.manuscript_id, page.teaches)
 
 
@@ -1209,7 +1078,7 @@ func _on_talk(npc: Npc) -> void:
 	npc.process_mode = Node.PROCESS_MODE_ALWAYS
 	npc.set_talking(true)
 	hero.set_facing(signf(npc.global_position.x - hero.global_position.x))
-	_pause_for(State.DIALOGUE)
+	pause_for(State.DIALOGUE)
 	dialogue.play(id, DialogueLibrary.lines(id))
 
 
@@ -1231,18 +1100,18 @@ func _on_dialogue_finished(id: StringName) -> void:
 			if npc.teaches != &"":
 				_learn(npc.teaches)
 			if npc.counsel != &"":
-				_counsel(npc.counsel)
+				teaching.counsel(npc.counsel)
 		if id == npc.dialogue and npc.gives_keepsake != &"":
 			_give_keepsake(npc.gives_keepsake)
 	_refresh_story()
 	_save_game()
-	_resume_play()
+	resume_play()
 
 
 func _on_hero_interacted(target: Interactable) -> void:
 	var gate: LevelExit = target as LevelExit
 	if gate != null and not gate.unlocked:
-		_say("SPEAKER_YUSUF", gate.locked_line_for(save.flags))
+		say("SPEAKER_YUSUF", gate.locked_line_for(save.flags))
 
 
 ## The person the interact button would speak to glows softly.
@@ -1252,63 +1121,6 @@ func _on_target_changed(target: Interactable) -> void:
 	_near_npc = target as Npc
 	if _near_npc != null:
 		_near_npc.highlight(true)
-
-
-# --- Lessons that stop the game ---------------------------------------------------------------------
-
-## Shows a lesson card now, the game paused under it: a technique learned, the first lamp, a warning.
-func _show_card(card: Dictionary) -> void:
-	var kind: String = card.get("kind", "")
-	_pause_for(State.LESSON)
-	match kind:
-		"technique":
-			var technique: StringName = card["id"]
-			var art: bool = hero.art_by_id(technique) != null
-			var key: String = "HINT_LEARNED_%s" % String(technique).to_upper()
-			lesson_screen.show_lesson(tr(&"LESSON_NEW_ART" if art else &"LESSON_NEW_TECHNIQUE"),
-				tr(Lessons.technique_name(technique)), key, _card_demo(technique))
-		"counsel":
-			var move: StringName = card["id"]
-			var name: String = String(move).to_upper()
-			lesson_screen.show_lesson(tr(&"LESSON_COUNSEL_HEADING"), tr("COUNSEL_%s_TITLE" % name), "HINT_COUNSEL_%s" % name,
-				MoveDemos.of(move))
-		"lamp":
-			var niche: AtlasTexture = AtlasTexture.new()
-			niche.atlas = LAMP_PICTURE
-			niche.region = Rect2(80, 0, 40, 64)
-			save.note_lesson(&"HINT_LAMP_CARD")
-			lesson_screen.show_lesson(tr(&"LESSON_LAMP_HEADING"), tr(&"LESSON_LAMP_CARD"), "HINT_LAMP_CARD", {}, niche)
-		"warning":
-			var tell: int = card["tell"]
-			var lesson: Array = WARNING_LESSONS[tell]
-			var title: String = lesson[0]
-			var key: String = lesson[1]
-			var demo: StringName = lesson[2]
-			save.note_lesson(StringName(key))
-			lesson_screen.show_lesson(tr(&"LESSON_WARNING_HEADING"), tr(title), key, MoveDemos.of(demo), null,
-				CombatPresentation.TELL_GLINTS[tell], presentation.tell_colours[tell])
-	sounds.play(&"manuscript", -6.0)
-
-
-## The lesson read: on to what waits on it (the lamp menu), or back to play at once (a warning's blow is
-## still coming, so the devices are hardly held off).
-func _close_card() -> void:
-	lesson_screen.close()
-	var after: Callable = _after_card
-	_after_card = Callable()
-	if after.is_valid():
-		after.call()
-		return
-	_resume_play(0.06)
-
-
-## A technique's demo; an Art carried second is shown on the second Art's own button.
-func _card_demo(technique: StringName) -> Dictionary:
-	var demo: Dictionary = MoveDemos.of(technique)
-	var arts: Array[ArtDefinition] = hero.carried_arts()
-	if arts.size() > 1 and arts[1].id == technique:
-		return MoveDemos.with_art_button(demo, &"art_2")
-	return demo
 
 
 # --- The story --------------------------------------------------------------------------------------
@@ -1378,7 +1190,7 @@ func _refresh_story() -> void:
 
 
 ## A line said in passing, low on the screen with the speaker named (translation keys; no speaker: narration).
-func _say(speaker: String, line: String) -> void:
+func say(speaker: String, line: String) -> void:
 	if line == "":
 		return
 	hud.say(tr(speaker) if speaker != "" else "", tr(line))
@@ -1407,13 +1219,13 @@ func _on_trigger(trigger: StoryTrigger) -> void:
 			music.play_music(&"combat")
 			_refresh_story()
 		&"boss":
-			if not _begin_boss():
+			if not boss_fight.begin():
 				return
 		&"alarm":
 			level.alarm_group(trigger.group)
 	if trigger.hint != "":
-		_hint(trigger.hint)
-	_say(trigger.speaker, trigger.line)
+		teaching.hint(trigger.hint)
+	say(trigger.speaker, trigger.line)
 
 
 func _on_group_cleared(group: StringName) -> void:
@@ -1426,7 +1238,7 @@ func _on_group_cleared(group: StringName) -> void:
 		if npc != null and npc.requires == StringName("%s_cleared" % group):
 			_earn(CATALOG.person_freed, StringName("freed_%s" % npc.npc_id))
 	_save_game()
-	if _boss != null and _boss.get_meta(&"group", &"") == group:
+	if boss_fight.holds_group(group):
 		return  # The boss's fall has its own moment.
 	music.play_music(level.music)
 	# Not every group is the objective (a soldier over a captive): announce only a real change.
@@ -1506,110 +1318,6 @@ func _show_complete() -> void:
 		save.manuscripts.size(), MANUSCRIPTS_TOTAL, tr(&"STATS_SAVED"), saved, CAPTIVES_TOTAL, tr(&"STATS_LOST"), lost,
 		tr(&"STATS_HONOUR"), save.honour]
 	complete.show_result("CHAPTER_COMPLETE", "CHAPTER_1_TITLE", stats + "\n\n" + tr(&"CHAPTER_COMPLETE_NEXT"))
-
-
-# --- The boss ---------------------------------------------------------------------------------------
-
-## The arena closes behind the hero and its boss roars; false if there is no fight to begin.
-func _begin_boss() -> bool:
-	var arena: BossArena = level.arena
-	if arena == null or arena.closed:
-		return false
-	var boss: MongolSoldier = arena.boss()
-	if boss == null or boss.dead:
-		return false
-	var brain: CaptainBrain = boss.get_node_or_null(^"Brain") as CaptainBrain
-	if brain == null:
-		return false
-	_boss = boss
-	arena.close()
-	camera.set_bounds(arena.camera_bounds)
-	brain.phase_changed.connect(_on_boss_phase)
-	boss.health_changed.connect(_on_boss_health)
-	boss.beaten.connect(_on_boss_beaten)
-	boss.died.connect(_on_boss_died)
-	hud.show_boss(tr(boss.profile.display_name), boss.health, boss.max_health)
-	music.play_music(&"boss")
-	sounds.play(&"boss_roar")
-	camera.shake(3.0)
-	hero.set_cinematic(true)
-	hero.set_facing(signf(boss.global_position.x - hero.global_position.x))
-	brain.begin_fight()
-	_release_hero_after(CaptainBrain.ROAR_TIME)
-	return true
-
-
-func _release_hero_after(seconds: float) -> void:
-	var held: Warrior = hero
-	await _real_delay(seconds)
-	if held != null and is_instance_valid(held) and held == hero:
-		held.set_cinematic(false)
-
-
-func _on_boss_health(current: float, _maximum: float) -> void:
-	hud.update_boss(current)
-
-
-func _on_boss_phase(_phase: int) -> void:
-	sounds.play(&"boss_roar")
-	camera.shake(4.0)
-	_say("SPEAKER_TOQTO", "TOQTO_PHASE")
-
-
-## The blow that would have killed him brings him to his knee instead, propped on his sabre. A last
-## word, in slow time; then Yusuf steps in, and his stroke takes the Captain's head.
-func _on_boss_beaten() -> void:
-	var boss: MongolSoldier = _boss
-	if boss == null:
-		return
-	hero.set_cinematic(true)
-	hero.set_facing(signf(boss.global_position.x - hero.global_position.x))
-	hit_stop.slow(0.4, 1.0)
-	camera.shake(4.0)
-	music.play_music(&"")
-	sounds.play(&"boss_roar", -8.0)
-	_say("SPEAKER_TOQTO", "TOQTO_FALL")
-	await _real_delay(2.6)
-	if _boss != boss or not is_instance_valid(boss) or boss.dead or hero == null:
-		return
-	# Yusuf beside him, and the stroke.
-	var side: float = signf(hero.global_position.x - boss.global_position.x)
-	if side == 0.0:
-		side = -boss.facing
-	hero.global_position.x = boss.global_position.x + side * 52.0
-	hero.set_facing(-side)
-	hero.cinematic_strike(&"heavy")
-	await _real_delay(0.3)
-	if _boss != boss or not is_instance_valid(boss) or boss.dead:
-		return
-	hit_stop.slow(0.22, 1.6)
-	camera.shake(7.0)
-	boss.finish()
-
-
-## He falls; then the arena opens and the way on is clear.
-func _on_boss_died() -> void:
-	var fallen: Level = level
-	hit_stop.slow(0.3, 1.2)
-	camera.shake(5.0)
-	sounds.play(&"boss_fall")
-	music.play_music(&"")
-	await _real_delay(1.4)
-	if level != fallen or level == null:
-		return
-	hud.hide_boss()
-	await _real_delay(1.6)
-	if level != fallen or level == null:
-		return
-	if level.arena != null:
-		level.arena.open()
-	camera.set_bounds(level.bounds)
-	_boss = null
-	if hero != null:
-		hero.set_cinematic(false)
-	_say("SPEAKER_YUSUF", "YUSUF_AFTER_TOQTO")
-	music.play_music(level.music)
-	_refresh_story()
 
 
 # --- The playtest log ----------------------------------------------------------------------------------

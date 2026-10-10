@@ -114,7 +114,7 @@ func _run() -> void:
 	game._earn(10, &"capture_honour")
 	game.hud.notice(tr("NOTICE_SATCHEL"))
 	game.hud.notice(tr("NOTICE_KEEPSAKE") % tr("KEEPSAKE_REED_PEN"))
-	game._say("SPEAKER_YUSUF", "GATE_LOCKED_1")
+	game.say("SPEAKER_YUSUF", "GATE_LOCKED_1")
 	await _visit(232.0, street, "13_new_objective", 0.8)
 	# The Guide.
 	game._pause()
