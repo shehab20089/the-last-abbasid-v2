@@ -40,10 +40,12 @@ export function inPointedArch(px, py, cx, springY, halfWidth, rise, baseY) {
  * A fired-brick wall over a rectangle: running bond, each brick a slightly different tone,
  * mortar lines, light from above, scattered damage and soot climbing from below or above. Given a
  * `relief` (relief.mjs), it lays the bricks' faces at `depth`, the mortar a little behind them and the
- * chipped bricks sunk, so a grazing light picks out the courses.
+ * chipped bricks sunk, so a grazing light picks out the courses. A `calm` wall varies less from brick to brick, so
+ * a great sheet of it reads by its big shapes and its light rather than as noise.
  */
 export function brickWall(c, x0, y0, w, h, { ramp = P.brick, base = 3, seed = 1, brickW = 8, brickH = 4,
-  soot = 0, sootFrom = "top", damage = 0.04, light = 0.0, mortar = null, relief = null, depth = 0 } = {}) {
+  soot = 0, sootFrom = "top", damage = 0.04, light = 0.0, mortar = null, relief = null, depth = 0, joint = 0.8,
+  calm = false } = {}) {
   const mortarColor = mortar ?? ramp[Math.max(0, base - 2)];
   for (let y = y0; y < y0 + h; y++) {
     const row = Math.floor((y - y0) / brickH);
@@ -52,10 +54,11 @@ export function brickWall(c, x0, y0, w, h, { ramp = P.brick, base = 3, seed = 1,
       const offset = row % 2 === 0 ? 0 : brickW / 2;
       const col = Math.floor((x - x0 + offset) / brickW);
       const inCol = (x - x0 + offset) % brickW;
-      let tone = base + (hash2(col, row, seed) < 0.3 ? -1 : hash2(col, row, seed) > 0.85 ? 1 : 0);
+      const odd = hash2(col, row, seed);
+      let tone = base + (odd < (calm ? 0.12 : 0.3) ? -1 : odd > (calm ? 0.94 : 0.85) ? 1 : 0);
       if (inRow === 0 || inCol === 0) {
         c.set(x, y, mortarColor);
-        relief?.set(x, y, depth - 0.8);
+        relief?.set(x, y, depth - joint);
         continue;
       }
       if (inRow === 1 && light > 0) tone += 1; // the lit top face of each brick
@@ -138,9 +141,12 @@ export function archway(c, cx, baseY, width, height, { ring = 2, ringRamp = P.br
   });
 }
 
-/** A dome on a drum: ribbed or plain, hemispherical, onion or pointed. */
+/** A dome on a drum: ribbed or plain, hemispherical, onion or pointed. Given a `relief`, it swells out from
+ * `depth` as a dome does (each course a circle about its axis), so the street's light models it; its painted
+ * shading is then kept light. */
 export function dome(c, cx, baseY, radius, { ramp = P.brick, tone = 3, shape = "pointed", ribs = 0,
-  tile = null, light = -0.4, finial = true } = {}) {
+  tile = null, light = -0.4, finial = true, relief = null, depth = 0 } = {}) {
+  if (relief) light *= 0.35;
   const h = shape === "onion" ? radius * 1.5 : shape === "pointed" ? radius * 1.25 : radius;
   const profileAt = (t) => {
     // t: 0 at the base, 1 at the top. Returns the half-width.
@@ -163,6 +169,7 @@ export function dome(c, cx, baseY, radius, { ramp = P.brick, tone = 3, shape = "
       }
       const ramp2 = tile && t > 0.05 ? tile : ramp;
       c.set(x, y, pick(ramp2, k));
+      relief?.set(x, y, depth + Math.sqrt(Math.max(0, half * half - (x + 0.5 - cx) ** 2)) * 0.6);
     }
   }
   if (finial) {

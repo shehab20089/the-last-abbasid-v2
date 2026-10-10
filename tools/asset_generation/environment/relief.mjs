@@ -39,6 +39,13 @@ export class Relief {
   rect(x0, y0, x1, y1, d) {
     this.fill(x0, y0, x1, y1, () => true, d);
   }
+
+  /** The depths of a region as they are now, read back as (x, y) relative to it (what stood behind a ruin). */
+  copy(x0, y0, w, h) {
+    const kept = new Float32Array(w * h);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) kept[y * w + x] = this.get(x0 + x, y0 + y);
+    return (x, y) => (x < 0 || y < 0 || x >= w || y >= h ? 0 : kept[y * w + x]);
+  }
 }
 
 /** A colour as linear light (0..1 per channel). */
@@ -58,9 +65,11 @@ function emissiveSet() {
  * Lights the painted street from its relief.
  * - `ambient`: the night sky's colour and strength (it reaches every face, less where deep or overhung).
  * - `lights`: warm lights standing in the street: { x, y, z (how far before the wall), radius, color, strength }.
+ * - `key`: the hour's low sun, if it has one: { dir (toward it), color, strength, steps }: it rakes along the street,
+ *   lighting the faces turned to it and laying long shadows from whatever stands out (a tower across the wall).
  * - `haze`: how much the highest storeys sink into the night's tint (0 at the street, `haze.top` at the top).
  */
-export function lightRelief(c, relief, { ambient, lights = [], haze = { tint: P.night[1], top: 0.3, street: 0.1 } }) {
+export function lightRelief(c, relief, { ambient, lights = [], key = null, haze = { tint: P.night[1], top: 0.3, street: 0.1 } }) {
   const W = c.width;
   const H = c.height;
   const D = relief.depth;
@@ -113,6 +122,41 @@ export function lightRelief(c, relief, { ambient, lights = [], haze = { tint: P.
       light[i] = amb[0] * k;
       light[i + 1] = amb[1] * k;
       light[i + 2] = amb[2] * k;
+    }
+  }
+
+  // The hour's low sun: a far light raking along the street, its shadows long.
+  if (key) {
+    const len = Math.hypot(key.dir[0], key.dir[1], key.dir[2]);
+    const kd = key.dir.map((v) => v / len);
+    const flat = Math.hypot(kd[0], kd[1]);
+    const sx = kd[0] / flat;
+    const sy = kd[1] / flat;
+    const rise = kd[2] / flat;
+    const kl = linear(key.color).map((v) => v * key.strength);
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        if (!solid(x, y)) continue;
+        const d = at(x, y);
+        const gx = Math.max(-2.5, Math.min(2.5, (at(x + 1, y) - at(x - 1, y)) * 0.5));
+        const gy = Math.max(-2.5, Math.min(2.5, (at(x, y + 1) - at(x, y - 1)) * 0.5));
+        const nl = Math.hypot(gx, gy, 1);
+        const lambert = Math.max(0, (-gx * kd[0] - gy * kd[1] + kd[2]) / nl);
+        if (lambert <= 0) continue;
+        let vis = 1;
+        for (let s2 = 1; s2 <= (key.steps ?? 60); s2++) {
+          const over = at(Math.round(x + sx * s2), Math.round(y + sy * s2)) - (d + rise * s2);
+          if (over > 0.3) {
+            vis = Math.min(vis, Math.max(0.1, 1 - (over - 0.3) * 0.4));
+            if (vis <= 0.1) break;
+          }
+        }
+        const k = lambert * vis;
+        const i = (y * W + x) * 3;
+        light[i] += kl[0] * k;
+        light[i + 1] += kl[1] * k;
+        light[i + 2] += kl[2] * k;
+      }
     }
   }
 

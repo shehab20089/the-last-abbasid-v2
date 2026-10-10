@@ -116,7 +116,7 @@ Plan and progress: `docs/combat_focus_plan.md`. Two audits found about 35 action
 - **Fixed in passing:** emphasis followed by punctuation (`*parry*,`) left a stray asterisk on screen (`KeyText`: the closing mark may now come before punctuation, Arabic punctuation too).
 - **Tests:** session 239 (Hamid's counsel card; no kick or charge in the Market or Streets; both taught in the Scholars' Quarter; a master's lesson silent on a first journey and teaching on a master's; the tree's master locks; the finished chapter opening them; the library's men unaware, hidden ambushers not; the log written and summed up, and silent when switched off).
 
-## The street standard: one section brought to final quality (art step 4, after "proceed with point 4, the art"): FIRST PASS DONE, awaiting the user's eye
+## The street standard: one section brought to final quality, then every building (art step 4, after "proceed with point 4, the art" and "continue with the rest of the building fixes"): BUILDINGS DONE, awaiting the user's eye
 The Market's opening (the gate street and the potters' lane, columns 0–84) was taken as the standard: it is the first street every player sees, and its houses and shops recur through the chapter. The review's faults were plain there:
 - every roof wore the same row of teeth;
 - doors were black holes;
@@ -139,8 +139,27 @@ The Market's opening (the gate street and the potters' lane, columns 0–84) was
   - `FireLight` threw away each fire's reach every frame (`texture_scale = 1.0 + …`), so every fire lit only a small circle. It now wavers about the reach it was built with, and the fighters and the street near a fire are lit as intended.
   - The facades no longer take those lights (they stand on light mask 2), so the round halos on the walls are gone. Each fire gains a faint, broad `WallLight` that reaches only the facades, so the wall still breathes with the flames.
 - **Every level.** The painter is shared, so every level's houses and shops took the new light and roofs. Their tours were checked, and nothing was lost.
-- **Not yet brought to the standard:** the rampart, the gatehouse and the other special builders (ruin, bathhouse, alley gate, portal, river wall, camp) do not write relief yet. Nor do the street paving, the foreground and the props. They come next, with the character materials.
-- **Tests** (`./tools/run_tests.ps1`, all passing, no script errors): gameplay 226, enemy 325, session 249, finishers 25, lint 1 known, partial build 3, traversal of all four levels. Judged by eye in the game view: `tests/capture_tour.gd` before and after, every level.
+- **Every building to the standard** (committed first as `c7a47e9`, then "continue with the rest of the building fixes").
+  - Every builder now writes relief and is lit like the houses:
+    - the ruin's broken walls, over what stands behind them;
+    - the bathhouse's domes;
+    - the alley gate;
+    - the portal and its muqarnas hood;
+    - the river wall;
+    - the camp's wall and its tents;
+    - the monuments' copings and crenellations (`shurafat`), and domes that swell out of the wall.
+  - **The city wall at the Last Gate** was a flat sheet of brick. It is now one great built thing marked by the siege (`scarWall`):
+    - a cut-stone base course;
+    - a string course standing out, so a band of shadow runs under it the length of the wall;
+    - patches mended in paler brick;
+    - the scars of the engines' stones, each a shallow crater with cracks running out;
+    - soot from the fires at its foot;
+    - merlons knocked down or broken to stumps (`crenels` `broken`).
+    - Its brick varies less from brick to brick (`calm`), so it reads by those big shapes.
+  - The gate towers have stone corbels under their parapets, and iron fire-baskets burn either side of the gateway.
+  - The dawn gains a low sun from the east (`GRADES.dawn.key`): the towers cast long shadows along the wall.
+- **Not yet brought to the standard:** the street paving, the foreground and the props. They come next, with the character materials.
+- **Tests** (`./tools/run_tests.ps1`, all passing, no script errors, after the first pass and again after the buildings): gameplay 226, enemy 325, session 249, finishers 25, lint 1 known, partial build 3, traversal of all four levels. Judged by eye in the game view: `tests/capture_tour.gd` before and after, every level (`captures/buildings_before_after.png`).
 
 ## The combat fixes the first playtest log pointed to (after "yes please"): DONE, awaiting the next playtest
 The work before them was committed and pushed first (`e2431f7`).
