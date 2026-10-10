@@ -263,7 +263,7 @@ size = Vector2(80, 120)
 size = Vector2(32, 320)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_55"]
-size = Vector2(64, 320)
+size = Vector2(48, 320)
 
 [node name="FallenMarket" type="Node2D"]
 script = ExtResource("1_level_gd")
@@ -1775,7 +1775,7 @@ requires_flag = &""
 shape = SubResource("RectangleShape2D_54")
 
 [node name="lesson_low_cut" type="Area2D" parent="Triggers"]
-position = Vector2(4352, 288)
+position = Vector2(4056, 288)
 script = ExtResource("59_story_trigger_gd")
 trigger_id = "lesson_low_cut"
 hint = ""

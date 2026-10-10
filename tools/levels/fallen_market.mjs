@@ -174,7 +174,9 @@ export const LEVEL = {
     { id: "burners", from: 150, to: 152, speaker: "SPEAKER_YUSUF", line: "BURNERS_1" },
     { id: "hint_plunge", from: 153, to: 158, above: 80, height: 120, hint: "HINT_PLUNGE" },
     { id: "ambush", from: 205, to: 207, event: "ambush", group: "ambush", line: "AMBUSH_1" },
-    { id: "lesson_low_cut", from: 270, to: 274, teaches: "low_cut" },
+    // Past Ibrahim and short of the soldier at his work (c265), out of the guards' sight (c280): its card shows
+    // before their fight, not after it.
+    { id: "lesson_low_cut", from: 252, to: 255, teaches: "low_cut" },
   ],
   exit: { name: "RiverGate", col: 297, prompt: "PROMPT_OPEN_GATE", lockedPrompt: "PROMPT_GATE_LOCKED",
     lockedLine: "GATE_LOCKED_1", requires: "satchel" },

@@ -103,6 +103,7 @@ func _on_area_entered(area: Area2D) -> void:
 	hit.hit_stop = 0.05
 	hit.direction = signf(_velocity.x) if _velocity.x != 0.0 else direction
 	hit.projectile = true
+	hit.cause = &"fire_pot"
 	hit.position = global_position
 	var outcome: HitData.Outcome = target.receive_hit(hit)
 	if outcome == HitData.Outcome.DODGED or outcome == HitData.Outcome.IGNORED:

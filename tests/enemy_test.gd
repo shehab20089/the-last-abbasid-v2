@@ -631,7 +631,8 @@ func _test_poise_and_flinches() -> void:
 	await frames(40)
 
 
-## Only blows that can reach the hero count against MAX_ATTACKERS (an archer drawing far off does not); a
+## Only blows that can reach the hero count against MAX_ATTACKERS (an archer drawing far off does not, one in the
+## same fight does); a
 ## soldier whose turn has not come waits a step off; no blade is swung at a hero on a ledge; a knife out
 ## of the dark wounds an unaware man and turns him (it takes a blade to kill unseen); an arrow loosed from a
 ## roof is aimed down at the street; a level's eagerness shortens the pauses between blows.
@@ -658,6 +659,22 @@ func _test_crowd_rules() -> void:
 	check(not third._may_attack() and third._waiting(), "two blades at him: a third waits his turn")
 	third.keep_range(c.profile.min_range, c.profile.preferred_range + 8.0, 120.0)
 	check(c.move_intent == -third.direction_to_target(), "and steps back to wait, not crowding in")
+	await frames(60)
+	# A bowman drawing in the same fight takes an attacker's place: with one blade out, a second man waits.
+	await _reset()
+	var near_a: MongolSoldier = _spawn("swordsman", warrior.global_position + Vector2(36, 0))
+	var near_b: MongolSoldier = _spawn("swordsman", warrior.global_position + Vector2(-36, 0), 1.0)
+	var bowman: MongolSoldier = _spawn("archer", warrior.global_position + Vector2(150, 0))
+	for s: MongolSoldier in [near_a, near_b, bowman]:
+		s.unaware = false
+		_brain(s).process_mode = Node.PROCESS_MODE_DISABLED
+	await frames(4)
+	var second: EnemyBrain = _brain(near_b)
+	second.target = warrior
+	near_a.attack(near_a.profile.attacks[SwordsmanBrain.CUT])
+	bowman.attack(bowman.profile.attacks[ArcherBrain.SHOOT])
+	await frames(1)
+	check(not second._may_attack(), "a bowman drawing in the same fight takes an attacker's place")
 	await frames(60)
 	# A hero on a ledge above: no blade is swung at him.
 	await _reset()
@@ -1209,7 +1226,8 @@ func _test_finisher_rules() -> void:
 
 
 ## Every blow a soldier opens with glints at least 0.22 s before it lands (a chain's follow-ups ride
-## its rhythm).
+## its rhythm); a low sweep (amber), which asks for a jump or a roll rather than a raised shield, and the Captain's
+## opening cut, which begins his chain, a third of a second.
 func _test_telegraph_lead() -> void:
 	print("every blow glints in time")
 	for kind: String in ["swordsman", "spearman", "archer", "captain", "veteran", "maceman", "shieldbearer", "engineer",
@@ -1224,15 +1242,20 @@ func _test_telegraph_lead() -> void:
 			var lead: float = 0.0
 			for i: int in range(maxi(attack.telegraph_frame, 0), strike):
 				lead += strips.get_frame_duration(attack.animation, i) / strips.get_animation_speed(attack.animation)
-			check(attack.telegraph_frame >= 0 and lead >= 0.219,
-				"%s, %s: glints %.0f ms before it lands" % [kind, attack.display_name, lead * 1000.0])
+			var opener: bool = attack.resource_path.ends_with("captain_slash_a.tres")
+			var least: float = 0.329 if attack.tell() == AttackDefinition.Tell.LOW or opener else 0.219
+			check(attack.telegraph_frame >= 0 and lead >= least,
+				"%s, %s: glints %.0f ms before it lands (at least %.0f)" % [kind, attack.display_name, lead * 1000.0,
+					least * 1000.0])
 		soldier.free()
 
 
-## The spearman's low sweep at a hero standing `gap` px before him; returns the outcomes it met.
-func _sweep_at(gap: float, block: bool, jump: bool) -> Array[HitData.Outcome]:
+## A low sweep (the spearman's, unless another `kind` and his `sweep` are named) at a hero standing `gap` px before
+## him; returns the outcomes it met.
+func _sweep_at(gap: float, block: bool, jump: bool, kind: String = "spearman",
+		sweep: String = "spearman_sweep") -> Array[HitData.Outcome]:
 	await _reset()
-	var spearman: MongolSoldier = _spawn("spearman", Vector2(warrior.global_position.x + gap, 0))
+	var spearman: MongolSoldier = _spawn(kind, Vector2(warrior.global_position.x + gap, 0))
 	_brain(spearman).process_mode = Node.PROCESS_MODE_DISABLED
 	await frames(10)
 	spearman.global_position = warrior.global_position + Vector2(gap, 0)
@@ -1249,8 +1272,8 @@ func _sweep_at(gap: float, block: bool, jump: bool) -> Array[HitData.Outcome]:
 		spearman.telegraphed.connect(func(_a: AttackDefinition) -> void:
 			warrior.input.press(&"jump")
 			warrior.input.jump_held = true)
-	spearman.attack(load("res://features/enemies/definitions/spearman_sweep.tres") as AttackDefinition)
-	await frames(50)
+	spearman.attack(load("res://features/enemies/definitions/%s.tres" % sweep) as AttackDefinition)
+	await frames(60)
 	warrior.input.block_held = false
 	warrior.input.jump_held = false
 	return outcomes
@@ -1263,6 +1286,14 @@ func _test_low_sweep() -> void:
 		"a raised shield does not stop it")
 	var jumped: Array[HitData.Outcome] = await _sweep_at(40.0, false, true)
 	check(jumped.is_empty(), "a jump at its amber glint clears it")
+	# Every amber sweep, the axeman's and the Captain's too: it lands into the time a jump hangs in the air.
+	for pair: Array in [["axeman", "axeman_sweep"], ["captain", "captain_sweep"]]:
+		var kind: String = pair[0]
+		var sweep: String = pair[1]
+		var standing: Array[HitData.Outcome] = await _sweep_at(40.0, false, false, kind, sweep)
+		var cleared: Array[HitData.Outcome] = await _sweep_at(40.0, false, true, kind, sweep)
+		check(HitData.Outcome.HIT in standing and cleared.is_empty(),
+			"the %s's sweep: it takes a man who stands, and a jump at its glint clears it (%s, %s)" % [kind, standing, cleared])
 
 
 func _test_guard_turn() -> void:
@@ -1457,6 +1488,19 @@ func _test_shieldbearer() -> void:
 	await frames(45)
 	check(HitData.Outcome.BLOCKED in outcomes and not HitData.Outcome.GUARD_BROKEN in outcomes,
 		"and the heavy cleave too")
+	# Strings beaten on his wall, kicks and all, hardly wear him: it takes what is meant to open it.
+	outcomes.clear()
+	await frames(30)
+	wall.state = MongolSoldier.State.READY
+	wall.poise = wall.max_poise
+	for string: int in 2:
+		for step: int in 4:
+			warrior.input.press(&"attack")
+			await frames(18)
+		await frames(30)
+	check(HitData.Outcome.BLOCKED in outcomes and wall.state != MongolSoldier.State.STAGGER
+		and wall.poise > wall.max_poise * 0.5,
+		"two strings beaten on his wall leave him standing (poise %.0f of %.0f)" % [wall.poise, wall.max_poise])
 	outcomes.clear()
 	await frames(30)
 	wall.state = MongolSoldier.State.READY

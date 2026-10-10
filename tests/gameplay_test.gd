@@ -294,6 +294,22 @@ func _test_second_move_set() -> void:
 	warrior.input.down_held = false
 	check(HitData.Outcome.BLOCKED in outcomes and not HitData.Outcome.HIT in outcomes,
 		"a shield wall reaches the street (%s)" % [outcomes])
+	# The reaping sweep throws down men off their guard, not one behind a raised shield: going under it is the low
+	# cut's job.
+	await _reset()
+	soldier = _soldier("swordsman", 30.0)
+	await frames(4)
+	soldier.guard(10.0)
+	outcomes.clear()
+	soldier.struck.connect(func(_hit: HitData, outcome: HitData.Outcome) -> void: outcomes.append(outcome))
+	warrior.input.down_held = true
+	warrior.input.press(&"heavy_attack")
+	await frames(3)
+	check(warrior.current_attack == warrior.profile.sweep, "down and the heavy button: the reaping sweep")
+	await frames(30)
+	warrior.input.down_held = false
+	check(HitData.Outcome.BLOCKED in outcomes and not HitData.Outcome.HIT in outcomes,
+		"the sweep does not pass a raised shield; the low cut does (%s)" % [outcomes])
 	# A cut on a raised shield glances off: the string stops, and the shield can come up at once.
 	await _reset()
 	soldier = _soldier("swordsman", 30.0)

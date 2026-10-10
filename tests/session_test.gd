@@ -433,6 +433,24 @@ func _lesson_walked_past() -> void:
 		check(game.level.triggers.get_node_or_null("lesson_charge") == null
 			and game.level.triggers.get_node_or_null("lesson_kick") == null and not game.hero.knows(&"charge")
 			and not game.hero.knows(&"kick"), "no kick or charge is taught in %s, where no soldier asks for one" % level)
+	# The low cut's card shows as he comes to the river gate, before its guards (who guard nearly every blow) see him,
+	# not once their fight is over (the first playtest found it there); no soldier is cleared out of its way.
+	for flag: StringName in [&"knows_low_cut", &"lesson_low_cut"]:
+		game.save.flags.erase(flag)
+	game._enter_level("res://features/levels/fallen_market/fallen_market.tscn", &"", false, false)
+	await frames(20)
+	game.hero.input.enabled = false
+	var low: Node2D = game.level.triggers.get_node("lesson_low_cut") as Node2D
+	game.hero.global_position = Vector2(low.global_position.x, game.hero.global_position.y)
+	await frames(10)
+	var guards_engaged: bool = false
+	for soldier: MongolSoldier in game.level.soldiers():
+		if soldier.global_position.x > low.global_position.x + 300.0 and soldier.engaged:
+			guards_engaged = true
+	check(game.hero.knows(&"low_cut") and game.state == AbbasidGame.State.LESSON
+		and game.lesson_screen.lesson == "HINT_LEARNED_LOW_CUT" and not guards_engaged,
+		"the low cut's card shows at the river gate before its guards see him")
+	await _read_cards()
 	for flag: StringName in [&"knows_kick", &"knows_charge", &"knows_guarded_thrust", &"master", &"lesson_kick",
 			&"lesson_charge", &"lesson_guarded_thrust"]:
 		game.save.flags.erase(flag)
@@ -1237,11 +1255,30 @@ func _play_log() -> void:
 			soldier = node as Combatant
 			break
 	var slash: AttackDefinition = load("res://features/enemies/definitions/swordsman_slash.tres")
+	soldier.swung.emit(slash)
 	game.hero.struck.emit(HitData.from_attack(soldier, slash), HitData.Outcome.BLOCKED)
+	# A second slash begun at him that never touches him (jumped, stepped from): avoided.
+	soldier.swung.emit(slash)
+	# Burning ground under him: told as fire, not as an arrow.
+	var fire: HitData = HitData.new()
+	fire.unblockable = true
+	fire.cause = &"fire"
+	game.hero.struck.emit(fire, HitData.Outcome.HIT)
+	# One of his blows lands; his health falls to a quarter; a remedy is drunk.
+	var cut: AttackDefinition = load("res://features/warrior/definitions/light_1.tres")
+	soldier.struck.emit(HitData.from_attack(game.hero, cut), HitData.Outcome.HIT)
+	game.hero.health_changed.emit(game.hero.max_health * 0.25, game.hero.max_health)
+	game.hero.remedies_changed.emit(game.hero.remedies - 1, game.hero.profile.max_remedies)
+	game.hero.remedies_changed.emit(game.hero.remedies, game.hero.profile.max_remedies)
+	game.hero.health_changed.emit(game.hero.health, game.hero.max_health)
 	await frames(2)
 	log.write_summary()
 	var events: String = FileAccess.get_file_as_string(log.file_path())
 	var summary: String = FileAccess.get_file_as_string(log.summary_path())
+	check(summary.contains("swordsman_slash ×2: blocked 1, avoided 1") and events.contains("fire: fire")
+		and summary.contains("Lowest health: 25%") and summary.contains("Remedies drunk (1)")
+		and summary.contains("Damage he dealt ("),
+		"every blow begun at him is told and how it ended, avoided too; fire as fire; his lowest health, the remedies he drank, the damage he dealt")
 	for needle: String in [",enter,streets_of_ash", ",swing,", ",kill,", ",fall,", ",taken,", ",lamp,"]:
 		if not events.contains(needle):
 			print("  missing from the log: %s" % needle)

@@ -35,6 +35,9 @@ enum DownPhase {FALL, LIE, RISE}
 
 ## A staggered soldier this badly hurt (a fraction of his health) can be finished.
 const FINISH_HEALTH: float = 0.5
+## The share of a turned blow's poise damage a shield wall feels (a round shield, half): his tall shield takes it
+## full on, so only what is meant to open it does (an overwhelming blow, one from behind, a parry's riposte).
+const WALL_POISE: float = 0.1
 const FRICTION: float = 900.0
 ## Braking once an attack's lunge ends: he plants his feet rather than skating on.
 const ATTACK_FRICTION: float = 1600.0
@@ -318,6 +321,11 @@ func flinch(away: float) -> void:
 
 ## A staggered soldier can be finished once his wounds have brought him this low (a fraction of his
 ## health): a parry on a fresh man opens him to the riposte, not to the finisher.
+## A shield wall stands guard whenever he is not swinging or reeling.
+func _walled() -> bool:
+	return profile.shield_wall and (state == State.READY or state == State.GUARD)
+
+
 func can_be_finished() -> bool:
 	return (not dead and not in_finisher and (state == State.STAGGER or is_down()) and not profile.armoured_body
 		and not is_beaten and health <= max_health * FINISH_HEALTH)
@@ -547,8 +555,7 @@ func judge_hit(hit: HitData) -> HitData.Outcome:
 	# A blow no shield can stop (the fully charged cleave) goes through any guard, a wall's too.
 	if hit.unblockable:
 		return HitData.Outcome.HIT
-	# A shield wall stands guard whenever he is not swinging or reeling.
-	var walled: bool = profile.shield_wall and (state == State.READY or state == State.GUARD)
+	var walled: bool = _walled()
 	if (state == State.GUARD or walled) and is_frontal(hit) and not (hit.low and not walled):
 		if hit.overwhelms or (hit.guard_break and not walled):
 			_blocked_in_row = 0
@@ -585,7 +592,7 @@ func on_struck(hit: HitData, outcome: HitData.Outcome) -> void:
 		HitData.Outcome.BLOCKED:
 			velocity.x = hit.shove(0.0, 0.5)
 			_drawn(hit)
-			poise -= hit.poise_damage * 0.5
+			poise -= hit.poise_damage * (WALL_POISE if _walled() else 0.5)
 			_poise_timer = poise_recovery_delay
 			flash(0.35)
 			guarded_hit.emit(hit)

@@ -113,6 +113,8 @@ var _last_objective: String = ""
 var _near_npc: Npc
 ## The last blow that landed on him (what felled him, for the game over's tip).
 var _last_blow: HitData
+## The remedies he had when last told, so one drunk is told to the playtest log (a lamp refills them).
+var _remedies_seen: int = 0
 ## Seconds in play since the level was entered.
 var _level_time: float = 0.0
 ## The warnings' colours and the finisher's glow, as the settings choose them.
@@ -646,6 +648,9 @@ func _wire_hero() -> void:
 	hero.landed.connect(_on_hero_landed)
 	hero.rolled.connect(_on_hero_rolled)
 	hero.healed.connect(_on_hero_healed)
+	hero.health_changed.connect(_on_hero_health)
+	hero.remedies_changed.connect(_on_hero_remedies)
+	_remedies_seen = hero.remedies
 	hero.interacted.connect(_on_hero_interacted)
 	hero.finisher_started.connect(_on_finisher_started)
 	hero.finisher_struck.connect(_on_finisher_struck)
@@ -1260,6 +1265,9 @@ func _on_struck(hit: HitData, outcome: HitData.Outcome, target: Combatant) -> vo
 func _on_swung(attack: AttackDefinition, combatant: Combatant) -> void:
 	if combatant == hero:
 		play_log.event("swing", _blow_name(attack), hero.global_position.x)
+	elif combatant is MongolSoldier:
+		# Every soldier's blow is begun at him: one that never touches him was avoided (jumped, stepped from).
+		play_log.count("aimed", _blow_name(attack))
 	sounds.play(attack.swing_cue, -2.0)
 	if attack.flinch_radius > 0.0:
 		# A blow like a falling beam: grit thrown up both ways, and the street shakes.
@@ -1459,9 +1467,11 @@ func _on_projectile(projectile: Node2D) -> void:
 	if arrow != null:
 		sounds.play(&"bow_release", -3.0)
 		arrow.impacted.connect(_on_arrow_impacted)
+		play_log.count("aimed", "arrow")
 	var pot: FirePot = projectile as FirePot
 	if pot != null:
 		pot.burst.connect(_on_pot_burst)
+		play_log.count("aimed", "fire_pot")
 
 
 ## A fire pot breaks: clay and naphtha, and the fire takes.
@@ -1493,8 +1503,21 @@ func _on_hero_healed(_amount: float) -> void:
 	sounds.play(&"heal")
 
 
+## His health, for the playtest log (the lowest on each street).
+func _on_hero_health(current: float, maximum: float) -> void:
+	if maximum > 0.0:
+		play_log.health(current / maximum)
+
+
+## A remedy drunk (the count falls; a lamp's refill is not one), for the playtest log.
+func _on_hero_remedies(count: int, _maximum: int) -> void:
+	if count < _remedies_seen:
+		play_log.event("remedy", "", hero.global_position.x)
+	_remedies_seen = count
+
+
 func _on_hero_died() -> void:
-	var felled_by: String = "%s: %s" % [_kind(_last_blow.attacker), _blow_name(_last_blow.attack)] if _last_blow != null else "unknown"
+	var felled_by: String = "%s: %s" % [_kind(_last_blow.attacker), _hit_name(_last_blow)] if _last_blow != null else "unknown"
 	play_log.event("fall", felled_by, hero.global_position.x)
 	play_log.write_summary()
 	state = State.DEAD
@@ -2171,12 +2194,16 @@ func _log_blow(hit: HitData, outcome: HitData.Outcome, target: Combatant) -> voi
 	var outcome_name: String = outcomes[outcome]
 	var how: String = outcome_name.to_lower().replace("_", " ")
 	if target == hero:
-		var warning: String = PlayLog.tell_name(int(hit.attack.tell())) if hit.attack != null else "arrow"
+		# A blow with no attack of its own (an arrow, a fire pot, burning ground) is told by what dealt it.
+		var warning: String = PlayLog.tell_name(int(hit.attack.tell())) if hit.attack != null else _hit_name(hit)
 		play_log.count("warning", "%s %s" % [warning, how])
-		play_log.event("taken", "%s %s: %s, %s" % [_kind(hit.attacker), _blow_name(hit.attack), warning, how],
+		play_log.event("taken", "%s %s: %s, %s" % [_kind(hit.attacker), _hit_name(hit), warning, how],
 			hero.global_position.x)
+		play_log.count("met", "%s: %s" % [_hit_name(hit), how])
 	elif hit.attacker == hero:
-		play_log.count("landed", "%s %s" % [_blow_name(hit.attack), how])
+		play_log.count("landed", "%s %s" % [_hit_name(hit), how])
+		if outcome == HitData.Outcome.HIT:
+			play_log.add("damage", _hit_name(hit), hit.damage)
 
 
 ## What kind of man a combatant is, for the playtest log (the soldier's profile, or Yusuf).
@@ -2189,6 +2216,13 @@ func _kind(combatant: Combatant) -> String:
 	if soldier != null and soldier.profile != null:
 		return soldier.profile.resource_path.get_file().get_basename()
 	return String(combatant.name)
+
+
+## A blow's name for the playtest log: its attack's (see _blow_name), or what dealt it (arrow, fire_pot, fire).
+func _hit_name(hit: HitData) -> String:
+	if hit.attack != null:
+		return _blow_name(hit.attack)
+	return String(hit.cause) if hit.cause != &"" else "arrow"
 
 
 ## A blow's name for the playtest log: its definition's file (light_1, heavy, archer_shot), or the arrow.

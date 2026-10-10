@@ -836,10 +836,10 @@ animations = [{
 "speed": 8.0
 }, {
 "frames": [{
-"duration": 1.20,
+"duration": 1.60,
 "texture": SubResource("slash_a_0")
 }, {
-"duration": 1.80,
+"duration": 3.00,
 "texture": SubResource("slash_a_1")
 }, {
 "duration": 0.80,
@@ -978,10 +978,10 @@ animations = [{
 "duration": 1.00,
 "texture": SubResource("sweep_0")
 }, {
-"duration": 1.50,
+"duration": 2.20,
 "texture": SubResource("sweep_1")
 }, {
-"duration": 1.70,
+"duration": 2.40,
 "texture": SubResource("sweep_2")
 }, {
 "duration": 0.80,

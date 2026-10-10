@@ -12,7 +12,6 @@ recovery_from = 6
 damage = 14.0
 poise_damage = 30.0
 stamina_damage = 24.0
-low = true
 radial = true
 knocks_down = true
 knockback = 200.0

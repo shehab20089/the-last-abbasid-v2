@@ -71,6 +71,7 @@ func _physics_process(delta: float) -> void:
 			hit.poise_damage = first_poise
 		hit.hit_stop = 0.03
 		hit.unblockable = true
+		hit.cause = &"fire"
 		hit.direction = signf(target.global_position.x - global_position.x) if target.global_position.x != global_position.x else 1.0
 		hit.position = target.global_position + Vector2(0, -8)
 		target.receive_hit(hit)

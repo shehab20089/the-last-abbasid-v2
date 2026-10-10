@@ -15,8 +15,11 @@ signal alerted
 enum Mode {IDLE, PATROL, ALERT, CHASE, ATTACK, BLOCK, STAGGER, RETREAT, DEAD}
 
 const MAX_ATTACKERS: int = 2
-## Only a comrade this near the hero (px) counts against MAX_ATTACKERS (an archer drawing far off does not).
+## Only a comrade this near the hero (px) counts against MAX_ATTACKERS.
 const ATTACKER_REACH: float = 140.0
+## A shot drawn this near the hero (px) counts too: the bowman (or the pot-thrower) is in the same fight, in view, and
+## his arrow is a blow at him like any blade; one drawn from further off does not.
+const SHOT_REACH: float = 240.0
 ## While the attackers' places are taken, the others wait this far off (px), ready to step in.
 const WAIT_NEAR: float = 64.0
 const WAIT_FAR: float = 84.0
@@ -617,16 +620,16 @@ func _watch_for_swings() -> void:
 
 
 ## Few enough comrades are swinging at the hero: only blows that can reach him count (a man near him
-## winding up), not a shot drawn far off or a fight elsewhere.
+## winding up, a shot drawn in the same fight), not a shot drawn far off or a fight elsewhere.
 func _may_attack() -> bool:
 	var swinging: int = 0
 	for node: Node in soldier.get_tree().get_nodes_in_group(&"enemies"):
 		var other: MongolSoldier = node as MongolSoldier
 		if other == null or other == soldier or other.state != MongolSoldier.State.ATTACK:
 			continue
-		if other.current_attack != null and other.current_attack.projectile_frame >= 0:
-			continue
-		if target != null and absf(other.global_position.x - target.global_position.x) > ATTACKER_REACH:
+		var shot: bool = other.current_attack != null and other.current_attack.projectile_frame >= 0
+		var reach: float = SHOT_REACH if shot else ATTACKER_REACH
+		if target != null and absf(other.global_position.x - target.global_position.x) > reach:
 			continue
 		swinging += 1
 	return swinging < MAX_ATTACKERS

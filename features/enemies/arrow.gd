@@ -83,6 +83,7 @@ func _on_area_entered(area: Area2D) -> void:
 	hit.hit_stop = hit_stop
 	hit.direction = direction
 	hit.projectile = true
+	hit.cause = &"arrow"
 	hit.position = global_position
 	var outcome: HitData.Outcome = target.receive_hit(hit)
 	if outcome == HitData.Outcome.DODGED or outcome == HitData.Outcome.IGNORED:

@@ -26,6 +26,9 @@ var low: bool = false
 ## Drags the one struck toward the striker (a hooked axe) instead of driving him off.
 var pulls: bool = false
 var projectile: bool = false
+## What dealt a blow that has no attack of its own (an arrow, a fire pot, burning ground), for those who tell
+## of it (the playtest log); empty for a blow of an attack.
+var cause: StringName = &""
 ## A counterattack into an opening made by a parry or a broken guard.
 var riposte: bool = false
 ## Set by the one struck: the blow fell on him before he knew the attacker was there.
