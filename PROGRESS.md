@@ -188,8 +188,24 @@ The Market's opening (the gate street and the potters' lane, columns 0–84) was
   - **The exit gates** (the river gate, the quarter gate, the garden door, the Last Gate) are painted with relief and lit by their level's hour, in their level's colours. Their leaves stand deep in their arches, with iron bands and bronze studs.
     - Open, the view through them is painted as a view: night water with firelight on it under the far bank, a dusk garden with its palms, and dawn over the river with the sun's path across it.
   - Only what truly lies flat stays painted: the scattered pages and the spilt ink.
-- **Not yet brought to the standard:** the character materials come next.
-- **Tests** (`./tools/run_tests.ps1`, all passing, no script errors, after the first pass, the buildings, the play and the props): gameplay 226, enemy 325, session 249, finishers 25, lint 1 known, partial build 3, traversal of all four levels. Judged by eye in the game view: `tests/capture_tour.gd` before and after, every level (`captures/buildings_before_after.png`).
+- **The characters' materials, wear and stances** (the review's point 8: "clean rendered miniatures against the rough, burning environment"; props committed as `34ccea6`, then "yes please").
+  - **Light in clusters.** Every material takes the light by its stuff (`lib/sprite_shader.mjs` `FEELS`). The smooth light is gathered into a few levels, so a surface shades in three or four deliberate clusters instead of its whole ramp in even bands:
+    - cloth matte and soft, never reaching its brightest;
+    - leather fuller;
+    - skin warm;
+    - hair dark;
+    - metal hard, with a band of dark reflection between its lit face and its highlight.
+    - A fitting of one stuff on another (a bracer on a sleeve, a shield's bronze rim) is lit as its own stuff.
+    - The lamellar's rows of plates each catch the light along their top edge.
+  - **Wear** (`characters/wear.mjs`), laid by place on the surface so it stays put through every frame, and restrained to a few marks in clusters:
+    - dust and soot gathered toward hems and on boots;
+    - blood spattered where a man has killed, most on his weapon arm;
+    - scratches and dull patches on metal, stains on shields.
+    - Each soldier kind in its own measure (`KINDS.wear`): the swordsman, the mace-bearer and the axeman bloodiest, the veteran's armour scratched but kept, the engineer sooty. The hero carries a little dust, a touch of blood and a few scratches, his teal, gold and green shield kept. The townsfolk's hems have dragged through the dust.
+  - **Stances** (`*_READY` in `mongol3d_animations.mjs`), from which every move is posed, so each follows: the mace-bearer and the axeman low and wide, leaning over their weapons; the Captain tall, chest out and chin up; the spearman braced; the archer at ease on his back leg; the engineer hunched over his pots. The swordsman keeps his guard, the shield-bearer and the skirmisher their own already. The moves the new stances strained were mended: the heavy wind-ups rise less high, and the Captain's bash and smash keep their feet in reach and planted. The lint is back to its one accepted issue.
+  - Compared old against new in quiet light and by firelight (the sprites staged as the game lifts them) and in the game view (`tests/capture_cast.gd`).
+- **Not yet done:** the review's last item, splitting the largest scripts.
+- **Tests** (`./tools/run_tests.ps1`, all passing, no script errors, after the first pass, the buildings, the play, the props and the characters): gameplay 226, enemy 325, session 249, finishers 25, lint 1 known, partial build 3, traversal of all four levels. Judged by eye in the game view: `tests/capture_tour.gd` before and after, every level (`captures/buildings_before_after.png`).
 
 ## The combat fixes the first playtest log pointed to (after "yes please"): DONE, awaiting the next playtest
 The work before them was committed and pushed first (`e2431f7`).

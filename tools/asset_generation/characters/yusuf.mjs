@@ -12,7 +12,8 @@ import { P } from "../lib/palette.mjs";
 import { hex, mix } from "../lib/canvas.mjs";
 import { clamp, sub, toParent } from "../lib/space.mjs";
 import { ellipsoid, lathe, limb, place, roundedBox, shieldDisc, tube } from "../lib/meshes.mjs";
-import { pick, rampIndex } from "../lib/sprite_shader.mjs";
+import { pick, rampIndex, respond } from "../lib/sprite_shader.mjs";
+import { dusty, scratched, spattered } from "./wear.mjs";
 import { ribbonSides } from "./body3d.mjs";
 import {
   band, bodyColliders, bootShaft, fist, foot, hangingFromHead, headPoint, onHead, rest, shoulderCap, skirt, sleeve,
@@ -48,6 +49,8 @@ function shaded(r, bias = 0, extra = {}) {
 
 /** Metal: lit on its ramp, with a hard glint where it turns to the light. */
 const metal = (r, s, bias = 0, threshold = 0.55) => (s.glint > threshold ? r[r.length - 1] : pick(r, s.light, bias));
+/** A part of one stuff on another (a boss on the coat, mail on the sleeve): lit as its own stuff (sprite_shader FEELS). */
+const as = (s, feel) => ({ ...s, light: respond(s.smooth, feel) });
 
 /** Quilting: diamond lines stitched across padded cloth. */
 const quilt = (s, size = 3.8) => s.light > 0.52 && (frac((s.u + s.v) / size) < 0.22 || frac((s.u - s.v) / size) < 0.22);
@@ -58,13 +61,13 @@ const M = {};
 
 /** The coat's body: quilted, a teal stole hanging down its front, a baldric and its roundel. */
 M.coat = {
-  ramp: COAT, outline: outlineOf(COAT), line: COAT[0], rim: 0.34,
+  feel: "cloth", ramp: COAT, outline: outlineOf(COAT), line: COAT[0], rim: 0.34,
   shade(s) {
     const around = (s.w > 0.5 ? s.w - 1 : s.w) * 44; // pixels from the front, + toward the far side
     // The baldric, from the near shoulder down to the far hip, and its bronze boss.
     const strap = Math.abs((around + 5.4) * 15 / 11.6 - (21 - s.v)) / 1.73;
-    if (Math.hypot(around - 0.2, s.v - 13.6) < 1.6) return metal(BRONZE, s, 0.4);
-    if (strap < 0.95 && s.v > 5 && s.v < 22) return pick(LEATHER, s.light, -0.2 + (strap > 0.55 ? -1 : 0));
+    if (Math.hypot(around - 0.2, s.v - 13.6) < 1.6) return metal(BRONZE, as(s, "metal"), 0.4);
+    if (strap < 0.95 && s.v > 5 && s.v < 22) return pick(LEATHER, as(s, "leather").light, -0.2 + (strap > 0.55 ? -1 : 0));
     // The scarf's end, hanging down the chest.
     if (around > -1.2 && around < 2.4 && s.v > 7.5) {
       const fold = frac((s.v + around * 0.6) / 3) < 0.22;
@@ -77,10 +80,10 @@ M.coat = {
 /** The coat's skirt: quilted, teal facings down its open front, a bronze and teal hem. */
 function skirtMaterial(length, edge) {
   return {
-    ramp: COAT, outline: outlineOf(COAT), line: COAT[0], rim: 0.34,
+    feel: "cloth", ramp: COAT, outline: outlineOf(COAT), line: COAT[0], rim: 0.34,
     shade(s) {
       if (s.v > length - 1.3) return pick(TEAL, s.light, -0.3);
-      if (s.v > length - 2.3) return metal(BRONZE, s, -0.6, 0.7);
+      if (s.v > length - 2.3) return metal(BRONZE, as(s, "metal"), -0.6, 0.7);
       if (s.w < edge + 0.03 || s.w > 1 - edge - 0.03) return pick(TEAL, s.light, -0.2);
       return pick(COAT, s.light, -0.6 - (quilt(s) ? 1 : 0));
     },
@@ -91,23 +94,26 @@ function skirtMaterial(length, edge) {
 M.sleeve = {
   ramp: MAIL, outline: outlineOf(MAIL), line: MAIL[0], rim: 0.3,
   shade(s) {
-    if (s.v < 4.4) return pick(COAT, s.light, -0.6 - (quilt(s) ? 1 : 0));
+    if (s.v < 4.4) return pick(COAT, as(s, "cloth").light, -0.6 - (quilt(s) ? 1 : 0));
     if (s.v < 13.6) {
       const ring = (Math.floor(s.u * 1.15) + Math.floor(s.v * 1.4)) & 1;
       if (s.glint > 0.5 && !ring) return MAIL[5];
-      return pick(MAIL, s.light, -0.7 - ring);
+      return pick(MAIL, as(s, "metal").light, -0.7 - ring);
     }
     if (s.v < 14.4) return MAIL[0];
-    if ((s.v > 15 && s.v < 16.2) || (s.v > 23.2 && s.v < 24.4)) return metal(BRONZE, s, -0.4);
-    return pick(LEATHER, s.light, -0.2);
+    if ((s.v > 15 && s.v < 16.2) || (s.v > 23.2 && s.v < 24.4)) return metal(BRONZE, as(s, "metal"), -0.4);
+    return pick(LEATHER, as(s, "leather").light, -0.2);
   },
 };
 
-M.glove = shaded(LEATHER, -1);
+M.glove = shaded(LEATHER, -1, { feel: "leather" });
+
+/** A material with wear laid over its colour: `fn(colour, surface)`. */
+const worn = (material, fn) => ({ ...material, shade: (s) => fn(material.shade(s), s) });
 M.shoulder = { ...M.sleeve, shade: (s) => pick(COAT, s.light, -0.25 - (quilt(s) ? 1 : 0)) };
 
 M.trousers = {
-  ramp: TROUSERS, outline: outlineOf(TROUSERS), line: TROUSERS[0], rim: 0.28,
+  feel: "cloth", ramp: TROUSERS, outline: outlineOf(TROUSERS), line: TROUSERS[0], rim: 0.28,
   shade(s) {
     const fold = Math.abs(frac(s.w * 3 + s.v * 0.035) - 0.5) < 0.06;
     return pick(TROUSERS, s.light, -0.1 - (fold ? 1 : 0));
@@ -115,49 +121,49 @@ M.trousers = {
 };
 
 M.boot = {
-  ramp: LEATHER, outline: outlineOf(LEATHER), line: LEATHER[0], rim: 0.25,
+  feel: "leather", ramp: LEATHER, outline: outlineOf(LEATHER), line: LEATHER[0], rim: 0.25,
   shade(s) {
     const a = frac((s.v * 0.9 + s.u * 0.6) / 2.6) < 0.3;
     const b = frac((s.v * 0.9 - s.u * 0.6) / 2.6) < 0.3;
     return pick(LEATHER, s.light, -0.6 - (a || b ? 1 : 0));
   },
 };
-M.foot = shaded(LEATHER, -0.9);
+M.foot = shaded(LEATHER, -0.9, { feel: "leather" });
 
-M.skin = shaded(SKIN, 0.1, { rim: 0.25 });
-M.beard = shaded(HAIR, 0.2, { rim: 0.2 });
+M.skin = shaded(SKIN, 0.1, { rim: 0.25, feel: "skin" });
+M.beard = shaded(HAIR, 0.2, { rim: 0.2, feel: "hair" });
 M.eye = { ramp: HAIR, outline: P.outline, line: HAIR[0], rim: 0, shade: () => hex("#0a0707") };
 
 M.helmet = {
-  ramp: HELM, outline: outlineOf(HELM), line: HELM[0], rim: 0.3,
+  feel: "metal", ramp: HELM, outline: outlineOf(HELM), line: HELM[0], rim: 0.3,
   shade: (s) => metal(HELM, s, -1.6, 0.62),
 };
 M.band = {
-  ramp: BRONZE, outline: outlineOf(BRONZE), line: BRONZE[0], rim: 0.35,
+  feel: "metal", ramp: BRONZE, outline: outlineOf(BRONZE), line: BRONZE[0], rim: 0.35,
   shade(s) {
     const engraved = (Math.floor(s.u * 0.9) + Math.floor(s.v * 2.2)) % 3 === 0;
     return metal(BRONZE, s, -0.3 - (engraved ? 1 : 0), 0.6);
   },
 };
-M.bronze = { ramp: BRONZE, outline: outlineOf(BRONZE), line: BRONZE[0], rim: 0.35, shade: (s) => metal(BRONZE, s, 0, 0.45) };
-M.nasal = { ramp: STEEL, outline: outlineOf(STEEL), line: STEEL[0], rim: 0.3, shade: (s) => metal(STEEL, s, 0, 0.5) };
+M.bronze = { feel: "metal", ramp: BRONZE, outline: outlineOf(BRONZE), line: BRONZE[0], rim: 0.35, shade: (s) => metal(BRONZE, s, 0, 0.45) };
+M.nasal = { feel: "metal", ramp: STEEL, outline: outlineOf(STEEL), line: STEEL[0], rim: 0.3, shade: (s) => metal(STEEL, s, 0, 0.5) };
 
 M.hood = {
-  ramp: TEAL, outline: outlineOf(TEAL), line: TEAL[0], rim: 0.34,
+  feel: "cloth", ramp: TEAL, outline: outlineOf(TEAL), line: TEAL[0], rim: 0.34,
   shade(s) {
     const fold = Math.abs(frac(s.w * 7) - 0.5) < 0.1 && s.v > 2;
     return pick(TEAL, s.light, -0.9 - (fold ? 1 : 0));
   },
 };
 M.collar = {
-  ramp: TEAL, outline: outlineOf(TEAL), line: TEAL[0], rim: 0.34,
+  feel: "cloth", ramp: TEAL, outline: outlineOf(TEAL), line: TEAL[0], rim: 0.34,
   shade(s) {
     const fold = frac(s.v * 0.55 + s.w * 4) < 0.18;
     return pick(TEAL, s.light, -0.3 - (fold ? 1 : 0));
   },
 };
 M.scarf = {
-  ramp: TEAL, outline: outlineOf(TEAL), line: TEAL[0], rim: 0.4,
+  feel: "cloth", ramp: TEAL, outline: outlineOf(TEAL), line: TEAL[0], rim: 0.4,
   shade(s) {
     if (s.w > 0.9 && (s.x + s.y) % 2 === 0) return null;
     if (s.w > 0.74 && s.w < 0.79) return pick(GOLD, s.light, -1.2);
@@ -165,14 +171,14 @@ M.scarf = {
   },
 };
 M.sash = {
-  ramp: SASH, outline: outlineOf(SASH), line: SASH[0], rim: 0.3,
+  feel: "cloth", ramp: SASH, outline: outlineOf(SASH), line: SASH[0], rim: 0.3,
   shade(s) {
     const stripe = frac(s.v / 1.4) < 0.3;
     return pick(SASH, s.light, -0.4 - (stripe ? 1 : 0));
   },
 };
 M.sashEnd = {
-  ramp: SASH, outline: outlineOf(SASH), line: SASH[0], rim: 0.3,
+  feel: "cloth", ramp: SASH, outline: outlineOf(SASH), line: SASH[0], rim: 0.3,
   shade(s) {
     if (s.w > 0.86 && s.x % 2 === 0) return null;
     if (s.w > 0.8 && s.w < 0.86) return pick(GOLD, s.light, -1);
@@ -180,40 +186,45 @@ M.sashEnd = {
   },
 };
 M.belt = {
-  ramp: LEATHER, outline: outlineOf(LEATHER), line: LEATHER[0], rim: 0.25,
+  feel: "leather", ramp: LEATHER, outline: outlineOf(LEATHER), line: LEATHER[0], rim: 0.25,
   shade(s) {
-    if (frac(s.u / 3.2) < 0.3 && s.v > 0.5 && s.v < 1.3) return metal(BRONZE, s, 0.3);
+    if (frac(s.u / 3.2) < 0.3 && s.v > 0.5 && s.v < 1.3) return metal(BRONZE, as(s, "metal"), 0.3);
     return pick(LEATHER, s.light, -0.5);
   },
 };
 
 /** The shield: dark teal lacquer, a gold eight-pointed star and ring, a bronze rim. */
 M.shield = {
-  ramp: LACQUER, outline: outlineOf(LACQUER, 0.6), line: LACQUER[0], rim: 0.34,
+  feel: "leather", ramp: LACQUER, outline: outlineOf(LACQUER, 0.6), line: LACQUER[0], rim: 0.34,
   shade(s) {
     const r = s.w;
     if (r > 10.4) return pick(LEATHER, s.light, -1.2); // the back and the edge
-    if (r > 9.3) return metal(BRONZE, s, -0.2, 0.5);
+    if (r > 9.3) return scratched(metal(BRONZE, as(s, "metal"), -0.2, 0.5), s, BRONZE, { density: 0.12, seed: 21 });
     const x = s.u;
     const y = s.v;
     const square = Math.max(Math.abs(x), Math.abs(y));
     const diamond = (Math.abs(x) + Math.abs(y)) / Math.SQRT2;
     const star = Math.max(square, diamond);
-    if (Math.abs(r - 7.6) < 0.4) return metal(GOLD, s, -1.4, 0.7);
+    if (Math.abs(r - 7.6) < 0.4) return metal(GOLD, as(s, "metal"), -1.4, 0.7);
     if (Math.abs(star - 5.4) < 0.4) return pick(LACQUER, s.light, 1.2);
     if (s.glint > 0.7) return LACQUER[5];
     return pick(LACQUER, s.light, -0.6);
   },
 };
-M.boss = { ramp: BRONZE, outline: outlineOf(BRONZE), line: BRONZE[0], rim: 0.3, shade: (s) => metal(BRONZE, s, 0.2, 0.4) };
-M.grip = shaded(LEATHER, -1.2, { rim: 0 });
+M.boss = { feel: "metal", ramp: BRONZE, outline: outlineOf(BRONZE), line: BRONZE[0], rim: 0.3, shade: (s) => metal(BRONZE, s, 0.2, 0.4) };
+M.grip = shaded(LEATHER, -1.2, { rim: 0, feel: "leather" });
 /** The naphtha flask: fired clay ringed by its turning, and a rag wick alight. */
 const CLAY = ramp("#1e110b", "#341d12", "#4f2c1a", "#6d3f25", "#8d5633", "#ab6f45");
-M.clay = { ramp: CLAY, outline: outlineOf(CLAY), line: CLAY[0], rim: 0.3,
+M.clay = { feel: "cloth", ramp: CLAY, outline: outlineOf(CLAY), line: CLAY[0], rim: 0.3,
   shade: (s) => pick(CLAY, s.light, -0.3 - (frac(s.v / 2.2) < 0.18 ? 1 : 0)) };
 M.wick = { ramp: BRONZE, outline: outlineOf(BRONZE, 0.3), line: BRONZE[0], rim: 0,
   shade: (s) => (s.glint > 0.3 ? BRONZE[5] : BRONZE[4]) };
-M.gold = { ramp: GOLD, outline: outlineOf(GOLD), line: GOLD[0], rim: 0.2, shade: (s) => metal(GOLD, s, 0, 0.45) };
+M.trousers = worn(M.trousers, (c, s) => dusty(c, s, s.v / 20, { from: 0.45, amount: 0.35, seed: 2 }));
+M.boot = worn(M.boot, (c, s) => dusty(c, s, 0.7, { from: 0, amount: 0.3, seed: 6 }));
+M.foot = worn(M.foot, (c, s) => dusty(c, s, 0.85, { from: 0, amount: 0.35, seed: 7 }));
+M.sleeve = worn(M.sleeve, (c, s) => (s.part.name === "sleeveF" && s.v > 13 ? spattered(c, s, { density: 0.08, seed: 5 }) : c));
+M.helmet = worn(M.helmet, (c, s) => scratched(c, s, HELM, { density: 0.08, seed: 8 }));
+M.gold = { feel: "metal", ramp: GOLD, outline: outlineOf(GOLD), line: GOLD[0], rim: 0.2, shade: (s) => metal(GOLD, s, 0, 0.45) };
 
 // --- Model ------------------------------------------------------------------------------------
 

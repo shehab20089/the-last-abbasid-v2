@@ -695,6 +695,10 @@ export const SWORDSMAN = {
 /** The spear levelled low over the shield, its point at the enemy's chest. */
 const SPEAR_READY = {
   ...SWORD_READY,
+  // Braced behind his spear: a little lower, his feet wider.
+  pelvis: [0, 37.1],
+  footN: [-9.5, -4.8, 4.2],
+  footF: [9.5, 5, 4.2],
   handN: [2, -10, 44],
   sword: [100, 8],
   handF: [9, 3, 47],
@@ -827,8 +831,13 @@ export const SPEARMAN = {
 /** The bow held low and forward, the drawing hand by the quiver. */
 const BOW_READY = {
   ...SWORD_READY,
-  hips: { yaw: -12, pitch: 3, roll: 0 },
-  torso: { yaw: -2, pitch: 4, roll: 0 },
+  // At ease, the bow lowered: his weight on his back leg, his hips dropped to that side, half turned to the street.
+  pelvis: [-0.8, 37.6],
+  hips: { yaw: -12, pitch: 2, roll: 5 },
+  torso: { yaw: -8, pitch: 2, roll: -3 },
+  head: { yaw: 18, pitch: -2, roll: 0 },
+  footN: [-7, -4.6, 4.2],
+  footF: [7.5, 4.8, 4.2],
   handN: [0, -9.5, 41],
   sword: [70, 10],
   handF: [9, 3.5, 42],
@@ -914,12 +923,13 @@ export const ARCHER = {
 /** Heavier, lower, the sabre held back and the great shield forward. */
 const CAP_READY = {
   ...SWORD_READY,
-  pelvis: [0, 37.4],
-  hips: { yaw: -18, pitch: 4, roll: 0 },
-  torso: { yaw: -2, pitch: 6, roll: 0 },
-  head: { yaw: 16, pitch: -2, roll: 0 },
-  footN: [-9, -4.8, 4.2],
-  footF: [9, 5, 4.2],
+  // He stands tall, chest out and chin up: there is no one in this city he fears.
+  pelvis: [0, 38.1],
+  hips: { yaw: -18, pitch: 1, roll: 0 },
+  torso: { yaw: -4, pitch: 0, roll: 0 },
+  head: { yaw: 16, pitch: -7, roll: 0 },
+  footN: [-10, -4.8, 4.2],
+  footF: [10, 5, 4.2],
   handN: [3, -11, 45],
   sword: [150, 22],
   handF: [9, 3, 46],
@@ -994,8 +1004,8 @@ function smash() {
   return [
     blend(CAP_READY, crouch, 0.6), crouch, pose(crouch, { pelvis: [-1.4, 30.8], torso: { pitch: 18 } }),
     rise, air, down, impact, pose(impact, { pelvis: [8, 28.6], handN: [24, -7, 25] }),
-    blend(impact, pose(CAP_READY, { pelvis: [5, 36], footF: [14, 5, 4.2] }), 0.5),
-    pose(CAP_READY, { pelvis: [3, 37], footF: [12, 5, 4.2] }),
+    blend(impact, pose(CAP_READY, { pelvis: [5, 36], footF: [14, 5, 4.2], footN: impact.footN }), 0.5),
+    pose(CAP_READY, { pelvis: [3, 37], footF: [12, 5, 4.2], footN: impact.footN }),
   ];
 }
 
@@ -1015,7 +1025,7 @@ function bash() {
   return [
     blend(CAP_READY, set, 0.6), set, launch, flight, land, skid,
     pose(blend(skid, CAP_READY, 0.6), { footF: skid.footF, footN: skid.footN }),
-    pose(CAP_READY, { footF: skid.footF, footN: skid.footN }),
+    pose(CAP_READY, { pelvis: [2, 37.2], footF: skid.footF, footN: skid.footN }),
   ];
 }
 
@@ -1172,15 +1182,16 @@ const haft = (hand, [angle], along = -6) => {
 };
 const MACE_READY = {
   ...SWORD_READY,
-  pelvis: [0, 37.2],
-  hips: { yaw: -20, pitch: 5, roll: 0 },
-  torso: { yaw: -6, pitch: 7, roll: 0 },
-  head: { yaw: 18, pitch: -2, roll: 0 },
-  footN: [-9, -4.8, 4.2],
-  footF: [9, 5, 4.2],
-  handN: [4, -10, 48],
+  // A heavy man: low and wide, leaning over his mace.
+  pelvis: [0.6, 35.9],
+  hips: { yaw: -22, pitch: 8, roll: 0 },
+  torso: { yaw: -6, pitch: 12, roll: 0 },
+  head: { yaw: 18, pitch: 2, roll: 0 },
+  footN: [-11, -5, 4.2],
+  footF: [10.5, 5.2, 4.2],
+  handN: [4, -10, 46.6],
   sword: [140, 16],
-  handF: haft([4, -10, 48], [140, 16]),
+  handF: haft([4, -10, 46.6], [140, 16]),
   shield: [0, -40],
 };
 /** A mace pose: the far hand follows the near one on the haft. */
@@ -1191,7 +1202,7 @@ const mr = (o) => {
 
 /** The overhead blow: raised high behind, held, then down into the street. Telegraph 1, active 3-4. */
 function maceSmash() {
-  const raised = mr({ pelvis: [-2, 38.6], hips: { yaw: -22, pitch: -2 }, torso: { yaw: -16, pitch: -10, roll: 3 },
+  const raised = mr({ pelvis: [-1.2, 37.6], hips: { yaw: -22, pitch: -2 }, torso: { yaw: -16, pitch: -10, roll: 3 },
     head: { yaw: 20, pitch: -8 }, handN: [-2, -9, 70], sword: [204, 10] });
   const over = mr({ pelvis: [4, 36.4], hips: { yaw: -2, pitch: 10 }, torso: { yaw: 4, pitch: 14 }, head: { yaw: 8, pitch: 4 },
     footF: [14, 5, LIFT], toeF: 12, handN: [18, -9, 56], sword: [112, 4] });
@@ -1355,9 +1366,11 @@ export const SHIELDBEARER = {
 const POTS = ["pot", "wick"];
 const POT_READY = {
   ...SWORD_READY,
-  hips: { yaw: -12, pitch: 3, roll: 0 },
-  torso: { yaw: -4, pitch: 4, roll: 0 },
-  head: { yaw: 14, pitch: -4, roll: 0 },
+  // Hunched over the pots of fire he carries, wary of them.
+  pelvis: [0, 37.1],
+  hips: { yaw: -12, pitch: 6, roll: 0 },
+  torso: { yaw: -4, pitch: 14, roll: 0 },
+  head: { yaw: 14, pitch: 4, roll: 0 },
   handN: [5, -9, 42],
   sword: [90, 0],
   handF: [9, 4, 44],
@@ -1579,16 +1592,17 @@ const overhand = (angle) => { const a = (angle * Math.PI) / 180; return [-Math.c
 const underhand = (angle) => { const a = (angle * Math.PI) / 180; return [Math.cos(a), 0, Math.sin(a)]; };
 const AXE_READY = {
   ...SWORD_READY,
-  pelvis: [0, 37],
-  hips: { yaw: -22, pitch: 5, roll: 0 },
-  torso: { yaw: -4, pitch: 7, roll: 0 },
-  head: { yaw: 18, pitch: -2, roll: 0 },
-  footN: [-10, -4.8, 4.2],
-  footF: [9, 5, 4.2],
-  handN: [7, -10, 45],
+  // A heavy man: low and wide, the axe across him.
+  pelvis: [0.4, 35.9],
+  hips: { yaw: -22, pitch: 8, roll: 0 },
+  torso: { yaw: -4, pitch: 11, roll: 0 },
+  head: { yaw: 18, pitch: 1, roll: 0 },
+  footN: [-11.5, -4.8, 4.2],
+  footF: [10, 5, 4.2],
+  handN: [7, -10, 44],
   sword: [124, 16],
   edge: overhand(124),
-  handF: axeGrip([7, -10, 45], [124, 16]),
+  handF: axeGrip([7, -10, 44], [124, 16]),
   shield: [0, -40],
 };
 /** An axe pose: the far hand follows the near one down the haft, the edge leads an overhand blow. */
@@ -1600,7 +1614,7 @@ const ar = (o, along = -10) => {
 /** The chop: the axe raised high behind, held, then over and down into the street before him, where
  * it bites and stays a moment. Telegraph 1, active 3-4. */
 function axeChop() {
-  const raised = ar({ pelvis: [-2.4, 38.6], hips: { yaw: -20, pitch: -4 }, torso: { yaw: -12, pitch: -12, roll: 3 },
+  const raised = ar({ pelvis: [-1.6, 37.6], hips: { yaw: -20, pitch: -4 }, torso: { yaw: -12, pitch: -12, roll: 3 },
     head: { yaw: 18, pitch: -8 }, handN: [-3, -9, 71], sword: [214, 10] });
   const over = ar({ pelvis: [4, 36.4], hips: { yaw: -2, pitch: 10 }, torso: { yaw: 4, pitch: 14 }, head: { yaw: 8, pitch: 4 },
     footF: [14, 5, LIFT], toeF: 12, handN: [19, -9, 58], sword: [112, 4] });

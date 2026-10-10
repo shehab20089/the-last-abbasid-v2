@@ -19,6 +19,30 @@ export function lightOf(n, wrap = 0.35) {
 /** How strongly a metal surface throws the key back at the viewer (0..1). */
 export const glintOf = (n, power = 24) => Math.max(0, dot(n, HALF)) ** power;
 
+/**
+ * How a material takes the light (`material.feel`): the smooth light gathered into a few levels, so a surface shades
+ * in a few deliberate clusters, as a hand would place them, rather than across its whole ramp in even bands. Cloth is
+ * matte and soft, never reaching its brightest; leather a little fuller; skin warm and soft; hair dark; metal hard,
+ * with a band of dark reflection between its lit face and its highlight (the highlight itself comes from the glint).
+ * Each is { cuts (light thresholds), levels (the light each step is given) }.
+ */
+export const FEELS = {
+  cloth: { cuts: [0.3, 0.52, 0.76], levels: [0.26, 0.44, 0.6, 0.72] },
+  leather: { cuts: [0.3, 0.5, 0.74], levels: [0.22, 0.42, 0.6, 0.78] },
+  skin: { cuts: [0.32, 0.52, 0.74], levels: [0.3, 0.48, 0.64, 0.8] },
+  hair: { cuts: [0.36, 0.62], levels: [0.24, 0.44, 0.62] },
+  metal: { cuts: [0.3, 0.48, 0.62, 0.7], levels: [0.12, 0.34, 0.6, 0.38, 0.74] },
+};
+
+/** The light a material of the given feel takes (the smooth light if it has none). */
+export function respond(light, feel) {
+  const f = FEELS[feel];
+  if (!f) return light;
+  let k = 0;
+  while (k < f.cuts.length && light >= f.cuts[k]) k++;
+  return f.levels[k];
+}
+
 /** A ramp colour for a light value, shifted by bias (in ramp steps). */
 export function pick(ramp, light, bias = 0) {
   const i = Math.floor(clamp(light, 0, 0.999) * ramp.length + bias);
@@ -101,9 +125,10 @@ export function shadeSprite(g, { width, height, scale }, parts, options = {}) {
       depth[o] = front;
       normal[o] = n;
       const part = parts[best];
+      const smooth = lightOf(n, part.material.wrap ?? 0.35);
       const s = {
         n, u: g.u[near], v: g.v[near], w: g.w[near], depth: front, x: px, y: py, part,
-        light: lightOf(n, part.material.wrap ?? 0.35), glint: glintOf(n, part.material.glintPower ?? 24),
+        light: respond(smooth, part.material.feel), smooth, glint: glintOf(n, part.material.glintPower ?? 24),
       };
       const color = part.material.shade(s);
       if (!color) {

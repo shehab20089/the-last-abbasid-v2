@@ -13,11 +13,12 @@ import { P } from "../lib/palette.mjs";
 import { hex, mix } from "../lib/canvas.mjs";
 import { add, clamp, normalize, scale, sub, toParent } from "../lib/space.mjs";
 import { ellipsoid, lathe, limb, mesh, place, roundedBox, shieldDisc, tube } from "../lib/meshes.mjs";
-import { pick } from "../lib/sprite_shader.mjs";
+import { pick, respond } from "../lib/sprite_shader.mjs";
 import {
   band, bodyColliders, bootShaft, fist, foot, hangingFromHead, headPoint, onHead, rest, shoulderCap, skirt, sleeve,
   torsoRings, torsoWeights, trousers,
 } from "./figure3d.mjs";
+import { dusty, scratched, spattered, stained } from "./wear.mjs";
 
 const ramp = (...codes) => codes.map((c) => hex(c));
 const frac = (x) => x - Math.floor(x);
@@ -56,6 +57,8 @@ const outlineOf = (r, k = 0.55) => mix(r[0], P.outline, k);
 const shaded = (r, bias = 0, extra = {}) => ({ ramp: r, outline: outlineOf(r), line: r[0], rim: 0.3,
   shade: (s) => pick(r, s.light, bias), ...extra });
 const metal = (r, s, bias = 0, threshold = 0.55) => (s.glint > threshold ? r[r.length - 1] : pick(r, s.light, bias));
+/** A metal fitting on a part of another stuff (a bracer on a sleeve, a rim on a hide shield): lit as metal. */
+const fitting = (s) => ({ ...s, light: respond(s.smooth, "metal") });
 
 /**
  * Lamellar: rows of small iron plates laced together, a bronze rivet catching the light on each.
@@ -66,26 +69,31 @@ function lamellar(s, bias = 0, rowsize = 2.6) {
   const across = (s.u + (row % 2) * 0.9) / 1.8;
   const inRow = frac(s.v / rowsize);
   if (inRow < 0.26) return pick(PLATE, s.light, bias - 1.6);
+  // The top edge of each row of plates catches the light where the row turns out over the one below.
+  if (inRow < 0.42 && s.smooth > 0.42) return pick(PLATE, s.light, bias + 0.9);
   if (inRow > 0.4 && inRow < 0.7 && frac(across) < 0.34 && s.light > 0.45) return metal(BRONZE, s, 0.2, 0.3);
   return frac(across) < 0.16 ? pick(PLATE, s.light, bias - 1) : metal(PLATE, s, bias, 0.7);
 }
 
 // --- Materials -------------------------------------------------------------------------------
 
-function materialsFor(DEEL) {
-return {
-  skin: shaded(SKIN, 0.45, { rim: 0.25 }),
-  hair: shaded(HAIR, 0.2, { rim: 0.2 }),
+/** A material with wear laid over its colour: `fn(colour, surface)`. */
+const worn = (material, fn) => ({ ...material, shade: (s) => fn(material.shade(s), s) });
+
+function materialsFor(DEEL, wear) {
+const M = {
+  skin: shaded(SKIN, 0.45, { rim: 0.25, feel: "skin" }),
+  hair: shaded(HAIR, 0.2, { rim: 0.2, feel: "hair" }),
   eye: { ramp: HAIR, outline: P.outline, line: HAIR[0], rim: 0, shade: () => hex("#080606") },
-  mask: shaded(MASK, 0, { rim: 0.2 }),
+  mask: shaded(MASK, 0, { rim: 0.2, feel: "cloth" }),
   deel: {
-    ramp: DEEL, outline: outlineOf(DEEL), line: DEEL[0], rim: 0.3,
+    feel: "cloth", ramp: DEEL, outline: outlineOf(DEEL), line: DEEL[0], rim: 0.3,
     shade: (s) => pick(DEEL, s.light, -0.4 - (frac((s.u * 0.7 + s.v) / 4.2) < 0.16 && s.light > 0.5 ? 1 : 0)),
   },
-  cuirass: { ramp: PLATE, outline: outlineOf(PLATE), line: PLATE[0], rim: 0.34, shade: (s) => lamellar(s) },
-  pauldron: { ramp: PLATE, outline: outlineOf(PLATE), line: PLATE[0], rim: 0.34, shade: (s) => lamellar(s, -0.3, 2.3) },
+  cuirass: { feel: "metal", ramp: PLATE, outline: outlineOf(PLATE), line: PLATE[0], rim: 0.34, shade: (s) => lamellar(s) },
+  pauldron: { feel: "metal", ramp: PLATE, outline: outlineOf(PLATE), line: PLATE[0], rim: 0.34, shade: (s) => lamellar(s, -0.3, 2.3) },
   tassets: {
-    ramp: PLATE, outline: outlineOf(PLATE), line: PLATE[0], rim: 0.34,
+    feel: "metal", ramp: PLATE, outline: outlineOf(PLATE), line: PLATE[0], rim: 0.34,
     shade(s) {
       if (s.v > s.part.length - 1.2) return metal(BRONZE, s, -0.6, 0.6);
       if (s.w < s.part.edge + 0.02 || s.w > 1 - s.part.edge - 0.02) return pick(PLATE, s.light, -1.5);
@@ -93,14 +101,14 @@ return {
     },
   },
   deelSkirt: {
-    ramp: DEEL, outline: outlineOf(DEEL), line: DEEL[0], rim: 0.3,
+    feel: "cloth", ramp: DEEL, outline: outlineOf(DEEL), line: DEEL[0], rim: 0.3,
     shade(s) {
       if (s.v > s.part.length - 1.6) return pick(RED, s.light, -0.8);
       return pick(DEEL, s.light, -0.5 - (Math.abs(frac(s.w * 9) - 0.5) < 0.08 ? 1 : 0));
     },
   },
   furTrimSkirt: {
-    ramp: DEEL, outline: outlineOf(DEEL), line: DEEL[0], rim: 0.3,
+    feel: "cloth", ramp: DEEL, outline: outlineOf(DEEL), line: DEEL[0], rim: 0.3,
     shade(s) {
       if (s.v > s.part.length - 2.4) return pick(FUR, s.light, -0.2 - ((s.x + s.y) % 3 === 0 ? 1 : 0));
       if (s.w < s.part.edge + 0.035 || s.w > 1 - s.part.edge - 0.035) return pick(FUR, s.light, -0.4);
@@ -110,69 +118,70 @@ return {
     },
   },
   sleeve: {
-    ramp: DEEL, outline: outlineOf(DEEL), line: DEEL[0], rim: 0.3,
+    feel: "cloth", ramp: DEEL, outline: outlineOf(DEEL), line: DEEL[0], rim: 0.3,
     shade(s) {
       if (s.v > 14.6) {
         // Iron bracers, riveted.
-        if (s.v > 15 && s.v < 15.9) return metal(BRONZE, s, -0.5, 0.6);
+        const m = fitting(s);
+        if (s.v > 15 && s.v < 15.9) return metal(BRONZE, m, -0.5, 0.6);
         const rivet = frac(s.u / 2.2) < 0.3 && frac(s.v / 2.6) < 0.3;
-        return rivet ? metal(BRONZE, s, 0, 0.4) : metal(IRON, s, -1, 0.6);
+        return rivet ? metal(BRONZE, m, 0, 0.4) : metal(IRON, m, -1, 0.6);
       }
       return pick(DEEL, s.light, -0.3 - (frac(s.v / 3) < 0.18 && s.light > 0.5 ? 1 : 0));
     },
   },
   archerSleeve: {
-    ramp: DEEL, outline: outlineOf(DEEL), line: DEEL[0], rim: 0.3,
+    feel: "cloth", ramp: DEEL, outline: outlineOf(DEEL), line: DEEL[0], rim: 0.3,
     shade(s) {
       if (s.v > 18) return pick(LEATHER, s.light, -0.4);
       return pick(DEEL, s.light, -0.3 - (frac(s.v / 3) < 0.18 && s.light > 0.5 ? 1 : 0));
     },
   },
-  glove: shaded(LEATHER, -0.8),
+  glove: shaded(LEATHER, -0.8, { feel: "leather" }),
   fur: {
-    ramp: FUR, outline: outlineOf(FUR), line: FUR[0], rim: 0.42,
+    feel: "hair", ramp: FUR, outline: outlineOf(FUR), line: FUR[0], rim: 0.42,
     shade: (s) => pick(FUR, s.light, -0.2 - (((s.x * 3 + s.y * 2) % 5 === 0) ? 1 : 0)),
   },
-  helmet: { ramp: IRON, outline: outlineOf(IRON), line: IRON[0], rim: 0.3, shade: (s) => metal(IRON, s, -1.3, 0.62) },
+  helmet: { feel: "metal", ramp: IRON, outline: outlineOf(IRON), line: IRON[0], rim: 0.3, shade: (s) => metal(IRON, s, -1.3, 0.62) },
   // Bright worked steel: a knife's blade, an axe's edge.
-  knife: { ramp: STEEL, outline: outlineOf(STEEL), line: STEEL[0], rim: 0.35, shade: (s) => metal(STEEL, s, 0.4, 0.5) },
+  knife: { feel: "metal", ramp: STEEL, outline: outlineOf(STEEL), line: STEEL[0], rim: 0.35, shade: (s) => metal(STEEL, s, 0.4, 0.5) },
   helmetBand: {
-    ramp: BRONZE, outline: outlineOf(BRONZE), line: BRONZE[0], rim: 0.3,
+    feel: "metal", ramp: BRONZE, outline: outlineOf(BRONZE), line: BRONZE[0], rim: 0.3,
     shade: (s) => metal(BRONZE, s, -0.5 - ((Math.floor(s.u * 0.8) % 3 === 0) ? 1 : 0), 0.6),
   },
-  bronze: { ramp: BRONZE, outline: outlineOf(BRONZE), line: BRONZE[0], rim: 0.3, shade: (s) => metal(BRONZE, s, 0, 0.45) },
-  gold: { ramp: GOLD, outline: outlineOf(GOLD), line: GOLD[0], rim: 0.2, shade: (s) => metal(GOLD, s, 0, 0.45) },
+  bronze: { feel: "metal", ramp: BRONZE, outline: outlineOf(BRONZE), line: BRONZE[0], rim: 0.3, shade: (s) => metal(BRONZE, s, 0, 0.45) },
+  gold: { feel: "metal", ramp: GOLD, outline: outlineOf(GOLD), line: GOLD[0], rim: 0.2, shade: (s) => metal(GOLD, s, 0, 0.45) },
   belt: {
-    ramp: LEATHER, outline: outlineOf(LEATHER), line: LEATHER[0], rim: 0.25,
-    shade: (s) => (frac(s.u / 3.4) < 0.3 && s.v > 0.4 && s.v < 1.4 ? metal(BRONZE, s, 0.2) : pick(LEATHER, s.light, -0.5)),
+    feel: "leather", ramp: LEATHER, outline: outlineOf(LEATHER), line: LEATHER[0], rim: 0.25,
+    shade: (s) => (frac(s.u / 3.4) < 0.3 && s.v > 0.4 && s.v < 1.4 ? metal(BRONZE, fitting(s), 0.2) : pick(LEATHER, s.light, -0.5)),
   },
   sash: {
-    ramp: RED, outline: outlineOf(RED), line: RED[0], rim: 0.3,
+    feel: "cloth", ramp: RED, outline: outlineOf(RED), line: RED[0], rim: 0.3,
     shade: (s) => pick(RED, s.light, -0.5 - (frac(s.v / 1.5) < 0.3 ? 1 : 0)),
   },
   strip: {
-    ramp: RED, outline: outlineOf(RED), line: RED[0], rim: 0.35,
+    feel: "cloth", ramp: RED, outline: outlineOf(RED), line: RED[0], rim: 0.35,
     shade(s) {
       if (s.w > 0.84 && (s.x + s.y) % 2 === 0) return null;
       return pick(RED, s.light, -0.5 - (Math.abs(s.u) > 0.9 ? 0.6 : 0));
     },
   },
   plume: {
-    ramp: HAIR, outline: outlineOf(HAIR, 0.3), line: HAIR[0], rim: 0.5,
+    feel: "hair", ramp: HAIR, outline: outlineOf(HAIR, 0.3), line: HAIR[0], rim: 0.5,
     shade(s) {
       if (s.w > 0.8 && (s.x + s.y) % 2 === 0) return null;
       return pick(HAIR, s.light, 0.4 - (frac(s.u * 1.3) < 0.3 ? 1 : 0));
     },
   },
   redPlume: {
-    ramp: RED, outline: outlineOf(RED, 0.4), line: RED[0], rim: 0.5,
+    feel: "hair", ramp: RED, outline: outlineOf(RED, 0.4), line: RED[0], rim: 0.5,
     shade(s) {
       if (s.w > 0.8 && (s.x + s.y) % 2 === 0) return null;
       return pick(RED, s.light, 0 - (frac(s.u * 1.3) < 0.3 ? 1 : 0));
     },
   },
   cloak: {
-    ramp: DEEL, outline: outlineOf(DEEL), line: DEEL[0], rim: 0.4,
+    feel: "cloth", ramp: DEEL, outline: outlineOf(DEEL), line: DEEL[0], rim: 0.4,
     shade(s) {
       if (s.w > 0.88 && (s.x * 2 + s.y) % 3 === 0) return null;
       if (s.w > 0.8 && s.w < 0.84) return pick(RED, s.light, -0.8);
@@ -180,78 +189,78 @@ return {
     },
   },
   trousers: {
-    ramp: TROUSERS, outline: outlineOf(TROUSERS), line: TROUSERS[0], rim: 0.25,
+    feel: "cloth", ramp: TROUSERS, outline: outlineOf(TROUSERS), line: TROUSERS[0], rim: 0.25,
     shade: (s) => pick(TROUSERS, s.light, -0.1 - (Math.abs(frac(s.w * 3 + s.v * 0.035) - 0.5) < 0.06 ? 1 : 0)),
   },
   boot: {
-    ramp: LEATHER, outline: outlineOf(LEATHER), line: LEATHER[0], rim: 0.25,
+    feel: "leather", ramp: LEATHER, outline: outlineOf(LEATHER), line: LEATHER[0], rim: 0.25,
     shade(s) {
       const a = frac((s.v * 0.9 + s.u * 0.6) / 2.6) < 0.3;
       const b = frac((s.v * 0.9 - s.u * 0.6) / 2.6) < 0.3;
       return pick(LEATHER, s.light, -0.7 - (a || b ? 1 : 0));
     },
   },
-  foot: shaded(LEATHER, -1),
+  foot: shaded(LEATHER, -1, { feel: "leather" }),
   shield: {
-    ramp: HIDE, outline: outlineOf(HIDE, 0.6), line: HIDE[0], rim: 0.34,
+    feel: "leather", ramp: HIDE, outline: outlineOf(HIDE, 0.6), line: HIDE[0], rim: 0.34,
     shade(s) {
       const r = s.w;
       if (r > s.part.radius - 0.1) return pick(LEATHER, s.light, -1.4);
-      if (r > s.part.radius - 1.2) return metal(BRONZE, s, -0.5, 0.55);
+      if (r > s.part.radius - 1.2) return metal(BRONZE, fitting(s), -0.5, 0.55);
       // Bronze studs in a ring.
       const a = Math.atan2(s.v, s.u);
-      if (Math.abs(r - (s.part.radius - 2.4)) < 0.6 && frac((a / (2 * Math.PI)) * 12) < 0.3) return metal(BRONZE, s, 0.2, 0.4);
+      if (Math.abs(r - (s.part.radius - 2.4)) < 0.6 && frac((a / (2 * Math.PI)) * 12) < 0.3) return metal(BRONZE, fitting(s), 0.2, 0.4);
       if (s.glint > 0.72) return HIDE[5];
       return pick(HIDE, s.light, -0.5 - (frac((s.u + s.v * 0.6) / 3.1) < 0.12 ? 1 : 0));
     },
   },
   captainShield: {
-    ramp: HIDE, outline: outlineOf(HIDE, 0.6), line: HIDE[0], rim: 0.34,
+    feel: "leather", ramp: HIDE, outline: outlineOf(HIDE, 0.6), line: HIDE[0], rim: 0.34,
     shade(s) {
       const r = s.w;
       if (r > s.part.radius - 0.1) return pick(LEATHER, s.light, -1.4);
-      if (r > s.part.radius - 1.4) return metal(BRONZE, s, -0.3, 0.5);
+      if (r > s.part.radius - 1.4) return metal(BRONZE, fitting(s), -0.3, 0.5);
       const a = Math.atan2(s.v, s.u);
-      if (Math.abs(r - (s.part.radius - 2.6)) < 0.6 && frac((a / (2 * Math.PI)) * 16) < 0.3) return metal(GOLD, s, 0, 0.4);
+      if (Math.abs(r - (s.part.radius - 2.6)) < 0.6 && frac((a / (2 * Math.PI)) * 16) < 0.3) return metal(GOLD, fitting(s), 0, 0.4);
       // A gold beast coiled about the boss: a spiral that thickens toward the rim.
       const swirl = frac((a / (2 * Math.PI)) * 2 + r / 5.5);
-      if (r > 3.6 && swirl < 0.13 + r * 0.004) return metal(GOLD, s, -0.9, 0.6);
+      if (r > 3.6 && swirl < 0.13 + r * 0.004) return metal(GOLD, fitting(s), -0.9, 0.6);
       if (s.glint > 0.72) return HIDE[5];
       return pick(HIDE, s.light, -0.6);
     },
   },
-  boss: { ramp: BRONZE, outline: outlineOf(BRONZE), line: BRONZE[0], rim: 0.3, shade: (s) => metal(BRONZE, s, 0.1, 0.4) },
-  grip: shaded(LEATHER, -1.2, { rim: 0 }),
+  boss: { feel: "metal", ramp: BRONZE, outline: outlineOf(BRONZE), line: BRONZE[0], rim: 0.3, shade: (s) => metal(BRONZE, s, 0.1, 0.4) },
+  grip: shaded(LEATHER, -1.2, { rim: 0, feel: "leather" }),
   // A wound's face: wet red flesh, a pale core of bone at its middle.
   stump: {
     ramp: BLOOD, outline: outlineOf(BLOOD, 0.4), line: BLOOD[0], rim: 0.15, glintPower: 10,
     shade: (s) => (s.glint > 0.5 ? BLOOD[5] : Math.abs(s.v) > s.part.bone ? pick(BONE, s.light, -0.4) : pick(BLOOD, s.light, 0.6)),
   },
   codex: {
-    ramp: RED, outline: outlineOf(RED), line: RED[0], rim: 0.3,
+    feel: "leather", ramp: RED, outline: outlineOf(RED), line: RED[0], rim: 0.3,
     // A red leather binding with pale page edges.
     shade: (s) => (Math.abs(s.v) < 0.7 ? pick(FUR, s.light, 1.4) : pick(RED, s.light, -0.3)),
   },
   shaft: {
-    ramp: WOOD, outline: outlineOf(WOOD), line: WOOD[0], rim: 0.2,
+    feel: "leather", ramp: WOOD, outline: outlineOf(WOOD), line: WOOD[0], rim: 0.2,
     shade: (s) => pick(WOOD, s.light, -0.4 - (frac(s.v / 5) < 0.1 ? 1 : 0)),
   },
   tassel: {
-    ramp: RED, outline: outlineOf(RED), line: RED[0], rim: 0.4,
+    feel: "hair", ramp: RED, outline: outlineOf(RED), line: RED[0], rim: 0.4,
     shade: (s) => (s.w > 0.75 && (s.x + s.y) % 2 === 0 ? null : pick(RED, s.light, -0.2)),
   },
   bow: {
-    ramp: WOOD, outline: outlineOf(WOOD), line: WOOD[0], rim: 0.3,
+    feel: "leather", ramp: WOOD, outline: outlineOf(WOOD), line: WOOD[0], rim: 0.3,
     shade(s) {
       if (Math.abs(s.v - s.part.length / 2) < 2.4) return pick(LEATHER, s.light, -0.5);
-      if (s.v < 1.6 || s.v > s.part.length - 1.6) return metal(BRONZE, s, -0.4);
+      if (s.v < 1.6 || s.v > s.part.length - 1.6) return metal(BRONZE, fitting(s), -0.4);
       return pick(WOOD, s.light, -0.1 - (frac(s.v / 2.6) < 0.2 ? 1 : 0));
     },
   },
   quiver: {
-    ramp: LEATHER, outline: outlineOf(LEATHER), line: LEATHER[0], rim: 0.3,
+    feel: "leather", ramp: LEATHER, outline: outlineOf(LEATHER), line: LEATHER[0], rim: 0.3,
     shade(s) {
-      if (frac(s.v / 4.5) < 0.18) return metal(BRONZE, s, -0.5, 0.6);
+      if (frac(s.v / 4.5) < 0.18) return metal(BRONZE, fitting(s), -0.5, 0.6);
       return pick(LEATHER, s.light, -0.4);
     },
   },
@@ -260,7 +269,7 @@ return {
     shade: (s) => ((s.x + s.y) % 2 === 0 ? pick(RED, s.light, -0.4) : pick(FUR, s.light, 0.4)),
   },
   whitePlume: {
-    ramp: WHITE, outline: outlineOf(WHITE, 0.45), line: WHITE[0], rim: 0.5,
+    feel: "hair", ramp: WHITE, outline: outlineOf(WHITE, 0.45), line: WHITE[0], rim: 0.5,
     shade(s) {
       if (s.w > 0.8 && (s.x + s.y) % 2 === 0) return null;
       return pick(WHITE, s.light, -0.6 - (frac(s.u * 1.3) < 0.3 ? 1 : 0));
@@ -268,7 +277,7 @@ return {
   },
   // Mail: rows of small iron rings, each catching a point of light.
   mail: {
-    ramp: IRON, outline: outlineOf(IRON), line: IRON[0], rim: 0.32,
+    feel: "metal", ramp: IRON, outline: outlineOf(IRON), line: IRON[0], rim: 0.32,
     shade(s) {
       const ring = (Math.floor(s.u / 1.2) + Math.floor(s.v / 1.1)) % 2 === 0;
       return metal(IRON, s, ring ? -1.0 : -1.6, ring ? 0.66 : 0.82);
@@ -277,53 +286,77 @@ return {
   // The shield-bearer's tall shield: a crimson field, a bone border inside an iron rim, an iron
   // spine down its middle; plain planks behind.
   towerShield: {
-    ramp: DEEL_CRIMSON, outline: outlineOf(DEEL_CRIMSON, 0.6), line: DEEL_CRIMSON[0], rim: 0.34,
+    feel: "leather", ramp: DEEL_CRIMSON, outline: outlineOf(DEEL_CRIMSON, 0.6), line: DEEL_CRIMSON[0], rim: 0.34,
     shade(s) {
       if (s.w < 0) return pick(WOOD, s.light, -0.6);
-      if (s.w < 1.1) return metal(IRON, s, -0.6, 0.55);
+      if (s.w < 1.1) return metal(IRON, fitting(s), -0.6, 0.55);
       if (s.w < 2.1) return pick(WHITE, s.light, -1.4);
       if (Math.abs(s.u) < 0.9) {
         const rivet = frac(s.v / 4.4) < 0.25;
-        return rivet ? metal(BRONZE, s, 0, 0.4) : metal(IRON, s, -0.9, 0.6);
+        return rivet ? metal(BRONZE, fitting(s), 0, 0.4) : metal(IRON, fitting(s), -0.9, 0.6);
       }
       if (s.glint > 0.75) return DEEL_CRIMSON[5];
       return pick(DEEL_CRIMSON, s.light, -0.2 - (frac((s.u + s.v * 0.4) / 3.3) < 0.1 ? 1 : 0));
     },
   },
   clay: {
-    ramp: CLAY, outline: outlineOf(CLAY), line: CLAY[0], rim: 0.3,
+    feel: "cloth", ramp: CLAY, outline: outlineOf(CLAY), line: CLAY[0], rim: 0.3,
     shade: (s) => pick(CLAY, s.light, -0.3 - (frac(s.v / 2.2) < 0.18 ? 1 : 0)),
   },
   wick: {
     ramp: BRONZE, outline: outlineOf(BRONZE, 0.3), line: BRONZE[0], rim: 0,
     shade: (s) => (s.glint > 0.3 ? BRONZE[5] : BRONZE[4]),
   },
-  felt: shaded(FELT, -0.2, { rim: 0.3 }),
+  felt: shaded(FELT, -0.2, { rim: 0.3, feel: "cloth" }),
 };
+// The sack's wear on each, in this soldier's measure: blood where he has been killing (most on his sword arm), dust and
+// soot gathered toward his hems and on his boots, scratches on his iron, stains on his shield.
+const { blood = 0, dust = 0, scratches = 0 } = wear;
+M.deel = worn(M.deel, (c, s) => spattered(c, s, { density: blood, seed: 3 }));
+for (const name of ["deelSkirt", "furTrimSkirt", "cloak"]) {
+  M[name] = worn(M[name], (c, s) => spattered(dusty(c, s, s.v / (s.part.length ?? 20), { from: 0.5, amount: dust, seed: 1 }), s,
+    { density: blood * 0.6, seed: 4 }));
+}
+for (const name of ["sleeve", "archerSleeve"]) {
+  M[name] = worn(M[name], (c, s) => spattered(c, s, { density: s.part.name === "sleeveN" ? blood * 1.6 : blood * 0.4, seed: 5 }));
+}
+M.trousers = worn(M.trousers, (c, s) => dusty(c, s, s.v / 20, { from: 0.4, amount: dust, seed: 2 }));
+M.boot = worn(M.boot, (c, s) => dusty(c, s, 0.75, { from: 0, amount: dust * 0.8, seed: 6 }));
+M.foot = worn(M.foot, (c, s) => dusty(c, s, 0.9, { from: 0, amount: dust * 0.9, seed: 7 }));
+M.helmet = worn(M.helmet, (c, s) => scratched(c, s, IRON, { density: scratches, seed: 8 }));
+for (const name of ["cuirass", "pauldron", "tassets"]) {
+  M[name] = worn(M[name], (c, s) => spattered(scratched(c, s, PLATE, { density: scratches * 0.6, seed: 9 }), s,
+    { density: blood * 0.5, seed: 10 }));
+}
+for (const name of ["shield", "captainShield", "towerShield"]) {
+  M[name] = worn(M[name], (c, s) => spattered(stained(scratched(c, s, HIDE, { density: scratches * 0.7, seed: 11 }), s,
+    { density: 0.08 + dust * 0.1, seed: 12 }), s, { density: blood * 0.5, seed: 13 }));
+}
+return M;
 }
 
 // --- Kinds -----------------------------------------------------------------------------------
 
 /** What sets each soldier apart. */
 const KINDS = {
-  swordsman: { cuirass: true, weapon: "sabre", shield: 9.4, plume: "black", mask: false, beard: true, deel: DEEL_MADDER },
-  spearman: { cuirass: true, weapon: "spear", shield: 9.0, plume: "black", mask: true, beard: false, deel: DEEL_UMBER },
-  archer: { cuirass: false, weapon: "bow", shield: 0, plume: "black", mask: false, beard: true, furHat: true,
+  swordsman: { wear: { blood: 0.14, dust: 0.5, scratches: 0.12 }, cuirass: true, weapon: "sabre", shield: 9.4, plume: "black", mask: false, beard: true, deel: DEEL_MADDER },
+  spearman: { wear: { blood: 0.08, dust: 0.5, scratches: 0.1 }, cuirass: true, weapon: "spear", shield: 9.0, plume: "black", mask: true, beard: false, deel: DEEL_UMBER },
+  archer: { wear: { blood: 0.03, dust: 0.55, scratches: 0.06 }, cuirass: false, weapon: "bow", shield: 0, plume: "black", mask: false, beard: true, furHat: true,
     deel: DEEL_INDIGO },
-  captain: { cuirass: true, weapon: "sabre", shield: 11.2, plume: "red", mask: false, beard: true, heavy: true,
+  captain: { wear: { blood: 0.06, dust: 0.35, scratches: 0.08 }, cuirass: true, weapon: "sabre", shield: 11.2, plume: "red", mask: false, beard: true, heavy: true,
     deel: DEEL_MADDER },
-  veteran: { cuirass: true, weapon: "sabre", shield: 9.4, plume: "white", mask: true, beard: false, deel: DEEL_INDIGO },
-  maceman: { cuirass: true, full: true, weapon: "mace", shield: 0, plume: "black", mask: true, beard: false,
+  veteran: { wear: { blood: 0.05, dust: 0.35, scratches: 0.16 }, cuirass: true, weapon: "sabre", shield: 9.4, plume: "white", mask: true, beard: false, deel: DEEL_INDIGO },
+  maceman: { wear: { blood: 0.16, dust: 0.5, scratches: 0.18 }, cuirass: true, full: true, weapon: "mace", shield: 0, plume: "black", mask: true, beard: false,
     deel: DEEL_UMBER, scale: 1.06 },
-  shieldbearer: { cuirass: true, mail: true, weapon: "shortspear", shield: 0, tower: true, plume: "none", mask: false,
+  shieldbearer: { wear: { blood: 0.06, dust: 0.6, scratches: 0.15 }, cuirass: true, mail: true, weapon: "shortspear", shield: 0, tower: true, plume: "none", mask: false,
     beard: true, helmet: "conical", deel: DEEL_CRIMSON },
-  engineer: { cuirass: false, weapon: "pot", shield: 0, plume: "none", mask: false, beard: true, hat: "felt",
+  engineer: { wear: { blood: 0, dust: 0.75, scratches: 0.05 }, cuirass: false, weapon: "pot", shield: 0, plume: "none", mask: false, beard: true, hat: "felt",
     deel: DEEL_UMBER },
   // A Kipchak skirmisher of the steppe: no armour and no shield, a fur cap, a short sabre and a long knife.
-  skirmisher: { cuirass: false, weapon: "knives", shield: 0, plume: "none", mask: false, beard: true, furHat: true,
+  skirmisher: { wear: { blood: 0.1, dust: 0.6, scratches: 0.08 }, cuirass: false, weapon: "knives", shield: 0, plume: "none", mask: false, beard: true, furHat: true,
     deel: DEEL_OCHRE },
   // A Georgian axeman: mail to the knee, a conical helm, a long-hafted bearded axe in both hands.
-  axeman: { cuirass: true, mail: true, full: true, weapon: "axe", shield: 0, plume: "none", mask: false, beard: true,
+  axeman: { wear: { blood: 0.14, dust: 0.55, scratches: 0.16 }, cuirass: true, mail: true, full: true, weapon: "axe", shield: 0, plume: "none", mask: false, beard: true,
     helmet: "conical", deel: DEEL_CRIMSON, scale: 1.08 },
 };
 
@@ -363,7 +396,7 @@ function towerBoard(width, height, { bow = 1.4, thickness = 1.3, drop = 4, cols 
 
 function buildParts(kind) {
   const k = KINDS[kind];
-  const M = materialsFor(k.deel);
+  const M = materialsFor(k.deel, k.wear ?? {});
   const parts = [];
   const add_ = (name, mesh, bind, material, options = {}) => parts.push({ name, mesh, bind, material, ...options });
   const put = (name, { mesh, bind }, material, options) => add_(name, mesh, bind, material, options);
@@ -620,7 +653,7 @@ function buildParts(kind) {
 
 function buildChains(kind) {
   const k = KINDS[kind];
-  const M = materialsFor(k.deel);
+  const M = materialsFor(k.deel, k.wear ?? {});
   const chains = [];
   // The horsehair plume from the finial (none on a Georgian helmet or a felt cap).
   if (k.plume !== "none") chains.push({
