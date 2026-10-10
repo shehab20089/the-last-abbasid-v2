@@ -116,7 +116,7 @@ Plan and progress: `docs/combat_focus_plan.md`. Two audits found about 35 action
 - **Fixed in passing:** emphasis followed by punctuation (`*parry*,`) left a stray asterisk on screen (`KeyText`: the closing mark may now come before punctuation, Arabic punctuation too).
 - **Tests:** session 239 (Hamid's counsel card; no kick or charge in the Market or Streets; both taught in the Scholars' Quarter; a master's lesson silent on a first journey and teaching on a master's; the tree's master locks; the finished chapter opening them; the library's men unaware, hidden ambushers not; the log written and summed up, and silent when switched off).
 
-## The street standard: one section brought to final quality, then every building, the ground, the clutter and the foreground (art step 4, after "proceed with point 4, the art", "continue with the rest of the building fixes" and "commit and push and continue"): DONE, awaiting the user's eye
+## The street standard: one section brought to final quality, then every building, the ground, every prop and the foreground (art step 4, after "proceed with point 4, the art", "continue with the rest of the building fixes", "commit and push and continue" and "commit please and continue"): DONE, awaiting the user's eye
 The Market's opening (the gate street and the potters' lane, columns 0–84) was taken as the standard: it is the first street every player sees, and its houses and shops recur through the chapter. The review's faults were plain there:
 - every roof wore the same row of teeth;
 - doors were black holes;
@@ -177,8 +177,19 @@ The Market's opening (the gate street and the potters' lane, columns 0–84) was
     - stone shot, a brazier on its tripod, a well with its pulley and bucket.
     - The camera has no pitch, so nothing lies flat: what has fallen is heaped, draped or propped.
   - **The foreground**: the black rubble passing along the foot of the view was lost against the darkened ground. It is now a 3D heap of rubble, a beam end and a broken jar, near-black, the firelight catching its top.
-- **Not yet brought to the standard:** the props still painted flat: the stalls, the college's furniture (lectern, scroll rack, shelves, armillary, fountain, cypress), the standards and ladders, the gates and the lamp niche. Then the character materials.
-- **Tests** (`./tools/run_tests.ps1`, all passing, no script errors, after the first pass, after the buildings and after the play): gameplay 226, enemy 325, session 249, finishers 25, lint 1 known, partial build 3, traversal of all four levels. Judged by eye in the game view: `tests/capture_tour.gd` before and after, every level (`captures/buildings_before_after.png`).
+- **The rest of the props** (the play committed as `686a373`, then "commit please and continue").
+  - **Modelled in 3D** (`environment/furnishings3d.mjs`):
+    - the market's stalls under their timber roofs: posts, a cloth hung in folds at the back, a counter of planks with its spice, jars and open sacks, a striped valance (torn on one), goods spilt in the street;
+    - the post captives are tied to, rope wound about it and coiled at its foot;
+    - the college's folding lectern holding an open book, the scroll rack (scroll ends in its pigeonholes), a bookcase pulled down with its books spilt, the tiled fountain with water falling from its bowl, the cypresses, the armillary sphere;
+    - the siege's horse-tail standards and a ladder snapped in two.
+  - **The lamp niche** is painted with relief: the niche sunk under a muqarnas hood, a stone shelf, the bronze lamp. It is lit by its own lamp, so the shelf throws its shadow down the niche. Unlit, an ember glows at the wick; lit, the flame flickers.
+    - The checkpoint's light now also reaches the walls and the paving (light mask 2). They lost it when the street's light was painted in, so lighting a lamp lights the street about it again, flare and all.
+  - **The exit gates** (the river gate, the quarter gate, the garden door, the Last Gate) are painted with relief and lit by their level's hour, in their level's colours. Their leaves stand deep in their arches, with iron bands and bronze studs.
+    - Open, the view through them is painted as a view: night water with firelight on it under the far bank, a dusk garden with its palms, and dawn over the river with the sun's path across it.
+  - Only what truly lies flat stays painted: the scattered pages and the spilt ink.
+- **Not yet brought to the standard:** the character materials come next.
+- **Tests** (`./tools/run_tests.ps1`, all passing, no script errors, after the first pass, the buildings, the play and the props): gameplay 226, enemy 325, session 249, finishers 25, lint 1 known, partial build 3, traversal of all four levels. Judged by eye in the game view: `tests/capture_tour.gd` before and after, every level (`captures/buildings_before_after.png`).
 
 ## The combat fixes the first playtest log pointed to (after "yes please"): DONE, awaiting the next playtest
 The work before them was committed and pushed first (`e2431f7`).

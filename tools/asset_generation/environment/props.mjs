@@ -1,19 +1,29 @@
-// Props that dress the streets of every level: market stalls (their timber roofs are the one-way
-// platforms), scattered pages; the posts captives are roped to; the college's lecterns, scroll
-// racks, toppled shelves, spilt ink, fountain, cypress and armillary sphere; the siege's horse-tail
-// standards and broken ladders; the lamp niche where the hero rests; each level's exit gate; and
-// dark foreground silhouettes. Each prop is drawn standing on its bottom edge. The set pieces
-// soldiers handle (a pyre of books, a plundered chest) and the streets' clutter (jars whole and
-// broken, sacks, a cart, rubble, a charred beam, a heap of books, a fallen banner, stone shot, a
-// brazier, a well) are modelled in 3D (props3d.mjs, clutter3d.mjs) and rendered like the characters.
-import { join } from "node:path";
+// Props that dress the streets of every level. Painted here: what lies flat (scattered pages, spilt
+// ink), the foreground's post and cloth, and with relief and lit as the streets are (relief.mjs):
+// the lamp niche where the hero rests, and each level's exit gate. Each prop is drawn standing on its bottom edge. The rest is modelled in 3D and rendered
+// like the characters: the set pieces soldiers handle (props3d.mjs: the pyre, the chest, the dead),
+// the streets' clutter (clutter3d.mjs: jars, sacks, a cart, rubble, a charred beam, books, a fallen
+// banner, stone shot, a brazier, a well, the foreground's heap) and their furnishings
+// (furnishings3d.mjs: the market's stalls, under timber roofs that are one-way platforms; the post
+// captives are tied to; the college's lecterns, scroll racks, a fallen bookcase, fountain, cypresses
+// and armillary sphere; the siege's horse-tail standards and broken ladder).
+import { readFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import {
-  Canvas, P, archway, awning, bayer, beam, brickWall, fbm, fillShape, glow, hash2, hex, mix, pick,
+  Canvas, P, archway, awning, bayer, beam, brickWall, fbm, fillShape, glow, hash2, hex, inPointedArch, mix, pick,
 } from "./env_lib.mjs";
+import { archRelief, coping, crenels, crescent, levelGrade, muqarnasHood, toPalette } from "./backdrop.mjs";
+import { FIRELIGHT, LAMPLIGHT, Relief, SKYLIGHT, lightRelief } from "./relief.mjs";
+import { LEVEL as MARKET } from "../../levels/fallen_market.mjs";
+import { LEVEL as STREETS } from "../../levels/streets_of_ash.mjs";
+import { LEVEL as SCHOLARS } from "../../levels/scholars_quarter.mjs";
+import { LEVEL as GATE } from "../../levels/last_gate.mjs";
 import { rng } from "../lib/noise.mjs";
 import { strip } from "../lib/canvas.mjs";
 import { props3d } from "./props3d.mjs";
 import { clutter3d } from "./clutter3d.mjs";
+import { furnishings3d } from "./furnishings3d.mjs";
 import { writeSpriteFramesRegions } from "../lib/godot_resources.mjs";
 
 const OUTLINE = P.outline;
@@ -33,85 +43,7 @@ export function outline(c, color = OUTLINE) {
   return c;
 }
 
-/** A clay jar of height h, its widest point a third of the way up. */
-function jar(c, cx, base, h, ramp = P.brick, { broken = false, seed = 1 } = {}) {
-  const w = h * 0.62;
-  for (let y = base - h; y < base; y++) {
-    const t = (base - y) / h;
-    let half = t > 0.86 ? w * 0.18 : t > 0.8 ? w * 0.28 : Math.sin(Math.min(1, t * 1.25) * Math.PI) * w * 0.5 + w * 0.12;
-    if (broken && t > 0.55 + hash2(Math.floor(cx), Math.floor(y / 3), seed) * 0.2) continue;
-    for (let x = Math.floor(cx - half); x <= Math.ceil(cx + half); x++) {
-      const u = (x + 0.5 - cx) / Math.max(1, half);
-      if (Math.abs(u) > 1) continue;
-      let k = 3 + (u < -0.35 ? 1 : u > 0.45 ? -1 : 0);
-      if (t > 0.78 && t < 0.82) k -= 1; // the neck ring
-      if (Math.abs(t - 0.45) < 0.02) k -= 1; // a painted band
-      c.set(x, y, pick(ramp, k));
-    }
-  }
-}
-
-function sack(c, x, base, w, h, ramp) {
-  for (let y = base - h; y < base; y++) {
-    const t = (base - y) / h;
-    const half = (w / 2) * (t > 0.82 ? 0.45 : 0.85 + Math.sin(t * Math.PI) * 0.15);
-    const cx = x + w / 2;
-    for (let px = Math.floor(cx - half); px <= Math.ceil(cx + half); px++) {
-      const u = (px + 0.5 - cx) / half;
-      c.set(px, y, pick(ramp, 2 + (u < -0.3 ? 1 : u > 0.5 ? -1 : 0) + (t > 0.8 && t < 0.86 ? -1 : 0)));
-    }
-  }
-}
-
-/** A heap of goods spilled from a sack (spices or grain). */
-function heap(c, x, base, w, h, ramp) {
-  for (let px = x; px < x + w; px++) {
-    const t = (px - x) / w;
-    const top = base - Math.round(Math.sin(t * Math.PI) * h);
-    for (let y = top; y < base; y++) c.set(px, y, pick(ramp, 2 + (y === top ? 1 : 0) + (bayer(px, y) < 0.2 ? -1 : 0)));
-  }
-}
-
 // --- Stalls ----------------------------------------------------------------------------------------
-
-/** A market stall 96 px wide whose roof line is 48 px up (row 25 planks sit on it). */
-function stall(variant) {
-  const w = 96;
-  const h = 64;
-  const c = new Canvas(w, h);
-  const base = h;
-  const roof = h - 48;
-  const r = rng(variant * 31 + 3);
-  // Back cloth (shade) between the posts.
-  const back = [P.awning, P.awningAlt, P.saffron][variant % 3];
-  fillShape(c, 6, roof + 2, w - 7, base - 18, () => true, (x, y) => pick(back, 1 + ((x >> 2) % 2 === 0 ? 0 : -1) + (y < roof + 5 ? 1 : 0)));
-  // Posts.
-  for (const px of [3, w - 7]) beam(c, px, roof, 4, base - roof, { tone: 3, seed: px });
-  // Counter with goods.
-  beam(c, 4, base - 20, w - 8, 4, { tone: 4 });
-  fillShape(c, 6, base - 16, w - 7, base - 1, () => true, (x, y) => pick(P.wood, 2 + ((x % 12 === 0) ? -1 : 0)));
-  let gx = 8;
-  while (gx < w - 16) {
-    const kind = r();
-    if (kind < 0.4) {
-      const ramp = [P.saffron, P.madder, P.ochre, P.jade][Math.floor(r() * 4)];
-      heap(c, gx, base - 20, 12, 5, ramp);
-      gx += 13;
-    } else if (kind < 0.7) {
-      jar(c, gx + 4, base - 20, 10, [P.brick, P.tile, P.plaster][Math.floor(r() * 3)]);
-      gx += 10;
-    } else {
-      sack(c, gx, base - 20, 10, 9, P.linen);
-      gx += 11;
-    }
-  }
-  // The valance hanging from the roof beam, torn on some stalls.
-  awning(c, 0, roof - 2, w, 12, { colors: variant % 2 === 0 ? [P.awning, P.linen] : [P.awningAlt, P.linen],
-    stripe: 6, torn: variant === 1 ? 0.55 : 0.15, slope: 0, seed: variant + 9 });
-  // Spilled goods on the street.
-  heap(c, w - 26, base, 18, 3, P.saffron);
-  return outline(c);
-}
 
 // --- Small props --------------------------------------------------------------------------------
 
@@ -131,64 +63,6 @@ function pages() {
 
 // --- The streets, the college and the siege -------------------------------------------------------
 
-/** A post with a coil of rope: where the soldiers tie their captives. */
-function ropePost() {
-  const c = new Canvas(20, 34);
-  beam(c, 8, 2, 4, 32, { tone: 3, seed: 5 });
-  for (let y = 12; y < 20; y += 2) fillShape(c, 6, y, 13, y, () => true, P.linen[2]);
-  for (let d = 0; d < 9; d++) c.set(13 + Math.floor(d / 3), 20 + d, P.linen[1]);
-  fillShape(c, 2, 30, 17, 33, () => true, (x, y) => ((x + y) % 2 === 0 ? P.linen[1] : P.linen[2]));
-  return outline(c);
-}
-
-/** A folding lectern (rahl) holding an open book. */
-function lectern() {
-  const c = new Canvas(26, 24);
-  for (let d = 0; d < 16; d++) {
-    c.set(5 + d, 23 - d, P.wood[3]);
-    c.set(6 + d, 23 - d, P.wood[2]);
-    c.set(20 - d, 23 - d, P.wood[3]);
-    c.set(21 - d, 23 - d, P.wood[4]);
-  }
-  fillShape(c, 3, 6, 22, 9, () => true, (x, y) => (x === 12 || x === 13 ? P.leather[1] : y === 6 ? P.parchment[4] : P.parchment[2]));
-  for (let x = 4; x < 22; x += 2) if (x < 11 || x > 14) c.set(x, 8, P.night[1]);
-  return outline(c);
-}
-
-/** A rack of pigeonholes, each with a rolled scroll. */
-function scrollRack() {
-  const c = new Canvas(44, 40);
-  fillShape(c, 1, 1, 42, 39, () => true, P.wood[1]);
-  for (let row = 0; row < 4; row++) {
-    for (let col = 0; col < 5; col++) {
-      const x = 3 + col * 8;
-      const y = 3 + row * 9;
-      fillShape(c, x, y, x + 6, y + 7, () => true, P.night[0]);
-      if (hash2(row, col, 4) < 0.75) {
-        fillShape(c, x + 1, y + 2, x + 5, y + 6, () => true, (px) => pick(P.parchment, px === x + 1 ? 1 : 3));
-        c.set(x + 3, y + 4, hash2(row, col, 5) < 0.5 ? P.madder[3] : P.saffron[3]);
-      }
-    }
-  }
-  for (let y = 1; y < 40; y += 9) fillShape(c, 1, y, 42, y + 1, () => true, P.wood[3]);
-  return outline(c);
-}
-
-/** A bookcase pulled down on its face, its books spilt across the floor. */
-function shelfFallen() {
-  const c = new Canvas(80, 22);
-  beam(c, 6, 12, 56, 10, { tone: 3, seed: 9 });
-  for (let x = 8; x < 60; x += 9) fillShape(c, x, 12, x + 1, 21, () => true, P.wood[1]);
-  const r = rng(91);
-  for (let i = 0; i < 18; i++) {
-    const x = 40 + Math.floor(r() * 36);
-    const y = 16 + Math.floor(r() * 5);
-    const ramp = [P.madder, P.indigo, P.leather, P.saffron, P.jade][Math.floor(r() * 5)];
-    fillShape(c, x, y, x + 5, y + 1, () => true, (px, py) => pick(ramp, py === y ? 3 : 1));
-  }
-  return outline(c);
-}
-
 /** Spilt ink: a black pool with a broken inkwell and a reed pen. */
 function inkSpill() {
   const c = new Canvas(48, 6);
@@ -201,208 +75,255 @@ function inkSpill() {
   return c;
 }
 
-/** A courtyard fountain: a stone basin on a stepped base, its bowl spilling water. */
-function fountain() {
-  const c = new Canvas(80, 34);
-  fillShape(c, 2, 24, 77, 33, () => true, (x, y) => pick(P.stone, (y === 24 ? 5 : 3) + (x % 12 === 0 ? -1 : 0)));
-  fillShape(c, 6, 20, 73, 24, () => true, (x, y) => (y === 20 ? P.stone[5] : (x + y) % 7 === 0 ? P.tile[4] : P.indigo[2]));
-  fillShape(c, 34, 8, 45, 20, () => true, (x) => pick(P.stone, 4 + (x > 41 ? -1 : 0)));
-  fillShape(c, 26, 5, 53, 8, () => true, (x, y) => pick(P.stone, y === 5 ? 5 : 3));
-  for (const sx of [28, 51]) for (let y = 9; y < 20; y++) if (y % 3 !== 0) c.set(sx, y, P.indigo[4]);
-  fillShape(c, 38, 2, 41, 4, () => true, P.indigo[4]);
-  return outline(c);
-}
-
-/** A tall cypress: a dark flame of foliage on a short trunk. */
-function cypress() {
-  const c = new Canvas(26, 120);
-  for (let y = 4; y < 112; y++) {
-    const t = (y - 4) / 108;
-    const half = 11 * Math.sin(Math.min(1, t * 1.15) * Math.PI * 0.62) * (t < 0.15 ? t / 0.15 : 1);
-    for (let x = Math.floor(13 - half); x <= Math.ceil(13 + half); x++) {
-      const u = (x + 0.5 - 13) / Math.max(1, half);
-      const leaf = fbm(x * 0.4, y * 0.25, { seed: 6 }) > 0.5;
-      c.set(x, y, pick(P.jade, (u < -0.2 ? 2 : 1) + (leaf ? 0 : -1) - (y > 100 ? 1 : 0)));
-    }
-  }
-  fillShape(c, 12, 108, 14, 119, () => true, P.wood[2]);
-  return outline(c);
-}
-
-/** A brass armillary sphere on a turned stand. */
-function armillary() {
-  const c = new Canvas(30, 40);
-  const [cx, cy, r] = [15, 13, 11];
-  for (let a = 0; a < 120; a++) {
-    const ang = (a / 120) * Math.PI * 2;
-    c.set(Math.round(cx + Math.cos(ang) * r), Math.round(cy + Math.sin(ang) * r), P.bronze[3]);
-    c.set(Math.round(cx + Math.cos(ang) * r * 0.45), Math.round(cy + Math.sin(ang) * r), P.bronze[2]);
-    c.set(Math.round(cx + Math.cos(ang) * r), Math.round(cy + Math.sin(ang) * r * 0.35), P.bronze[4]);
-  }
-  for (let d = -r - 2; d <= r + 2; d++) c.set(cx + Math.round(d * 0.5), cy + d, P.bronze[1]);
-  fillShape(c, 14, 25, 16, 34, () => true, P.bronze[2]);
-  fillShape(c, 8, 34, 22, 39, () => true, (x, y) => pick(P.wood, 3 + (y === 34 ? 1 : 0)));
-  return outline(c);
-}
-
-/** A Mongol horse-tail standard (tug): a tall pole crowned with a trident and black tails. */
-function standard() {
-  const c = new Canvas(24, 92);
-  fillShape(c, 11, 8, 12, 91, () => true, (x) => pick(P.wood, x === 11 ? 3 : 2));
-  for (const [x, y] of [[11, 0], [11, 1], [11, 2], [8, 3], [14, 3], [8, 4], [14, 4], [9, 5], [10, 5], [11, 5], [12, 5], [13, 5]]) c.set(x, y, P.iron[4]);
-  fillShape(c, 8, 6, 15, 8, () => true, P.gold[2]);
-  for (let t = 0; t < 8; t++) {
-    for (let d = 0; d < 34; d++) {
-      const x = 7 + t + Math.round(Math.sin(d * 0.18 + t * 0.9) * 1.5 + d * 0.06);
-      c.set(x, 9 + d, t % 4 === 0 ? P.ash[1] : hex("#0f0c0d"));
-    }
-  }
-  return outline(c);
-}
-
-/** A siege ladder snapped in two, one half leaning, one fallen. */
-function ladderBroken() {
-  const c = new Canvas(40, 62);
-  for (const side of [0, 9]) {
-    for (let y = 0; y < 48; y++) {
-      const x = Math.round(8 + side + y * 0.32);
-      c.set(x, y, P.wood[3]);
-      c.set(x + 1, y, P.wood[1]);
-    }
-  }
-  for (let y = 5; y < 46; y += 9) {
-    const x = Math.round(8 + y * 0.32);
-    for (let k = 0; k <= 9; k++) c.set(x + k, y, P.wood[4]);
-  }
-  beam(c, 4, 56, 34, 3, { tone: 3 });
-  beam(c, 2, 59, 34, 3, { tone: 2 });
-  for (let x = 6; x < 36; x += 8) c.set(x, 58, P.wood[4]);
-  return outline(c);
-}
-
 // --- The lamp niche (checkpoint) ----------------------------------------------------------------
 
-/** A wall fragment with a prayer-niche recess and an oil lamp: frame 0 dark, 1..4 lit (flicker). */
+/**
+ * A wall fragment with a prayer niche and an oil lamp on its shelf: frames 0-1 unlit, an ember breathing on the wick
+ * so it reads as a lamp waiting for its flame; 2-5 alight, the flame flickering. Painted with relief (the niche sunk
+ * in the wall under a muqarnas hood, its ring a little proud, the shelf standing out from its back) and lit by the
+ * night sky and by its own lamp, which casts the shelf's shadow down the niche. The checkpoint's own light adds the
+ * flare as it is lit, and lights the street about it.
+ */
 function lampNiche() {
   const frames = [];
-  // Frames 0-1: not yet lit, an ember breathing on the wick so the lamp reads as one waiting for a flame;
-  // frames 2-5: alight.
+  const [cx, base, width, height] = [20, 57, 20, 42];
+  const half = width / 2;
+  const rise = half * 0.9;
+  const spring = base - height + rise;
   for (let f = 0; f < 6; f++) {
     const c = new Canvas(40, 64);
+    const relief = new Relief(40, 64);
     const lit = f > 1;
-    brickWall(c, 0, 4, 40, 60, { base: 3, seed: 61, light: 1 });
-    fillShape(c, 0, 0, 39, 4, () => true, P.plaster[4]);
-    archway(c, 20, 56, 20, 40, { ring: 2, ringTone: 5, interior: (x, y) => {
-      const d = Math.hypot(x - 20, y - 44);
-      if (!lit) return d < 3.5 ? P.glow[f === 0 ? 2 : 1] : d < 7.5 ? P.glow[0] : y > 44 ? P.night[1] : P.night[0];
-      return d < 6 ? P.fire[3] : d < 11 ? P.glow[4] : d < 16 ? P.glow[2] : P.glow[0];
-    } });
-    // A stone shelf and a bronze lamp.
-    fillShape(c, 9, 50, 31, 52, () => true, P.stone[4]);
-    fillShape(c, 15, 47, 25, 49, () => true, (x, y) => (y === 47 ? P.bronze[4] : P.bronze[2]));
+    brickWall(c, 0, 6, 40, 58, { base: 3, seed: 61, light: 1, relief });
+    coping(c, 0, 39, 4, P.plaster, 3, relief, 0);
+    archway(c, cx, base, width, height, { ring: 2, ringTone: 5, interior: () => P.plaster[3] });
+    archRelief(relief, cx, base, width, height, { ring: 2, ringOut: 1, recess: -7 });
+    muqarnasHood(c, cx, spring, half, rise, { ramp: P.plaster, tone: 4, rows: 4, relief, depth: -7 });
+    // The shelf, standing out from the niche's back, and the bronze lamp on it, its spout to the right.
+    fillShape(c, 11, 50, 29, 52, () => true, (x, y) => pick(P.stone, y === 50 ? 5 : 3));
+    relief.rect(11, 50, 29, 52, -3);
+    fillShape(c, 14, 47, 24, 49, () => true, (x, y) => (y === 47 ? P.bronze[4] : x < 17 ? P.bronze[3] : P.bronze[2]));
+    relief.rect(14, 47, 24, 49, -2);
     fillShape(c, 24, 46, 27, 47, () => true, P.bronze[3]);
-    if (!lit) c.set(20, 45, f === 0 ? P.fire[3] : P.fire[2]);
+    relief.rect(24, 46, 27, 47, -2);
     if (lit) {
-      const flicker = [0, 1, -1, 1][f - 2];
-      const flame = [[19, 45], [20, 45], [19, 44], [20, 44], [20, 43 + flicker], [20, 42 + flicker]];
+      const lick = [0, 1, -1, 1][f - 2];
+      const flame = [[26, 45], [27, 45], [26, 44], [27, 44], [26 + (lick > 0 ? 1 : 0), 43], [26, 42 + Math.max(0, lick)]];
       flame.forEach(([x, y], i) => c.set(x, y, i < 2 ? P.fire[5] : i < 4 ? P.fire[6] : P.fire[4]));
+    } else {
+      c.set(26, 45, f === 0 ? P.fire[3] : P.fire[2]);
     }
+    lightRelief(c, relief, {
+      ambient: { color: SKYLIGHT, strength: 1.6 },
+      lights: lit ? [{ x: 26.5, y: 43, z: -1, radius: 52, color: LAMPLIGHT, strength: [2.4, 2.7, 2.2, 2.55][f - 2] }]
+        : [{ x: 26.5, y: 45, z: -4, radius: 13, color: FIRELIGHT, strength: f === 0 ? 1.0 : 0.6 }],
+      haze: { tint: P.night[1], veil: () => 0.06 },
+    });
     frames.push(c);
   }
   return frames;
 }
 
-// --- The river gate (exit) ------------------------------------------------------------------------
+// --- The exits ------------------------------------------------------------------------------------
 
+/** Each exit's level: its hour lights the gate, its painting's colours paint it. */
+const EXIT_LEVELS = { river_gate: MARKET, quarter_gate: STREETS, garden_door: SCHOLARS, last_gate: GATE };
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
+
+/** Inside a pointed arch drawn by archway(). */
+const archInside = (cx, base, width, height) => {
+  const half = width / 2;
+  const rise = half * 0.9;
+  return (x, y) => inPointedArch(x + 0.5, y + 0.5, cx, base - height + rise, half, rise, base);
+};
+
+/**
+ * Lights a gate painted with relief by the hour of its level, then lays the view through it when it stands open
+ * (`beyond`: (x, y) -> a colour inside the arch, or null), which is its own light, and maps it all to the colours of
+ * its level's painting.
+ */
+function lightGate(c, relief, name, beyond) {
+  const level = EXIT_LEVELS[name];
+  const grade = levelGrade(level);
+  lightRelief(c, relief, {
+    ambient: { color: grade.sky, strength: grade.ambient },
+    key: grade.key ?? null,
+    haze: { tint: grade.tint, veil: () => 0.06 },
+  });
+  if (beyond) {
+    for (let y = 0; y < c.height; y++) {
+      for (let x = 0; x < c.width; x++) {
+        const color = beyond(x, y);
+        if (color) c.set(x, y, color);
+      }
+    }
+  }
+  const env = level.env.replace("res://", "");
+  toPalette(c, JSON.parse(readFileSync(join(ROOT, env, "palette.json"), "utf8")));
+  return c;
+}
+
+/** Water at night under the fires: dark, glints of their light lying on it in short streaks, more toward the near
+ * bank. `top` its far edge, `bottom` its near one. */
+function nightWater(x, y, top, bottom, seed) {
+  const t = (y - top) / Math.max(1, bottom - top);
+  if (y % 2 === 0 && hash2(x >> 2, y, seed) < 0.06 + t * 0.2) return hash2(x, y, seed + 1) < 0.4 ? P.glow[4] : P.glow[3];
+  if (y % 3 === 1 && hash2(x >> 3, y, seed + 2) < 0.2) return P.indigo[3];
+  return mix(P.indigo[1], P.indigo[2], t);
+}
+
+/** Bronze studs along the iron bands of a gate's leaves, a little proud of them. */
+function studs(c, relief, xs, ys, depth) {
+  for (const y of ys) {
+    for (const x of xs) {
+      c.set(x, y, P.bronze[3]);
+      relief.set(x, y, depth);
+    }
+  }
+}
+
+/** The river gate: a postern in the river wall, merlons above; its leaves of planks bound with iron and studded
+ * with bronze, deep in a pointed arch; open, the river at night beyond, the fires in it. */
 function riverGate(open) {
   const c = new Canvas(80, 128);
-  brickWall(c, 0, 8, 80, 120, { base: 3, seed: 71, light: 1, soot: 0.4 });
-  for (let x = 0; x < 80; x += 8) fillShape(c, x, 0, x + 4, 8, () => true, P.brick[4]);
-  archway(c, 40, 124, 48, 96, { ring: 5, ringTone: 5, interior: (x, y) => {
-    if (open) {
-      // Through the open gate: the river at night, reflecting the fires.
-      if (y > 100) return (x + y) % 5 === 0 ? P.glow[3] : (y % 3 === 0 ? P.indigo[2] : P.indigo[1]);
-      return y > 80 ? P.night[2] : P.night[1];
-    }
+  const relief = new Relief(80, 128);
+  brickWall(c, 0, 8, 80, 120, { base: 3, seed: 71, light: 1, soot: 0.4, relief });
+  crenels(c, 0, 79, 8, P.brick, 3, { size: 5, gap: 3, relief, front: 0 });
+  const [cx, base, width, height] = [40, 124, 48, 96];
+  archway(c, cx, base, width, height, { ring: 5, ringTone: 5, interior: (x, y) => {
     const plank = Math.floor((x - 16) / 6);
     if (Math.abs(x + 0.5 - 40) < 1) return P.wood[0];
     if ((y - 28) % 14 === 0) return P.iron[2];
     if ((x - 16) % 6 === 0) return P.wood[1];
     return pick(P.wood, 2 + (hash2(plank, 0, 7) > 0.6 ? 1 : 0));
   } });
-  if (!open) {
-    for (let y = 40; y < 120; y += 14) for (let x = 18; x < 63; x += 4) c.set(x, y + 1, P.bronze[3]);
-  }
-  return c;
+  archRelief(relief, cx, base, width, height, { ring: 5, ringOut: 1.5, recess: open ? -40 : (x, y) =>
+    (Math.abs(x + 0.5 - 40) < 1 ? -6.8 : (y - 28) % 14 === 0 ? -5.4 : (x - 16) % 6 === 0 ? -6.5 : -6) });
+  if (!open) studs(c, relief, Array.from({ length: 12 }, (_, k) => 18 + k * 4), [41, 55, 69, 83, 97, 111], -5.1);
+  fillShape(c, 12, 124, 67, 127, () => true, (x, y) => pick(P.stone, y === 124 ? 5 : 3));
+  relief.rect(12, 124, 67, 127, 2);
+  const inside = archInside(cx, base, width, height);
+  return lightGate(c, relief, "river_gate", open ? (x, y) => {
+    if (!inside(x, y) || y >= 124) return null;
+    const bank = 78 - Math.floor(hash2(x >> 3, 1, 4) * 6) - ((x >> 1) % 5 === 0 ? 2 : 0);
+    if (y < bank) return mix(P.night[1], P.night[3], (y - 28) / 50);
+    if (y < 86) return hash2(x >> 1, y >> 1, 5) < 0.05 ? P.glow[3] : P.night[0];
+    return nightWater(x, y, 86, 124, 7);
+  } : null);
 }
 
-/** The gate of a quarter: heavy double doors under a brick arch, a crescent nailed above; open, the
- * passage beyond and the glow of the next street. */
+/** The gate of a quarter: heavy double doors deep under a brick arch, a crescent nailed above; open, the passage
+ * beyond and the glow of the next street. */
 function quarterGate(open) {
   const c = new Canvas(80, 128);
-  archway(c, 40, 126, 60, 112, { ring: 6, ringTone: 5, interior: (x, y) => {
-    if (open) {
-      const t = (y - 14) / 112;
-      if (t > 0.78) return hash2(x >> 1, y, 3) < 0.35 ? P.glow[4] : P.glow[3];
-      return t > 0.5 ? P.glow[1] : P.night[1];
-    }
+  const relief = new Relief(80, 128);
+  const [cx, base, width, height] = [40, 126, 60, 112];
+  archway(c, cx, base, width, height, { ring: 6, ringTone: 5, interior: (x, y) => {
     if (Math.abs(x + 0.5 - 40) < 1) return P.iron[1];
     if ((y - 20) % 18 === 0) return P.iron[3];
     if ((x - 12) % 8 === 0) return P.wood[1];
     return pick(P.wood, 2 + (fbm(x * 0.3, y * 1.1, { seed: 5 }) > 0.6 ? 1 : 0));
   } });
-  if (!open) for (let y = 38; y < 120; y += 18) for (let x = 14; x < 67; x += 6) c.set(x, y + 1, P.bronze[3]);
-  const [cx, cy, r] = [40, 26, 5];
-  for (let y = cy - r; y <= cy + r; y++) {
-    for (let x = cx - r; x <= cx + r; x++) {
-      const outer = Math.hypot(x + 0.5 - cx, y + 0.5 - cy) <= r;
-      const inner = Math.hypot(x + 0.5 - (cx + 2), y + 0.5 - (cy - 1.5)) <= r * 0.8;
-      if (outer && !inner && !open) c.set(x, y, P.gold[3]);
-    }
+  archRelief(relief, cx, base, width, height, { ring: 6, ringOut: 1.5, recess: open ? -40 : (x, y) =>
+    ((y - 20) % 18 === 0 ? -4.4 : (x - 12) % 8 === 0 ? -5.5 : -5) });
+  if (!open) {
+    studs(c, relief, Array.from({ length: 9 }, (_, k) => 14 + k * 6), [39, 57, 75, 93, 111], -4.1);
+    crescent(c, 40, 26, 5);
+    relief.rect(35, 21, 45, 31, -4);
   }
-  return c;
+  const inside = archInside(cx, base, width, height);
+  return lightGate(c, relief, "quarter_gate", open ? (x, y) => {
+    if (!inside(x, y)) return null;
+    const t = (y - 14) / 112;
+    if (t > 0.78) return hash2(x >> 1, y, 3) < 0.35 ? P.glow[4] : P.glow[3];
+    return t > 0.5 ? P.glow[1] : P.night[1];
+  } : null);
 }
 
-/** The college's garden door: a small door in a tiled frame; open, the garden's palms against
- * the paling sky. */
+/** The college's garden door: a small door of turned panels in a frame of glazed tile under a brick lintel; open,
+ * the garden's palms against the paling sky. */
 function gardenDoor(open) {
   const c = new Canvas(64, 112);
+  const relief = new Relief(64, 112);
   fillShape(c, 4, 6, 59, 111, () => true, (x, y) => ((x + y) % 6 === 0 ? P.tile[4] : (x - y + 300) % 6 === 0 ? P.indigo[4] : P.indigo[1]));
-  fillShape(c, 4, 6, 59, 9, () => true, P.brick[5]);
-  archway(c, 32, 110, 36, 88, { ring: 3, ringTone: 5, interior: (x, y) => {
-    if (open) {
-      const t = (y - 22) / 88;
-      if (t < 0.55) return t < 0.25 ? hex("#3b2b52") : hex("#6e3d55");
-      const palm = Math.abs(x - 24) < 1.5 || (y < 72 && Math.abs(x - 24 - (72 - y) * 0.6) < 1.2) || Math.abs(x - 42) < 1;
-      return palm ? hex("#0b0a14") : t > 0.85 ? P.jade[0] : hex("#141228");
-    }
+  relief.rect(4, 6, 59, 111, 1);
+  fillShape(c, 4, 6, 59, 9, () => true, (x, y) => pick(P.brick, y === 6 ? 6 : 5));
+  relief.rect(4, 6, 59, 9, 2.5);
+  const [cx, base, width, height] = [32, 110, 36, 88];
+  archway(c, cx, base, width, height, { ring: 3, ringTone: 5, interior: (x, y) => {
     if (Math.abs(x + 0.5 - 32) < 0.8) return P.wood[0];
     if ((y - 24) % 14 === 0) return P.bronze[2];
     return pick(P.wood, 3 + (Math.floor(x) % 5 === 0 ? -1 : 0));
   } });
-  return c;
+  archRelief(relief, cx, base, width, height, { ring: 3, front: 1, ringOut: 1, recess: open ? -40 : (x, y) =>
+    ((y - 24) % 14 === 0 ? -3.4 : Math.floor(x) % 5 === 0 ? -4.4 : -4) });
+  const inside = archInside(cx, base, width, height);
+  return lightGate(c, relief, "garden_door", open ? (x, y) => {
+    if (!inside(x, y)) return null;
+    const t = (y - 22) / 88;
+    // Two palms against the paling sky, their fronds falling from the crowns; the garden's dark below.
+    const trunk = (cx, lean, top) => y > top && Math.abs(x + 0.5 - (cx + (y - top) * lean)) < 1.3;
+    const fronds = (cx, cy) => {
+      const dx = x + 0.5 - cx;
+      const dy = y + 0.5 - cy;
+      const d = Math.hypot(dx, dy);
+      if (d > 13 || d < 1) return false;
+      const a = Math.atan2(dy, dx);
+      const droop = Math.abs(Math.sin(a * 3.5)) * (dy > -2 ? 1 : 0.6);
+      return droop > 0.82 && dy > -6 + (d * d) / 40;
+    };
+    if (trunk(25, -0.12, 44) || trunk(43, 0.08, 52) || fronds(30, 45) || fronds(39, 53)) return hex("#0b0a14");
+    if (t > 0.86) return hash2(x >> 1, y, 3) < 0.25 ? P.jade[1] : P.jade[0];
+    if (t > 0.78) return hex("#141228");
+    return mix(mix(hex("#241c3c"), hex("#6e3d55"), Math.min(1, t / 0.55)), hex("#b07a6c"), Math.max(0, (t - 0.55) / 0.23));
+  } : null);
 }
 
-/** The last gate: great iron-bound doors filling the gatehouse arch; open, first light and the
+/** The last gate: great iron-bound doors deep in the gatehouse arch, barred with a beam; open, first light and the
  * river road beyond. */
 function lastGate(open) {
   const c = new Canvas(96, 184);
-  archway(c, 48, 182, 86, 172, { ring: 5, ringTone: 5, interior: (x, y) => {
-    const t = (y - 10) / 172;
-    if (open) {
-      // Dawn beyond the gate: a gold horizon, the road and the river.
-      if (t < 0.62) return t < 0.3 ? hex("#c89a7a") : t < 0.48 ? hex("#e2ae7c") : hex("#f0c890");
-      if (t < 0.7) return (x % 9 < 6 && t < 0.66) ? hex("#3a3241") : hex("#5a4a4c");
-      return t > 0.9 ? P.stone[3] : (y + x) % 7 === 0 ? hex("#e8b878") : hex("#4a5470");
-    }
+  const relief = new Relief(96, 184);
+  const [cx, base, width, height] = [48, 182, 86, 172];
+  archway(c, cx, base, width, height, { ring: 5, ringTone: 5, interior: (x, y) => {
     const lx = x - 5;
     if (Math.abs(x + 0.5 - 48) < 1.2) return P.iron[1];
     if ((y - 12) % 20 === 0 || (y - 12) % 20 === 1) return P.iron[2];
     if (lx % 10 === 5 && (y - 12) % 20 === 10) return P.iron[4];
     return pick(P.wood, 2 + (fbm(x * 0.22, y * 0.9, { seed: 8 }) > 0.62 ? 1 : 0) + (lx % 10 === 0 ? -1 : 0));
   } });
-  if (!open) beam(c, 6, 92, 84, 8, { tone: 4, seed: 3 });
-  return c;
+  archRelief(relief, cx, base, width, height, { ring: 5, ringOut: 1.5, recess: open ? -40 : (x, y) => {
+    const lx = x - 5;
+    if (Math.abs(x + 0.5 - 48) < 1.2) return -6.8;
+    if ((y - 12) % 20 <= 1) return -5.3;
+    if (lx % 10 === 5 && (y - 12) % 20 === 10) return -5.1;
+    return lx % 10 === 0 ? -6.5 : -6;
+  } });
+  if (!open) {
+    beam(c, 6, 92, 84, 8, { tone: 4, seed: 3 });
+    relief.rect(6, 92, 89, 99, -3);
+  }
+  const inside = archInside(cx, base, width, height);
+  return lightGate(c, relief, "last_gate", open ? (x, y) => {
+    if (!inside(x, y)) return null;
+    const t = (y - 10) / 172;
+    // Dawn beyond the gate: the sky paling to gold at the horizon, the sun just risen, the far shore dark under it,
+    // the river with the sun's path across it, and the road at the gate's foot.
+    const sun = Math.hypot(x + 0.5 - 62, (y + 0.5 - 100) * 1.1);
+    if (t < 0.53) {
+      if (sun < 6) return sun < 4 ? hex("#fff0c8") : hex("#ffe0a0");
+      const sky = t < 0.3 ? mix(hex("#9a7480"), hex("#d4a07e"), t / 0.3) : mix(hex("#d4a07e"), hex("#f4cc94"), (t - 0.3) / 0.23);
+      return sun < 16 ? mix(sky, hex("#ffe6b0"), (1 - sun / 16) * 0.6) : sky;
+    }
+    const shore = 0.53 + (hash2(x >> 2, 2, 6) < 0.3 ? 0.035 : 0.015) + ((x >> 1) % 7 === 0 ? 0.03 : 0);
+    if (t < Math.max(shore, 0.565)) return t < shore ? hex("#3a3241") : hex("#5a4a4c");
+    if (t < 0.86) {
+      const path = Math.abs(x + 0.5 - 62) < 8 - (t - 0.57) * 10;
+      if (y % 2 === 0 && hash2(x >> 1, y, 8) < (path ? 0.55 : 0.08)) return path ? hex("#f0c890") : hex("#e8b878");
+      return mix(hex("#5a6488"), hex("#3c4462"), (t - 0.57) / 0.29);
+    }
+    return t > 0.93 ? P.stone[3] : P.stone[2];
+  } : null);
 }
 
 // --- Foreground ----------------------------------------------------------------------------------
@@ -436,22 +357,13 @@ export function buildProps(OUT, REVIEW) {
     canvas.save(join(OUT, "props", `${name}.png`));
     sheet.push(canvas);
   };
-  for (let v = 0; v < 3; v++) save(`stall_${v}`, stall(v));
   save("pages", pages());
-  save("rope_post", ropePost());
-  save("lectern", lectern());
-  save("scroll_rack", scrollRack());
-  save("shelf_fallen", shelfFallen());
   save("ink_spill", inkSpill());
-  save("fountain", fountain());
-  save("cypress", cypress());
-  save("armillary", armillary());
-  save("standard", standard());
-  save("ladder_broken", ladderBroken());
-  // Set pieces the soldiers handle and the streets' clutter, modelled in 3D and rendered like them (props3d.mjs,
-  // clutter3d.mjs).
+  // Set pieces the soldiers handle, the streets' clutter and their furnishings, modelled in 3D and rendered like them
+  // (props3d.mjs, clutter3d.mjs, furnishings3d.mjs).
   for (const [name, canvas] of props3d()) save(name, canvas);
   for (const [name, canvas] of clutter3d()) save(name, canvas);
+  for (const [name, canvas] of furnishings3d()) save(name, canvas);
   const niche = lampNiche();
   strip(niche).save(join(OUT, "props", "lamp_niche.png"));
   const nicheTexture = "res://assets/environments/market/props/lamp_niche.png";

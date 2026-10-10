@@ -10,12 +10,12 @@ import { pick } from "../lib/sprite_shader.mjs";
 import { CHARRED, COVERS, book, bookMaterial, hash, material, random, render, scorched } from "./props3d.mjs";
 
 const frac = (x) => x - Math.floor(x);
-const at = (o) => ({ o, x: [1, 0, 0], y: [0, 1, 0], z: [0, 0, 1] });
+export const at = (o) => ({ o, x: [1, 0, 0], y: [0, 1, 0], z: [0, 0, 1] });
 /** A frame whose z axis (a lathe's) runs along y, toward the camera's far side: a wheel facing the viewer. */
-const facing = (o) => ({ o, x: [1, 0, 0], y: [0, 0, 1], z: [0, 1, 0] });
+export const facing = (o) => ({ o, x: [1, 0, 0], y: [0, 0, 1], z: [0, 1, 0] });
 
 /** Parts collected for render(). */
-function scene() {
+export function scene() {
   const parts = [];
   return {
     parts,
@@ -28,27 +28,27 @@ function scene() {
 // --- Materials ---------------------------------------------------------------------------------------------
 
 /** Fired clay, a painted band about its shoulder (between heights `band[0]` and `band[1]` along the profile). */
-const clay = (ramp, { band = null, bias = -0.2 } = {}) => material(ramp, bias, {
+export const clay = (ramp, { band = null, bias = -0.2 } = {}) => material(ramp, bias, {
   shade: (s) => (band && s.v > band[0] && s.v < band[1] ? pick(band[2], s.light, -0.3) : pick(ramp, s.light, bias)),
 });
 /** A turquoise glaze, glossy: the key throws back off it. */
-const GLAZE = material(P.tile, -0.1, { glintPower: 14, shade: (s) => (s.glint > 0.42 ? P.tile[5] : pick(P.tile, s.light, -0.1)) });
+export const GLAZE = material(P.tile, -0.1, { glintPower: 14, shade: (s) => (s.glint > 0.42 ? P.tile[5] : pick(P.tile, s.light, -0.1)) });
 /** Coarse linen, a seam darker here and there. */
-const LINEN = material(P.linen, -0.4, { shade: (s) => pick(P.linen, s.light, frac(s.u / 5.5) < 0.12 ? -1.3 : -0.4) });
+export const LINEN = material(P.linen, -0.4, { shade: (s) => pick(P.linen, s.light, frac(s.u / 5.5) < 0.12 ? -1.3 : -0.4) });
 /** Grain or spice heaped: speckled. */
-const grain = (ramp) => material(ramp, -0.2, { rim: 0.15, shade: (s) => pick(ramp, s.light, hash(s.x, s.y, 7) < 0.22 ? -1.2 : -0.1) });
+export const grain = (ramp) => material(ramp, -0.2, { rim: 0.15, shade: (s) => pick(ramp, s.light, hash(s.x, s.y, 7) < 0.22 ? -1.2 : -0.1) });
 /** Planks: a dark seam every few pixels across the face, the grain running along. */
-const PLANKS = material(P.wood, 0, { shade: (s) => pick(P.wood, s.light, s.y % 4 === 0 ? -1.3 : hash(s.x >> 2, s.y, 3) < 0.2 ? -0.7 : -0.2) });
-const TIMBER = material(P.wood, 0, { shade: (s) => pick(P.wood, s.light, hash(s.x >> 1, s.y >> 2, 5) < 0.25 ? -0.8 : -0.2) });
-const IRON = material(P.iron, -0.6, { glintPower: 16, shade: (s) => (s.glint > 0.55 ? P.iron[4] : pick(P.iron, s.light, -0.8)) });
-const BRONZE = material(P.bronze, -0.3, { glintPower: 14, shade: (s) => (s.glint > 0.5 ? P.bronze[4] : pick(P.bronze, s.light, -0.3)) });
+export const PLANKS = material(P.wood, 0, { shade: (s) => pick(P.wood, s.light, s.y % 4 === 0 ? -1.3 : hash(s.x >> 2, s.y, 3) < 0.2 ? -0.7 : -0.2) });
+export const TIMBER = material(P.wood, 0, { shade: (s) => pick(P.wood, s.light, hash(s.x >> 1, s.y >> 2, 5) < 0.25 ? -0.8 : -0.2) });
+export const IRON = material(P.iron, -0.6, { glintPower: 16, shade: (s) => (s.glint > 0.55 ? P.iron[4] : pick(P.iron, s.light, -0.8)) });
+export const BRONZE = material(P.bronze, -0.3, { glintPower: 14, shade: (s) => (s.glint > 0.5 ? P.bronze[4] : pick(P.bronze, s.light, -0.3)) });
 /** A fired brick, each a little different. */
-const brick = (k) => material(P.brick, -0.2 + (k % 3) * 0.25, { shade: (s) => pick(P.brick, s.light, -0.2 + (k % 3) * 0.25 - (hash(s.x, s.y, k) < 0.1 ? 1 : 0)) });
+export const brick = (k) => material(P.brick, -0.2 + (k % 3) * 0.25, { shade: (s) => pick(P.brick, s.light, -0.2 + (k % 3) * 0.25 - (hash(s.x, s.y, k) < 0.1 ? 1 : 0)) });
 /** Rough stone, pitted. */
-const STONE = material(P.stone, 0, { shade: (s) => pick(P.stone, s.light, hash(s.x, s.y, 11) < 0.12 ? -1.2 : 0) });
+export const STONE = material(P.stone, 0, { shade: (s) => pick(P.stone, s.light, hash(s.x, s.y, 11) < 0.12 ? -1.2 : 0) });
 /** Timber the fire has had: charcoal in scales, black splits between them, a few still glowing; ash on what faces
  * up. */
-const BURNT = material(P.smoke, 0, {
+export const BURNT = material(P.smoke, 0, {
   rim: 0.2,
   shade: (s) => {
     const along = s.x + s.y;
@@ -79,7 +79,7 @@ const COALS = material(P.fire, 0, {
 // --- Jars ------------------------------------------------------------------------------------------------
 
 /** A jar's profile for lathe(): foot, swelling body, shoulder, neck and rolled lip; `belly` its widest radius. */
-function jarProfile(h, belly, neck = 0.3) {
+export function jarProfile(h, belly, neck = 0.3) {
   return [
     [belly * 0.45, 0], [belly * 0.72, h * 0.06], [belly * 0.95, h * 0.2], [belly, h * 0.34], [belly * 0.94, h * 0.5],
     [belly * 0.66, h * 0.68], [belly * neck * 1.15, h * 0.79], [belly * neck, h * 0.86], [belly * neck * 1.4, h * 0.92],

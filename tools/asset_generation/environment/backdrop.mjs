@@ -441,7 +441,7 @@ function patternedBrick(c, x0, y0, w, h, { tone = 4, seed = 5, relief = null, de
 
 /** A muqarnas hood filling a pointed arch: rows of small niches stepping out toward the apex. Given a `relief`,
  * each niche is a hollow under its lit lip and each row stands out from the one below, from `depth`. */
-function muqarnasHood(c, cx, spring, half, rise, { ramp = P.plaster, tone = 4, rows = 5, relief = null, depth = 0 } = {}) {
+export function muqarnasHood(c, cx, spring, half, rise, { ramp = P.plaster, tone = 4, rows = 5, relief = null, depth = 0 } = {}) {
   const top = spring - rise;
   const inside = (px, py) => inPointedArch(px, py, cx, spring, half, rise, spring + 1);
   fillShape(c, cx - half, top, cx + half, spring, inside, (x, y) => {
