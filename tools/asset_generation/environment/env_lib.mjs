@@ -38,10 +38,12 @@ export function inPointedArch(px, py, cx, springY, halfWidth, rise, baseY) {
 
 /**
  * A fired-brick wall over a rectangle: running bond, each brick a slightly different tone,
- * mortar lines, light from above, scattered damage and soot climbing from below or above.
+ * mortar lines, light from above, scattered damage and soot climbing from below or above. Given a
+ * `relief` (relief.mjs), it lays the bricks' faces at `depth`, the mortar a little behind them and the
+ * chipped bricks sunk, so a grazing light picks out the courses.
  */
 export function brickWall(c, x0, y0, w, h, { ramp = P.brick, base = 3, seed = 1, brickW = 8, brickH = 4,
-  soot = 0, sootFrom = "top", damage = 0.04, light = 0.0, mortar = null } = {}) {
+  soot = 0, sootFrom = "top", damage = 0.04, light = 0.0, mortar = null, relief = null, depth = 0 } = {}) {
   const mortarColor = mortar ?? ramp[Math.max(0, base - 2)];
   for (let y = y0; y < y0 + h; y++) {
     const row = Math.floor((y - y0) / brickH);
@@ -53,12 +55,15 @@ export function brickWall(c, x0, y0, w, h, { ramp = P.brick, base = 3, seed = 1,
       let tone = base + (hash2(col, row, seed) < 0.3 ? -1 : hash2(col, row, seed) > 0.85 ? 1 : 0);
       if (inRow === 0 || inCol === 0) {
         c.set(x, y, mortarColor);
+        relief?.set(x, y, depth - 0.8);
         continue;
       }
       if (inRow === 1 && light > 0) tone += 1; // the lit top face of each brick
       if (inRow === brickH - 1) tone -= 1;
       // Damage: chipped bricks show darker hollows.
-      if (hash2(col, row, seed + 7) < damage) tone -= 2;
+      const chipped = hash2(col, row, seed + 7) < damage;
+      if (chipped) tone -= 2;
+      relief?.set(x, y, depth + (chipped ? -1.4 : (hash2(col, row, seed + 11) - 0.5) * 0.4));
       // Soot from fire.
       const fy = sootFrom === "top" ? (y - y0) / h : 1 - (y - y0) / h;
       const sootAmount = soot * (1 - fy) * (0.6 + 0.6 * fbm(x * 0.05, y * 0.08, { seed: seed + 3, octaves: 2 }));
@@ -68,14 +73,36 @@ export function brickWall(c, x0, y0, w, h, { ramp = P.brick, base = 3, seed = 1,
   }
 }
 
-/** A plastered surface: mostly even, with sparse pitting, water stains and a grimy base. */
-export function plasterWall(c, x0, y0, w, h, { ramp = P.plaster, base = 3, seed = 2, stain = 0.4 } = {}) {
+/** A plastered surface: mostly even, with sparse pitting, water stains and a grimy base. Given a `relief`,
+ * plaster that has fallen away (`fallen`, the share of the wall) shows the brick behind it, sunk a pixel. */
+export function plasterWall(c, x0, y0, w, h, { ramp = P.plaster, base = 3, seed = 2, stain = 0.4, relief = null,
+  depth = 0, fallen = 0 } = {}) {
   for (let y = y0; y < y0 + h; y++) {
     for (let x = x0; x < x0 + w; x++) {
+      if (relief && fallen > 0) {
+        // Where the plaster has come away, in ragged patches: the brick behind it.
+        const bare = fbm(x * 0.06, y * 0.09, { seed: seed + 21, octaves: 3 });
+        if (bare > 1 - fallen) {
+          const row = Math.floor(y / 4);
+          const inRow = y % 4;
+          const inCol = (x + (row % 2) * 4) % 8;
+          const edge = bare < 1 - fallen + 0.025;
+          // The brick behind is warmer and lighter than the grime on the plaster around it.
+          c.set(x, y, edge ? pick(ramp, base - 2) : inRow === 0 || inCol === 0 ? P.brick[2] : pick(P.brick, base + 1 +
+            (hash2(Math.floor((x + (row % 2) * 4) / 8), row, seed) > 0.7 ? 1 : 0)));
+          relief.set(x, y, depth - (edge ? 0.6 : inRow === 0 || inCol === 0 ? 1.8 : 1.1));
+          continue;
+        }
+        relief.set(x, y, depth);
+      }
       const n = fbm(x * 0.045, y * 0.045, { seed, octaves: 3 });
       let tone = base;
-      // Broad, faint unevenness only where the noise is strongest.
-      if (n < 0.3) tone -= 1;
+      // Broad, faint unevenness only where the noise is strongest (on a street with relief, calmer still: the
+      // light does the modelling, and no blotches pattern the wall).
+      if (relief) {
+        if (n < 0.2) tone -= 1;
+        else if (n > 0.78) tone += 1;
+      } else if (n < 0.3) tone -= 1;
       else if (n > 0.7 && bayer(x, y) < 0.5) tone += 1;
       // Pitting and chips.
       if (hash2(x, y, seed) < 0.012) tone -= 1;
@@ -249,9 +276,10 @@ export function lattice(c, x0, y0, w, h, { ramp = P.wood, tone = 3, glow = null,
   }
 }
 
-/** A cloth awning sagging between two points, striped, with a scalloped or torn edge. */
+/** A cloth awning sagging between two points, striped, with a scalloped or torn edge. Given a `relief`, it stands
+ * out from the wall from `out[0]` where it is fixed to `out[1]` at its hem, so it shades what is under it. */
 export function awning(c, x0, y0, w, h, { colors = [P.awning, P.linen], stripe = 4, torn = 0, seed = 6,
-  slope = 0.25 } = {}) {
+  slope = 0.25, relief = null, out = [2, 14] } = {}) {
   for (let x = x0; x < x0 + w; x++) {
     const t = (x - x0) / w;
     const sag = Math.sin(t * Math.PI) * h * 0.18;
@@ -270,6 +298,7 @@ export function awning(c, x0, y0, w, h, { colors = [P.awning, P.linen], stripe =
       if ((x - x0) % stripe === 0) k -= 1;
       if (fy < 0.12) k += 1;
       c.set(x, y, pick(ramp, k));
+      relief?.set(x, y, out[0] + (out[1] - out[0]) * fy);
     }
   }
 }

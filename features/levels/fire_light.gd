@@ -8,14 +8,17 @@ extends PointLight2D
 
 var _time: float = 0.0
 var _seed: float = 0.0
+## The reach the light was given (a large fire's is wider than a small one's): it wavers about this.
+var _base_scale: float = 1.0
 
 
 func _ready() -> void:
 	_seed = float(get_instance_id() % 997)
+	_base_scale = texture_scale
 
 
 func _process(delta: float) -> void:
 	_time += delta
 	var wave: float = sin(_time * speed + _seed) * 0.5 + sin(_time * speed * 2.3 + _seed * 1.7) * 0.3
 	energy = base_energy * (1.0 + wave * flicker)
-	texture_scale = 1.0 + wave * 0.03
+	texture_scale = _base_scale * (1.0 + wave * 0.03)

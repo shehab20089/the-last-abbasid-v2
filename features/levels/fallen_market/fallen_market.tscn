@@ -308,41 +308,49 @@ position = Vector2(0, 48)
 texture = ExtResource("4_backdrop_0_png")
 centered = false
 position = Vector2(0, 88)
+light_mask = 2
 
 [node name="Chunk1" type="Sprite2D" parent="Backdrop"]
 texture = ExtResource("5_backdrop_1_png")
 centered = false
 position = Vector2(600, 88)
+light_mask = 2
 
 [node name="Chunk2" type="Sprite2D" parent="Backdrop"]
 texture = ExtResource("6_backdrop_2_png")
 centered = false
 position = Vector2(1200, 88)
+light_mask = 2
 
 [node name="Chunk3" type="Sprite2D" parent="Backdrop"]
 texture = ExtResource("7_backdrop_3_png")
 centered = false
 position = Vector2(1800, 88)
+light_mask = 2
 
 [node name="Chunk4" type="Sprite2D" parent="Backdrop"]
 texture = ExtResource("8_backdrop_4_png")
 centered = false
 position = Vector2(2400, 88)
+light_mask = 2
 
 [node name="Chunk5" type="Sprite2D" parent="Backdrop"]
 texture = ExtResource("9_backdrop_5_png")
 centered = false
 position = Vector2(3000, 88)
+light_mask = 2
 
 [node name="Chunk6" type="Sprite2D" parent="Backdrop"]
 texture = ExtResource("10_backdrop_6_png")
 centered = false
 position = Vector2(3600, 88)
+light_mask = 2
 
 [node name="Chunk7" type="Sprite2D" parent="Backdrop"]
 texture = ExtResource("11_backdrop_7_png")
 centered = false
 position = Vector2(4200, 88)
+light_mask = 2
 
 [node name="Haze" type="Parallax2D" parent="."]
 scroll_scale = Vector2(1, 1)
@@ -373,6 +381,16 @@ texture = ExtResource("14_light_soft_png")
 texture_scale = 4.00
 script = ExtResource("15_fire_light_gd")
 base_energy = 1.15
+
+[node name="WallLight" type="PointLight2D" parent="Fires/Fire0"]
+position = Vector2(0, -38.4)
+color = Color(1, 0.6, 0.3, 1)
+energy = 0.32
+texture = ExtResource("14_light_soft_png")
+texture_scale = 7.20
+range_item_cull_mask = 2
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.32
 
 [node name="Smoke" type="CPUParticles2D" parent="Fires/Fire0"]
 position = Vector2(0, -76.8)
@@ -430,6 +448,16 @@ texture_scale = 1.70
 script = ExtResource("15_fire_light_gd")
 base_energy = 0.80
 
+[node name="WallLight" type="PointLight2D" parent="Fires/Fire1"]
+position = Vector2(0, -12)
+color = Color(1, 0.6, 0.3, 1)
+energy = 0.22
+texture = ExtResource("14_light_soft_png")
+texture_scale = 3.06
+range_item_cull_mask = 2
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.22
+
 [node name="Smoke" type="CPUParticles2D" parent="Fires/Fire1"]
 position = Vector2(0, -24)
 amount = 6
@@ -485,6 +513,16 @@ texture = ExtResource("14_light_soft_png")
 texture_scale = 2.70
 script = ExtResource("15_fire_light_gd")
 base_energy = 0.95
+
+[node name="WallLight" type="PointLight2D" parent="Fires/Fire2"]
+position = Vector2(0, -20.8)
+color = Color(1, 0.6, 0.3, 1)
+energy = 0.27
+texture = ExtResource("14_light_soft_png")
+texture_scale = 4.86
+range_item_cull_mask = 2
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.27
 
 [node name="Smoke" type="CPUParticles2D" parent="Fires/Fire2"]
 position = Vector2(0, -41.6)
@@ -542,6 +580,16 @@ texture_scale = 1.70
 script = ExtResource("15_fire_light_gd")
 base_energy = 0.80
 
+[node name="WallLight" type="PointLight2D" parent="Fires/Fire3"]
+position = Vector2(0, -12)
+color = Color(1, 0.6, 0.3, 1)
+energy = 0.22
+texture = ExtResource("14_light_soft_png")
+texture_scale = 3.06
+range_item_cull_mask = 2
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.22
+
 [node name="Smoke" type="CPUParticles2D" parent="Fires/Fire3"]
 position = Vector2(0, -24)
 amount = 6
@@ -597,6 +645,16 @@ texture = ExtResource("14_light_soft_png")
 texture_scale = 1.70
 script = ExtResource("15_fire_light_gd")
 base_energy = 0.80
+
+[node name="WallLight" type="PointLight2D" parent="Fires/Fire4"]
+position = Vector2(0, -12)
+color = Color(1, 0.6, 0.3, 1)
+energy = 0.22
+texture = ExtResource("14_light_soft_png")
+texture_scale = 3.06
+range_item_cull_mask = 2
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.22
 
 [node name="Smoke" type="CPUParticles2D" parent="Fires/Fire4"]
 position = Vector2(0, -24)
@@ -654,6 +712,16 @@ texture_scale = 2.70
 script = ExtResource("15_fire_light_gd")
 base_energy = 0.95
 
+[node name="WallLight" type="PointLight2D" parent="Fires/Fire5"]
+position = Vector2(0, -20.8)
+color = Color(1, 0.6, 0.3, 1)
+energy = 0.27
+texture = ExtResource("14_light_soft_png")
+texture_scale = 4.86
+range_item_cull_mask = 2
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.27
+
 [node name="Smoke" type="CPUParticles2D" parent="Fires/Fire5"]
 position = Vector2(0, -41.6)
 amount = 6
@@ -709,6 +777,16 @@ texture = ExtResource("14_light_soft_png")
 texture_scale = 2.70
 script = ExtResource("15_fire_light_gd")
 base_energy = 0.95
+
+[node name="WallLight" type="PointLight2D" parent="Fires/Fire6"]
+position = Vector2(0, -20.8)
+color = Color(1, 0.6, 0.3, 1)
+energy = 0.27
+texture = ExtResource("14_light_soft_png")
+texture_scale = 4.86
+range_item_cull_mask = 2
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.27
 
 [node name="Smoke" type="CPUParticles2D" parent="Fires/Fire6"]
 position = Vector2(0, -41.6)
@@ -766,6 +844,16 @@ texture_scale = 4.00
 script = ExtResource("15_fire_light_gd")
 base_energy = 1.15
 
+[node name="WallLight" type="PointLight2D" parent="Fires/Fire7"]
+position = Vector2(0, -38.4)
+color = Color(1, 0.6, 0.3, 1)
+energy = 0.32
+texture = ExtResource("14_light_soft_png")
+texture_scale = 7.20
+range_item_cull_mask = 2
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.32
+
 [node name="Smoke" type="CPUParticles2D" parent="Fires/Fire7"]
 position = Vector2(0, -76.8)
 amount = 10
@@ -821,6 +909,16 @@ texture = ExtResource("14_light_soft_png")
 texture_scale = 2.70
 script = ExtResource("15_fire_light_gd")
 base_energy = 0.95
+
+[node name="WallLight" type="PointLight2D" parent="Fires/Fire8"]
+position = Vector2(0, -20.8)
+color = Color(1, 0.6, 0.3, 1)
+energy = 0.27
+texture = ExtResource("14_light_soft_png")
+texture_scale = 4.86
+range_item_cull_mask = 2
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.27
 
 [node name="Smoke" type="CPUParticles2D" parent="Fires/Fire8"]
 position = Vector2(0, -41.6)
@@ -878,6 +976,16 @@ texture_scale = 4.00
 script = ExtResource("15_fire_light_gd")
 base_energy = 1.15
 
+[node name="WallLight" type="PointLight2D" parent="Fires/Fire9"]
+position = Vector2(0, -38.4)
+color = Color(1, 0.6, 0.3, 1)
+energy = 0.32
+texture = ExtResource("14_light_soft_png")
+texture_scale = 7.20
+range_item_cull_mask = 2
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.32
+
 [node name="Smoke" type="CPUParticles2D" parent="Fires/Fire9"]
 position = Vector2(0, -76.8)
 amount = 10
@@ -933,6 +1041,16 @@ texture = ExtResource("14_light_soft_png")
 texture_scale = 1.70
 script = ExtResource("15_fire_light_gd")
 base_energy = 0.80
+
+[node name="WallLight" type="PointLight2D" parent="Fires/Fire10"]
+position = Vector2(0, -12)
+color = Color(1, 0.6, 0.3, 1)
+energy = 0.22
+texture = ExtResource("14_light_soft_png")
+texture_scale = 3.06
+range_item_cull_mask = 2
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.22
 
 [node name="Smoke" type="CPUParticles2D" parent="Fires/Fire10"]
 position = Vector2(0, -24)
@@ -990,6 +1108,16 @@ texture_scale = 2.70
 script = ExtResource("15_fire_light_gd")
 base_energy = 0.95
 
+[node name="WallLight" type="PointLight2D" parent="Fires/Fire11"]
+position = Vector2(0, -20.8)
+color = Color(1, 0.6, 0.3, 1)
+energy = 0.27
+texture = ExtResource("14_light_soft_png")
+texture_scale = 4.86
+range_item_cull_mask = 2
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.27
+
 [node name="Smoke" type="CPUParticles2D" parent="Fires/Fire11"]
 position = Vector2(0, -41.6)
 amount = 6
@@ -1045,6 +1173,16 @@ texture = ExtResource("14_light_soft_png")
 texture_scale = 4.00
 script = ExtResource("15_fire_light_gd")
 base_energy = 1.15
+
+[node name="WallLight" type="PointLight2D" parent="Fires/Fire12"]
+position = Vector2(0, -38.4)
+color = Color(1, 0.6, 0.3, 1)
+energy = 0.32
+texture = ExtResource("14_light_soft_png")
+texture_scale = 7.20
+range_item_cull_mask = 2
+script = ExtResource("15_fire_light_gd")
+base_energy = 0.32
 
 [node name="Smoke" type="CPUParticles2D" parent="Fires/Fire12"]
 position = Vector2(0, -76.8)

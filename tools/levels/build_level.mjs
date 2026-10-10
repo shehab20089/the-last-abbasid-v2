@@ -195,7 +195,7 @@ node("Band", "Sprite2D", "Smoke", { texture: resource("Texture2D", "res://assets
 node("Backdrop", "Node2D", ".");
 for (let i = 0; i < Math.ceil(W / CHUNK); i++) {
   node(`Chunk${i}`, "Sprite2D", "Backdrop", { texture: resource("Texture2D", `${ENV}/backdrop_${i}.png`),
-    centered: "false", position: v2(i * CHUNK, BACKDROP_TOP) });
+    centered: "false", position: v2(i * CHUNK, BACKDROP_TOP), light_mask: 2 });
 }
 
 node("Haze", "Parallax2D", ".", { scroll_scale: v2(1, 1), repeat_size: v2(512, 0), repeat_times: 12,
@@ -218,6 +218,15 @@ function fire(parent, nodeName, x, y, size, phase) {
     position: v2(0, -h * 0.4), color: "Color(1, 0.58, 0.26, 1)", energy: energy.toFixed(2),
     texture: resource("Texture2D", "res://assets/effects/light_soft.png"), texture_scale: lightScale.toFixed(2),
     script: resource("Script", "res://features/levels/fire_light.gd"), base_energy: energy.toFixed(2),
+  });
+  // The facades behind have this fire's light painted in, with its shadows (backdrop.mjs, relief.mjs), so the light
+  // above does not reach them (they stand on light mask 2); this faint, broad one does, only so the wall breathes
+  // with the flames.
+  node("WallLight", "PointLight2D", path, {
+    position: v2(0, -h * 0.4), color: "Color(1, 0.6, 0.3, 1)", energy: (energy * 0.28).toFixed(2),
+    texture: resource("Texture2D", "res://assets/effects/light_soft.png"), texture_scale: (lightScale * 1.8).toFixed(2),
+    range_item_cull_mask: 2,
+    script: resource("Script", "res://features/levels/fire_light.gd"), base_energy: (energy * 0.28).toFixed(2),
   });
   node("Smoke", "CPUParticles2D", path, {
     position: v2(0, -h * 0.8), amount: size === "large" ? 10 : 6, lifetime: 4.0, preprocess: 4.0,

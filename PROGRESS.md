@@ -116,6 +116,32 @@ Plan and progress: `docs/combat_focus_plan.md`. Two audits found about 35 action
 - **Fixed in passing:** emphasis followed by punctuation (`*parry*,`) left a stray asterisk on screen (`KeyText`: the closing mark may now come before punctuation, Arabic punctuation too).
 - **Tests:** session 239 (Hamid's counsel card; no kick or charge in the Market or Streets; both taught in the Scholars' Quarter; a master's lesson silent on a first journey and teaching on a master's; the tree's master locks; the finished chapter opening them; the library's men unaware, hidden ambushers not; the log written and summed up, and silent when switched off).
 
+## The street standard: one section brought to final quality (art step 4, after "proceed with point 4, the art"): FIRST PASS DONE, awaiting the user's eye
+The Market's opening (the gate street and the potters' lane, columns 0–84) was taken as the standard: it is the first street every player sees, and its houses and shops recur through the chapter. The review's faults were plain there:
+- every roof wore the same row of teeth;
+- doors were black holes;
+- the walls were one dark grey-violet, plaster, brick and wood alike;
+- the firelight was a round circle painted on the wall.
+- **Relief and light** (`tools/asset_generation/environment/relief.mjs`).
+  - The facade painter now writes depth beside the colour: door and window recesses, arch rings, cornices and joist ends, stone sills, plinths, balconies on their brackets, awnings standing out over the shops, banners, booms and cages, the mortar between bricks, and fallen plaster showing the brick behind.
+  - The street is lit from that depth.
+    - A sky from above lights the faces turned up, and a balcony or lintel shuts it out of what lies under it.
+    - The fires and lamps (lanterns, lit windows, rooms burning behind broken doors) light the faces turned to them, and what stands in their way shuts them out.
+    - Recesses darken near their rims, and what burns keeps its colour.
+  - The overall brightness of a wall away from the fires was matched to the old (measured), so the gain is in the relief, not in a lighter street.
+- **The standard's content.**
+  - Roofs are varied (`roofline`): plain copings, stepped merlons now and then, timber sleeping shelters, water jars, washing lines between poles. Near fires the top is broken away, with charred joists jutting out.
+  - Doors are broken in (a torn leaf hanging, a dark room or a burning one) or nailed shut, more of them near the fires.
+  - The houses have stone plinths and sills, plaster stripped back to warm brick, and soot above windows the fire went through.
+  - Neighbouring houses stand a little forward or back, so their joints fall into shadow.
+  - The plaster is calmer: its camouflage-like blotches and their ordered dither are gone on the street.
+- **The fires' own light.**
+  - `FireLight` threw away each fire's reach every frame (`texture_scale = 1.0 + …`), so every fire lit only a small circle. It now wavers about the reach it was built with, and the fighters and the street near a fire are lit as intended.
+  - The facades no longer take those lights (they stand on light mask 2), so the round halos on the walls are gone. Each fire gains a faint, broad `WallLight` that reaches only the facades, so the wall still breathes with the flames.
+- **Every level.** The painter is shared, so every level's houses and shops took the new light and roofs. Their tours were checked, and nothing was lost.
+- **Not yet brought to the standard:** the rampart, the gatehouse and the other special builders (ruin, bathhouse, alley gate, portal, river wall, camp) do not write relief yet. Nor do the street paving, the foreground and the props. They come next, with the character materials.
+- **Tests** (`./tools/run_tests.ps1`, all passing, no script errors): gameplay 226, enemy 325, session 249, finishers 25, lint 1 known, partial build 3, traversal of all four levels. Judged by eye in the game view: `tests/capture_tour.gd` before and after, every level.
+
 ## The combat fixes the first playtest log pointed to (after "yes please"): DONE, awaiting the next playtest
 The work before them was committed and pushed first (`e2431f7`).
 - **Warnings long enough to answer.**

@@ -12,6 +12,7 @@ import {
   lattice, mix, pick, plasterWall, smokeColumn,
 } from "./env_lib.mjs";
 import { rng } from "../lib/noise.mjs";
+import { FIRELIGHT, LAMPLIGHT, Relief, SKYLIGHT, lightRelief } from "./relief.mjs";
 
 /** Every level's street is the top of tile row 28. */
 export const STREET_ROW = 28;
@@ -23,12 +24,17 @@ export const CHUNK = 600;
 const STOREY = 118;
 const CLEAR = [0, 0, 0, 0];
 
-/** How each hour grades the facades: the darkness overhead, and the light on the parapets. */
+/** How each hour lights the facades (relief.mjs): the sky's light on every face, how far the highest storeys sink
+ * into the night's tint, the strength of the fires, and the light on the parapets. */
 const GRADES = {
-  night: { tint: P.night[1], top: 0.58, mid: 0.39, edge: hex("#8a87a6"), edgeAmount: 0.35, fire: 1 },
-  smoke: { tint: hex("#170c12"), top: 0.6, mid: 0.41, edge: hex("#b0645a"), edgeAmount: 0.3, fire: 1.1 },
-  predawn: { tint: hex("#121126"), top: 0.52, mid: 0.36, edge: hex("#b48a92"), edgeAmount: 0.35, fire: 0.85 },
-  dawn: { tint: hex("#1a1e2e"), top: 0.44, mid: 0.3, edge: hex("#e2ae7c"), edgeAmount: 0.45, fire: 0.7 },
+  night: { tint: P.night[1], sky: mix(SKYLIGHT, hex("#c0703c"), 0.3), ambient: 1.75, haze: 0.38, edge: hex("#8a87a6"),
+    edgeAmount: 0.35, fire: 1 },
+  smoke: { tint: hex("#170c12"), sky: mix(SKYLIGHT, hex("#c0603c"), 0.4), ambient: 1.65, haze: 0.42, edge: hex("#b0645a"),
+    edgeAmount: 0.3, fire: 1.1 },
+  predawn: { tint: hex("#121126"), sky: mix(SKYLIGHT, hex("#b4808c"), 0.3), ambient: 1.8, haze: 0.34, edge: hex("#b48a92"),
+    edgeAmount: 0.35, fire: 0.85 },
+  dawn: { tint: hex("#1a1e2e"), sky: mix(SKYLIGHT, hex("#e2ae7c"), 0.35), ambient: 2.0, haze: 0.28, edge: hex("#e2ae7c"),
+    edgeAmount: 0.45, fire: 0.7 },
 };
 
 /** Themes that fill their whole section with one structure. */
@@ -147,7 +153,11 @@ function crenels(c, x0, x1, top, ramp, tone, { size = 8, gap = 6 } = {}) {
   }
 }
 
-function door(c, cx, base, width, height, seed) {
+function door(c, cx, base, width, height, seed, ctx, state = "shut") {
+  if (state === "broken") {
+    brokenDoor(c, cx, base, width, height, seed, ctx);
+    return;
+  }
   archway(c, cx, base, width + 6, height + 4, { ring: 3, ringTone: 4, interior: (x, y) => {
     const lx = x - (cx - width / 2);
     if (Math.abs(x + 0.5 - cx) < 0.7) return P.wood[0];
@@ -159,9 +169,80 @@ function door(c, cx, base, width, height, seed) {
   // A bronze ring handle.
   c.set(Math.floor(cx) - 3, base - Math.floor(height * 0.45), P.bronze[4]);
   c.set(Math.floor(cx) + 2, base - Math.floor(height * 0.45), P.bronze[4]);
+  if (!ctx?.relief) return;
+  // The doorway is a recess: the leaves stand back in the wall's thickness, the arch's ring a pixel proud of it,
+  // and a stone step before the threshold.
+  const half = (width + 6) / 2;
+  const rise = half * 0.9;
+  const spring = base - (height + 4) + rise;
+  const inner = (px, py) => inPointedArch(px, py, cx, spring, half, rise, base);
+  const outer = (px, py) => inPointedArch(px, py, cx, spring, half + 3, rise + 3, base);
+  ctx.relief.fill(cx - half - 4, base - height - 8, cx + half + 4, base, (px, py) => outer(px, py) && !inner(px, py),
+    ctx.front + 1);
+  ctx.relief.fill(cx - half, base - height - 4, cx + half, base, inner, (x) =>
+    ctx.front - 5 + (Math.abs(x + 0.5 - cx) < 0.7 ? -0.6 : 0));
+  fillShape(c, cx - half - 2, base, cx + half + 1, base + 1, () => true, (x, y) => pick(P.stone, y === base ? 4 : 2));
+  ctx.relief.rect(cx - half - 2, base, cx + half + 1, base + 1, ctx.front + 2);
+  if (state === "boarded") {
+    // Nailed shut against the soldiers: planks across the leaves, standing out from them.
+    for (const [y, tilt] of [[base - height * 0.72, -2], [base - height * 0.45, 3], [base - height * 0.2, -1]]) {
+      for (let x = Math.floor(cx - half - 1); x <= cx + half; x++) {
+        const yy = Math.round(y + ((x - cx) / half) * tilt);
+        for (let k = 0; k < 4; k++) {
+          c.set(x, yy + k, pick(P.wood, k === 0 ? 4 : k === 3 ? 1 : 3));
+          ctx.relief.set(x, yy + k, ctx.front + 1.5);
+        }
+      }
+      c.set(Math.floor(cx - half + 2), Math.round(y) + 1, P.iron[4]);
+      c.set(Math.floor(cx + half - 3), Math.round(y) + 1, P.iron[4]);
+    }
+  }
 }
 
-function balcony(c, x, y, w, h, lit) {
+/** A door broken in by the soldiers: the doorway open on a dark room (on fire, near a fire), one leaf torn half off
+ * its pins and hanging into the street, the other gone; splinters on the step. */
+function brokenDoor(c, cx, base, width, height, seed, ctx) {
+  const burning = ctx?.burning(cx);
+  archway(c, cx, base, width + 6, height + 4, { ring: 3, ringTone: 4, interior: (x, y) => {
+    const t = (y - (base - height)) / height;
+    if (burning && t > 0.55) {
+      const n = fbm(x * 0.25, y * 0.35, { seed: seed + 5 });
+      return n > 0.6 ? P.fire[3] : n > 0.45 ? P.fire[2] : P.fire[1];
+    }
+    return t < 0.3 ? P.night[0] : (x + y) % 9 === 0 ? P.wood[0] : P.night[1];
+  } });
+  if (!ctx?.relief) return;
+  const half = (width + 6) / 2;
+  const rise = half * 0.9;
+  const spring = base - (height + 4) + rise;
+  const inner = (px, py) => inPointedArch(px, py, cx, spring, half, rise, base);
+  const outer = (px, py) => inPointedArch(px, py, cx, spring, half + 3, rise + 3, base);
+  ctx.relief.fill(cx - half - 4, base - height - 8, cx + half + 4, base, (px, py) => outer(px, py) && !inner(px, py),
+    ctx.front + 1);
+  ctx.relief.fill(cx - half, base - height - 4, cx + half, base, inner, ctx.front - 22);
+  // The torn leaf: hanging from its lower pin, swung out over the step.
+  const leafW = Math.floor(width / 2);
+  for (let y = base - height + 14; y < base - 2; y++) {
+    const swing = Math.floor((y - (base - height + 14)) * 0.18);
+    for (let x = 0; x < leafW; x++) {
+      const px = Math.floor(cx - half + 1 + x + swing);
+      if (x === leafW - 1 && hash2(px, y, seed) < 0.5) continue;
+      c.set(px, y, (y - base) % 18 === 0 ? P.wood[1] : pick(P.wood, 2 + (fbm(px * 0.3, y * 1.2, { seed }) > 0.6 ? 1 : 0)));
+      ctx.relief.set(px, y, ctx.front - 2 + x * 0.12);
+    }
+  }
+  // Splinters on the step.
+  for (let k = 0; k < 6; k++) {
+    const sx = Math.floor(cx - half + hash2(k, 1, seed) * width);
+    c.set(sx, base - 1, P.wood[3]);
+    c.set(sx + 1, base - 1, P.wood[2]);
+  }
+  fillShape(c, cx - half - 2, base, cx + half + 1, base + 1, () => true, (x, y) => pick(P.stone, y === base ? 4 : 2));
+  ctx.relief.rect(cx - half - 2, base, cx + half + 1, base + 1, ctx.front + 2);
+  if (burning) ctx.lamp(cx, base - 18, 70, 1.1);
+}
+
+function balcony(c, x, y, w, h, lit, ctx) {
   lattice(c, x, y, w, h, { ramp: P.wood, tone: 3, glow: lit ? (px, py) =>
     (hash2(px, py, 3) > 0.5 ? P.fire[3] : P.fire[2]) : null });
   beam(c, x - 3, y + h, w + 6, 4, { tone: 3 });
@@ -171,17 +252,29 @@ function balcony(c, x, y, w, h, lit) {
   }
   fillShape(c, x - 2, y - 4, x + w + 1, y - 1, () => true, P.wood[4]);
   fillShape(c, x - 2, y - 1, x + w + 1, y - 1, () => true, P.wood[2]);
+  if (!ctx?.relief) return;
+  // A closed timber bay standing out on its brackets: it shades the wall under it, and a lit one lights it.
+  ctx.relief.rect(x - 2, y - 4, x + w + 1, y + h - 1, ctx.front + 7);
+  ctx.relief.rect(x - 3, y + h, x + w + 2, y + h + 3, ctx.front + 6);
+  for (let k = 0; k < 3; k++) {
+    const bx = x + Math.floor((k + 0.5) * (w / 3));
+    for (let d = 0; d < 7; d++) ctx.relief.set(bx - Math.floor(d / 2), y + h + 4 + d, ctx.front + 5 - d * 0.6);
+  }
+  if (lit) ctx.lamp(x + w / 2, y + h / 2, 70, 0.8);
 }
 
 /** A black Abbasid banner hanging from a pole, torn at its foot, a gold crescent on its field. */
-function banner(c, x, y, w, h, seed) {
+function banner(c, x, y, w, h, seed, ctx) {
   beam(c, x - 3, y - 2, w + 6, 2, { ramp: P.wood, tone: 2 });
+  ctx?.relief?.rect(x - 3, y - 2, x + w + 2, y - 1, ctx.front + 3);
   for (let px = x; px < x + w; px++) {
     const tear = Math.floor(fbm(px * 0.4, 0, { seed }) * h * 0.45);
     for (let py = y; py < y + h - tear; py++) {
       const fold = Math.sin((px - x) * 0.9) > 0.6 ? 1 : 0;
       const trim = py === y || py === y + 2;
       c.set(px, py, trim ? P.gold[1] : pick([hex("#0b0a0c"), hex("#151317"), hex("#211d24")], fold + (px === x ? 1 : 0)));
+      // The cloth hangs a little out from the wall, its folds rising and falling.
+      ctx?.relief?.set(px, py, ctx.front + 2 + fold * 0.8);
     }
   }
   crescent(c, x + w / 2, y + Math.min(h * 0.32, 14), Math.max(3, Math.min(w, h) * 0.28));
@@ -199,31 +292,45 @@ function crescent(c, cx, cy, r) {
 }
 
 /** A timber boom jutting from a wall with a pulley, its rope dropping to a hanging cage or a load. */
-function boom(c, x, y, length, dir, seed, { cage = true } = {}) {
+function boom(c, x, y, length, dir, seed, { cage = true } = {}, ctx = null) {
   const end = x + dir * length;
+  const relief = ctx?.relief;
+  const front = ctx?.front ?? 0;
   beam(c, Math.min(x, end), y, length, 5, { tone: 2, seed });
+  relief?.rect(Math.min(x, end), y, Math.max(x, end), y + 4, front + 4 + 4 * 0.5);
   // A brace under the boom.
   for (let d = 0; d < length * 0.5; d++) {
     c.set(x + dir * d, y + 5 + Math.floor((length * 0.5 - d) * 0.6), P.wood[2]);
     c.set(x + dir * d, y + 6 + Math.floor((length * 0.5 - d) * 0.6), P.wood[1]);
+    relief?.set(x + dir * d, y + 5 + Math.floor((length * 0.5 - d) * 0.6), front + 2 + d * 0.15);
+    relief?.set(x + dir * d, y + 6 + Math.floor((length * 0.5 - d) * 0.6), front + 2 + d * 0.15);
   }
   fillShape(c, end - 3, y + 5, end + 2, y + 9, () => true, P.iron[3]);
+  relief?.rect(end - 3, y + 5, end + 2, y + 9, front + 7);
   const drop = 40 + Math.floor(hash2(seed, 2, 3) * 50);
-  for (let d = 0; d < drop; d++) c.set(end, y + 10 + d, d % 3 === 0 ? P.linen[1] : P.linen[0]);
+  for (let d = 0; d < drop; d++) {
+    c.set(end, y + 10 + d, d % 3 === 0 ? P.linen[1] : P.linen[0]);
+    relief?.set(end, y + 10 + d, front + 8);
+  }
   const top = y + 10 + drop;
   if (cage) {
-    // A wooden cage: a frame of bars, dark inside.
+    // A wooden cage: a frame of bars, dark inside, hanging well out from the wall.
     fillShape(c, end - 9, top, end + 9, top + 22, () => true, (px, py) =>
       (px === end - 9 || px === end + 9 || py === top || py === top + 22 || (px - end + 9) % 4 === 0)
         ? pick(P.wood, 3 + (py === top ? 1 : 0)) : P.night[0]);
-    for (const hx of [end - 8, end + 8]) for (let d = 0; d < 6; d++) c.set(hx + (end - hx) * (d / 6), top - 6 + d, P.linen[1]);
+    relief?.rect(end - 9, top, end + 9, top + 22, front + 10);
+    for (const hx of [end - 8, end + 8]) for (let d = 0; d < 6; d++) {
+      c.set(hx + (end - hx) * (d / 6), top - 6 + d, P.linen[1]);
+      relief?.set(Math.round(hx + (end - hx) * (d / 6)), top - 6 + d, front + 9);
+    }
   } else {
     beam(c, end - 8, top, 16, 10, { ramp: P.wood, tone: 3, seed: seed + 1 });
+    relief?.rect(end - 8, top, end + 7, top + 9, front + 9);
   }
 }
 
 /** A patterned carpet thrown over a ledge to hang down the wall. */
-function carpet(c, x, y, w, h, seed) {
+function carpet(c, x, y, w, h, seed, ctx) {
   const field = hash2(seed, 1, 1) < 0.5 ? P.madder : P.indigo;
   for (let py = y; py < y + h; py++) {
     for (let px = x; px < x + w; px++) {
@@ -236,19 +343,30 @@ function carpet(c, x, y, w, h, seed) {
         : pick(field, 2 + (motif ? 1 : 0));
       if (fbm(px * 0.2, py * 0.2, { seed }) > 0.72) color = mix(color, P.night[0], 0.4);
       c.set(px, py, color);
+      // Thrown over the ledge, it hangs out from the wall and sags in its middle.
+      ctx?.relief?.set(px, py, ctx.front + 1.5 + Math.sin((lx / w) * Math.PI) * 0.8);
     }
-    // Fringe.
   }
-  for (let px = x; px < x + w; px += 2) c.set(px, y + h, P.linen[2]);
+  for (let px = x; px < x + w; px += 2) {
+    c.set(px, y + h, P.linen[2]);
+    ctx?.relief?.set(px, y + h, ctx.front + 1.5);
+  }
 }
 
 /** A hanging brass lantern on a bracket, lit or dark. */
-function lantern(c, x, y, lit) {
+function lantern(c, x, y, lit, ctx = null) {
   for (let d = 0; d < 6; d++) c.set(x - 6 + d, y - 6, P.iron[2]);
   c.set(x, y - 5, P.iron[2]);
   fillShape(c, x - 2, y - 4, x + 2, y + 2, () => true, (px, py) =>
     (px === x - 2 || px === x + 2 || py === y - 4 || py === y + 2) ? P.bronze[2] : lit ? P.fire[5] : P.night[1]);
-  if (lit) glow(c, x, y, 16, P.fire[5], 0.4, { steps: 3 });
+  if (ctx?.relief) {
+    // On its bracket, out from the wall; a lit one is a light of the street (relief.mjs).
+    ctx.relief.rect(x - 6, y - 6, x, y - 5, ctx.front + 4);
+    ctx.relief.rect(x - 2, y - 4, x + 2, y + 2, ctx.front + 5);
+    if (lit) ctx.lamp(x, y, 52, 0.75);
+  } else if (lit) {
+    glow(c, x, y, 16, P.fire[5], 0.4, { steps: 3 });
+  }
 }
 
 /** A scaling ladder of lashed poles leaning on a wall, foot to top. */
@@ -318,6 +436,145 @@ function muqarnasHood(c, cx, spring, half, rise, { ramp = P.plaster, tone = 4, r
   });
 }
 
+// --- Roofs ----------------------------------------------------------------------------------------
+
+/**
+ * The top of a house or a shop: not one crenellation on every roof (it read as a row of teeth) but what Baghdad's
+ * roofs had. A parapet with its coping, standing out from the wall; on some a run of stepped merlons (shurafat);
+ * on the roof a timber shelter for sleeping out in the heat, water jars, a pole with a cloth hung out, the drain
+ * spouts; and where the fire has been, the top broken away with charred joists jutting from the break.
+ */
+function roofline(c, x0, x1, top, ramp, tone, seed, ctx) {
+  const r = rng(seed + 31);
+  const front = ctx.front;
+  const relief = ctx.relief;
+  const width = x1 - x0 + 1;
+  const burnt = ctx.burning((x0 + x1) / 2);
+  const kind = burnt && r() < 0.7 ? "broken" : r() < 0.15 ? "stepped" : "plain";
+  if (kind === "broken") {
+    // The fire took the roof: the wall's top is gnawed away in a ragged line, charred joist ends jut from it.
+    const from = x0 + Math.floor(width * (0.1 + r() * 0.3));
+    const to = Math.min(x1, from + Math.floor(width * (0.35 + r() * 0.3)));
+    for (let x = from; x <= to; x++) {
+      const t = (x - from) / Math.max(1, to - from);
+      const bite = Math.floor(Math.sin(t * Math.PI) * (14 + r() * 2) + (fbm(x * 0.3, 0, { seed }) - 0.5) * 8);
+      for (let y = top - 6; y < top + Math.max(0, bite); y++) c.set(x, y, [0, 0, 0, 0]);
+      // The broken edge, charred.
+      const edge = top + Math.max(0, bite);
+      for (let y = edge; y < edge + 3; y++) {
+        if (c.alpha(x, y) > 0) c.set(x, y, mix(c.get(x, y), P.night[0], 0.6 - (y - edge) * 0.15));
+      }
+    }
+    for (let jx = from + 4; jx < to - 2; jx += 9 + Math.floor(r() * 5)) {
+      const jy = top + 6 + Math.floor(r() * 6);
+      const len = 5 + Math.floor(r() * 7);
+      fillShape(c, jx, jy - len, jx + 2, jy, () => true, (px, py) => pick(P.wood, py < jy - len + 2 ? 0 : 1));
+      relief.rect(jx, jy - len, jx + 2, jy, front + 3);
+      if (r() < 0.4) c.set(jx + 1, jy - len, P.fire[3]);
+    }
+    // The coping still stands where the fire left it.
+    for (const [a, b] of [[x0, from - 1], [to + 1, x1]]) if (b > a) coping(c, a, b, top, ramp, tone, relief, front);
+    return;
+  }
+  coping(c, x0, x1, top, ramp, tone, relief, front);
+  if (kind === "stepped") {
+    // Shurafat: stepped merlons, broad and low, with a gap between each.
+    for (let x = x0 + 4; x <= x1 - 12; x += 20) {
+      for (let step = 0; step < 2; step++) {
+        const y = top - 3 - step * 3;
+        fillShape(c, x + step * 3, y - 2, x + 11 - step * 3, y, () => true, (px, py) =>
+          pick(ramp, tone + (py === y - 2 ? 2 : 1)));
+        relief.rect(x + step * 3, y - 2, x + 11 - step * 3, y, front + 2);
+      }
+    }
+    return;
+  }
+  // A plain parapet; on the roof behind it, what people kept there.
+  const furniture = r();
+  if (furniture < 0.32 && width > 80) {
+    // A timber shelter: four posts and a slatted roof, for sleeping out in the summer's heat.
+    const sx = x0 + 8 + Math.floor(r() * (width - 70));
+    const sw = 40 + Math.floor(r() * 18);
+    const sh = 22 + Math.floor(r() * 6);
+    for (const px of [sx, sx + Math.floor(sw / 2), sx + sw]) {
+      fillShape(c, px, top - sh, px + 1, top - 4, () => true, (x) => pick(P.wood, x === px ? 3 : 1));
+      relief.rect(px, top - sh, px + 1, top - 4, front - 6);
+    }
+    for (let x = sx - 3; x <= sx + sw + 3; x++) {
+      const sag = Math.floor(Math.sin(((x - sx + 3) / (sw + 6)) * Math.PI) * 2);
+      for (let y = top - sh - 3 + sag; y <= top - sh + sag; y++) {
+        const slat = (x - sx) % 4 === 0;
+        c.set(x, y, pick(P.wood, y === top - sh - 3 + sag ? 4 : slat ? 1 : 3));
+        relief.set(x, y, front - 5);
+      }
+    }
+    // A mat or a cloth thrown over its side.
+    if (r() < 0.6) {
+      const cloth = r() < 0.5 ? P.madder : P.indigo;
+      for (let x = sx + sw - 12; x < sx + sw - 2; x++) {
+        const hang = 8 + Math.floor(fbm(x * 0.5, 0, { seed: seed + 3 }) * 6);
+        for (let y = top - sh + 1; y < top - sh + 1 + hang; y++) {
+          c.set(x, y, pick(cloth, 2 + ((x + y) % 5 === 0 ? 1 : 0) - (y > top - sh + hang - 2 ? 1 : 0)));
+          relief.set(x, y, front - 4);
+        }
+      }
+    }
+  } else if (furniture < 0.55) {
+    // Water jars at the parapet, cooling in the night air.
+    let jx = x0 + 6 + Math.floor(r() * (width - 40));
+    for (let k = 0; k < 2 + Math.floor(r() * 3); k++) {
+      const jh = 7 + Math.floor(r() * 3);
+      fillShape(c, jx, top - 3 - jh, jx + 6, top - 4, (px, py) => {
+        const t = (top - 4 - py) / jh;
+        return Math.abs(px - (jx + 3)) <= 3 * (t > 0.85 ? 0.45 : Math.sin(Math.min(1, t * 1.1) * Math.PI) * 0.6 + 0.4);
+      }, (px) => pick(P.brick, px < jx + 3 ? 5 : 4));
+      relief.rect(jx, top - 3 - jh, jx + 6, top - 4, front - 3);
+      jx += 9 + Math.floor(r() * 4);
+    }
+  } else if (furniture < 0.62 && width > 70) {
+    // A line strung between two poles, cloths hung on it to dry, left where they were when the city fell.
+    const px = x0 + 8 + Math.floor(r() * (width - 60));
+    const span = 34 + Math.floor(r() * 16);
+    const ph = 24 + Math.floor(r() * 8);
+    for (const x of [px, px + span]) {
+      fillShape(c, x, top - ph, x + 1, top - 3, () => true, (xx) => pick(P.wood, xx === x ? 3 : 1));
+      relief.rect(x, top - ph, x + 1, top - 3, front - 3);
+    }
+    const sagAt = (x) => top - ph + 2 + Math.floor(Math.sin(((x - px) / span) * Math.PI) * 4);
+    for (let x = px + 2; x < px + span; x++) {
+      c.set(x, sagAt(x), P.linen[1]);
+      relief.set(x, sagAt(x), front - 2);
+    }
+    let x = px + 3;
+    while (x < px + span - 6) {
+      const cw = 6 + Math.floor(r() * 6);
+      const cloth = [P.linen, P.madder, P.indigo, P.saffron][Math.floor(r() * 4)];
+      const hang = 8 + Math.floor(r() * 8);
+      for (let cx = x; cx < Math.min(x + cw, px + span - 2); cx++) {
+        const y0 = sagAt(cx) + 1;
+        const tear = Math.floor(fbm(cx * 0.6, 2, { seed: seed + 7 }) * 4);
+        for (let y = y0; y < y0 + hang - tear; y++) {
+          c.set(cx, y, pick(cloth, 2 + (cx === x ? 1 : 0) - ((cx - x) % 4 === 3 ? 1 : 0)));
+          relief.set(cx, y, front - 1);
+        }
+      }
+      x += cw + 2 + Math.floor(r() * 3);
+    }
+  }
+  // Drain spouts through the parapet, a short timber channel each.
+  for (let x = x0 + 14 + Math.floor(r() * 10); x < x1 - 10; x += 38 + Math.floor(r() * 24)) {
+    fillShape(c, x, top + 4, x + 2, top + 6, () => true, (px, py) => pick(P.wood, py === top + 4 ? 3 : 1));
+    relief.rect(x, top + 4, x + 2, top + 6, front + 6);
+  }
+}
+
+/** A parapet's coping: a band standing out from the wall, lit on its top, its underside in shadow. */
+function coping(c, x0, x1, top, ramp, tone, relief, front) {
+  fillShape(c, x0, top - 2, x1, top + 2, () => true, (x, y) => pick(ramp, tone + (y === top - 2 ? 2 : y === top + 2 ? -1 : 1)));
+  relief.rect(x0, top - 2, x1, top + 1, front + 2.5);
+  relief.rect(x0, top + 2, x1, top + 2, front + 1.5);
+}
+
 // --- Buildings ------------------------------------------------------------------------------------
 
 function building(c, x0, width, ground, kind, seed, ctx) {
@@ -338,35 +595,59 @@ function building(c, x0, width, ground, kind, seed, ctx) {
     ? r() < 0.55 : r() < 0.3;
   const ramp = usePlaster ? P.plaster : P.brick;
   const tone = 3;
-  if (usePlaster) plasterWall(c, x0, top, width, height, { base: tone, seed });
-  else brickWall(c, x0, top, width, height, { base: tone, seed, soot: ctx.soot(x0, width), sootFrom: "top", light: 1 });
-  brickWall(c, x0, ground - 12, width, 12, { base: 2, seed: seed + 1 });
+  // Each house stands a little forward of or back from its neighbours (a street is not a ruler): the joints
+  // between them fall into shadow.
+  ctx.front = Math.round((r() - 0.5) * 6);
+  const relief = ctx.relief;
+  if (usePlaster) {
+    // Plaster that the fire and the years have stripped in places, showing the brick behind.
+    plasterWall(c, x0, top, width, height, { base: tone, seed, relief, depth: ctx.front,
+      fallen: ctx.burning(x0 + width / 2) ? 0.3 : 0.16 });
+  } else {
+    brickWall(c, x0, top, width, height, { base: tone, seed, soot: ctx.soot(x0, width), sootFrom: "top", light: 1,
+      relief, depth: ctx.front });
+  }
+  // A plinth of cut stone along the street, a little proud of the wall.
+  brickWall(c, x0, ground - 12, width, 12, { ramp: P.stone, base: 3, seed: seed + 1, brickW: 14, brickH: 6, relief,
+    depth: ctx.front + 1.5, damage: 0.08 });
+  fillShape(c, x0, ground - 13, x0 + width - 1, ground - 13, () => true, pick(P.stone, 4));
+  relief.rect(x0, ground - 13, x0 + width - 1, ground - 13, ctx.front + 2);
   fillShape(c, x0, top, x0, ground, () => true, pick(ramp, tone + 1));
   fillShape(c, x0 + width - 1, top, x0 + width - 1, ground, () => true, pick(ramp, tone - 1));
-  parapet(c, x0, x0 + width - 1, top, ramp, tone);
+  if (kind === "houses" || kind === "potters" || kind === "spices" || kind === "books") {
+    roofline(c, x0, x0 + width - 1, top, ramp, tone, seed, ctx);
+  } else {
+    parapet(c, x0, x0 + width - 1, top, ramp, tone);
+    relief.rect(x0, top - 6, x0 + width - 1, top + 2, ctx.front + 2);
+  }
   // Roof furniture: a windcatcher or a small dome now and then.
   if (kind !== "wall" && r() < 0.35) {
     const wx = x0 + 12 + Math.floor(r() * (width - 36));
-    brickWall(c, wx, top - 34, 14, 34, { base: 3, seed: seed + 9 });
+    brickWall(c, wx, top - 34, 14, 34, { base: 3, seed: seed + 9, relief, depth: ctx.front - 8 });
     fillShape(c, wx + 3, top - 28, wx + 10, top - 12, () => true, P.night[0]);
+    relief.rect(wx + 3, top - 28, wx + 10, top - 12, ctx.front - 14);
     fillShape(c, wx - 2, top - 37, wx + 15, top - 34, () => true, pick(P.brick, 4));
+    relief.rect(wx - 2, top - 37, wx + 15, top - 34, ctx.front - 6);
   } else if (kind === "mosque" || ((kind === "books" || kind === "madrasa") && r() < 0.25)) {
     dome(c, x0 + width * 0.6, top - 2, 26, { ramp: P.tile, tone: 2, shape: "pointed", ribs: 6, light: -0.4 });
   }
   if (kind === "madrasa" || kind === "library") tileBand(c, x0 + 2, x0 + width - 3, top + 10, 6, { seed, glaze: COBALT });
   if (kind !== "wall" && height >= STOREY + 56) {
-    // Upper storey.
+    // Upper storey: a cornice between the floors, the joists' ends showing under it.
     const floorLine = ground - (kind === "library" ? 156 : STOREY);
     fillShape(c, x0, floorLine - 2, x0 + width - 1, floorLine, () => true, pick(ramp, tone + 1));
     fillShape(c, x0, floorLine + 1, x0 + width - 1, floorLine + 1, () => true, pick(ramp, tone - 1));
-    // Projecting joist ends under the cornice.
-    for (let jx = x0 + 6; jx < x0 + width - 4; jx += 14) fillShape(c, jx, floorLine + 2, jx + 2, floorLine + 4, () => true, P.wood[2]);
+    relief.rect(x0, floorLine - 2, x0 + width - 1, floorLine, ctx.front + 2.5);
+    for (let jx = x0 + 6; jx < x0 + width - 4; jx += 14) {
+      fillShape(c, jx, floorLine + 2, jx + 2, floorLine + 4, () => true, P.wood[2]);
+      relief.rect(jx, floorLine + 2, jx + 2, floorLine + 4, ctx.front + 4);
+    }
     const upperBase = floorLine - 18;
     if (kind === "khan" || kind === "madrasa") {
       // The gallery is drawn with the arcade below.
     } else if (r() < 0.6 && width >= 90) {
       const bw = Math.floor(width * 0.42);
-      balcony(c, x0 + Math.floor((width - bw) / 2), upperBase - 46, bw, 36, r() < 0.45);
+      balcony(c, x0 + Math.floor((width - bw) / 2), upperBase - 46, bw, 36, r() < 0.45, ctx);
     } else {
       const count = Math.max(1, Math.floor(width / 48));
       for (let k = 0; k < count; k++) {
@@ -374,10 +655,14 @@ function building(c, x0, width, ground, kind, seed, ctx) {
         const lit = r() < 0.3;
         archway(c, wx, upperBase, 12, 28, { ring: 2, ringTone: 4, interior: (x, y) =>
           (lit ? (hash2(x, y, 5) > 0.5 ? P.fire[3] : P.fire[2]) : (x + y) % 3 === 0 ? P.wood[1] : P.night[0]) });
-        if (lit) glow(c, wx, upperBase - 12, 24, P.glow[4], 0.35, { steps: 3 });
+        // A window is a deep opening: its shutters or its light stand back in the wall's thickness.
+        relief.fill(wx - 8, upperBase - 32, wx + 8, upperBase, (px, py) =>
+          inPointedArch(px, py, wx, upperBase - 28 + 6 * 0.9, 6, 6 * 0.9, upperBase), ctx.front - 6);
+        sill(c, wx - 8, wx + 7, upperBase, relief, ctx.front);
+        if (lit) ctx.lamp(wx, upperBase - 12, 46, 0.6);
       }
     }
-    if (r() < 0.22 && kind !== "madrasa") banner(c, x0 + 10 + Math.floor(r() * (width - 40)), floorLine - 64, 16, 44, seed);
+    if (r() < 0.22 && kind !== "madrasa") banner(c, x0 + 10 + Math.floor(r() * (width - 40)), floorLine - 64, 16, 44, seed, ctx);
   }
   // Ground floor by kind.
   if (["potters", "spices", "books", "khan", "madrasa", "library"].includes(kind)) {
@@ -396,17 +681,37 @@ function building(c, x0, width, ground, kind, seed, ctx) {
         // A student's cell: a lamp, a low desk, a few books.
         fillShape(c, cx - 8, ground - 18, cx + 8, ground - 16, () => true, P.wood[3]);
         shopInterior(c, cx, ground - 8, bay - 12, archH, "books", seed * 13 + k, { shelves: [ground - 52] });
-        if (r() < 0.4) lantern(c, Math.floor(cx), ground - 72, true);
+        if (r() < 0.4) lantern(c, Math.floor(cx), ground - 72, true, ctx);
       } else {
         shopInterior(c, cx, ground - 8, bay - 12, archH, theme, seed * 13 + k, { burnt, shelves });
       }
+      // The shop is a deep vault: its back wall far in, its shelves and goods standing out from it, the arch's
+      // ring a pixel proud of the wall.
+      const half = (bay - 12) / 2;
+      const rise = half * 0.9;
+      const spring = ground - 8 - archH + rise;
+      const inside = (px, py) => inPointedArch(px, py, cx, spring, half, rise, ground - 8);
+      relief.fill(cx - half - 5, ground - 8 - archH - 5, cx + half + 5, ground - 8, (px, py) =>
+        inPointedArch(px, py, cx, spring, half + 4, rise + 4, ground - 8) && !inside(px, py), ctx.front + 1);
+      relief.fill(cx - half, ground - 8 - archH, cx + half, ground - 8, inside, (x, y) => {
+        const back = ctx.front - 16;
+        // Shelves and what stands on them come out from the back wall.
+        const rgb = c.get(x, y);
+        const dark = rgb[0] + rgb[1] + rgb[2] < 40;
+        return dark ? back : back + 5;
+      });
       if (tall && !burnt && r() < 0.6) {
         // A library ladder against the shelves.
         const lx = Math.floor(cx - bay / 2 + 12 + r() * (bay - 30));
         for (let y = ground - 112; y < ground - 8; y++) {
           c.set(lx, y, P.wood[4]);
           c.set(lx + 6, y, P.wood[4]);
-          if ((y - ground) % 7 === 0) fillShape(c, lx, y, lx + 6, y, () => true, P.wood[3]);
+          relief.set(lx, y, ctx.front - 8);
+          relief.set(lx + 6, y, ctx.front - 8);
+          if ((y - ground) % 7 === 0) {
+            fillShape(c, lx, y, lx + 6, y, () => true, P.wood[3]);
+            relief.rect(lx, y, lx + 6, y, ctx.front - 8);
+          }
         }
       }
       if ((kind === "madrasa" || kind === "library") && k < count - 1) {
@@ -419,33 +724,51 @@ function building(c, x0, width, ground, kind, seed, ctx) {
       if (!["khan", "madrasa", "library"].includes(kind) && !burnt && r() < 0.75) {
         const colors = r() < 0.4 ? [P.awning, P.linen] : r() < 0.5 ? [P.awningAlt, P.linen] : [P.saffron, P.madder];
         awning(c, Math.floor(cx - bay / 2 + 1), ground - 112, bay - 2, 22, { colors, stripe: 5,
-          torn: r() < 0.4 ? 0.5 : 0, seed: seed + k });
+          torn: r() < 0.4 ? 0.5 : 0, seed: seed + k, relief, out: [ctx.front + 2, ctx.front + 15] });
       }
-      if (r() < 0.3) lantern(c, Math.floor(cx + bay / 2 - 2), ground - (tall ? 136 : 96), r() < 0.5);
+      if (r() < 0.3) lantern(c, Math.floor(cx + bay / 2 - 2), ground - (tall ? 136 : 96), r() < 0.5, ctx);
     }
     if (kind === "khan" || kind === "madrasa") {
       for (let k = 0; k < count; k++) {
         const cx = x0 + margin + (k + 0.5) * bay;
         archway(c, cx, ground - STOREY - 22, bay - 18, 66, { ring: 3, ringTone: 4, interior: (x, y) =>
           (y > ground - STOREY - 40 ? P.wood[1] : P.night[0]) });
+        const half = (bay - 18) / 2;
+        relief.fill(cx - half, ground - STOREY - 22 - 66, cx + half, ground - STOREY - 22, (px, py) =>
+          inPointedArch(px, py, cx, ground - STOREY - 22 - 66 + half * 0.9, half, half * 0.9, ground - STOREY - 22),
+          ctx.front - 12);
         // A timber railing along the gallery.
         fillShape(c, cx - bay / 2, ground - STOREY - 36, cx + bay / 2, ground - STOREY - 35, () => true, P.wood[3]);
+        relief.rect(cx - bay / 2, ground - STOREY - 36, cx + bay / 2, ground - STOREY - 35, ctx.front - 2);
         for (let px = Math.floor(cx - bay / 2); px < cx + bay / 2; px += 4) {
           fillShape(c, px, ground - STOREY - 34, px, ground - STOREY - 23, () => true, P.wood[2]);
+          relief.rect(px, ground - STOREY - 34, px, ground - STOREY - 23, ctx.front - 2);
         }
       }
     }
   } else if (kind === "houses") {
-    door(c, x0 + Math.floor(width * (0.3 + r() * 0.4)), ground - 10, 30, 82, seed);
+    const dx = x0 + Math.floor(width * (0.3 + r() * 0.4));
+    // The sack has been down this street: doors broken in, most of all near the fires; some nailed shut.
+    const roll = r();
+    const state = roll < (ctx.burning(dx) ? 0.55 : 0.25) ? "broken" : roll > 0.84 ? "boarded" : "shut";
+    door(c, dx, ground - 10, 30, 82, seed, ctx, state);
     if (ctx.cranes && r() < 0.45) boom(c, r() < 0.5 ? x0 + 6 : x0 + width - 6, top + 40, 34 + Math.floor(r() * 20),
-      r() < 0.5 ? 1 : -1, seed + 7, { cage: r() < 0.6 });
-    if (ctx.carpets && r() < 0.4) carpet(c, x0 + 14 + Math.floor(r() * (width - 50)), ground - STOREY - 4, 22, 36, seed + 8);
+      r() < 0.5 ? 1 : -1, seed + 7, { cage: r() < 0.6 }, ctx);
+    if (ctx.carpets && r() < 0.4) carpet(c, x0 + 14 + Math.floor(r() * (width - 50)), ground - STOREY - 4, 22, 36, seed + 8, ctx);
     for (let k = 0; k < 2; k++) {
+      // A barred window, deep in the wall, on a stone sill; soot climbs from it where the fire has been.
       const wx = x0 + 10 + Math.floor(r() * (width - 30));
+      if (Math.abs(wx + 5 - dx) < 26) continue;
       fillShape(c, wx, ground - 78, wx + 9, ground - 66, () => true, P.night[0]);
-      for (let b = 1; b < 10; b += 2) fillShape(c, wx + b, ground - 78, wx + b, ground - 66, () => true, P.iron[2]);
+      relief.rect(wx, ground - 78, wx + 9, ground - 66, ctx.front - 5);
+      for (let b = 1; b < 10; b += 2) {
+        fillShape(c, wx + b, ground - 78, wx + b, ground - 66, () => true, P.iron[2]);
+        relief.rect(wx + b, ground - 78, wx + b, ground - 66, ctx.front - 2);
+      }
+      sill(c, wx - 2, wx + 11, ground - 65, relief, ctx.front);
+      if (ctx.burning(wx)) soot(c, wx - 3, wx + 12, ground - 79, 30, seed + k);
     }
-    if (r() < 0.5) lantern(c, x0 + width - 14, ground - 104, true);
+    if (r() < 0.5) lantern(c, x0 + width - 14, ground - 104, true, ctx);
   } else if (kind === "mosque") {
     for (let x = x0 + 4; x < x0 + width - 4; x++) {
       for (let y = ground - 150; y < ground - 134; y++) {
@@ -453,12 +776,16 @@ function building(c, x0, width, ground, kind, seed, ctx) {
         c.set(x, y, motif ? P.tile[4] : P.tile[1]);
       }
     }
+    relief.rect(x0 + 4, ground - 150, x0 + width - 5, ground - 135, ctx.front + 1);
     archway(c, x0 + width / 2, ground - 10, 46, 104, { ring: 5, ringTone: 4,
       interior: (x, y) => ((x + y) % 5 === 0 && y < ground - 70 ? P.tile[2] : P.night[0]) });
+    relief.fill(x0 + width / 2 - 23, ground - 114, x0 + width / 2 + 23, ground - 10, (px, py) =>
+      inPointedArch(px, py, x0 + width / 2, ground - 114 + 23 * 0.9, 23, 23 * 0.9, ground - 10), ctx.front - 14);
   } else if (kind === "wall") {
     for (let bx = x0 + 24; bx < x0 + width - 20; bx += 72) {
-      brickWall(c, bx, top + 24, 18, height - 24, { base: 4, seed: bx, brickW: 6, light: 1 });
+      brickWall(c, bx, top + 24, 18, height - 24, { base: 4, seed: bx, brickW: 6, light: 1, relief, depth: ctx.front + 6 });
       fillShape(c, bx + 8, top + 70, bx + 9, top + 86, () => true, P.night[0]);
+      relief.rect(bx + 8, top + 70, bx + 9, top + 86, ctx.front - 4);
     }
     // The siege: Mongol scaling ladders still leaning where the wall was taken, and a breach
     // patched with rubble.
@@ -469,6 +796,24 @@ function building(c, x0, width, ground, kind, seed, ctx) {
     for (let x = x0 + 180; x < x0 + 260 && x < x0 + width; x++) {
       const crack = Math.floor(fbm(x * 0.08, 0, { seed: 77 }) * 40);
       for (let y = top + 6; y < top + 46 + crack; y++) c.set(x, y, y > top + 40 + crack - 4 ? P.brick[1] : P.night[0]);
+    }
+  }
+}
+
+/** A stone sill under a window, standing out from the wall: lit on top, shadowing the wall below. */
+function sill(c, x0, x1, y, relief, front) {
+  fillShape(c, x0, y, x1, y + 1, () => true, (x, yy) => pick(P.stone, yy === y ? 5 : 2));
+  relief.rect(x0, y, x1, y + 1, front + 2.5);
+}
+
+/** Soot climbing the wall from an opening the fire has gone through: dark tongues, densest at the opening. */
+function soot(c, x0, x1, base, height, seed) {
+  for (let x = x0; x <= x1; x++) {
+    const reach = height * (0.45 + fbm(x * 0.25, 0, { seed }) * 0.75);
+    for (let y = base; y > base - reach; y--) {
+      if (c.alpha(x, y) === 0) continue;
+      const t = (base - y) / reach;
+      c.set(x, y, mix(c.get(x, y), P.night[0], 0.55 * (1 - t)));
     }
   }
 }
@@ -817,7 +1162,7 @@ const SPECIAL = { ruin, hammam, darb, portal, river: riverWall, rampart, gatehou
 
 /** Houses a street further back, low and dark, so alleys and the dips of ruined walls show the next
  * street rather than the sky. */
-function deepBand(c, x0, x1, ground, seed) {
+function deepBand(c, x0, x1, ground, seed, relief) {
   const shades = [mix(P.brick[1], P.night[1], 0.5), mix(P.brick[2], P.night[1], 0.5), mix(P.plaster[2], P.night[1], 0.55)];
   let x = x0;
   let i = 0;
@@ -829,6 +1174,7 @@ function deepBand(c, x0, x1, ground, seed) {
       for (let y = ground - h; y < ground; y++) {
         const edge = y === ground - h || px === x;
         c.set(px, y, edge ? shades[Math.min(2, tone + 1)] : shades[tone]);
+        relief?.set(px, y, -26);
       }
     }
     if (hash2(i, 4, seed) < 0.3) {
@@ -878,10 +1224,12 @@ export function paintBackdrop(level, look = "night") {
   const W = level.cols * 16;
   const H = BACKDROP_HEIGHT;
   const c = new Canvas(W, H);
+  const relief = new Relief(W, H);
+  const lamps = [];
   const ground = H;
   const base = GRADES[look] ?? GRADES.night;
   // Before a painted city the street stands darker, a silhouette lit by its fires and the sky.
-  const grade = level.painting ? { ...base, top: base.top + 0.2, mid: base.mid + 0.2, fire: base.fire * 1.35,
+  const grade = level.painting ? { ...base, ambient: base.ambient * 0.86, haze: base.haze + 0.08, fire: base.fire * 1.25,
     edgeAmount: base.edgeAmount + 0.15 } : base;
   const fires = level.fires.map(([col, row, size]) => ({ x: col * 16 + 8, y: row * 16 - BACKDROP_TOP, size }));
   const ctx = {
@@ -891,11 +1239,16 @@ export function paintBackdrop(level, look = "night") {
     scale: level.painting ? 0.6 : 1,
     cranes: !!level.dress?.cranes,
     carpets: !!level.dress?.carpets,
+    // The relief the painters write (relief.mjs), the depth of the wall of the building being painted, and the
+    // street's lamps and lit windows, which light it as its fires do.
+    relief,
+    front: 0,
+    lamp: (x, y, radius, strength) => lamps.push({ x, y, radius, strength }),
   };
   for (const section of level.sections) {
     const themes = Array.isArray(section.theme) ? section.theme : [section.theme];
     if (!themes.some((kind) => kind === "river" || kind === "camp")) {
-      deepBand(c, section.from * 16, section.to * 16, ground, section.from + 3);
+      deepBand(c, section.from * 16, section.to * 16, ground, section.from + 3, relief);
     }
   }
   for (const section of level.sections) {
@@ -913,21 +1266,18 @@ export function paintBackdrop(level, look = "night") {
       seed += 17;
     }
   }
-  // The hour: the upper storeys sink into darkness, the street level keeps its colour, and the
-  // fires warm what is near them.
-  for (let y = 0; y < H; y++) {
-    const t = y / H;
-    const dark = t < 0.55 ? grade.top - t * 0.35 : grade.mid - (t - 0.55) * 0.35;
-    for (let x = 0; x < W; x++) {
-      if (c.alpha(x, y) === 0) continue;
-      c.set(x, y, mix(c.get(x, y), grade.tint, dark));
-    }
-  }
-  for (const f of fires) {
-    const radius = f.size === "large" ? 160 : f.size === "medium" ? 120 : 80;
-    glow(c, f.x, f.y - 12, radius, P.fire[3], 0.55 * grade.fire);
-    glow(c, f.x, f.y - 22, radius * 0.55, P.fire[5], 0.32 * grade.fire);
-  }
+  // The hour, lit from the relief (relief.mjs): the night sky on every face, shut out from under what stands out;
+  // the fires and lamps lighting what is turned to them, shut out from behind what stands in their way; the upper
+  // storeys sinking into the night.
+  lightRelief(c, relief, {
+    ambient: { color: grade.sky, strength: grade.ambient },
+    lights: [
+      ...fires.map((f) => ({ x: f.x, y: f.y - 14, z: 22, radius: f.size === "large" ? 210 : f.size === "medium" ? 170 : 125,
+        color: FIRELIGHT, strength: 3.2 * grade.fire })),
+      ...lamps.map((l) => ({ x: l.x, y: l.y, z: 10, radius: l.radius, color: LAMPLIGHT, strength: 1.4 * l.strength })),
+    ],
+    haze: { tint: grade.tint, top: grade.haze, street: 0.06 },
+  });
   // Light from the sky catching the parapets.
   for (let x = 0; x < W; x++) {
     for (let y = 1; y < H; y++) {
