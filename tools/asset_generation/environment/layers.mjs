@@ -360,7 +360,7 @@ export function paintRiver(look, levelWidth, height) {
  * palette saved for the nearer layers.
  */
 async function buildDistant({ OUT, REVIEW, level }) {
-  const { paintedLayer } = await import("./painted.mjs");
+  const { paintedLayer, quietPainting } = await import("./painted.mjs");
   const { writeFileSync } = await import("node:fs");
   const p = level.painting;
   const width = layerWidth(p.scroll ?? 0.06, level.cols * 16);
@@ -368,6 +368,8 @@ async function buildDistant({ OUT, REVIEW, level }) {
   const body = Math.round(height * (p.fill ?? 0.88));
   const { canvas, palette } = paintedLayer(join(process.cwd(), p.source), { crop: p.crop, width, height: body,
     colors: p.colors ?? 96, patches: p.patches ?? [] });
+  // Quieted where it would compete with the fight (after its palette is taken, so the street's colours stay its own).
+  if (p.quiet) quietPainting(canvas, p.quiet);
   const layer = new Canvas(width, height);
   layer.blit(canvas, 0, 0);
   // Below the painting: its last row, darkening into the shadowed foot of the city.

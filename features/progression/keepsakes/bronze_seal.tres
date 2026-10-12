@@ -14,5 +14,5 @@ id = &"bronze_seal"
 modifiers = SubResource("Resource_mods")
 name_key = "KEEPSAKE_BRONZE_SEAL"
 description_key = "KEEPSAKE_BRONZE_SEAL_DESC"
-source_key = "KEEPSAKE_SOURCE_ROOFTOPS"
+source_key = "KEEPSAKE_SOURCE_HAMID"
 icon = ExtResource("3_icon")

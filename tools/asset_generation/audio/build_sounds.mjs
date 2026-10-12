@@ -1,9 +1,12 @@
-// Synthesizes every sound of the game: sword, shield and body sounds, enemy and boss cues, the
-// interface, the city's ambiences (fire and wind, the river), and the score: a plucked oud over a
-// drone with a frame drum, in a maqam for each place (Hijaz for the market, Saba for the burning
-// streets, Bayati with a ney for the scholars, Hijaz Kar for the last gate and its captain).
-// Quarter tones are fractional semitones. Deterministic: rerunning rewrites the same files.
+// Builds every sound of the game. The physical ones (blades, shields, bodies, steps, armour, cloth, arrows, voices)
+// are layered from recorded takes (the kit: kit.mjs, build_kit.mjs, CC0 libraries credited in
+// assets/audio/kit/CREDITS.md); the rest is synthesized: the warnings, the Arts, breath and the heart, the interface,
+// the city's ambiences (fire and wind, the river) and the score: a plucked oud over a drone with a frame drum, in a
+// maqam for each place (Hijaz for the market, Saba for the burning streets, Bayati with a ney for the scholars, Hijaz
+// Kar for the last gate and its captain). Quarter tones are fractional semitones. Deterministic: rerunning rewrites
+// the same files.
 // Usage: node tools/asset_generation/audio/build_sounds.mjs [--only name,name]
+import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -11,11 +14,12 @@ import {
   normalize, oscillator, partials, percussive, pinkNoise, pluck, render, reverb, whiteNoise, writeWav,
 } from "./dsp.mjs";
 import { rng } from "../lib/noise.mjs";
+import { excerpt, highpass, layer, level, lowpass, peak, reach, room, speed, take } from "./recorded.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 const SFX = join(ROOT, "assets", "audio", "sfx");
 const MUSIC = join(ROOT, "assets", "audio", "music");
-const SR = 32000;
+const SR = 44100;
 const MR = 24000;
 const args = process.argv.slice(2);
 const onlyIndex = args.indexOf("--only");
@@ -62,115 +66,315 @@ function rattle(seconds, count, seed, { freq = 4200 } = {}) {
   return out;
 }
 
-// --- Blades ----------------------------------------------------------------------------------------
+// --- Recorded ----------------------------------------------------------------------------------------
+// The physical sounds (blades, shields, bodies, steps, armour, cloth, arrows, voices) are layered from the kit's
+// recorded takes (kit.mjs, cut by build_kit.mjs): several takes a cue, each brought to the cue's loudness (its
+// loudest 50 ms, in dBFS, as the code-made cue it replaced, so the mix keeps its balance; the parry and the heavy
+// blows a little louder) with its peaks limited. The game plays one at random, never the same twice running, its
+// pitch spread by `pitch` and its level by `volume` dB (variation.json, read by tools/write_main_scene.mjs). A code
+// layer is kept only where the thing is not a recording's to give: a fire's rush, a drum under a cry, the weight
+// of a stone striking a wall far off, a reward's chime.
 
-sfx("sword_swing", () => whoosh(0.24, 700, 2800, 11));
-sfx("sword_thrust", () => whoosh(0.16, 1300, 3400, 12, { q: 2.2, attack: 0.02 }));
-sfx("sword_heavy", () => {
-  const b = whoosh(0.38, 320, 1700, 13, { q: 1.1, attack: 0.08 });
-  return mixInto(b, noiseBurst(0.38, 14, { type: "brown", lp: 300, env: (t) => percussive(t, 0.08, 0.12) }), 0, 0.8);
-});
-sfx("enemy_swing", () => whoosh(0.26, 520, 2200, 21, { q: 1.4 }));
-sfx("enemy_swing_heavy", () => {
-  const b = whoosh(0.42, 260, 1500, 22, { q: 1.0, attack: 0.1 });
-  return mixInto(b, noiseBurst(0.42, 23, { type: "brown", lp: 260, env: (t) => percussive(t, 0.1, 0.14) }), 0, 0.9);
-});
-sfx("spear_thrust", () => {
-  const b = whoosh(0.22, 900, 2600, 24, { q: 2.0, attack: 0.03 });
-  return mixInto(b, rattle(0.18, 4, 25, { freq: 1600 }), 0.02, 0.5);
+const variation = {};
+
+/**
+ * A cue of `takes` takes (name__1.wav ...; one take is name.wav), each `make(i)` brought to `loud` dBFS (a number,
+ * or one per take where some are meant quieter). Where a take cannot reach it without crushing its transient (a
+ * sword's clash is nearly all peak), every take of the cue is brought down together, so they still match, and the
+ * build says so: the cue then sits that much lower in the mix than asked. A clash of steel is nearly all its first
+ * milliseconds: its takes may be held down further there (`most` dB) and let go at once (`release` s), which
+ * rounds the click of the strike and keeps its ring.
+ */
+function recorded(name, { takes = 1, loud, pitch = 1.05, volume = 1, most = 4, release = 0.04 }, make) {
+  if (only && !only.includes(name)) return;
+  // Takes this build no longer makes go, with their import files; a take rewritten keeps its import (Godot
+  // imports it again on the next editor scan).
+  const files = new Set(Array.from({ length: takes }, (_, i) => (takes === 1 ? `${name}.wav` : `${name}__${i + 1}.wav`)));
+  for (const file of readdirSync(SFX)) {
+    const wav = file.replace(/\.import$/, "");
+    const mine = wav === `${name}.wav` || new RegExp(`^${name}__\\d+\\.wav$`).test(wav);
+    if (mine && !files.has(wav)) rmSync(join(SFX, file));
+  }
+  const sounds = Array.from({ length: takes }, (_, i) => make(i));
+  const wanted = sounds.map((_, i) => (typeof loud === "function" ? loud(i) : loud));
+  const short = Math.min(0, ...sounds.map((b, i) => reach(b, { most, release }) - wanted[i]));
+  if (short < -0.5) console.log(`  ${name}: ${(wanted[0] + short).toFixed(1)} dBFS, ${(-short).toFixed(1)} dB under the ${wanted[0]} asked`);
+  sounds.forEach((b, i) => {
+    const file = takes === 1 ? `${name}.wav` : `${name}__${i + 1}.wav`;
+    writeWav(join(SFX, file), fadeEdges(level(b, wanted[i] + short, { most, release }), 0.0005, 0.008));
+  });
+  variation[name] = { takes, pitch, volume, ...(typeof loud === "function" ? { uneven: true } : {}) };
+  built.push(name);
+}
+
+/** Where a sound is loudest (its 5 ms RMS), in seconds. */
+function peakTime(b) {
+  const w = Math.max(1, Math.round(b.rate * 0.005));
+  let sum = 0;
+  let best = 0;
+  let at = 0;
+  for (let i = 0; i < b.data.length; i++) {
+    sum += b.data[i] * b.data[i];
+    if (i >= w) sum -= b.data[i - w] * b.data[i - w];
+    if (sum > best) {
+      best = sum;
+      at = i - w / 2;
+    }
+  }
+  return Math.max(0, at) / b.rate;
+}
+
+/**
+ * A blade through the air: a take with its loudest moment `lead` seconds in, since the cue plays as the blade
+ * sweeps (the blow's first live frame), swelling in to it.
+ */
+function swish(family, n, { lead = 0.03, rate = 1, hp = 0 } = {}) {
+  const w = speed(take(family, n), rate);
+  const p = peakTime(w);
+  const from = Math.max(0, p - lead);
+  const out = excerpt(w, from, w.data.length / w.rate, 0.04);
+  const swell = Math.round((p - from) * out.rate);
+  for (let i = 0; i < swell; i++) out.data[i] *= (i / swell) ** 1.5;
+  return hp ? highpass(out, hp) : out;
+}
+
+/** The first `seconds` of a take, high-passed (cloth, mail and plates under a heavier sound). */
+const rustle = (family, n, seconds, hp) => highpass(excerpt(take(family, n), 0, seconds, seconds * 0.4), hp);
+
+/** Lays [at, sound, db] layers into one buffer long enough for them all. */
+function mix(rate, ...layers) {
+  const out = room(rate, ...layers.map(([at, b]) => [at, b]));
+  for (const [at, b, db = 0] of layers) layer(out, b, at, db);
+  return out;
+}
+
+// Blades through the air: Yusuf's cuts whistle (a sabre's and a katana's edge), his thrust is a dagger's quick
+// swish, his cleave an axe's whomp under a slowed whistle; the soldiers' sabres a long knife's cut slowed, their
+// maces and axes the axe's whomp slower still, the spear its own.
+recorded("sword_swing", { takes: 8, loud: -12, pitch: 1.06 }, (i) =>
+  peak(swish("swing_light", [1, 2, 4, 6, 8, 11, 13, 16][i], { hp: 260 }), 3200, 0.9, 3));
+recorded("sword_thrust", { takes: 6, loud: -13, pitch: 1.06 }, (i) =>
+  peak(swish("swing_quick", [1, 2, 4, 5, 1, 2][i], { lead: 0.02, rate: i < 4 ? 1.1 : 1.2, hp: 320 }), 3500, 1, 2));
+recorded("sword_heavy", { takes: 6, loud: -11, pitch: 1.05, most: 6 }, (i) => mix(SR,
+  [0, swish("swing_heavy", i + 1, { lead: 0.05, hp: 70 })],
+  [0, swish("swing_light", 9 + i, { lead: 0.05, rate: 0.85, hp: 300 }), -5]));
+recorded("enemy_swing", { takes: 8, loud: -12, pitch: 1.06 }, (i) =>
+  swish("swing_seax", [1, 2, 3, 5, 6, 7, 8, 9][i], { rate: 0.93, hp: 200 }));
+recorded("enemy_swing_heavy", { takes: 6, loud: -11, pitch: 1.05, most: 6 }, (i) => mix(SR,
+  [0, swish("swing_heavy", 6 - i, { lead: 0.06, rate: 0.88, hp: 55 })],
+  [0.01, swish("swing_spear", 1 + (i % 5), { lead: 0.05, rate: 0.9, hp: 180 }), -7]));
+recorded("spear_thrust", { takes: 5, loud: -12, pitch: 1.05 }, (i) =>
+  swish("swing_spear", i + 1, { lead: 0.04, hp: 180 }));
+recorded("whirl", { takes: 4, loud: -11, pitch: 1.05 }, (i) => mix(SR,
+  [0, swish("swing_light", 2 + i * 3, { hp: 260 }), -2],
+  [0.17, swish("swing_light", 3 + i * 3, { rate: 1.08, hp: 260 })]));
+recorded("charge_release", { takes: 4, loud: -10, pitch: 1.04, most: 6 }, (i) => mix(SR,
+  [0, swish("swing_heavy", [6, 5, 2, 1][i], { lead: 0.05, rate: 0.82, hp: 45 })],
+  [0, swish("swing_light", 12 + i, { lead: 0.05, rate: 0.8, hp: 280 }), -4]));
+
+// Steel on steel and on the shields: a parry is a sword struck on a sword, ringing (two strikes a breath apart, so
+// the ring is full), with a slide of steel and a little air about it; a block a blade on a round shield's board (wood, a bronze rim); a broken guard a mace's blow
+// on steel, the board cracking and the plates crashing; a glance a light ring and a skid off the rim.
+recorded("parry", { takes: 8, loud: -12, pitch: 1.04, most: 9, release: 0.006 }, (i) => reverb(mix(SR,
+  [0, peak(take("clash_ring", [6, 5, 13, 12, 14, 7, 2, 8][i]), 4000, 0.8, 2)],
+  [0.007, speed(take("clash_ring", [12, 14, 6, 5, 13, 2, 7, 1][i]), 1.05), -5],
+  [0.012, highpass(excerpt(take("scrape", 1 + (i % 2)), 0.05 + 0.04 * i, 0.2 + 0.04 * i, 0.06), 1500), -16]),
+  { room: 0.62, damp: 0.5, wet: 0.08, tail: 0.5 }));
+recorded("shield_block", { takes: 8, loud: -12, pitch: 1.05, most: 8, release: 0.008 }, (i) => mix(SR,
+  [0, take("clash_wood", [10, 7, 2, 13, 9, 14, 12, 5][i])],
+  [0.002, lowpass(speed(take("plank", 1 + (i % 5)), 0.85), 2500), -5]));
+recorded("guard_break", { takes: 6, loud: -11, pitch: 1.04, most: 8, release: 0.008 }, (i) => mix(SR,
+  [0, take("clash_heavy", [9, 5, 10, 13, 7, 2][i])],
+  [0.008, take("wood_crack", 1 + (i % 4)), -3],
+  [0.004, lowpass(take("plate_medium", 1 + (i % 5)), 5000), -10]));
+recorded("glance", { takes: 6, loud: -15, pitch: 1.06, most: 9, release: 0.006 }, (i) => mix(SR,
+  [0, excerpt(speed(take("clash_ring", [1, 9, 16, 3, 4, 10][i]), 1.12), 0, 0.3, 0.12), -1],
+  [0.005, highpass(excerpt(take("scrape", 1 + (i % 2)), 0.1 + i * 0.05, 0.24 + i * 0.05, 0.05), 1200), -6]));
+
+// Blows landing on men in cloth and lamellar: the edge through cloth, the blow's weight in the body, the little
+// plates knocking; a heavy blow chops in under a crash of plates; the pommel a hard knock of wood and bone; the
+// kick and the shield's boss deep blows with the mail shaken; a blade cutting a man apart a chop and a wet slice.
+recorded("sword_hit", { takes: 8, loud: -9, pitch: 1.05, volume: 1.5 }, (i) => mix(SR,
+  [0, highpass(excerpt(take("slice", 1 + (i % 2)), 0, 0.16, 0.06), 900), -4],
+  [0.004, i % 2 ? take("punch_medium", 1 + ((i >> 1) % 5)) : take("hit_body", [2, 3, 5, 9][i >> 1])],
+  [0.01, highpass(take("metal_small", 1 + (i % 3)), 1500), -13]));
+recorded("sword_hit_heavy", { takes: 8, loud: -8.5, pitch: 1.05, volume: 1.5, most: 6 }, (i) => mix(SR,
+  [0.004, take("punch_heavy", 1 + (i % 5))],
+  [0, speed(take("chop", 1), 0.9 + (i % 4) * 0.05), -3],
+  [0, highpass(excerpt(take("slice", 1 + (i % 2)), 0.02, 0.2, 0.06), 900), -6],
+  [0.008, lowpass(take("plate_light", 1 + (i % 5)), 6000), -12]));
+recorded("pommel_crack", { takes: 4, loud: -9, pitch: 1.05 }, (i) => mix(SR,
+  [0, speed(take("wood_light", 1 + i), 0.9), -2],
+  [0.003, take("hit_body", [4, 6, 8, 11][i]), -1],
+  [0.012, highpass(take("metal_small", 1 + (i % 3)), 1500), -14]));
+recorded("kick_hit", { takes: 5, loud: -8, pitch: 1.05 }, (i) => mix(SR,
+  [0, take("punch_heavy", 5 - i)],
+  [0, take("thud_light", 1 + i), -4],
+  [0.02, rustle("chainmail", 1 + (i % 2), 0.3, 900), -12]));
+recorded("shield_bash", { takes: 5, loud: -9, pitch: 1.05, most: 6 }, (i) => mix(SR,
+  [0, take("wood_heavy", 1 + i)],
+  [0.004, take("punch_heavy", 1 + ((i + 2) % 5)), -3],
+  [0.006, lowpass(take("plate_medium", 1 + i), 5000), -11],
+  [0.02, rustle("chainmail", 1 + (i % 2), 0.3, 900), -13]));
+recorded("sever", { takes: 6, loud: -11, pitch: 1.05, most: 6 }, (i) => {
+  const out = mix(SR,
+    [0, speed(take("chop", 1), 0.88 + i * 0.04)],
+    [0, highpass(excerpt(take("slice", 1 + (i % 2)), 0, 0.25, 0.08), 700), -5],
+    [0.01, take("hit_body", [1, 7, 8, 10, 11, 12][i]), -4]);
+  // The spatter after: a few wet drops on the stones.
+  const r = rng(95 + i);
+  for (let k = 0; k < 4; k++) {
+    layer(out, noiseBurst(0.05, 97 + i * 5 + k, { bp: 2000 + r() * 900, q: 3, env: (t) => percussive(t, 0.001, 0.012) }),
+      0.18 + k * 0.08 + r() * 0.03, -14 - k * 2);
+  }
+  return out;
 });
 
-sfx("sword_hit", () => {
-  const out = buffer(0.3, SR);
-  mixInto(out, thump(0.2, 140, 55, 0.07), 0, 1.0);
-  mixInto(out, noiseBurst(0.12, 31, { lp: 2400, env: (t) => percussive(t, 0.001, 0.025) }), 0, 0.9);
-  mixInto(out, noiseBurst(0.1, 32, { bp: 900, q: 1.2, env: (t) => percussive(t, 0.002, 0.03) }), 0.003, 0.7);
-  mixInto(out, partials(0.2, SR, [[2140, 1, 0.05], [3420, 0.6, 0.04], [5100, 0.3, 0.03]]), 0, 0.18);
-  return out;
+// Steps and the body: a foot on stone (on boards, footstep_wood), the spring of a jump in cloth, a landing on both
+// feet with the mail shaken, a roll over the shoulder, a body (or a piece of one) meeting the street.
+recorded("footstep", { takes: 8, loud: -16, pitch: 1.08, volume: 2 }, (i) => mix(SR,
+  [0, speed(take("step_stone", 1 + (i % 5)), i < 5 ? 1 : 0.9)],
+  [0, take("thud_light", 1 + (i % 5)), -12]));
+recorded("footstep_wood", { takes: 6, loud: -16, pitch: 1.08, volume: 2 }, (i) =>
+  speed(take("step_wood", 1 + (i % 5)), i < 5 ? 1 : 0.92));
+recorded("jump", { takes: 6, loud: -15, pitch: 1.06 }, (i) => mix(SR,
+  [0, rustle(i % 2 ? "cloth" : "cloth_heavy", 1 + (i >> 1), 0.22, 200)],
+  [0, take("step_stone", 1 + (i % 5)), -6]));
+recorded("land", { takes: 6, loud: -10, pitch: 1.05 }, (i) => mix(SR,
+  [0, take("step_stone", 1 + (i % 5)), -2],
+  [0.018, take("step_stone", 1 + ((i + 2) % 5)), -4],
+  [0, take("thud_light", 1 + (i % 5)), -2],
+  [0, rustle("cloth", 1 + (i % 4), 0.18, 200), -10],
+  [0.01, rustle("chainmail", 1 + (i % 2), 0.2, 900), -18]));
+recorded("roll", { takes: 4, loud: -12, pitch: 1.05 }, (i) => mix(SR,
+  [0, rustle("cloth_heavy", 1 + (i % 2), 0.3, 150)],
+  [0.12, rustle("cloth", 1 + i, 0.3, 200), -3],
+  [0.05, take("thud_light", 1 + i), -5],
+  [0.3, take("thud_light", 2 + i), -8],
+  [0.08, rustle("chainmail", 1 + (i % 2), 0.35, 900), -14]));
+recorded("body_drop", { takes: 6, loud: -8, pitch: 1.06 }, (i) => mix(SR,
+  [0, take("thud_heavy", 1 + (i % 5))],
+  [0.01, take("leather_drop", 1), -6],
+  [0.02, rustle("chainmail", 1 + (i % 2), 0.35, 900), -12],
+  [0.03, lowpass(take("plate_light", 1 + (i % 5)), 4000), -16]));
+
+// Voices: the soldiers grunt when struck (not every time: some takes are only their plates), cry out as they fall,
+// shout as they draw on seeing him; Yusuf has his own voice for his wounds, his death and the Second Wind's cry;
+// the Captain's roar is a man's lowered and rung through his helm.
+recorded("enemy_hurt", { takes: 8, loud: (i) => (i < 5 ? -11.5 : -17), pitch: 1.03 }, (i) => i < 5
+  ? mix(SR, [0.02, take("voice_soldier_grunt", [1, 2, 3, 5, 7][i])], [0, rustle("armour_light", 1, 0.3, 600), -10])
+  : mix(SR, [0, [rustle("armour_light", 1, 0.3, 600), rustle("chainmail", 1, 0.3, 900), rustle("metal_small", 2, 0.25, 900)][i - 5]]));
+recorded("enemy_death", { takes: 7, loud: -9, pitch: 1.03 }, (i) => mix(SR,
+  [0, take("voice_soldier_death", i + 1)],
+  [0.32, take("thud_heavy", 1 + (i % 5)), -4],
+  [0.34, rustle("chainmail", 1 + (i % 2), 0.4, 900), -11]));
+recorded("hero_hurt", { takes: 6, loud: -9, pitch: 1.03 }, (i) => mix(SR,
+  [0.004, take("voice_hero_grunt", i + 1)],
+  [0, rustle("chainmail", 1 + (i % 2), 0.3, 900), -11]));
+recorded("hero_death", { takes: 2, loud: -8, pitch: 1.0, volume: 0 }, (i) => mix(SR,
+  [0, take("voice_hero_death", i + 1)],
+  [0.45, take("thud_heavy", 2 + i), -3],
+  [0.47, rustle("chainmail", 1 + i, 0.4, 900), -9],
+  [0.5, lowpass(take("plate_light", 2 + i), 4000), -14]));
+recorded("enemy_alert", { takes: 6, loud: (i) => (i < 4 ? -12 : -14), pitch: 1.03 }, (i) => i < 4
+  ? mix(SR, [0, take("voice_soldier_shout", i + 1)], [0.12, highpass(take("sabre_draw", i + 1), 400), -6])
+  : highpass(take("sabre_draw", i + 1), 400));
+recorded("war_cry", { takes: 2, loud: -8, pitch: 1.0, volume: 0 }, (i) => reverb(mix(SR,
+  [0, take("voice_hero_cry", [1, 3][i])],
+  [0.1, thump(0.6, 80, 36, 0.2), -10]), { room: 0.8, wet: 0.22, tail: 0.6 }));
+recorded("boss_roar", { takes: 3, loud: -9, pitch: 1.0, volume: 0 }, (i) => reverb(
+  peak(lowpass(speed(take("voice_captain", i + 1), 0.84), 6000), 700, 1.2, 3), { room: 0.82, wet: 0.2, tail: 0.6 }));
+recorded("boss_fall", { takes: 1, loud: -7, pitch: 1.0, volume: 0 }, () => reverb(mix(SR,
+  [0, speed(take("thud_heavy", 1), 0.85)],
+  [0.01, take("plate_heavy", 1), -3],
+  [0.05, take("metal_fall", 1), -5],
+  [0.42, speed(take("thud_heavy", 3), 0.9), -4],
+  [0.45, take("ring_metal", 1), -10]), { room: 0.85, wet: 0.2, tail: 0.8 }));
+
+// Bows and arrows: the string's slap and the arrow's hiss leaving; an arrow into wood, and into a man.
+recorded("bow_release", { takes: 5, loud: -16, pitch: 1.04, most: 8, release: 0.006 }, (i) => mix(SR,
+  [0, take("bow_shoot", i + 1)],
+  [0.04, highpass(take("arrow_pass", 1 + (i % 6)), 600), -9]));
+recorded("arrow_thunk", { takes: 5, loud: -12, pitch: 1.05 }, (i) => mix(SR,
+  [0, take("wood_light", 1 + i)],
+  [0, speed(take("plank", 1 + i), 1.3), -4]));
+recorded("arrow_hit", { takes: 5, loud: -10, pitch: 1.05 }, (i) => mix(SR,
+  [0, take("punch_medium", 1 + i)],
+  [0, speed(take("wood_light", 1 + ((i + 2) % 5)), 1.4), -7],
+  [0.008, highpass(take("metal_small", 1 + (i % 3)), 1500), -15]));
+
+// Fire pots and flasks shatter (the clay or the glass recorded, the fire's rush made); the great gate's timbers on
+// their hinges; a trebuchet's stone striking a wall far off (rock breaking, slowed, and rubble, over the boom's
+// weight, dulled by the distance); a remedy unstopped and drunk, a lamp's latch, a page turned.
+function whoomph(seconds, seed, from = 2400, fall = 1800, rise = 14, decay = 3.2) {
+  const rush = whiteNoise(seed);
+  const b = render(seconds, SR, (t) => rush() * Math.min(1, t * rise) * Math.exp(-t * decay));
+  return biquad(b, "lowpass", (t) => from - t * fall, 0.7);
+}
+recorded("pot_burst", { takes: 3, loud: -11, pitch: 1.04 }, (i) => reverb(mix(SR,
+  [0, take("shatter", i + 1)],
+  [0.03, whoomph(0.8, 227 + i), -3],
+  [0, thump(0.4, 90, 40, 0.2), -10]), { room: 0.6, wet: 0.2, tail: 0.5 }));
+recorded("naft_burst", { takes: 2, loud: -10, pitch: 1.03 }, (i) => {
+  const out = mix(SR,
+    [0, take("glass_shatter", i + 1)],
+    [0.02, whoomph(1.4, 552 + i, 3000, 2000, 10, 2.2), -1],
+    [0, thump(0.8, 70, 30, 0.3), -6]);
+  const r = rng(553 + i);
+  for (let k = 0; k < 26; k++) {
+    layer(out, noiseBurst(0.02, 560 + k, { hp: 3000, env: (t) => percussive(t, 0.0005, 0.004) }), 0.2 + r() * 1.3,
+      -14 + r() * 4);
+  }
+  return reverb(out, { room: 0.7, wet: 0.25, tail: 0.6 });
 });
-sfx("sword_hit_heavy", () => {
-  const out = buffer(0.5, SR);
-  mixInto(out, thump(0.4, 110, 40, 0.13), 0, 1.0);
-  mixInto(out, drive(noiseBurst(0.2, 33, { lp: 3000, env: (t) => percussive(t, 0.001, 0.05) }), 4), 0, 0.8);
-  mixInto(out, noiseBurst(0.3, 34, { type: "brown", lp: 400, env: (t) => percussive(t, 0.005, 0.12) }), 0, 0.8);
-  mixInto(out, rattle(0.3, 6, 35, { freq: 3800 }), 0.01, 0.4);
-  return out;
+recorded("gate_open", { takes: 1, loud: -9, pitch: 1.0, volume: 0 }, () => {
+  const door = speed(take("door_open", 2), 0.62);
+  const opened = door.data.length / SR;
+  return reverb(mix(SR,
+    [0, door],
+    [0.2, speed(take("creak", 1), 0.55), -5],
+    [opened - 0.08, speed(take("wood_heavy", 2), 0.7), -1]), { room: 0.85, wet: 0.25, tail: 1.0 });
+});
+recorded("siege_impact", { takes: 2, loud: -8, pitch: 1.02, volume: 0 }, (i) => reverb(lowpass(mix(SR,
+  [0, speed(take("rock_break", i + 1), 0.6)],
+  [0.15, speed(take("rubble", 1 + i * 2), 0.7), -4],
+  [0.4, speed(take("rubble", 2 + i * 2), 0.75), -7],
+  [0.25, speed(take("debris", i + 1), 0.8), -6],
+  [0, thump(1.2, 62, 26, 0.45), -2]), 2400), { room: 0.92, wet: 0.35, tail: 1.2 }));
+recorded("heal", { takes: 1, loud: -11, pitch: 1.0, volume: 0 }, () => {
+  const out = mix(SR, [0, take("bottle", 1), -2]);
+  const r = buffer(1.1, SR);
+  mixInto(r, partials(0.5, SR, [[2093, 1, 0.12], [3320, 0.6, 0.09], [5010, 0.3, 0.06]]), 0, 0.4);
+  const source = whiteNoise(111);
+  const gurgle = biquad(render(0.7, SR, (t) => source() * (0.5 + 0.5 * Math.sin(TAU * 11 * t + Math.sin(TAU * 3 * t) * 2))
+    * adsr(t, 0.05, 0.1, 0.8, 0.2, 0.5)), "bandpass", (t) => 500 + 300 * Math.sin(TAU * 7 * t), 4);
+  mixInto(r, gurgle, 0.2, 0.9);
+  return mix(SR, [0, out], [0.18, r, -3]);
+});
+recorded("lamp_light", { takes: 1, loud: -11, pitch: 1.0, volume: 0 }, () => {
+  const out = buffer(2.0, SR);
+  mixInto(out, noiseBurst(0.4, 121, { lp: 900, env: (t) => adsr(t, 0.12, 0.1, 0.4, 0.15, 0.2) }), 0, 0.8);
+  mixInto(out, partials(1.8, SR, [[587.3, 0.8, 0.7], [880, 0.5, 0.55], [1174.7, 0.3, 0.4]], { attack: 0.01 }), 0.12, 0.5);
+  return mix(SR, [0, take("latch", 2), -4], [0.1, reverb(out, { room: 0.84, wet: 0.3, tail: 1.0 })]);
+});
+recorded("manuscript", { takes: 1, loud: -12, pitch: 1.0, volume: 0 }, () => {
+  const out = buffer(1.2, SR);
+  mixInto(out, partials(1.0, SR, [[1318.5, 0.6, 0.35], [1975.5, 0.4, 0.28], [2637, 0.25, 0.2]], { attack: 0.005 }), 0, 0.5);
+  return mix(SR, [0, highpass(take("book", 2), 300), -2], [0.2, reverb(out, { room: 0.8, wet: 0.25, tail: 0.8 }), -4]);
 });
 
-// --- Shields and guards ---------------------------------------------------------------------------
+if (!only || Object.keys(variation).length) {
+  const file = join(SFX, "variation.json");
+  const kept = existsSync(file) && only ? JSON.parse(readFileSync(file, "utf8")) : {};
+  writeFileSync(file, `${JSON.stringify({ ...kept, ...variation }, null, 1)}\n`);
+}
 
-sfx("shield_block", () => {
-  const out = buffer(0.6, SR);
-  mixInto(out, thump(0.3, 210, 150, 0.09), 0, 0.9);
-  mixInto(out, noiseBurst(0.1, 41, { lp: 1800, env: (t) => percussive(t, 0.001, 0.02) }), 0, 0.8);
-  mixInto(out, partials(0.6, SR, [[523, 0.8, 0.18], [1271, 0.6, 0.12], [2214, 0.45, 0.09], [3117, 0.3, 0.06]]), 0, 0.35);
-  return out;
-});
-sfx("parry", () => {
-  const ring = partials(1.4, SR, [[880, 0.8, 0.5], [1347, 0.9, 0.42], [2210, 0.7, 0.32], [2914, 0.6, 0.26],
-    [3870, 0.45, 0.2], [5100, 0.3, 0.14], [6620, 0.2, 0.09]]);
-  const out = buffer(1.4, SR);
-  mixInto(out, ring, 0, 0.75);
-  mixInto(out, noiseBurst(0.06, 51, { hp: 3200, env: (t) => percussive(t, 0.0005, 0.012) }), 0, 1.0);
-  mixInto(out, whoosh(0.3, 2500, 6500, 52, { q: 3 }), 0.01, 0.25);
-  mixInto(out, thump(0.2, 260, 180, 0.05), 0, 0.5);
-  return reverb(out, { room: 0.78, wet: 0.22, tail: 0.6 });
-});
-sfx("guard_break", () => {
-  const out = buffer(0.8, SR);
-  mixInto(out, drive(noiseBurst(0.25, 61, { lp: 4000, env: (t) => percussive(t, 0.0005, 0.05) }), 6), 0, 0.9);
-  mixInto(out, thump(0.5, 120, 45, 0.16), 0, 1.0);
-  mixInto(out, partials(0.8, SR, [[420, 0.8, 0.25], [987, 0.6, 0.18], [1620, 0.4, 0.12]]), 0.01, 0.45);
-  mixInto(out, rattle(0.5, 8, 62, { freq: 2600 }), 0.05, 0.4);
-  return out;
-});
-sfx("shield_bash", () => {
-  // A shield's boss slammed into a man: a hollow boom of wood, the clank of its iron rim, a shiver of mail.
-  const out = buffer(0.6, SR);
-  mixInto(out, thump(0.4, 170, 85, 0.1), 0, 1.0);
-  mixInto(out, partials(0.35, SR, [[196, 0.9, 0.12], [311, 0.6, 0.09], [467, 0.4, 0.06]], { attack: 0.002 }), 0, 0.6);
-  mixInto(out, partials(0.3, SR, [[1180, 0.6, 0.07], [2010, 0.45, 0.05], [3150, 0.3, 0.035]], { attack: 0.001 }),
-    0.004, 0.45);
-  mixInto(out, noiseBurst(0.08, 401, { lp: 1600, env: (t) => percussive(t, 0.001, 0.02) }), 0, 0.7);
-  mixInto(out, rattle(0.35, 8, 402, { freq: 2800 }), 0.02, 0.35);
-  return out;
-});
-sfx("kick_hit", () => {
-  // A boot driven into a man: a deep, soft thud, the slap of leather, his plates rattling as he goes back.
-  const out = buffer(0.55, SR);
-  mixInto(out, thump(0.4, 110, 40, 0.12), 0, 1.0);
-  mixInto(out, noiseBurst(0.06, 391, { bp: 1500, q: 0.9, env: (t) => percussive(t, 0.0008, 0.012) }), 0, 0.75);
-  mixInto(out, noiseBurst(0.2, 392, { lp: 420, env: (t) => percussive(t, 0.003, 0.06) }), 0, 0.8);
-  mixInto(out, rattle(0.45, 12, 393, { freq: 3100 }), 0.03, 0.45);
-  return out;
-});
-sfx("glance", () => {
-  // Steel skidding off a raised shield: a short, bright scrape and a thin ring as his arm is thrown back.
-  const out = buffer(0.5, SR);
-  const grit = whiteNoise(411);
-  let scrape = render(0.16, SR, (t) => grit() * percussive(t, 0.002, 0.05) * (0.7 + 0.3 * Math.sin(TAU * 60 * t)));
-  scrape = biquad(scrape, "bandpass", (t) => 3800 - t * 9000, 4);
-  mixInto(out, scrape, 0, 0.85);
-  mixInto(out, partials(0.4, SR, [[2489, 0.6, 0.12], [3729, 0.45, 0.09], [5590, 0.25, 0.05]], { attack: 0.002 }),
-    0.01, 0.4);
-  mixInto(out, thump(0.15, 230, 170, 0.03), 0, 0.4);
-  return reverb(out, { room: 0.5, wet: 0.15, tail: 0.2 });
-});
-sfx("pommel_crack", () => {
-  // A hilt driven into a face: a hard, dull crack, the knock of bone, a shiver of mail.
-  const out = buffer(0.45, SR);
-  mixInto(out, drive(noiseBurst(0.08, 63, { bp: 900, q: 1.6, env: (t) => percussive(t, 0.0006, 0.02) }), 4), 0, 1.0);
-  mixInto(out, thump(0.3, 170, 70, 0.07), 0, 0.9);
-  mixInto(out, rattle(0.3, 6, 64, { freq: 2900 }), 0.02, 0.35);
-  return out;
-});
-sfx("whirl", () => {
-  // The blade carried all the way round him: a long double sweep of air.
-  const out = buffer(0.62, SR);
-  mixInto(out, whoosh(0.32, 420, 2100, 65, { q: 1.3, attack: 0.06 }), 0, 0.8);
-  mixInto(out, whoosh(0.3, 600, 3000, 66, { q: 1.5, attack: 0.05 }), 0.2, 1.0);
-  return out;
-});
+// --- Made in code ------------------------------------------------------------------------------------
+// What no recording gives: the held cleave's strain, the Arts' moments, the warnings (each its own colour and
+// sound), breath, the heart, honour, the interface and the stings.
+
+
+
 sfx("charge_hum", () => {
   // The blow held back: breath drawn through the teeth and a low tremor of strain that rises with it.
   const seconds = 1.4;
@@ -271,105 +475,9 @@ sfx("close_call", () => {
   mixInto(out, partials(0.7, SR, [[1760, 0.5, 0.4], [2637, 0.35, 0.3], [3520, 0.2, 0.2]], { attack: 0.05 }), 0.08, 0.35);
   return reverb(out, { room: 0.7, wet: 0.35, tail: 0.5 });
 });
-sfx("charge_release", () => {
-  // The held blow let go: a deep tearing sweep of air with all his weight behind it.
-  const out = buffer(0.7, SR);
-  mixInto(out, whoosh(0.46, 220, 1500, 68, { q: 1.0, attack: 0.05 }), 0, 1.0);
-  mixInto(out, noiseBurst(0.5, 69, { type: "brown", lp: 240, env: (t) => percussive(t, 0.05, 0.16) }), 0, 1.0);
-  mixInto(out, thump(0.4, 90, 40, 0.14), 0.04, 0.6);
-  return out;
-});
 
 // --- The body ----------------------------------------------------------------------------------------
 
-sfx("footstep", () => {
-  const out = buffer(0.12, SR);
-  mixInto(out, noiseBurst(0.1, 71, { lp: 520, env: (t) => percussive(t, 0.003, 0.025) }), 0, 1.0);
-  mixInto(out, noiseBurst(0.06, 72, { hp: 2500, env: (t) => percussive(t, 0.001, 0.008) }), 0.004, 0.25);
-  return out;
-});
-sfx("jump", () => gain(whoosh(0.2, 380, 900, 73, { q: 0.9, attack: 0.03 }), 0.8));
-sfx("land", () => {
-  const out = buffer(0.25, SR);
-  mixInto(out, thump(0.2, 95, 45, 0.06), 0, 1.0);
-  mixInto(out, noiseBurst(0.15, 74, { lp: 900, env: (t) => percussive(t, 0.002, 0.04) }), 0, 0.8);
-  mixInto(out, noiseBurst(0.08, 75, { hp: 3000, env: (t) => percussive(t, 0.001, 0.01) }), 0.005, 0.2);
-  return out;
-});
-sfx("roll", () => {
-  const out = buffer(0.5, SR);
-  mixInto(out, whoosh(0.25, 300, 700, 76, { q: 0.8, attack: 0.05 }), 0, 0.8);
-  mixInto(out, whoosh(0.25, 260, 620, 77, { q: 0.8, attack: 0.05 }), 0.16, 0.6);
-  mixInto(out, noiseBurst(0.12, 78, { lp: 600, env: (t) => percussive(t, 0.003, 0.03) }), 0.36, 0.7);
-  mixInto(out, rattle(0.3, 5, 79, { freq: 5200 }), 0.08, 0.25);
-  return out;
-});
-sfx("hero_hurt", () => {
-  // Yusuf struck: a heavy hit to the body, the breath driven out of him (a short voiced grunt), his mail
-  // shaken. Nothing like a soldier's hurt, so it is always known which of them was hit.
-  const out = buffer(0.5, SR);
-  mixInto(out, thump(0.3, 140, 52, 0.09), 0, 1.0);
-  mixInto(out, drive(noiseBurst(0.08, 811, { bp: 1100, q: 1.2, env: (t) => percussive(t, 0.001, 0.02) }), 3), 0, 0.7);
-  const voice = oscillator((t) => 150 - 40 * Math.min(1, t / 0.16), "saw");
-  const grunt = drive(render(0.22, SR, (t) => voice(t, SR) * adsr(t, 0.012, 0.05, 0.6, 0.08, 0.12)), 2);
-  mixInto(out, biquad(grunt, "bandpass", 700, 2.4), 0.015, 0.55);
-  mixInto(out, biquad(grunt, "bandpass", 1220, 3), 0.015, 0.3);
-  mixInto(out, rattle(0.35, 9, 82, { freq: 5600 }), 0.01, 0.4);
-  return out;
-});
-sfx("hero_death", () => {
-  const out = buffer(1.4, SR);
-  mixInto(out, thump(0.5, 90, 38, 0.18), 0.35, 1.0);
-  mixInto(out, noiseBurst(0.4, 83, { lp: 700, env: (t) => percussive(t, 0.01, 0.1) }), 0.35, 0.8);
-  mixInto(out, rattle(0.6, 14, 84, { freq: 5000 }), 0.35, 0.5);
-  for (const [at, g] of [[0.7, 0.6], [0.86, 0.35], [0.95, 0.2]]) {
-    mixInto(out, partials(0.3, SR, [[1890, 1, 0.08], [2730, 0.7, 0.06], [4100, 0.4, 0.04]]), at, g);
-  }
-  return out;
-});
-sfx("enemy_hurt", () => {
-  const out = buffer(0.35, SR);
-  mixInto(out, thump(0.25, 110, 48, 0.07), 0, 1.0);
-  mixInto(out, noiseBurst(0.12, 85, { bp: 600, q: 1, env: (t) => percussive(t, 0.002, 0.035) }), 0, 0.6);
-  mixInto(out, rattle(0.25, 7, 86, { freq: 3300 }), 0.005, 0.5);
-  return out;
-});
-sfx("enemy_death", () => {
-  const out = buffer(1.2, SR);
-  mixInto(out, thump(0.5, 85, 36, 0.16), 0.3, 1.0);
-  mixInto(out, noiseBurst(0.35, 87, { lp: 650, env: (t) => percussive(t, 0.01, 0.09) }), 0.3, 0.7);
-  mixInto(out, rattle(0.6, 16, 88, { freq: 3000 }), 0.3, 0.55);
-  mixInto(out, partials(0.35, SR, [[1560, 1, 0.09], [2390, 0.6, 0.06]]), 0.62, 0.4);
-  return out;
-});
-sfx("sever", () => {
-  // A blade through flesh and bone: a wet tearing slice, a dull crack, the spatter after.
-  const out = buffer(0.9, SR);
-  const wet = whiteNoise(95);
-  let tear = render(0.32, SR, (t) => wet() * percussive(t, 0.004, 0.09) * (0.7 + 0.3 * Math.sin(TAU * 38 * t)));
-  tear = biquad(tear, "bandpass", (t) => 1900 - t * 2600, 1.4);
-  mixInto(out, tear, 0, 1.0);
-  mixInto(out, drive(noiseBurst(0.08, 96, { bp: 1300, q: 2.2, env: (t) => percussive(t, 0.0008, 0.018) }), 5), 0.035, 0.85);
-  mixInto(out, thump(0.3, 95, 42, 0.09), 0.03, 0.9);
-  for (const [at, g, seed] of [[0.2, 0.35, 97], [0.28, 0.25, 98], [0.4, 0.2, 99], [0.47, 0.14, 100]]) {
-    mixInto(out, noiseBurst(0.05, seed, { bp: 2400, q: 3, env: (t) => percussive(t, 0.001, 0.012) }), at, g);
-  }
-  return out;
-});
-sfx("pot_burst", () => {
-  // A clay pot shatters and the naphtha goes up: a crack, a scatter of shards, a rushing whoomph.
-  const out = buffer(1.0, SR);
-  const shard = whiteNoise(211);
-  let crack = render(0.12, SR, (t) => shard() * Math.exp(-t * 40));
-  crack = biquad(crack, "highpass", () => 1800, 0.8);
-  mixInto(out, crack, 0, 0.8);
-  const rush = whiteNoise(227);
-  let whoomph = render(0.8, SR, (t) => rush() * Math.min(1, t * 14) * Math.exp(-t * 3.2));
-  whoomph = biquad(whoomph, "lowpass", (t) => 2400 - t * 1800, 0.7);
-  mixInto(out, whoomph, 0.03, 0.9);
-  mixInto(out, thump(0.4, 90, 40, 0.2), 0, 0.6);
-  return reverb(out, { room: 0.6, wet: 0.25, tail: 0.5 });
-});
 sfx("finisher", () => {
   // The street holds its breath: a low boom, a drawn swell of steel, and silence.
   const out = buffer(1.2, SR);
@@ -380,22 +488,6 @@ sfx("finisher", () => {
   mixInto(out, swell, 0.05, 0.7);
   mixInto(out, partials(0.9, SR, [[220, 0.8, 0.5], [331, 0.5, 0.4], [495, 0.3, 0.3]], { attack: 0.3 }), 0.1, 0.35);
   return reverb(out, { room: 0.8, wet: 0.35, tail: 0.8 });
-});
-sfx("body_drop", () => {
-  // A body or a piece of one hitting the street: a heavy soft thud and a clatter of mail.
-  const out = buffer(0.5, SR);
-  mixInto(out, thump(0.35, 70, 34, 0.12), 0, 1.0);
-  mixInto(out, noiseBurst(0.18, 101, { lp: 500, env: (t) => percussive(t, 0.004, 0.05) }), 0, 0.8);
-  mixInto(out, rattle(0.3, 9, 102, { freq: 3400 }), 0.01, 0.35);
-  return out;
-});
-sfx("enemy_alert", () => {
-  // A blade drawn from its scabbard: a rising metallic scrape ending in a click.
-  const source = whiteNoise(91);
-  let b = render(0.38, SR, (t) => source() * adsr(t, 0.04, 0.1, 0.7, 0.08, 0.3));
-  b = biquad(b, "bandpass", (t) => 2600 + t * 9000, 6);
-  mixInto(b, partials(0.12, SR, [[3200, 1, 0.03], [5300, 0.5, 0.02]]), 0.3, 0.5);
-  return b;
 });
 sfx("enemy_tell", () => {
   const b = partials(0.45, SR, [[3520, 0.7, 0.16], [5280, 0.5, 0.12], [7040, 0.3, 0.08]], { attack: 0.02 });
@@ -483,46 +575,11 @@ sfx("wounds_open", () => {
   mixInto(out, thump(0.3, 100, 45, 0.08), 0.02, 0.7);
   return reverb(out, { room: 0.5, wet: 0.15, tail: 0.3 });
 });
-sfx("naft_burst", () => {
-  // Greek fire: the flask cracks and the naphtha goes up in a great rushing whoomph, then crackles.
-  const out = buffer(1.9, SR);
-  const shard = whiteNoise(551);
-  let crack = render(0.1, SR, (t) => shard() * Math.exp(-t * 45));
-  crack = biquad(crack, "highpass", () => 1600, 0.8);
-  mixInto(out, crack, 0, 0.8);
-  const rush = whiteNoise(552);
-  let whoomph = render(1.4, SR, (t) => rush() * Math.min(1, t * 10) * Math.exp(-t * 2.2));
-  whoomph = biquad(whoomph, "lowpass", (t) => 3000 - t * 2000, 0.7);
-  mixInto(out, whoomph, 0.02, 1.0);
-  mixInto(out, thump(0.8, 70, 30, 0.3), 0, 0.9);
-  const r = rng(553);
-  for (let i = 0; i < 26; i++) {
-    mixInto(out, noiseBurst(0.02, 560 + i, { hp: 3000, env: (t) => percussive(t, 0.0005, 0.004) }), 0.2 + r() * 1.3,
-      0.2 + r() * 0.3);
-  }
-  return reverb(out, { room: 0.7, wet: 0.3, tail: 0.6 });
-});
 sfx("ignite", () => {
   // A man catching fire: a rushing whoosh of flame taking hold.
   const rush = whiteNoise(571);
   let b = render(0.6, SR, (t) => rush() * Math.min(1, t * 12) * Math.exp(-t * 4));
   return biquad(b, "bandpass", (t) => 900 + t * 1200, 0.9);
-});
-sfx("war_cry", () => {
-  // The guard's cry: a great shout from the chest, rising and held, over a drum.
-  const seconds = 1.1;
-  const voice = oscillator((t) => 150 + 30 * Math.min(1, t / 0.2) - 25 * Math.max(0, (t - 0.6) / 0.5)
-    + 5 * Math.sin(TAU * 7 * t), "saw");
-  const env = (t) => adsr(t, 0.05, 0.15, 0.9, 0.35, seconds - 0.35);
-  let v = render(seconds, SR, (t) => voice(t, SR) * env(t));
-  v = drive(v, 2.6);
-  const out = buffer(seconds + 0.5, SR);
-  mixInto(out, biquad(v, "bandpass", 730, 2.4), 0, 1.0);
-  mixInto(out, biquad(v, "bandpass", 1180, 3), 0, 0.6);
-  mixInto(out, biquad(v, "lowpass", 380, 0.8), 0, 0.5);
-  mixInto(out, noiseBurst(seconds, 581, { type: "pink", bp: 1100, q: 0.9, env }), 0, 0.3);
-  mixInto(out, thump(0.6, 80, 36, 0.2), 0.12, 0.8);
-  return reverb(out, { room: 0.8, wet: 0.3, tail: 0.6 });
 });
 sfx("judgment_gong", () => {
   // Each judgment: a deep bronze gong.
@@ -535,110 +592,16 @@ sfx("judgment_gong", () => {
 
 // --- The captain ------------------------------------------------------------------------------------
 
-sfx("boss_roar", () => {
-  // A great shout through a masked helm: a low voice driven hard through two formants, with breath.
-  const seconds = 1.6;
-  const voice = oscillator((t) => 96 - 22 * Math.min(1, t / seconds) + 4 * Math.sin(TAU * 6 * t), "saw");
-  const env = (t) => adsr(t, 0.12, 0.2, 0.85, 0.5, seconds - 0.5);
-  let v = render(seconds, SR, (t) => voice(t, SR) * env(t));
-  v = drive(v, 3);
-  const out = buffer(seconds + 0.4, SR);
-  mixInto(out, biquad(v, "bandpass", 620, 2.2), 0, 1.0);
-  mixInto(out, biquad(v, "bandpass", 1150, 3), 0, 0.6);
-  mixInto(out, biquad(v, "lowpass", 300, 0.8), 0, 0.7);
-  mixInto(out, noiseBurst(seconds, 181, { type: "pink", bp: 900, q: 0.8, env }), 0, 0.35);
-  return reverb(out, { room: 0.82, wet: 0.3, tail: 0.6 });
-});
-sfx("boss_fall", () => {
-  // Armour and a big man meeting the stones: a heavy thud, a crash of plates, a shield ringing out.
-  const out = buffer(2.2, SR);
-  mixInto(out, thump(0.8, 70, 30, 0.28), 0, 1.0);
-  mixInto(out, noiseBurst(0.6, 191, { type: "brown", lp: 500, env: (t) => percussive(t, 0.004, 0.2) }), 0, 0.9);
-  mixInto(out, rattle(0.9, 24, 192, { freq: 3000 }), 0.02, 0.6);
-  mixInto(out, partials(1.6, SR, [[392, 0.8, 0.6], [851, 0.6, 0.45], [1403, 0.4, 0.3], [2049, 0.3, 0.2]]), 0.45, 0.35);
-  mixInto(out, thump(0.5, 90, 40, 0.15), 0.42, 0.6);
-  return reverb(out, { room: 0.85, wet: 0.3, tail: 0.8 });
-});
 
-// --- Bows and arrows -----------------------------------------------------------------------------
-
-sfx("bow_release", () => {
-  const out = buffer(0.5, SR);
-  mixInto(out, pluck(0.45, SR, 98, { seed: 101, brightness: 0.9, decay: 0.985, body: false }), 0, 0.9);
-  mixInto(out, noiseBurst(0.03, 102, { hp: 2000, env: (t) => percussive(t, 0.0005, 0.006) }), 0, 0.8);
-  mixInto(out, whoosh(0.2, 1500, 3500, 103, { q: 2 }), 0.02, 0.35);
-  return out;
-});
-sfx("arrow_thunk", () => {
-  const out = buffer(0.35, SR);
-  mixInto(out, thump(0.2, 240, 170, 0.04), 0, 0.9);
-  mixInto(out, pluck(0.3, SR, 330, { seed: 104, brightness: 0.4, decay: 0.97, body: false }), 0.005, 0.4);
-  return out;
-});
-sfx("arrow_hit", () => {
-  const out = buffer(0.2, SR);
-  mixInto(out, thump(0.15, 160, 70, 0.04), 0, 1.0);
-  mixInto(out, noiseBurst(0.08, 105, { bp: 1200, q: 1.4, env: (t) => percussive(t, 0.001, 0.02) }), 0, 0.6);
-  return out;
-});
 
 // --- Remedies, lamps, pages, gates --------------------------------------------------------------
 
-sfx("heal", () => {
-  const out = buffer(1.1, SR);
-  mixInto(out, partials(0.5, SR, [[2093, 1, 0.12], [3320, 0.6, 0.09], [5010, 0.3, 0.06]]), 0, 0.4);
-  const source = whiteNoise(111);
-  const gurgle = biquad(render(0.7, SR, (t) => source() * (0.5 + 0.5 * Math.sin(TAU * 11 * t + Math.sin(TAU * 3 * t) * 2))
-    * adsr(t, 0.05, 0.1, 0.8, 0.2, 0.5)), "bandpass", (t) => 500 + 300 * Math.sin(TAU * 7 * t), 4);
-  mixInto(out, gurgle, 0.2, 0.9);
-  return out;
-});
-sfx("lamp_light", () => {
-  const out = buffer(2.0, SR);
-  mixInto(out, noiseBurst(0.4, 121, { lp: 900, env: (t) => adsr(t, 0.12, 0.1, 0.4, 0.15, 0.2) }), 0, 0.8);
-  mixInto(out, partials(1.8, SR, [[587.3, 0.8, 0.7], [880, 0.5, 0.55], [1174.7, 0.3, 0.4]], { attack: 0.01 }), 0.12, 0.5);
-  return reverb(out, { room: 0.84, wet: 0.3, tail: 1.0 });
-});
 sfx("checkpoint_rest", () => {
   const out = buffer(2.6, SR);
   [146.83, 174.61, 220, 293.66].forEach((f, i) => {
     mixInto(out, pluck(2.2, SR, f, { seed: 130 + i, brightness: 0.5, decay: 0.998 }), i * 0.12, 0.6);
   });
   return reverb(out, { room: 0.86, wet: 0.35, tail: 1.2 });
-});
-sfx("manuscript", () => {
-  const out = buffer(1.4, SR);
-  const r = rng(141);
-  const rustle = render(0.4, SR, () => 0);
-  const source = whiteNoise(142);
-  for (let i = 0; i < rustle.data.length; i++) {
-    const t = i / SR;
-    rustle.data[i] = source() * (0.4 + 0.6 * Math.abs(Math.sin(TAU * 9 * t + r() * 0.2))) * adsr(t, 0.02, 0.1, 0.6, 0.1, 0.3);
-  }
-  mixInto(out, biquad(rustle, "highpass", 1800, 0.7), 0, 0.6);
-  mixInto(out, partials(1.0, SR, [[1318.5, 0.6, 0.35], [1975.5, 0.4, 0.28], [2637, 0.25, 0.2]], { attack: 0.005 }), 0.15, 0.5);
-  return reverb(out, { room: 0.8, wet: 0.25, tail: 0.8 });
-});
-sfx("gate_open", () => {
-  // Heavy timber on iron hinges: a slow creak and a deep thud.
-  const r = rng(151);
-  const saw = oscillator((t) => 70 + 14 * Math.sin(TAU * 0.9 * t) + (r() - 0.5) * 9, "saw");
-  let creak = render(1.4, SR, (t) => saw(t, SR) * adsr(t, 0.2, 0.3, 0.7, 0.3, 1.1));
-  creak = biquad(creak, "bandpass", 900, 3);
-  const out = buffer(2.0, SR);
-  mixInto(out, creak, 0, 0.8);
-  mixInto(out, thump(0.6, 80, 34, 0.2), 1.35, 1.0);
-  return reverb(out, { room: 0.8, wet: 0.25, tail: 0.8 });
-});
-sfx("siege_impact", () => {
-  // A trebuchet's stone striking a wall far off (the opening's siege): a deep boom, masonry giving way and
-  // a long rumble of falling rubble, softened by distance.
-  const out = buffer(3.2, SR);
-  mixInto(out, thump(1.2, 62, 26, 0.45), 0, 1.0);
-  mixInto(out, noiseBurst(0.9, 231, { type: "brown", lp: 380, env: (t) => percussive(t, 0.006, 0.32) }), 0, 1.0);
-  mixInto(out, noiseBurst(2.4, 232, { type: "pink", lp: 900, env: (t) => adsr(t, 0.12, 0.4, 0.5, 0.6, 1.6) }), 0.08, 0.35);
-  mixInto(out, rattle(1.8, 30, 233, { freq: 1300 }), 0.1, 0.3);
-  return reverb(biquad(out, "lowpass", 2400, 0.7), { room: 0.92, wet: 0.4, tail: 1.2 });
 });
 sfx("ambush_sting", () => {
   const out = buffer(2.4, SR);

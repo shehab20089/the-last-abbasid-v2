@@ -1138,19 +1138,43 @@ function rampart(c, x0, width, ground, seed, ctx) {
   const top = ground - height;
   brickWall(c, x0, top, width, height, { base: 3, seed, light: 1, soot: ctx.soot(x0, width), sootFrom: "bottom", brickW: 9,
     relief, joint: 0.4, calm: true });
+  // Raised and mended in campaigns: old stretches on their plinth of great stones, a stretch mended in paler brick.
+  wallCampaigns(c, relief, x0, width, top, ground, seed, seed % 2 === 0
+    ? [[0.04, 0.27, "old"], [0.52, 0.64, "pale"], [0.78, 0.97, "old"]]
+    : [[0.1, 0.24, "pale"], [0.38, 0.6, "old"], [0.84, 0.96, "pale"]]);
   crenels(c, x0, x0 + width - 1, top, P.brick, 3, { size: 10, gap: 7, relief, front: 0, broken: 0.28, seed });
   scarWall(c, x0, width, top, ground, height, seed, relief, ctx);
-  // Blind arcade along the foot, sunk into the wall's thickness.
-  for (let ax = x0 + 30; ax < x0 + width - 30; ax += 64) {
-    archway(c, ax, ground - 10, 44, 112, { ring: 3, ringTone: 4, interior: (x, y) =>
-      pick(P.brick, 2 + ((y >> 2) % 2 === 0 && (x >> 3) % 2 === 0 ? 1 : 0)) });
-    archRelief(relief, ax, ground - 10, 44, 112, { ring: 3, ringOut: 1, recess: (x, y) =>
-      -6 + ((y >> 2) % 2 === 0 && (x >> 3) % 2 === 0 ? 0.4 : 0) });
+  // The engines' great scars, and the parapet knocked down above the worst of them.
+  const r = rng(seed + 61);
+  const struck = x0 + Math.round(width * (0.3 + (r() - 0.5) * 0.06));
+  greatScar(c, relief, struck, top + Math.round(height * 0.3), 18 + Math.floor(r() * 6), top, seed + 1);
+  greatScar(c, relief, x0 + Math.round(width * (0.72 + (r() - 0.5) * 0.06)), top + Math.round(height * 0.22),
+    13 + Math.floor(r() * 5), top, seed + 2);
+  parapetGap(c, relief, struck + Math.round((r() - 0.5) * 20), 40 + Math.floor(r() * 14), top, 22 + Math.floor(r() * 10),
+    seed + 3);
+  // Towers standing well out from the wall, not one after another alike: here whole, there with a timber hoarding hung
+  // from its parapet, there its top shattered by the engines.
+  const towers = [];
+  for (let tx = x0 + 60 + Math.floor(r() * 24), k = 0; tx < x0 + width - 50; tx += 190 + Math.floor(r() * 60), k++) {
+    const kind = ["whole", "hoarding", "shattered"][(k + seed) % 3];
+    towers.push({ tx, tw: kind === "hoarding" ? 60 : kind === "shattered" ? 50 : 54, kind });
   }
-  // Towers standing well out from the wall: they shade it beside them, and the fires light their faces.
-  for (let tx = x0 + 70; tx < x0 + width - 50; tx += 220) {
-    const tw = 54;
-    for (let y = top - 22; y < ground; y++) {
+  // The arcade at the wall's foot in bays between buttress piers, laid in the stretches between the towers (no arch
+  // half hidden behind one), each arch as the siege left it.
+  const plans = [[["open", "blocked"], ["broken"], ["open", "shored"]], [["postern"], ["blocked", "open"]],
+    [["broken", "open"], ["open"], ["blocked"]], [["shored", "open"], ["postern"]]];
+  let from = x0;
+  [...towers, { tx: x0 + width, tw: 0 }].forEach(({ tx, tw }, i) => {
+    if (tx - from > 70) {
+      arcadeBays(c, relief, from, tx, ground, seed + i * 13, { archW: 44, archH: 112, pierW: 24,
+        pierTop: top + Math.round(height * 0.5),
+        plan: plans[(i + seed) % plans.length] });
+    }
+    from = tx + tw;
+  });
+  for (const { tx, tw, kind } of towers) {
+    const ttop = top - (kind === "hoarding" ? 30 : 22);
+    for (let y = ttop; y < ground; y++) {
       for (let x = tx; x < tx + tw; x++) {
         const u = (x - tx) / tw;
         const shade = u < 0.2 ? 1 : u > 0.75 ? -1 : 0;
@@ -1160,10 +1184,37 @@ function rampart(c, x0, width, ground, seed, ctx) {
         relief.set(x, y, 12 + (joint ? -0.7 : 0) - ((y & 3) === 0 ? 0.5 : 0));
       }
     }
-    crenels(c, tx, tx + tw - 1, top - 22, P.brick, 4, { size: 7, gap: 5, relief, front: 12 });
+    if (kind === "shattered") {
+      // Its top broken off in a jagged line, no merlon left on it, the break dark.
+      for (let x = tx; x < tx + tw; x++) {
+        const bite = Math.round(8 + fbm(x * 0.22, 7, { seed: seed + tx }) * 22 + Math.sin(((x - tx) / tw) * Math.PI) * 10);
+        for (let y = ttop - 2; y < ttop + bite; y++) c.set(x, y, [0, 0, 0, 0]);
+        for (let y = ttop + bite; y < ttop + bite + 3; y++) {
+          c.set(x, y, mix(c.get(x, y), P.night[0], 0.55 - (y - ttop - bite) * 0.15));
+          relief.set(x, y, 10);
+        }
+      }
+    } else {
+      crenels(c, tx, tx + tw - 1, ttop, P.brick, 4, { size: 7, gap: 5, relief, front: 12, broken: kind === "whole" ? 0.12 : 0,
+        seed: seed + tx });
+    }
+    if (kind === "hoarding") {
+      // A timber hoarding hung out from the parapet on beams: a covered gallery to drop stones from, its pent roof
+      // shading the tower's face under it.
+      const hy = ttop + 8;
+      fillShape(c, tx - 6, hy - 5, tx + tw + 5, hy - 1, (px, py) => px >= tx - 6 + (hy - 1 - py) && px <= tx + tw + 5 - (hy - 1 - py),
+        (x, y) => pick(P.wood, y === hy - 5 ? 3 : 1));
+      relief.rect(tx - 6, hy - 5, tx + tw + 5, hy - 1, 19);
+      fillShape(c, tx - 5, hy, tx + tw + 4, hy + 13, () => true, (x, y) => pick(P.wood, (x % 4 === 0 ? 1 : 2) + (y === hy ? 1 : 0)));
+      relief.rect(tx - 5, hy, tx + tw + 4, hy + 13, 18);
+      for (let bx = tx - 4; bx < tx + tw + 3; bx += 8) {
+        fillShape(c, bx, hy + 14, bx + 2, hy + 19, () => true, (x) => pick(P.wood, x === bx ? 3 : 1));
+        relief.rect(bx, hy + 14, bx + 2, hy + 19, 16);
+      }
+    }
     for (let y = top + 20; y < ground - 60; y += 70) {
-      fillShape(c, tx + 26, y, tx + 27, y + 14, () => true, P.night[0]);
-      relief.rect(tx + 26, y, tx + 27, y + 14, 3);
+      fillShape(c, tx + Math.floor(tw / 2) - 1, y, tx + Math.floor(tw / 2), y + 14, () => true, P.night[0]);
+      relief.rect(tx + Math.floor(tw / 2) - 1, y, tx + Math.floor(tw / 2), y + 14, 3);
     }
   }
   // A stair climbing the wall's face to the walk, each step standing out from it.
@@ -1241,6 +1292,265 @@ export function scarWall(c, x0, width, top, ground, height, seed, relief, ctx) {
   for (let k = 0; k < Math.max(1, Math.floor(width / 420)); k++) {
     soot(c, x0 + 20 + Math.floor(r() * Math.max(1, width - 80)), 0, ground - 20, 90 + Math.floor(r() * 50), seed + 900 + k, 46);
   }
+}
+
+/**
+ * The wall raised and mended in campaigns, so it reads as built over years rather than as one sheet of brick:
+ * stretches in an older, larger and darker brick standing on a tall plinth of great cut stones, a stretch mended in
+ * a paler, smaller brick, each ending at a toothed seam where its courses meet the wall's. `bands` are authored
+ * stretches as [from, to, "old" | "pale"] in fractions of the width.
+ */
+export function wallCampaigns(c, relief, x0, width, top, ground, seed, bands) {
+  for (const [from, to, kind] of bands) {
+    const bx = x0 + Math.round(width * from);
+    const bw = Math.round(width * (to - from));
+    if (bw < 24) continue;
+    // What the wall was at the seams, so every other course can be given back to it (the band's edges are toothed).
+    const left = c.crop(bx, top, 6, ground - top);
+    const leftDepth = relief.copy(bx, top, 6, ground - top);
+    const right = c.crop(bx + bw - 6, top, 6, ground - top);
+    const rightDepth = relief.copy(bx + bw - 6, top, 6, ground - top);
+    if (kind === "old") {
+      brickWall(c, bx, top + 4, bw, ground - top - 4, { base: 2, seed: seed + bx, brickW: 12, brickH: 5, light: 1,
+        relief, joint: 0.5, calm: true, damage: 0.08 });
+      // The plinth of the first builders: great dressed stones, their top course chamfered.
+      const plinth = 40 + Math.round(hash2(bx, 3, seed) * 16);
+      brickWall(c, bx, ground - plinth, bw, plinth, { ramp: P.stone, base: 3, seed: seed + bx + 1, brickW: 22, brickH: 9,
+        relief, depth: 1.5, damage: 0.08, joint: 0.7 });
+      fillShape(c, bx, ground - plinth - 2, bx + bw - 1, ground - plinth - 1, () => true, (x, y) =>
+        pick(P.stone, y === ground - plinth - 2 ? 5 : 4));
+      relief.rect(bx, ground - plinth - 2, bx + bw - 1, ground - plinth - 1, 2.2);
+    } else {
+      brickWall(c, bx, top + 4, bw, ground - top - 4, { base: 4, seed: seed + bx, brickW: 7, brickH: 4, light: 1,
+        relief, joint: 0.35, calm: true, damage: 0.02 });
+    }
+    for (let y = top + 4; y < ground; y++) {
+      if (Math.floor((y - top) / 5) % 2 === 0) continue;
+      for (let x = 0; x < 4; x++) {
+        c.set(bx + x, y, left.get(x, y - top));
+        relief.set(bx + x, y, leftDepth(x, y - top));
+        c.set(bx + bw - 4 + x, y, right.get(x + 2, y - top));
+        relief.set(bx + bw - 4 + x, y, rightDepth(x + 2, y - top));
+      }
+    }
+  }
+}
+
+/**
+ * A great scar where the engines' stones struck again and again: the face knocked off to the rubble core, a ring of
+ * bricks knocked loose about it, long cracks running out (one up to the parapet), and the fallen bricks lying on the
+ * courses under it.
+ */
+export function greatScar(c, relief, cx, cy, rad, top, seed) {
+  const r = rng(seed + 5);
+  for (let y = cy - rad - 6; y <= cy + rad + 6; y++) {
+    for (let x = cx - rad - 6; x <= cx + rad + 6; x++) {
+      if (c.alpha(x, y) === 0) continue;
+      const d = Math.hypot(x - cx, (y - cy) * 1.2) / rad + (fbm(x * 0.18, y * 0.18, { seed }) - 0.5) * 0.45;
+      if (d < 1) {
+        // The core: broken brick and mortar, sunk behind the face, lumps of it catching the light.
+        const lump = hash2(x >> 1, y >> 1, seed) < 0.32;
+        c.set(x, y, pick(P.brick, d < 0.45 ? 1 : lump ? 3 : 2));
+        relief.set(x, y, -5 * (1 - d * d) + (lump ? 0.9 : 0));
+      } else if (d < 1.45 && hash2(x >> 3, y >> 2, seed + 1) < 0.42) {
+        // Bricks knocked loose about it: their hollows.
+        c.set(x, y, P.brick[1]);
+        relief.set(x, y, -1.8);
+      }
+    }
+  }
+  const cracks = [[-Math.PI / 2 + (r() - 0.5) * 0.4, Math.max(20, cy - top - rad)], [r() * Math.PI * 0.4, rad * 2.2],
+    [Math.PI - r() * Math.PI * 0.4, rad * 2], [Math.PI / 2 + (r() - 0.5) * 0.6, rad * 1.4]];
+  for (const [angle, len] of cracks) {
+    let x = cx + Math.cos(angle) * rad;
+    let y = cy + Math.sin(angle) * rad;
+    for (let s = 0; s < len; s++) {
+      x += Math.cos(angle + (fbm(s * 0.21, angle, { seed }) - 0.5) * 1.4);
+      y += Math.sin(angle + (fbm(s * 0.21, angle, { seed }) - 0.5) * 1.4);
+      const px = Math.round(x);
+      const py = Math.round(y);
+      if (c.alpha(px, py) === 0) break;
+      c.set(px, py, P.night[0]);
+      relief.set(px, py, -2);
+      if (s % 3 === 0) {
+        c.set(px + 1, py, P.brick[1]);
+        relief.set(px + 1, py, -1);
+      }
+    }
+  }
+  // The fallen bricks below, lodged on the courses.
+  for (let k = 0; k < 14; k++) {
+    const fx = cx + Math.round((r() - 0.5) * rad * 2.4);
+    const fy = cy + rad + 4 + Math.round(r() * rad * 1.6);
+    if (c.alpha(fx, fy) === 0) continue;
+    fillShape(c, fx, fy, fx + 2, fy + 1, () => true, (x, y) => pick(P.brick, y === fy ? 4 : 2));
+    relief.rect(fx, fy, fx + 2, fy + 1, 1.2);
+  }
+}
+
+/** A breach in the parapet: the top knocked down in a ragged notch (the city shows through it), its broken edge
+ * dark, loose brick hanging at its lips. */
+export function parapetGap(c, relief, cx, w, top, depth, seed) {
+  const half = w / 2;
+  for (let x = Math.round(cx - half); x <= Math.round(cx + half); x++) {
+    const u = (x - cx) / half;
+    const bite = Math.round(depth * (1 - Math.abs(u) ** 1.6) * (0.82 + fbm(x * 0.35, 1, { seed }) * 0.36));
+    for (let y = top - 30; y < top + bite; y++) c.set(x, y, [0, 0, 0, 0]);
+    for (let y = top + bite; y < top + bite + 3; y++) {
+      if (c.alpha(x, y) === 0) continue;
+      c.set(x, y, mix(c.get(x, y), P.night[0], 0.55 - (y - top - bite) * 0.15));
+      relief.set(x, y, relief.get(x, y) - 1.5);
+    }
+  }
+}
+
+/** A buttress pier standing out from the wall: brick with dressed-stone quoins, stepping back twice as it rises (each
+ * set-off a sloped stone cap). Its faces stand well proud, so the light rakes them and they shade the wall beside. */
+export function pier(c, relief, x, w, top, ground, seed) {
+  const H = ground - top;
+  const stages = [[ground, ground - Math.round(H * 0.4), 0, 17], [ground - Math.round(H * 0.4) - 3,
+    ground - Math.round(H * 0.74), 3, 13], [ground - Math.round(H * 0.74) - 3, top, 6, 9]];
+  for (const [y1, y0, inset, depth] of stages) {
+    const l = x + inset;
+    const rgt = x + w - 1 - inset;
+    for (let y = y0; y <= y1; y++) {
+      for (let px = l; px <= rgt; px++) {
+        const quoin = px - l < 4 || rgt - px < 4;
+        const course = Math.floor((y - y0) / 8);
+        const long = (course + (px - l < 4 ? 0 : 1)) % 2 === 0;
+        let colour;
+        if (quoin && (long || px - l < 2 || rgt - px < 2)) {
+          colour = pick(P.stone, (y - y0) % 8 === 0 ? 2 : 3 + (hash2(course, px > l + 4 ? 1 : 0, seed) < 0.3 ? 1 : 0));
+        } else {
+          const brick = ((y >> 2) + ((px >> 3) & 1)) % 2;
+          colour = pick(P.brick, 3 + ((y & 3) === 0 || (brick && px % 8 === 0) ? -1 : 0));
+        }
+        c.set(px, y, colour);
+        relief.set(px, y, depth - (px === l || px === rgt ? 0.8 : 0) - ((y & 3) === 0 ? 0.4 : 0));
+      }
+    }
+    // The set-off above this stage: a sloped stone cap stepping back to the next.
+    if (y0 > top + 4) {
+      for (let s = 0; s < 3; s++) {
+        fillShape(c, l + s, y0 - 3 + s, rgt - s, y0 - 3 + s, () => true, pick(P.stone, s === 0 ? 5 : 4));
+        relief.rect(l + s, y0 - 3 + s, rgt - s, y0 - 3 + s, depth - 1 - s);
+      }
+    }
+  }
+}
+
+/** A blind arch of the wall's arcade as the siege left it: "open" (its recess of brick), "blocked" (walled up in
+ * rough stone, a slit left in it), "broken" (its crown fallen, a dark hole, its rubble spilt at its foot), "shored"
+ * (propped with timber against the fall) or "postern" (a small door, its leaf studded with iron). */
+export function arcadeArch(c, relief, cx, ground, w, h, kind, seed, { rubble = true, foot = 10 } = {}) {
+  const base = ground - foot;
+  const half = w / 2;
+  const rise = half * 0.9;
+  const spring = base - h + rise;
+  const brickRecess = (x, y) => pick(P.brick, 2 + ((y >> 2) % 2 === 0 && (x >> 3) % 2 === 0 ? 1 : 0));
+  if (kind === "blocked") {
+    archway(c, cx, base, w, h, { ring: 3, ringTone: 4, interior: (x, y) => {
+      const n = fbm(x * 0.22, y * 0.3, { seed });
+      const stone = Math.floor(n * 6 + hash2(x >> 2, y >> 1, seed) * 2);
+      return (y + (x >> 2)) % 5 === 0 ? P.stone[1] : pick(P.stone, 2 + (stone % 3 === 0 ? 1 : 0));
+    } });
+    archRelief(relief, cx, base, w, h, { ring: 3, ringOut: 1, recess: (x, y) => -1.6 + ((y + (x >> 2)) % 5 === 0 ? -0.6 : 0) });
+    fillShape(c, cx - 1, spring + 6, cx, spring + 22, () => true, P.night[0]);
+    relief.rect(cx - 1, spring + 6, cx, spring + 22, -6);
+    return;
+  }
+  if (kind === "postern") {
+    archway(c, cx, base, w, h, { ring: 3, ringRamp: P.stone, ringTone: 4, interior: (x, y) => {
+      const plank = Math.floor((x - cx + half) / 5);
+      const stud = (x - cx + half) % 5 === 2 && (y - (base - h)) % 12 === 6;
+      return stud ? P.iron[3] : pick(P.wood, 2 + (plank % 2 === 0 ? 0 : -1) + (y > base - 6 ? -1 : 0));
+    } });
+    archRelief(relief, cx, base, w, h, { ring: 3, ringOut: 1.5, recess: (x, y) => -5 +
+      ((x - cx + half) % 5 === 2 && (y - (base - h)) % 12 === 6 ? 0.6 : 0) });
+    fillShape(c, cx - half - 4, base + 1, cx + half + 4, base + 3, () => true, (x, y) => pick(P.stone, y === base + 1 ? 5 : 3));
+    relief.rect(cx - half - 4, base + 1, cx + half + 4, base + 3, 1.5);
+    return;
+  }
+  const open = kind === "open";
+  archway(c, cx, base, w, h, { ring: 3, ringTone: 4, interior: open ? brickRecess : (x, y) =>
+    (y < spring ? P.night[0] : y > base - 8 ? P.night[1] : P.night[0]) });
+  archRelief(relief, cx, base, w, h, { ring: 3, ringOut: 1, recess: open ? (x, y) =>
+    -6 + ((y >> 2) % 2 === 0 && (x >> 3) % 2 === 0 ? 0.4 : 0) : -12 });
+  if (kind === "broken") {
+    // The crown has fallen: the ring broken away above the springing, a ragged hole into the wall's dark.
+    for (let y = Math.round(base - h - 8); y < spring + 4; y++) {
+      for (let x = Math.round(cx - half - 6); x <= Math.round(cx + half + 6); x++) {
+        const d = Math.hypot((x - cx) / (half + 2), (y - (base - h + 2)) / (rise * 0.75)) +
+          (fbm(x * 0.3, y * 0.3, { seed }) - 0.5) * 0.5;
+        if (d > 1) continue;
+        c.set(x, y, d > 0.82 ? P.brick[1] : P.night[0]);
+        relief.set(x, y, d > 0.82 ? -2 : -12);
+      }
+    }
+    if (rubble) {
+      // Its fallen stones in a heap at its foot, the top of the heap catching the light.
+      for (let x = Math.round(cx - half * 1.3); x <= Math.round(cx + half * 1.3); x++) {
+        const u = (x - cx) / (half * 1.3);
+        const heap = Math.round(14 * (1 - u * u) * (0.75 + fbm(x * 0.25, 4, { seed }) * 0.5));
+        for (let y = base - heap; y <= base; y++) {
+          const lump = hash2(x >> 1, y >> 1, seed + 2);
+          c.set(x, y, y === base - heap ? pick(P.stone, 4) : pick(lump < 0.5 ? P.stone : P.brick, 2 + (lump < 0.2 ? 1 : 0)));
+          relief.set(x, y, 4 + (base - y) * 0.2 + (lump < 0.2 ? 1 : 0));
+        }
+      }
+    }
+  }
+  if (kind === "shored") {
+    // Timbers wedged against the fall: a post each side under a lintel, two braces crossing between.
+    const posts = [Math.round(cx - half + 4), Math.round(cx + half - 6)];
+    for (const px of posts) {
+      fillShape(c, px, spring - 2, px + 2, base, () => true, (x) => pick(P.wood, x === px ? 3 : 1));
+      relief.rect(px, spring - 2, px + 2, base, 4);
+    }
+    beam(c, posts[0] - 2, spring - 6, posts[1] - posts[0] + 7, 4, { tone: 3, seed });
+    relief.rect(posts[0] - 2, spring - 6, posts[1] + 4, spring - 3, 5);
+    for (const dir of [1, -1]) {
+      const from = dir > 0 ? posts[0] + 2 : posts[1];
+      const span = posts[1] - posts[0] - 2;
+      for (let s = 0; s < span; s++) {
+        const y = Math.round(spring - 2 + (s / span) * (base - spring - 4));
+        fillShape(c, from + dir * s, y, from + dir * s, y + 1, () => true, P.wood[2]);
+        relief.rect(from + dir * s, y, from + dir * s, y + 1, 3.5);
+      }
+    }
+  }
+}
+
+/**
+ * The wall's arcade in bays rather than one arch after another its whole length: buttress piers standing out from it,
+ * and between them one to three arches, each as the siege left it (arcadeArch). `plan` is the authored order of the
+ * bays, each a list of arch kinds, taken in turn; `pierTop` is where the piers end. Returns the arches laid.
+ */
+export function arcadeBays(c, relief, x0, x1, ground, seed, { archW = 44, archH = 112, plan, pierW = 16, pierTop,
+  rubble = true, foot = 10 } = {}) {
+  const r = rng(seed + 41);
+  const arches = [];
+  const piers = [];
+  let x = x0 + 10;
+  let bay = 0;
+  while (x + pierW + 12 + archW + 8 < x1) {
+    piers.push(x);
+    x += pierW + 9 + Math.floor(r() * 5);
+    const kinds = plan[bay % plan.length];
+    bay += 1;
+    for (const kind of kinds) {
+      const w = kind === "postern" ? Math.round(archW * 0.62) : archW + Math.floor(r() * 7) - 3;
+      const h = kind === "postern" ? Math.round(archH * 0.68) : archH + Math.floor(r() * 11) - 5;
+      const cx = x + Math.ceil(w / 2) + 3;
+      if (cx + w / 2 + 6 > x1) break;
+      arches.push({ cx, w, h, kind });
+      x = cx + Math.ceil(w / 2) + 3 + 12 + Math.floor(r() * 7);
+    }
+    x += 3;
+  }
+  for (const a of arches) arcadeArch(c, relief, a.cx, ground, a.w, a.h, a.kind, seed + a.cx, { rubble, foot });
+  for (const px of piers) pier(c, relief, px, pierW, pierTop, ground, seed + px);
+  return arches;
 }
 
 /** Siege scaffolding of lashed poles and planks leaning on a wall. */

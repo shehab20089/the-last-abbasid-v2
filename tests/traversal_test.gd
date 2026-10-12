@@ -61,6 +61,10 @@ func _run() -> void:
 			break
 		if game.state != AbbasidGame.State.PLAYING:
 			continue
+		# A staged scene plays out (the hero held still): he waits for it, as a player would.
+		if game.scenes.playing != &"":
+			stuck = 0
+			continue
 		hero = game.hero
 		hero.input.enabled = false
 		hero.max_health = 100000.0

@@ -147,6 +147,7 @@ node(LEVEL.id.split("_").map((w) => w[0].toUpperCase() + w.slice(1)).join(""), "
   bounds: `Rect2(0, 0, ${W}, ${H})`,
   music: sn(LEVEL.music),
   ambience: sn(LEVEL.ambience),
+  acoustics: sn(LEVEL.acoustics ?? "street"),
   next_level: str(LEVEL.next),
   exit_card: sn(LEVEL.exitCard ?? ""),
   exit_title: str(LEVEL.exitTitle ?? ""),
@@ -158,6 +159,11 @@ node(LEVEL.id.split("_").map((w) => w[0].toUpperCase() + w.slice(1)).join(""), "
   // What is to be found here, for the Journal (pages, guardsmen's tokens, captives under a sabre).
   manuscript_ids: `PackedStringArray(${(LEVEL.manuscripts ?? []).map((m) => str(m.id)).join(", ")})`,
   relic_ids: `PackedStringArray(${(LEVEL.relics ?? []).filter((r) => !r.keepsake).map((r) => str(r.id)).join(", ")})`,
+  // The staged scenes (StagedScenes): each a list of steps, a verb and its words.
+  scenes: `Dictionary[StringName, PackedStringArray]({${Object.entries(LEVEL.scenes ?? {}).map(([id, steps]) =>
+    `${sn(id)}: PackedStringArray(${steps.map((step) => str(step)).join(", ")})`).join(", ")}})`,
+  // Who walks out of the way out when it opens at the end: "flag|kind".
+  procession: `PackedStringArray(${(LEVEL.procession ?? []).map(([flag, kind]) => str(`${flag}|${kind}`)).join(", ")})`,
   captive_ids: `PackedStringArray(${(LEVEL.captives ?? []).filter((c) => c.id).map((c) => str(c.id)).join(", ")})`,
 });
 
@@ -318,13 +324,13 @@ for (const relic of LEVEL.relics ?? []) {
   node(relic.id, null, "Interactables", { position: v2(xOf(relic.col), yOf(relic.row ?? STREET)),
     relic_id: sn(relic.id), keepsake: sn(relic.keepsake ?? "") }, resource("PackedScene", "res://features/levels/relic.tscn"));
 }
-/** Each kind's [idle, talk, waiting] animations. */
+/** Each kind's [idle, talk, waiting] animations (a person may name their own: `anims`). */
 const NPC_ANIM = {
   scholar: ["idle", "talk"], guard: ["sit", "talk"], mother: ["crouch", "talk"], salim: ["stand", "talk", "kneel"],
   librarian: ["idle", "talk"], copyist: ["crouch", "talk"],
 };
 for (const npc of LEVEL.npcs) {
-  const [idle, talk, waiting] = NPC_ANIM[npc.kind];
+  const [idle, talk, waiting] = npc.anims ?? NPC_ANIM[npc.kind];
   node(npc.id, null, "Interactables", {
     position: v2(xOf(npc.col), yOf(npc.row ?? STREET)), npc_id: sn(npc.id), dialogue: sn(npc.dialogue),
     requires: sn(npc.requires ?? ""), gives_flag: sn(npc.gives ?? ""), gives_notice: str(npc.notice ?? ""),
@@ -365,6 +371,28 @@ if (LEVEL.captives?.length) {
   });
 }
 
+// The figures of the staged scenes (features/story/actor.gd): out of sight until their scene shows them, unless
+// they are there from the start; a soldier among them as the fighters are lit, the townsfolk as the people are.
+const SOLDIER_KINDS = ["swordsman", "spearman", "archer", "captain", "veteran", "maceman", "shieldbearer", "engineer",
+  "skirmisher", "axeman"];
+if (LEVEL.actors?.length) {
+  node("Actors", "Node2D", ".");
+  for (const a of LEVEL.actors) {
+    const soldier = SOLDIER_KINDS.includes(a.kind);
+    const dir = soldier ? `assets/enemies/${a.kind}` : `assets/npcs/${a.kind}`;
+    const gore = `${dir}/${a.kind}_gore.tres`;
+    node(a.id, "AnimatedSprite2D", "Actors", {
+      position: v2(xOf(a.col), yOf(a.row ?? STREET)),
+      sprite_frames: resource("SpriteFrames", `res://${dir}/${a.kind}_frames.tres`),
+      animation: sn(a.rest ?? "idle"), script: resource("Script", "res://features/story/actor.gd"),
+      actor_id: sn(a.id), rest: sn(a.rest ?? "idle"), face: (a.face ?? 1).toFixed(1), unseen: a.hidden ? "true" : "false",
+      dead_flag: sn(a.dead ?? ""), gone_flag: sn(a.gone ?? ""),
+      lift: soldier ? "1.22" : "1.12", rim: soldier ? "0.25" : "0.2",
+      ...(!soldier && existsSync(join(ROOT, gore)) ? { gore_set: resource("Resource", `res://${gore}`) } : {}),
+    });
+  }
+}
+
 // Soldiers.
 node("Enemies", "Node2D", ".");
 const soldierNames = LEVEL.enemies.map((e, i) => `${e.kind}_${i}`);
@@ -394,7 +422,7 @@ for (const t of LEVEL.triggers) {
     position: v2(t.from * T + width / 2, yOf(STREET) - above - height / 2), script: resource("Script", "res://features/levels/story_trigger.gd"),
     trigger_id: str(t.id), hint: str(t.hint ?? ""), event: sn(t.event ?? ""), group: sn(t.group ?? ""),
     line: str(t.line ?? ""), speaker: str(t.speaker ?? ""), teaches: sn(t.teaches ?? ""),
-    requires_flag: sn(t.requiresFlag ?? ""),
+    requires_flag: sn(t.requiresFlag ?? ""), scene: sn(t.scene ?? ""),
   });
   node("Shape", "CollisionShape2D", `Triggers/${t.id}`, {
     shape: subResource("RectangleShape2D", { size: v2(width, height) }),
@@ -407,7 +435,7 @@ if (LEVEL.arena) {
   node("Arena", "Node2D", ".", {
     script: resource("Script", "res://features/levels/boss_arena.gd"),
     camera_bounds: `Rect2(${a.from * T}, 0, ${(a.to - a.from) * T}, ${H})`,
-    boss_path: `NodePath("../Enemies/${soldierNames[a.boss]}")`,
+    boss_path: `NodePath("../Enemies/${soldierNames[a.boss]}")`, scene_open_flag: sn(a.sceneOpenFlag ?? ""),
   });
   node("Barriers", "Node2D", "Arena");
   a.barriers.forEach((col, i) => {
@@ -421,6 +449,22 @@ if (LEVEL.arena) {
     node("Barricade", "Sprite2D", `${path}/Flames`, { texture: resource("Texture2D", `${SHARED}/props/cart.png`),
       position: v2(0, 1), offset: v2(0, -18), flip_h: i % 2 ? "true" : "false" });
   });
+  // A scene's barricade: fire across the square from the start, until its scene lets it burn down.
+  if (a.sceneBarriers?.length) {
+    node("SceneBarriers", "Node2D", "Arena");
+    a.sceneBarriers.forEach((col, i) => {
+      const path = `Arena/SceneBarriers/Fire${i}`;
+      node(`Fire${i}`, "StaticBody2D", "Arena/SceneBarriers", { position: v2(xOf(col), yOf(STREET)) });
+      node("Shape", "CollisionShape2D", path, { position: v2(0, -160),
+        shape: subResource("RectangleShape2D", { size: v2(16, 320) }) });
+      node("Flames", "Node2D", path);
+      fire(`${path}/Flames`, "FireA", -14, 0, "large", 0.4 + i * 0.3);
+      fire(`${path}/Flames`, "FireB", 10, 0, "large", 0.1 + i * 0.3);
+      fire(`${path}/Flames`, "FireC", -2, 0, "medium", 0.7 + i * 0.3);
+      node("Barricade", "Sprite2D", `${path}/Flames`, { texture: resource("Texture2D", `${SHARED}/props/beam_charred.png`),
+        position: v2(0, 1), offset: v2(0, -10) });
+    });
+  }
 }
 
 node("PlayerStart", "Marker2D", ".", { position: v2(xOf(LEVEL.start[0]), yOf(LEVEL.start[1])) });
@@ -429,8 +473,11 @@ node("PlayerStart", "Marker2D", ".", { position: v2(xOf(LEVEL.start[0]), yOf(LEV
 node("Foreground", "Parallax2D", ".", { scroll_scale: v2(1.25, 1) });
 const fgWidth = Math.ceil(1.25 * (W - 640) + 640);
 for (let x = 120, i = 0; x < fgWidth; x += 520 + ((i * 137) % 260), i++) {
-  node(`Rubble${i}`, "Sprite2D", "Foreground", { texture: resource("Texture2D", `${SHARED}/props/fg_rubble.png`),
-    centered: "false", position: v2(x, H - 40), flip_h: i % 2 ? "true" : "false" });
+  // Three heaps in turn, so the same one does not pass twice running.
+  node(`Rubble${i}`, "Sprite2D", "Foreground", { texture: resource("Texture2D",
+    `${SHARED}/props/fg_rubble${["", "_b", "_c"][i % 3]}.png`),
+    // Its whole shape in the view, its top still well below the street the fighters stand on.
+    centered: "false", position: v2(x, H - 50), flip_h: i % 2 ? "true" : "false" });
   // Hanging cloth framing the top of the view, only where there are no painted skies to hang in.
   if (i % 4 === 2 && !LEVEL.painting) {
     node(`Cloth${i}`, "Sprite2D", "Foreground", { texture: resource("Texture2D", `${SHARED}/props/fg_cloth.png`),

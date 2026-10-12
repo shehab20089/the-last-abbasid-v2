@@ -3062,6 +3062,60 @@
   "wounds": null,
   "file": "warrior_heal.png"
  },
+ "kneel": {
+  "name": "kneel",
+  "frames": 4,
+  "width": 96,
+  "height": 128,
+  "fps": 3,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   {
+    "hilt": [
+     7.6,
+     -23.7
+    ],
+    "tip": [
+     6,
+     3.1
+    ]
+   },
+   {
+    "hilt": [
+     7.6,
+     -23.7
+    ],
+    "tip": [
+     6,
+     3.1
+    ]
+   },
+   {
+    "hilt": [
+     7.6,
+     -23.7
+    ],
+    "tip": [
+     6,
+     3.1
+    ]
+   },
+   {
+    "hilt": [
+     7.6,
+     -23.7
+    ],
+    "tip": [
+     6,
+     3.1
+    ]
+   }
+  ],
+  "allRound": false,
+  "wounds": null,
+  "file": "warrior_kneel.png"
+ },
  "air_attack": {
   "name": "air_attack",
   "frames": 6,

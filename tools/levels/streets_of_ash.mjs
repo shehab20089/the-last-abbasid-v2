@@ -25,6 +25,8 @@ export const LEVEL = {
   title: "LEVEL_STREETS_OF_ASH",
   music: "streets",
   ambience: "fire_wind",
+  // Narrow burnt alleys, walled close on both sides.
+  acoustics: "alleys",
   next: "res://features/levels/scholars_quarter/scholars_quarter.tscn",
   exitCard: "streets_end",
   exitTitle: "LEVEL_SCHOLARS_QUARTER",
@@ -109,7 +111,8 @@ export const LEVEL = {
   // ruins' upper floor.
   relics: [
     { id: "token_balcony", col: 72, row: 25 },
-    { id: "bronze_seal", col: 138, row: 19, keepsake: "bronze_seal" },
+    // On the second collapse, where Yusuf first sees the column: a guardsman of the Caliph who fell there.
+    { id: "token_collapse", col: 138, row: 19 },
     { id: "token_ruins", col: 239, row: 22 },
   ],
   manuscripts: [
@@ -134,8 +137,10 @@ export const LEVEL = {
     { kind: "shieldbearer", col: 118, face: -1, patrol: 30 },
     // On the second collapse.
     { kind: "archer", col: 140, row: 19, face: -1, activity: "watch" },
-    // Among the mosque's dead, a Kipchak outrider: he will not stand for a heavy blow (quick cuts take him).
-    { kind: "skirmisher", col: 158, face: -1, patrol: 0 },
+    // The column's rear guard, out of sight until it passes the mosque: a swordsman and a Kipchak outrider (he will
+    // not stand for a heavy blow; quick cuts take him), told to kill Yusuf while Toqto drives the captives on.
+    { kind: "swordsman", col: 151, face: 1, dormant: true, hidden: true, group: "column_guard", patrol: 0 },
+    { kind: "skirmisher", col: 154, face: 1, dormant: true, hidden: true, group: "column_guard", patrol: 0 },
     // The square: a headsman at his work as the captors spring.
     { kind: "swordsman", col: 190, face: 1, activity: "execute", victim: "square_captive", delay: 5.0, patrol: 0 },
     { kind: "swordsman", col: 197, face: -1, dormant: true, group: "captors" },
@@ -153,6 +158,34 @@ export const LEVEL = {
       gives: "salim_freed", notice: "NOTICE_SALIM", teaches: "knives", keepsake: "saffron_sash" },
   ],
   // Others roped beside Salim run once the captors fall; two kneel under a headsman's sabre.
+  // The column that took Hamid (docs/story_plan.md): Toqto at its head, a spearman, three roped captives. Out of
+  // sight until its scene; gone once it has played.
+  actors: [
+    { id: "column_toqto", kind: "captain", col: 161, face: 1, hidden: true, gone: "scene_column" },
+    { id: "column_spear", kind: "spearman", col: 159.5, face: 1, hidden: true, gone: "scene_column" },
+    { id: "column_man", kind: "refugee_man", col: 158, face: 1, rest: "stand_bound", hidden: true, gone: "scene_column" },
+    { id: "column_hamid", kind: "guard", col: 156.5, face: 1, rest: "stand_bound", hidden: true, gone: "scene_column" },
+    { id: "column_woman", kind: "refugee_woman", col: 155, face: 1, rest: "stand_bound", hidden: true, gone: "scene_column" },
+  ],
+  // From the top of the second collapse Yusuf sees the column below; at his call it halts, Hamid shouts and is
+  // struck down, Toqto turns and leaves his rear guard to kill Yusuf, and the column is driven on into the smoke
+  // before the great fire, gone before Yusuf is free to follow (it is never there to be walked up to).
+  scenes: {
+    column: [
+      "quiet", "hold", "bars on", "show column_toqto column_spear column_man column_hamid column_woman",
+      "reveal column_guard", "look 162 1.4",
+      "walk column_toqto 190 22 walk 0.5", "walk column_spear 188 22 walk 0.52", "walk column_man 186 22 walk_bound 0.92",
+      "walk column_hamid 184 22 walk_bound 0.92", "walk column_woman 182 22 walk_bound 0.92",
+      "wait 1.6", "face hero right", "say SPEAKER_YUSUF COLUMN_YUSUF",
+      "stop column_toqto", "stop column_spear", "stop column_man", "stop column_hamid", "stop column_woman",
+      "face column_hamid hero", "act column_hamid shout", "say SPEAKER_GUARD COLUMN_HAMID",
+      "sound kick_hit column_hamid", "act column_hamid kneel", "shake 1.5", "wait 0.5",
+      "face column_toqto hero", "say SPEAKER_TOQTO COLUMN_TOQTO",
+      "go column_toqto 170 36 walk 0.82", "go column_spear 169.5 36 walk 0.86", "go column_man 169 36 walk_bound 1.5",
+      "go column_hamid 168.5 36 walk_bound 1.5", "go column_woman 168 36 walk_bound 1.5",
+      "until column_hamid", "until column_woman", "look hero 0.8", "bars off", "release", "wake column_guard",
+    ],
+  },
   captives: [
     { kind: "refugee_woman", col: 201, face: 1, freedBy: "captors_cleared", run: -1 },
     { kind: "refugee_man", col: 208, face: -1, freedBy: "captors_cleared", run: -1 },
@@ -160,7 +193,7 @@ export const LEVEL = {
     { id: "square_captive", kind: "refugee_man", col: 192, face: 1, run: -1, thanks: "SAVED_3" },
   ],
   triggers: [
-    { id: "streets_start", from: 6, to: 9, line: "STREETS_1" },
+    { id: "streets_start", from: 6, to: 9, speaker: "SPEAKER_YUSUF", line: "STREETS_1" },
     // A master's technique: taught only on a journey after the chapter has been finished.
     { id: "lesson_rising_cleave", from: 15, to: 18, teaches: "rising_cleave", requiresFlag: "master" },
     { id: "hint_rooftops", from: 40, to: 45, hint: "HINT_ROOFTOPS" },
@@ -170,7 +203,9 @@ export const LEVEL = {
     { id: "lesson_running_slash", from: 126, to: 129, teaches: "running_slash" },
     { id: "hint_skirmisher", from: 145, to: 147, hint: "HINT_SKIRMISHER" },
     { id: "mosque_dead", from: 149, to: 151, speaker: "SPEAKER_YUSUF", line: "MOSQUE_DEAD_1" },
-    { id: "captors", from: 186, to: 188, event: "ambush", group: "captors", line: "CAPTORS_1" },
+    { id: "captors", from: 186, to: 188, event: "ambush", group: "captors", speaker: "SPEAKER_YUSUF", line: "CAPTORS_1" },
+    // Over the second collapse, the column below: Toqto, his escort, and Hamid roped among the captives.
+    { id: "column", from: 143, to: 146, event: "scene", scene: "column", group: "column_guard" },
   ],
   exit: { name: "QuarterGate", col: 270, art: "quarter_gate", prompt: "PROMPT_OPEN_QUARTER_GATE",
     lockedPrompt: "PROMPT_QUARTER_GATE", lockedLine: "GATE_LOCKED_2", requires: "salim_freed",

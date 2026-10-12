@@ -35,6 +35,7 @@ func _run() -> void:
 	for tell: int in 4:
 		game.save.set_flag(StringName("seen_warning_%d" % tell))
 	await _first_street()
+	await _sound()
 	await _speak_with_guard()
 	await _execution()
 	await _light_lamp()
@@ -59,6 +60,8 @@ func _run() -> void:
 	await _library()
 	await _gate_lines()
 	await _warning_card()
+	await _column_scene()
+	await _boss_pause()
 	await _last_gate()
 	await _cinematics()
 	print("SESSION_TEST_COMPLETE passed=%d failed=%d" % [passed, failed])
@@ -300,11 +303,13 @@ func _planks() -> void:
 	hero.velocity = Vector2.ZERO
 	await frames(30)
 	check(hero.is_on_floor() and hero.global_position.y < street - 40.0, "he stands on the planks")
+	check(hero.on_boards(), "on the boards his steps sound of wood")
 	hero.input.down_held = true
 	hero.input.press(&"jump")
 	await frames(40)
 	hero.input.down_held = false
 	check(hero.is_on_floor() and absf(hero.global_position.y - street) < 2.0, "down and jump drop him to the street")
+	check(not hero.on_boards(), "and on the street, of stone")
 
 
 func _ambush() -> void:
@@ -408,7 +413,84 @@ func _river_gate() -> void:
 			break
 	check(game.state == AbbasidGame.State.PLAYING and game.level.level_id == &"streets_of_ash",
 		"the story goes on into the Streets of Ash")
+	check(_rings_as(&"alleys"), "and its narrow alleys ring closer than the market's street (%.2f)" % _reverb_room())
 	check(game.objective() == "OBJ_FOLLOW_CAPTIVES", "a new objective is set")
+
+
+## The sound (docs/sound_design.md): the blows have several recorded takes; every cue a blow, an Art or the street
+## asks for exists; a blow is heard where it lands; the interface plays dry; the market rings as an open street; the
+## music bows out for a moment and comes back.
+func _sound() -> void:
+	print("the sound")
+	var sounds: SoundDirector = game.sounds
+	var fewest: int = 99
+	for cue: StringName in [&"sword_hit", &"parry", &"shield_block", &"sword_swing", &"footstep", &"enemy_hurt"]:
+		var takes: AudioStreamRandomizer = null
+		if sounds.cues.has(cue):
+			var stream: AudioStream = sounds.cues[cue]
+			takes = stream as AudioStreamRandomizer
+		fewest = mini(fewest, takes.streams_count if takes != null else 0)
+	check(fewest >= 6, "a blow, a parry, a block, a swing, a step and a soldier struck each have many takes (%d or more)" % fewest)
+	var missing: Array[String] = []
+	for folder: String in ["res://features/warrior/definitions", "res://features/enemies/definitions", "res://features/warrior/arts"]:
+		for file: String in DirAccess.get_files_at(folder):
+			if not file.ends_with(".tres"):
+				continue
+			var resource: Resource = load(folder.path_join(file))
+			var attack: AttackDefinition = resource as AttackDefinition
+			if attack != null:
+				for cue: StringName in [attack.swing_cue, attack.hit_cue]:
+					if cue != &"" and not sounds.has_cue(cue):
+						missing.append("%s: %s" % [file, cue])
+			var art: ArtDefinition = resource as ArtDefinition
+			if art != null and art.cue != &"" and not sounds.has_cue(art.cue):
+				missing.append("%s: %s" % [file, art.cue])
+	for cue: StringName in [&"footstep_wood", &"enemy_alert", &"enemy_death", &"boss_roar", &"boss_fall", &"body_drop", &"sever"]:
+		if not sounds.has_cue(cue):
+			missing.append(String(cue))
+	check(missing.is_empty(), "every sound a blow, an Art or the street asks for is there %s" % [missing])
+	check(_rings_as(&"street"), "the market rings as an open street (%.2f)" % _reverb_room())
+	var at: Vector2 = game.hero.global_position + Vector2(180.0, -40.0)
+	sounds.play_at(&"sword_hit", at)
+	var placed: bool = false
+	for child: Node in sounds.get_children():
+		var voice: AudioStreamPlayer2D = child as AudioStreamPlayer2D
+		if voice != null and voice.global_position == at and voice.stream == sounds.cues[&"sword_hit"]:
+			placed = true
+	check(placed, "a blow is heard where it lands, off to his right")
+	var menu: AudioStreamPlayer = sounds.get_node_or_null(^"ui_move") as AudioStreamPlayer
+	check(menu != null and menu.bus == &"Interface", "the interface plays dry, on its own bus")
+	game.music.duck(-9.0, 0.1, 0.1)
+	await _seconds(0.15)
+	var ducked: float = _music_duck()
+	await _seconds(0.5)
+	check(ducked < -6.0 and _music_duck() > -0.5, "the music bows out for a moment and comes back (%.1f dB, then %.1f)" % [ducked, _music_duck()])
+
+
+## The room size of the reverb the world's sounds ring in now.
+func _reverb_room() -> float:
+	var bus: int = AudioServer.get_bus_index(&"Effects")
+	for i: int in AudioServer.get_bus_effect_count(bus):
+		var reverb: AudioEffectReverb = AudioServer.get_bus_effect(bus, i) as AudioEffectReverb
+		if reverb != null:
+			return reverb.room_size
+	return -1.0
+
+
+func _rings_as(space: StringName) -> bool:
+	var settings: Array = SoundDirector.SPACES[space]
+	var room: float = settings[0]
+	return absf(_reverb_room() - room) < 0.001
+
+
+## How far the music is lowered now (dB).
+func _music_duck() -> float:
+	var bus: int = AudioServer.get_bus_index(&"Music")
+	for i: int in AudioServer.get_bus_effect_count(bus):
+		var amplify: AudioEffectAmplify = AudioServer.get_bus_effect(bus, i) as AudioEffectAmplify
+		if amplify != null:
+			return amplify.volume_db
+	return 0.0
 
 
 func _check_save() -> void:
@@ -1025,6 +1107,171 @@ func _library() -> void:
 	check(keeper.ready_to_speak, "the keeper will speak now")
 
 
+## The boss fight waits on a pause as everything else does. Paused in his roar, the hero is not let go before him;
+## paused as he is beaten, nothing of his end plays behind the menu (no step in, no stroke, no fall, the square still
+## shut, his bar still up, the objective as it was, his slow time kept and the menu not slowed). Resumed, it all plays,
+## the slow time first and his execution through its frames. A fight left on a street behind never touches the next.
+## The column in the Streets of Ash (docs/story_plan.md): from the top of the second collapse Yusuf sees it, held
+## still under the bars. Played through, the column is gone into the smoke before he is let go (never there to be
+## walked up to); played again and skipped by holding the interact button, what the scene does is still done: the
+## column gone on, its rear guard turned on him, the scene not to be played again.
+func _column_scene() -> void:
+	print("the column")
+	var flags: Array[StringName] = game.save.flags.duplicate()
+	await _column_at_hand()
+	var marching: Actor = game.level.actor(&"column_hamid")
+	for i: int in 300:
+		await physics_frame
+		if game.scenes.playing == &"column" and game.hero.state == Warrior.State.CINEMATIC:
+			break
+	for i: int in 2400:
+		await physics_frame
+		if game.hero.state != Warrior.State.CINEMATIC:
+			break
+	check(game.scenes.playing == &"" and game.hero.state != Warrior.State.CINEMATIC and not is_instance_valid(marching)
+		and game.level.actor(&"column_toqto") == null,
+		"played through, the column is gone into the smoke before he is let go")
+	game.save.flags = flags.duplicate()
+	await _column_at_hand()
+	var hamid: Actor = game.level.actor(&"column_hamid")
+	var toqto: Actor = game.level.actor(&"column_toqto")
+	check(hamid != null and toqto != null and not hamid.visible and not toqto.visible, "the column is out of sight")
+	game.hero.global_position = Vector2(144.0 * 16.0, 19.0 * 16.0 - 8.0)
+	game.hero.velocity = Vector2.ZERO
+	for i: int in 300:
+		await physics_frame
+		if game.scenes.playing == &"column":
+			break
+	await frames(40)
+	check(game.scenes.playing == &"column" and hamid.visible and toqto.visible and hamid.moving()
+		and game.hero.state == Warrior.State.CINEMATIC, "from the collapse he sees the column, Hamid roped among the captives")
+	Input.action_press(&"interact")
+	for i: int in 200:
+		await physics_frame
+		if game.scenes.playing == &"":
+			break
+	Input.action_release(&"interact")
+	await frames(4)
+	var guard: Array[MongolSoldier] = []
+	for soldier: MongolSoldier in game.level.soldiers():
+		if soldier.get_meta(&"group", &"") == &"column_guard":
+			guard.append(soldier)
+	check(game.scenes.playing == &"" and not is_instance_valid(hamid) and not is_instance_valid(toqto)
+		and game.save.has_flag(&"scene_column") and game.hero.state != Warrior.State.CINEMATIC,
+		"held, the button skips it: the column is gone on and he is let go")
+	check(guard.size() == 2 and guard[0].visible and guard[1].visible and not (guard[0].get_node(^"Brain") as EnemyBrain).dormant,
+		"and its rear guard turns on him")
+	game.save.flags = flags
+
+
+## The Streets of Ash entered afresh, the collapse's archer gone (a scene waits for a quiet moment), the hero on the
+## collapse above the street where the column will pass.
+func _column_at_hand() -> void:
+	game._enter_level("res://features/levels/streets_of_ash/streets_of_ash.tscn", &"", false, false)
+	await frames(20)
+	game.hero.input.enabled = false
+	for soldier: MongolSoldier in game.level.soldiers():
+		if absf(soldier.global_position.x - 144.0 * 16.0) < 200.0 and soldier.get_meta(&"group", &"") != &"column_guard":
+			soldier.queue_free()
+	await frames(2)
+	game.hero.global_position = Vector2(144.0 * 16.0, 19.0 * 16.0 - 8.0)
+	game.hero.velocity = Vector2.ZERO
+
+
+func _boss_pause() -> void:
+	print("the boss fight and the pause")
+	var flags: Array[StringName] = game.save.flags.duplicate()
+	var captain: MongolSoldier = await _captain_at_hand()
+	var arena: BossArena = game.level.arena
+	game.boss_fight.begin()
+	check(arena.closed and game.boss_fight.boss == captain, "the captain's fight begins")
+	game._pause()
+	await _seconds(CaptainBrain.ROAR_TIME + 1.5)
+	check(paused and game.pause_menu.visible and game.hero.state == Warrior.State.CINEMATIC
+		and captain.sprite.animation == &"roar", "paused in his roar, the hero is held with him")
+	game.resume_play()
+	await _seconds(CaptainBrain.ROAR_TIME + 0.5)
+	check(game.hero.state != Warrior.State.CINEMATIC and captain.sprite.animation != &"roar",
+		"play goes on: his roar ends and the hero is let go")
+	await _beat(captain)
+	check(captain.is_beaten and not captain.dead and game.hero.state == Warrior.State.CINEMATIC,
+		"struck down, he is beaten to one knee")
+	var stood: Vector2 = game.hero.global_position
+	var objective: String = game.objective()
+	game._pause()
+	await _seconds(7.0)
+	check(not captain.dead and captain.severed == &"" and arena.closed and game.hud.boss_box.visible
+		and game.hero.state == Warrior.State.CINEMATIC and game.hero.global_position.is_equal_approx(stood)
+		and game.objective() == objective, "paused as he is beaten, nothing of his end plays behind the menu")
+	check(is_equal_approx(Engine.time_scale, 1.0), "while paused, the menu is not slowed by his slow time")
+	game.resume_play()
+	await frames(2)
+	check(Engine.time_scale < 1.0, "play goes on in the slow time of his last word")
+	for i: int in 900:
+		await physics_frame
+		if captain.dead:
+			break
+	check(captain.dead and captain.severed == &"head" and not game.hero.global_position.is_equal_approx(stood),
+		"resumed, Yusuf steps in and his stroke takes the head")
+	await frames(40)
+	check(captain.sprite.animation == &"executed" and captain.sprite.frame > 0, "the execution plays through its frames")
+	for i: int in 400:
+		await physics_frame
+		if not arena.closed:
+			break
+	check(not arena.closed and not game.hud.boss_box.visible and game.objective() == "OBJ_OPEN_GATE",
+		"then the square opens and the way on is told")
+	# Beaten, and the street left at once (a return to the lamp): what his end had still to do is not done here.
+	game.save.flags = flags.duplicate()
+	captain = await _captain_at_hand()
+	game.boss_fight.begin()
+	await _seconds(CaptainBrain.ROAR_TIME + 0.5)
+	await _beat(captain)
+	check(captain.is_beaten and game.boss_fight.boss == captain, "he is beaten again")
+	game.save.flags = flags.duplicate()
+	var next: MongolSoldier = await _captain_at_hand()
+	var standing: Vector2 = game.hero.global_position
+	await _seconds(8.0)
+	check(next != null and not next.dead and not next.is_beaten and not game.level.arena.closed
+		and not game.hud.boss_box.visible and game.hero.state != Warrior.State.CINEMATIC
+		and game.hero.global_position.distance_to(standing) < 2.0,
+		"a fight left on a street behind never touches the street entered after it")
+	game.save.flags = flags
+
+
+## The Last Gate entered afresh, the hero still and the Captain before him (the fight not begun; Hamid's scene before
+## it already played, so the fight begins at once).
+func _captain_at_hand() -> MongolSoldier:
+	game.save.set_flag(&"scene_boss_prelude")
+	game.save.set_flag(&"hamid_dead")
+	game._enter_level("res://features/levels/last_gate/last_gate.tscn", &"gate_lamp", false, false)
+	await frames(20)
+	game.hero.input.enabled = false
+	var captain: MongolSoldier = game.level.arena.boss()
+	game.hero.global_position = captain.global_position + Vector2(-120.0, 0.0)
+	game.hero.velocity = Vector2.ZERO
+	await frames(2)
+	return captain
+
+
+## The blow that would kill the Captain, once he can be struck (it beats him to one knee).
+func _beat(captain: MongolSoldier) -> void:
+	for i: int in 400:
+		if not captain.untouchable:
+			break
+		await physics_frame
+	var blow: HitData = HitData.from_attack(game.hero, load("res://features/warrior/definitions/heavy.tres") as AttackDefinition)
+	blow.damage = captain.max_health + 1.0
+	blow.direction = signf(captain.global_position.x - game.hero.global_position.x)
+	captain.receive_hit(blow)
+	await frames(4)
+
+
+## Waits `seconds` on the clock, paused or not.
+func _seconds(seconds: float) -> void:
+	await create_timer(seconds, true, false, true).timeout
+
+
 func _last_gate() -> void:
 	print("the last gate")
 	game._enter_level("res://features/levels/last_gate/last_gate.tscn", &"gate_lamp", false, false)
@@ -1033,10 +1280,33 @@ func _last_gate() -> void:
 	var arena: BossArena = game.level.arena
 	var captain: MongolSoldier = arena.boss()
 	check(arena != null and captain != null and not arena.closed, "the captain waits at his gate")
+	var hamid: Actor = game.level.actor(&"hamid_gate")
+	var fire: StaticBody2D = arena.get_node(^"SceneBarriers/Fire0") as StaticBody2D
+	var fire_shape: CollisionShape2D = fire.get_node(^"Shape") as CollisionShape2D
+	check(hamid != null and not hamid.dead and hamid.animation == &"kneel" and hamid.global_position.x > fire.global_position.x
+		and not fire_shape.disabled and fire.global_position.x > game.hero.global_position.x,
+		"Hamid kneels before the gate, a burning barricade between him and Yusuf")
 	var trigger: Node2D = game.level.triggers.get_node("boss") as Node2D
 	game.hero.global_position = Vector2(trigger.global_position.x, game.hero.global_position.y)
-	await frames(6)
-	check(arena.closed and game.hud.boss_box.visible, "the square closes and his name is shown")
+	await frames(30)
+	check(arena.closed and game.scenes.playing == &"boss_prelude" and game.hero.state == Warrior.State.CINEMATIC
+		and captain.sprite.animation == &"execute", "the square closes behind him and Toqto stands over Hamid, sabre raised")
+	game._pause()
+	await _seconds(4.0)
+	check(not hamid.dead and game.scenes.playing == &"boss_prelude", "paused, the scene waits")
+	game.resume_play()
+	for i: int in 2400:
+		await physics_frame
+		if hamid.dead:
+			break
+	check(hamid.dead and game.save.has_flag(&"hamid_dead") and not fire_shape.disabled,
+		"Toqto's stroke takes Hamid across the fire")
+	for i: int in 900:
+		await physics_frame
+		if game.hud.boss_box.visible:
+			break
+	await frames(4)
+	check(fire_shape.disabled and arena.closed and game.hud.boss_box.visible, "the fire burns down and his name is shown")
 	check(captain.state == MongolSoldier.State.ACTING and captain.sprite.animation == &"roar", "he roars")
 	await frames(30)
 	game.hero.global_position.x -= 90.0
@@ -1067,13 +1337,40 @@ func _last_gate() -> void:
 		if not arena.closed:
 			break
 	check(not arena.closed and not game.hud.boss_box.visible, "the square opens again")
+	for i: int in 300:
+		await physics_frame
+		if game.scenes.playing == &"boss_after" and game.hero.sprite.animation == &"kneel":
+			break
+	check(game.scenes.playing == &"boss_after" and game.hero.sprite.animation == &"kneel"
+		and absf(game.hero.global_position.x - hamid.global_position.x) < 44.0,
+		"Yusuf kneels by Hamid (%s, %s, %.0f)" % [game.scenes.playing, game.hero.sprite.animation,
+		absf(game.hero.global_position.x - hamid.global_position.x)])
+	for i: int in 1200:
+		await physics_frame
+		if game.scenes.playing == &"":
+			break
+	check(&"bronze_seal" in game.save.keepsakes and game.hero.state != Warrior.State.CINEMATIC,
+		"he takes Hamid's seal, and stands")
 	var gate: LevelExit = _interactable("LastGate") as LevelExit
 	check(gate.unlocked and game.objective() == "OBJ_OPEN_GATE", "the last gate can be opened")
+	game.save.set_flag(&"saved_gate_captive")
 	await _move_hero_to(gate, -22.0)
 	game.hero.input.press(&"interact")
 	await frames(30)
 	check(game.state == AbbasidGame.State.ENDING, "the gate opens on the ending")
-	for i: int in 400:
+	var walkers: int = 0
+	for node: Node in game.level.get_children():
+		if node is Actor and String(node.name).begins_with("Walker"):
+			walkers += 1
+	var expected: int = 0
+	for entry: String in game.level.procession:
+		var flag: String = entry.get_slice("|", 0)
+		if flag == "" or game.save.has_flag(StringName(flag)):
+			expected += 1
+	check(walkers == expected and expected >= 5,
+		"the people walk out past him: Salim, those he saved, the people of the road, Umm Ali with Ali (%d)" % walkers)
+	# The people walk out first; then the ending.
+	for i: int in 1500:
 		await physics_frame
 		if game.card.visible:
 			break
@@ -1353,6 +1650,8 @@ func _lesson_language() -> void:
 	game.settings.set_language("en")
 	await frames(2)
 	check(lessons.current_text() == english and not lessons._text.is_layout_rtl(), "and back in English, left to right")
+	check(InputGlyphs.writable("J") and InputGlyphs.writable("Shift") and not InputGlyphs.writable("ت")
+		and not InputGlyphs.writable("ض"), "a key's letter on an Arabic layout is named as a Latin keyboard prints it (J, not ت)")
 	lessons.clear()
 
 ## Quitting while sounds still play makes Godot report their playbacks as leaked; free the

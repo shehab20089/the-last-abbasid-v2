@@ -1,146 +1,738 @@
 [gd_scene format=3]
 
 [ext_resource type="AudioStream" path="res://assets/audio/sfx/ambush_sting.wav" id="1_ambush_sting_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/arrow_hit.wav" id="2_arrow_hit_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/arrow_thunk.wav" id="3_arrow_thunk_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/art_moment.wav" id="4_art_moment_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/art_refused.wav" id="5_art_refused_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/art_sting.wav" id="6_art_sting_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/body_drop.wav" id="7_body_drop_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/boss_fall.wav" id="8_boss_fall_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/boss_roar.wav" id="9_boss_roar_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/bow_release.wav" id="10_bow_release_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/breath_glint.wav" id="11_breath_glint_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/breath_in.wav" id="12_breath_in_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/breath_out.wav" id="13_breath_out_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/charge_hum.wav" id="14_charge_hum_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/charge_level.wav" id="15_charge_level_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/charge_release.wav" id="16_charge_release_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/checkpoint_rest.wav" id="17_checkpoint_rest_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/close_call.wav" id="18_close_call_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_alert.wav" id="19_enemy_alert_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_death.wav" id="20_enemy_death_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_hurt.wav" id="21_enemy_hurt_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing.wav" id="22_enemy_swing_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing_heavy.wav" id="23_enemy_swing_heavy_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_tell.wav" id="24_enemy_tell_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_tell_break.wav" id="25_enemy_tell_break_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_tell_dire.wav" id="26_enemy_tell_dire_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_tell_low.wav" id="27_enemy_tell_low_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/finisher.wav" id="28_finisher_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/footstep.wav" id="29_footstep_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/gate_open.wav" id="30_gate_open_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/glance.wav" id="31_glance_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/guard_break.wav" id="32_guard_break_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/heal.wav" id="33_heal_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/heartbeat.wav" id="34_heartbeat_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/hero_death.wav" id="35_hero_death_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/hero_hurt.wav" id="36_hero_hurt_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/honour.wav" id="37_honour_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/ignite.wav" id="38_ignite_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/judgment_gong.wav" id="39_judgment_gong_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/jump.wav" id="40_jump_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/kick_hit.wav" id="41_kick_hit_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/lamp_light.wav" id="42_lamp_light_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/land.wav" id="43_land_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/lesson.wav" id="44_lesson_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/manuscript.wav" id="45_manuscript_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/naft_burst.wav" id="46_naft_burst_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/objective.wav" id="47_objective_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/parry.wav" id="48_parry_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/pierce_dash.wav" id="49_pierce_dash_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/pierce_draw.wav" id="50_pierce_draw_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/pommel_crack.wav" id="51_pommel_crack_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/pot_burst.wav" id="52_pot_burst_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/roll.wav" id="53_roll_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/second_wind.wav" id="54_second_wind_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/sever.wav" id="55_sever_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/shield_bash.wav" id="56_shield_bash_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/shield_block.wav" id="57_shield_block_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/siege_impact.wav" id="58_siege_impact_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/spear_thrust.wav" id="59_spear_thrust_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/storm_wind.wav" id="60_storm_wind_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_heavy.wav" id="61_sword_heavy_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit.wav" id="62_sword_hit_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit_heavy.wav" id="63_sword_hit_heavy_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_swing.wav" id="64_sword_swing_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_thrust.wav" id="65_sword_thrust_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_back.wav" id="66_ui_back_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_move.wav" id="67_ui_move_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_select.wav" id="68_ui_select_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/war_cry.wav" id="69_war_cry_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/whirl.wav" id="70_whirl_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/winded.wav" id="71_winded_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/wounds_open.wav" id="72_wounds_open_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/music/music_boss.wav" id="73_music_boss_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/music/music_combat.wav" id="74_music_combat_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/music/music_ending.wav" id="75_music_ending_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/music/music_gate.wav" id="76_music_gate_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/music/music_market.wav" id="77_music_market_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/music/music_scholars.wav" id="78_music_scholars_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/music/music_streets.wav" id="79_music_streets_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/music/music_title.wav" id="80_music_title_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/music/amb_fire_wind.wav" id="81_amb_fire_wind_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/music/amb_river.wav" id="82_amb_river_wav"]
-[ext_resource type="AudioStream" path="res://assets/audio/music/amb_wind.wav" id="83_amb_wind_wav"]
-[ext_resource type="Script" path="res://app/main.gd" id="84_main_gd"]
-[ext_resource type="Script" path="res://features/menu/game_settings.gd" id="85_game_settings_gd"]
-[ext_resource type="Script" path="res://features/ui/input_glyphs.gd" id="86_input_glyphs_gd"]
-[ext_resource type="Script" path="res://shared/vfx/gore_director.gd" id="87_gore_director_gd"]
-[ext_resource type="SpriteFrames" path="res://assets/effects/effect_frames.tres" id="88_effect_frames_tres"]
-[ext_resource type="Texture2D" path="res://assets/effects/blood_drop.png" id="89_blood_drop_png"]
-[ext_resource type="Script" path="res://shared/vfx/vfx_director.gd" id="90_vfx_director_gd"]
-[ext_resource type="Script" path="res://features/presentation/game_camera.gd" id="91_game_camera_gd"]
-[ext_resource type="Texture2D" path="res://assets/effects/ash.png" id="92_ash_png"]
-[ext_resource type="Texture2D" path="res://assets/effects/ember.png" id="93_ember_png"]
-[ext_resource type="Script" path="res://shared/audio/sound_director.gd" id="94_sound_director_gd"]
-[ext_resource type="Script" path="res://shared/audio/music_director.gd" id="95_music_director_gd"]
-[ext_resource type="Script" path="res://features/presentation/hit_stop.gd" id="96_hit_stop_gd"]
-[ext_resource type="PackedScene" path="res://features/ui/hud.tscn" id="97_hud_tscn"]
-[ext_resource type="PackedScene" path="res://features/ui/dialogue_box.tscn" id="98_dialogue_box_tscn"]
-[ext_resource type="PackedScene" path="res://features/menu/title_screen.tscn" id="99_title_screen_tscn"]
-[ext_resource type="PackedScene" path="res://features/menu/pause_menu.tscn" id="100_pause_menu_tscn"]
-[ext_resource type="PackedScene" path="res://features/menu/settings_screen.tscn" id="101_settings_screen_tscn"]
-[ext_resource type="PackedScene" path="res://features/menu/game_over.tscn" id="102_game_over_tscn"]
-[ext_resource type="PackedScene" path="res://features/menu/chapter_complete.tscn" id="103_chapter_complete_tscn"]
-[ext_resource type="PackedScene" path="res://features/menu/manuscript_reader.tscn" id="104_manuscript_reader_tscn"]
-[ext_resource type="PackedScene" path="res://features/menu/story_card.tscn" id="105_story_card_tscn"]
-[ext_resource type="PackedScene" path="res://features/menu/lamp_menu.tscn" id="106_lamp_menu_tscn"]
-[ext_resource type="PackedScene" path="res://features/menu/techniques_screen.tscn" id="107_techniques_screen_tscn"]
-[ext_resource type="PackedScene" path="res://features/menu/guide_screen.tscn" id="108_guide_screen_tscn"]
-[ext_resource type="PackedScene" path="res://features/menu/journal_screen.tscn" id="109_journal_screen_tscn"]
-[ext_resource type="PackedScene" path="res://features/menu/codex_screen.tscn" id="110_codex_screen_tscn"]
-[ext_resource type="PackedScene" path="res://features/menu/lesson_screen.tscn" id="111_lesson_screen_tscn"]
-[ext_resource type="Shader" path="res://features/presentation/post_process.gdshader" id="112_post_process_gdshader"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/arrow_hit__1.wav" id="2_arrow_hit__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/arrow_hit__2.wav" id="3_arrow_hit__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/arrow_hit__3.wav" id="4_arrow_hit__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/arrow_hit__4.wav" id="5_arrow_hit__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/arrow_hit__5.wav" id="6_arrow_hit__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/arrow_thunk__1.wav" id="7_arrow_thunk__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/arrow_thunk__2.wav" id="8_arrow_thunk__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/arrow_thunk__3.wav" id="9_arrow_thunk__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/arrow_thunk__4.wav" id="10_arrow_thunk__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/arrow_thunk__5.wav" id="11_arrow_thunk__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/art_moment.wav" id="12_art_moment_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/art_refused.wav" id="13_art_refused_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/art_sting.wav" id="14_art_sting_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/body_drop__1.wav" id="15_body_drop__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/body_drop__2.wav" id="16_body_drop__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/body_drop__3.wav" id="17_body_drop__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/body_drop__4.wav" id="18_body_drop__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/body_drop__5.wav" id="19_body_drop__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/body_drop__6.wav" id="20_body_drop__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/boss_fall.wav" id="21_boss_fall_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/boss_roar__1.wav" id="22_boss_roar__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/boss_roar__2.wav" id="23_boss_roar__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/boss_roar__3.wav" id="24_boss_roar__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/bow_release__1.wav" id="25_bow_release__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/bow_release__2.wav" id="26_bow_release__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/bow_release__3.wav" id="27_bow_release__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/bow_release__4.wav" id="28_bow_release__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/bow_release__5.wav" id="29_bow_release__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/breath_glint.wav" id="30_breath_glint_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/breath_in.wav" id="31_breath_in_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/breath_out.wav" id="32_breath_out_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/charge_hum.wav" id="33_charge_hum_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/charge_level.wav" id="34_charge_level_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/charge_release__1.wav" id="35_charge_release__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/charge_release__2.wav" id="36_charge_release__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/charge_release__3.wav" id="37_charge_release__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/charge_release__4.wav" id="38_charge_release__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/checkpoint_rest.wav" id="39_checkpoint_rest_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/close_call.wav" id="40_close_call_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_alert__1.wav" id="41_enemy_alert__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_alert__2.wav" id="42_enemy_alert__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_alert__3.wav" id="43_enemy_alert__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_alert__4.wav" id="44_enemy_alert__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_alert__5.wav" id="45_enemy_alert__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_alert__6.wav" id="46_enemy_alert__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_death__1.wav" id="47_enemy_death__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_death__2.wav" id="48_enemy_death__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_death__3.wav" id="49_enemy_death__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_death__4.wav" id="50_enemy_death__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_death__5.wav" id="51_enemy_death__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_death__6.wav" id="52_enemy_death__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_death__7.wav" id="53_enemy_death__7_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_hurt__1.wav" id="54_enemy_hurt__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_hurt__2.wav" id="55_enemy_hurt__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_hurt__3.wav" id="56_enemy_hurt__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_hurt__4.wav" id="57_enemy_hurt__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_hurt__5.wav" id="58_enemy_hurt__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_hurt__6.wav" id="59_enemy_hurt__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_hurt__7.wav" id="60_enemy_hurt__7_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_hurt__8.wav" id="61_enemy_hurt__8_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing__1.wav" id="62_enemy_swing__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing__2.wav" id="63_enemy_swing__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing__3.wav" id="64_enemy_swing__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing__4.wav" id="65_enemy_swing__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing__5.wav" id="66_enemy_swing__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing__6.wav" id="67_enemy_swing__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing__7.wav" id="68_enemy_swing__7_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing__8.wav" id="69_enemy_swing__8_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing_heavy__1.wav" id="70_enemy_swing_heavy__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing_heavy__2.wav" id="71_enemy_swing_heavy__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing_heavy__3.wav" id="72_enemy_swing_heavy__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing_heavy__4.wav" id="73_enemy_swing_heavy__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing_heavy__5.wav" id="74_enemy_swing_heavy__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_swing_heavy__6.wav" id="75_enemy_swing_heavy__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_tell.wav" id="76_enemy_tell_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_tell_break.wav" id="77_enemy_tell_break_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_tell_dire.wav" id="78_enemy_tell_dire_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/enemy_tell_low.wav" id="79_enemy_tell_low_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/finisher.wav" id="80_finisher_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/footstep__1.wav" id="81_footstep__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/footstep__2.wav" id="82_footstep__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/footstep__3.wav" id="83_footstep__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/footstep__4.wav" id="84_footstep__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/footstep__5.wav" id="85_footstep__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/footstep__6.wav" id="86_footstep__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/footstep__7.wav" id="87_footstep__7_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/footstep__8.wav" id="88_footstep__8_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/footstep_wood__1.wav" id="89_footstep_wood__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/footstep_wood__2.wav" id="90_footstep_wood__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/footstep_wood__3.wav" id="91_footstep_wood__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/footstep_wood__4.wav" id="92_footstep_wood__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/footstep_wood__5.wav" id="93_footstep_wood__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/footstep_wood__6.wav" id="94_footstep_wood__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/gate_open.wav" id="95_gate_open_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/glance__1.wav" id="96_glance__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/glance__2.wav" id="97_glance__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/glance__3.wav" id="98_glance__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/glance__4.wav" id="99_glance__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/glance__5.wav" id="100_glance__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/glance__6.wav" id="101_glance__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/guard_break__1.wav" id="102_guard_break__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/guard_break__2.wav" id="103_guard_break__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/guard_break__3.wav" id="104_guard_break__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/guard_break__4.wav" id="105_guard_break__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/guard_break__5.wav" id="106_guard_break__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/guard_break__6.wav" id="107_guard_break__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/heal.wav" id="108_heal_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/heartbeat.wav" id="109_heartbeat_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/hero_death__1.wav" id="110_hero_death__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/hero_death__2.wav" id="111_hero_death__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/hero_hurt__1.wav" id="112_hero_hurt__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/hero_hurt__2.wav" id="113_hero_hurt__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/hero_hurt__3.wav" id="114_hero_hurt__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/hero_hurt__4.wav" id="115_hero_hurt__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/hero_hurt__5.wav" id="116_hero_hurt__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/hero_hurt__6.wav" id="117_hero_hurt__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/honour.wav" id="118_honour_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ignite.wav" id="119_ignite_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/judgment_gong.wav" id="120_judgment_gong_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/jump__1.wav" id="121_jump__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/jump__2.wav" id="122_jump__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/jump__3.wav" id="123_jump__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/jump__4.wav" id="124_jump__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/jump__5.wav" id="125_jump__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/jump__6.wav" id="126_jump__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/kick_hit__1.wav" id="127_kick_hit__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/kick_hit__2.wav" id="128_kick_hit__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/kick_hit__3.wav" id="129_kick_hit__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/kick_hit__4.wav" id="130_kick_hit__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/kick_hit__5.wav" id="131_kick_hit__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/lamp_light.wav" id="132_lamp_light_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/land__1.wav" id="133_land__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/land__2.wav" id="134_land__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/land__3.wav" id="135_land__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/land__4.wav" id="136_land__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/land__5.wav" id="137_land__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/land__6.wav" id="138_land__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/lesson.wav" id="139_lesson_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/manuscript.wav" id="140_manuscript_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/naft_burst__1.wav" id="141_naft_burst__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/naft_burst__2.wav" id="142_naft_burst__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/objective.wav" id="143_objective_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/parry__1.wav" id="144_parry__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/parry__2.wav" id="145_parry__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/parry__3.wav" id="146_parry__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/parry__4.wav" id="147_parry__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/parry__5.wav" id="148_parry__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/parry__6.wav" id="149_parry__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/parry__7.wav" id="150_parry__7_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/parry__8.wav" id="151_parry__8_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/pierce_dash.wav" id="152_pierce_dash_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/pierce_draw.wav" id="153_pierce_draw_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/pommel_crack__1.wav" id="154_pommel_crack__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/pommel_crack__2.wav" id="155_pommel_crack__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/pommel_crack__3.wav" id="156_pommel_crack__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/pommel_crack__4.wav" id="157_pommel_crack__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/pot_burst__1.wav" id="158_pot_burst__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/pot_burst__2.wav" id="159_pot_burst__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/pot_burst__3.wav" id="160_pot_burst__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/roll__1.wav" id="161_roll__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/roll__2.wav" id="162_roll__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/roll__3.wav" id="163_roll__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/roll__4.wav" id="164_roll__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/second_wind.wav" id="165_second_wind_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sever__1.wav" id="166_sever__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sever__2.wav" id="167_sever__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sever__3.wav" id="168_sever__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sever__4.wav" id="169_sever__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sever__5.wav" id="170_sever__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sever__6.wav" id="171_sever__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/shield_bash__1.wav" id="172_shield_bash__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/shield_bash__2.wav" id="173_shield_bash__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/shield_bash__3.wav" id="174_shield_bash__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/shield_bash__4.wav" id="175_shield_bash__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/shield_bash__5.wav" id="176_shield_bash__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/shield_block__1.wav" id="177_shield_block__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/shield_block__2.wav" id="178_shield_block__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/shield_block__3.wav" id="179_shield_block__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/shield_block__4.wav" id="180_shield_block__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/shield_block__5.wav" id="181_shield_block__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/shield_block__6.wav" id="182_shield_block__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/shield_block__7.wav" id="183_shield_block__7_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/shield_block__8.wav" id="184_shield_block__8_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/siege_impact__1.wav" id="185_siege_impact__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/siege_impact__2.wav" id="186_siege_impact__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/spear_thrust__1.wav" id="187_spear_thrust__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/spear_thrust__2.wav" id="188_spear_thrust__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/spear_thrust__3.wav" id="189_spear_thrust__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/spear_thrust__4.wav" id="190_spear_thrust__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/spear_thrust__5.wav" id="191_spear_thrust__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/storm_wind.wav" id="192_storm_wind_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_heavy__1.wav" id="193_sword_heavy__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_heavy__2.wav" id="194_sword_heavy__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_heavy__3.wav" id="195_sword_heavy__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_heavy__4.wav" id="196_sword_heavy__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_heavy__5.wav" id="197_sword_heavy__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_heavy__6.wav" id="198_sword_heavy__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit__1.wav" id="199_sword_hit__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit__2.wav" id="200_sword_hit__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit__3.wav" id="201_sword_hit__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit__4.wav" id="202_sword_hit__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit__5.wav" id="203_sword_hit__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit__6.wav" id="204_sword_hit__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit__7.wav" id="205_sword_hit__7_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit__8.wav" id="206_sword_hit__8_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit_heavy__1.wav" id="207_sword_hit_heavy__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit_heavy__2.wav" id="208_sword_hit_heavy__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit_heavy__3.wav" id="209_sword_hit_heavy__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit_heavy__4.wav" id="210_sword_hit_heavy__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit_heavy__5.wav" id="211_sword_hit_heavy__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit_heavy__6.wav" id="212_sword_hit_heavy__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit_heavy__7.wav" id="213_sword_hit_heavy__7_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_hit_heavy__8.wav" id="214_sword_hit_heavy__8_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_swing__1.wav" id="215_sword_swing__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_swing__2.wav" id="216_sword_swing__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_swing__3.wav" id="217_sword_swing__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_swing__4.wav" id="218_sword_swing__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_swing__5.wav" id="219_sword_swing__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_swing__6.wav" id="220_sword_swing__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_swing__7.wav" id="221_sword_swing__7_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_swing__8.wav" id="222_sword_swing__8_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_thrust__1.wav" id="223_sword_thrust__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_thrust__2.wav" id="224_sword_thrust__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_thrust__3.wav" id="225_sword_thrust__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_thrust__4.wav" id="226_sword_thrust__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_thrust__5.wav" id="227_sword_thrust__5_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sword_thrust__6.wav" id="228_sword_thrust__6_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_back.wav" id="229_ui_back_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_move.wav" id="230_ui_move_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_select.wav" id="231_ui_select_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/war_cry__1.wav" id="232_war_cry__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/war_cry__2.wav" id="233_war_cry__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/whirl__1.wav" id="234_whirl__1_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/whirl__2.wav" id="235_whirl__2_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/whirl__3.wav" id="236_whirl__3_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/whirl__4.wav" id="237_whirl__4_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/winded.wav" id="238_winded_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/wounds_open.wav" id="239_wounds_open_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/music_boss.wav" id="240_music_boss_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/music_combat.wav" id="241_music_combat_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/music_ending.wav" id="242_music_ending_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/music_gate.wav" id="243_music_gate_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/music_market.wav" id="244_music_market_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/music_scholars.wav" id="245_music_scholars_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/music_streets.wav" id="246_music_streets_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/music_title.wav" id="247_music_title_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/amb_fire_wind.wav" id="248_amb_fire_wind_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/amb_river.wav" id="249_amb_river_wav"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/amb_wind.wav" id="250_amb_wind_wav"]
+[ext_resource type="Script" path="res://app/main.gd" id="251_main_gd"]
+[ext_resource type="Script" path="res://features/menu/game_settings.gd" id="252_game_settings_gd"]
+[ext_resource type="Script" path="res://features/ui/input_glyphs.gd" id="253_input_glyphs_gd"]
+[ext_resource type="Script" path="res://shared/vfx/gore_director.gd" id="254_gore_director_gd"]
+[ext_resource type="SpriteFrames" path="res://assets/effects/effect_frames.tres" id="255_effect_frames_tres"]
+[ext_resource type="Texture2D" path="res://assets/effects/blood_drop.png" id="256_blood_drop_png"]
+[ext_resource type="Script" path="res://shared/vfx/vfx_director.gd" id="257_vfx_director_gd"]
+[ext_resource type="Script" path="res://features/presentation/game_camera.gd" id="258_game_camera_gd"]
+[ext_resource type="Texture2D" path="res://assets/effects/ash.png" id="259_ash_png"]
+[ext_resource type="Texture2D" path="res://assets/effects/ember.png" id="260_ember_png"]
+[ext_resource type="Script" path="res://shared/audio/sound_director.gd" id="261_sound_director_gd"]
+[ext_resource type="Script" path="res://shared/audio/music_director.gd" id="262_music_director_gd"]
+[ext_resource type="Script" path="res://features/presentation/hit_stop.gd" id="263_hit_stop_gd"]
+[ext_resource type="PackedScene" path="res://features/ui/hud.tscn" id="264_hud_tscn"]
+[ext_resource type="PackedScene" path="res://features/ui/dialogue_box.tscn" id="265_dialogue_box_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/title_screen.tscn" id="266_title_screen_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/pause_menu.tscn" id="267_pause_menu_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/settings_screen.tscn" id="268_settings_screen_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/game_over.tscn" id="269_game_over_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/chapter_complete.tscn" id="270_chapter_complete_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/manuscript_reader.tscn" id="271_manuscript_reader_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/story_card.tscn" id="272_story_card_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/lamp_menu.tscn" id="273_lamp_menu_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/techniques_screen.tscn" id="274_techniques_screen_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/guide_screen.tscn" id="275_guide_screen_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/journal_screen.tscn" id="276_journal_screen_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/codex_screen.tscn" id="277_codex_screen_tscn"]
+[ext_resource type="PackedScene" path="res://features/menu/lesson_screen.tscn" id="278_lesson_screen_tscn"]
+[ext_resource type="Shader" path="res://features/presentation/post_process.gdshader" id="279_post_process_gdshader"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_post"]
-shader = ExtResource("112_post_process_gdshader")
+shader = ExtResource("279_post_process_gdshader")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_arrow_hit"]
+playback_mode = 0
+random_pitch = 1.05
+random_volume_offset_db = 1
+streams_count = 5
+stream_0/stream = ExtResource("2_arrow_hit__1_wav")
+stream_1/stream = ExtResource("3_arrow_hit__2_wav")
+stream_2/stream = ExtResource("4_arrow_hit__3_wav")
+stream_3/stream = ExtResource("5_arrow_hit__4_wav")
+stream_4/stream = ExtResource("6_arrow_hit__5_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_arrow_thunk"]
+playback_mode = 0
+random_pitch = 1.05
+random_volume_offset_db = 1
+streams_count = 5
+stream_0/stream = ExtResource("7_arrow_thunk__1_wav")
+stream_1/stream = ExtResource("8_arrow_thunk__2_wav")
+stream_2/stream = ExtResource("9_arrow_thunk__3_wav")
+stream_3/stream = ExtResource("10_arrow_thunk__4_wav")
+stream_4/stream = ExtResource("11_arrow_thunk__5_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_body_drop"]
+playback_mode = 0
+random_pitch = 1.06
+random_volume_offset_db = 1
+streams_count = 6
+stream_0/stream = ExtResource("15_body_drop__1_wav")
+stream_1/stream = ExtResource("16_body_drop__2_wav")
+stream_2/stream = ExtResource("17_body_drop__3_wav")
+stream_3/stream = ExtResource("18_body_drop__4_wav")
+stream_4/stream = ExtResource("19_body_drop__5_wav")
+stream_5/stream = ExtResource("20_body_drop__6_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_boss_roar"]
+playback_mode = 0
+random_pitch = 1
+random_volume_offset_db = 0
+streams_count = 3
+stream_0/stream = ExtResource("22_boss_roar__1_wav")
+stream_1/stream = ExtResource("23_boss_roar__2_wav")
+stream_2/stream = ExtResource("24_boss_roar__3_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_bow_release"]
+playback_mode = 0
+random_pitch = 1.04
+random_volume_offset_db = 1
+streams_count = 5
+stream_0/stream = ExtResource("25_bow_release__1_wav")
+stream_1/stream = ExtResource("26_bow_release__2_wav")
+stream_2/stream = ExtResource("27_bow_release__3_wav")
+stream_3/stream = ExtResource("28_bow_release__4_wav")
+stream_4/stream = ExtResource("29_bow_release__5_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_charge_release"]
+playback_mode = 0
+random_pitch = 1.04
+random_volume_offset_db = 1
+streams_count = 4
+stream_0/stream = ExtResource("35_charge_release__1_wav")
+stream_1/stream = ExtResource("36_charge_release__2_wav")
+stream_2/stream = ExtResource("37_charge_release__3_wav")
+stream_3/stream = ExtResource("38_charge_release__4_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_enemy_alert"]
+playback_mode = 0
+random_pitch = 1.03
+random_volume_offset_db = 1
+streams_count = 6
+stream_0/stream = ExtResource("41_enemy_alert__1_wav")
+stream_1/stream = ExtResource("42_enemy_alert__2_wav")
+stream_2/stream = ExtResource("43_enemy_alert__3_wav")
+stream_3/stream = ExtResource("44_enemy_alert__4_wav")
+stream_4/stream = ExtResource("45_enemy_alert__5_wav")
+stream_5/stream = ExtResource("46_enemy_alert__6_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_enemy_death"]
+playback_mode = 0
+random_pitch = 1.03
+random_volume_offset_db = 1
+streams_count = 7
+stream_0/stream = ExtResource("47_enemy_death__1_wav")
+stream_1/stream = ExtResource("48_enemy_death__2_wav")
+stream_2/stream = ExtResource("49_enemy_death__3_wav")
+stream_3/stream = ExtResource("50_enemy_death__4_wav")
+stream_4/stream = ExtResource("51_enemy_death__5_wav")
+stream_5/stream = ExtResource("52_enemy_death__6_wav")
+stream_6/stream = ExtResource("53_enemy_death__7_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_enemy_hurt"]
+playback_mode = 0
+random_pitch = 1.03
+random_volume_offset_db = 1
+streams_count = 8
+stream_0/stream = ExtResource("54_enemy_hurt__1_wav")
+stream_1/stream = ExtResource("55_enemy_hurt__2_wav")
+stream_2/stream = ExtResource("56_enemy_hurt__3_wav")
+stream_3/stream = ExtResource("57_enemy_hurt__4_wav")
+stream_4/stream = ExtResource("58_enemy_hurt__5_wav")
+stream_5/stream = ExtResource("59_enemy_hurt__6_wav")
+stream_6/stream = ExtResource("60_enemy_hurt__7_wav")
+stream_7/stream = ExtResource("61_enemy_hurt__8_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_enemy_swing"]
+playback_mode = 0
+random_pitch = 1.06
+random_volume_offset_db = 1
+streams_count = 8
+stream_0/stream = ExtResource("62_enemy_swing__1_wav")
+stream_1/stream = ExtResource("63_enemy_swing__2_wav")
+stream_2/stream = ExtResource("64_enemy_swing__3_wav")
+stream_3/stream = ExtResource("65_enemy_swing__4_wav")
+stream_4/stream = ExtResource("66_enemy_swing__5_wav")
+stream_5/stream = ExtResource("67_enemy_swing__6_wav")
+stream_6/stream = ExtResource("68_enemy_swing__7_wav")
+stream_7/stream = ExtResource("69_enemy_swing__8_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_enemy_swing_heavy"]
+playback_mode = 0
+random_pitch = 1.05
+random_volume_offset_db = 1
+streams_count = 6
+stream_0/stream = ExtResource("70_enemy_swing_heavy__1_wav")
+stream_1/stream = ExtResource("71_enemy_swing_heavy__2_wav")
+stream_2/stream = ExtResource("72_enemy_swing_heavy__3_wav")
+stream_3/stream = ExtResource("73_enemy_swing_heavy__4_wav")
+stream_4/stream = ExtResource("74_enemy_swing_heavy__5_wav")
+stream_5/stream = ExtResource("75_enemy_swing_heavy__6_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_footstep"]
+playback_mode = 0
+random_pitch = 1.08
+random_volume_offset_db = 2
+streams_count = 8
+stream_0/stream = ExtResource("81_footstep__1_wav")
+stream_1/stream = ExtResource("82_footstep__2_wav")
+stream_2/stream = ExtResource("83_footstep__3_wav")
+stream_3/stream = ExtResource("84_footstep__4_wav")
+stream_4/stream = ExtResource("85_footstep__5_wav")
+stream_5/stream = ExtResource("86_footstep__6_wav")
+stream_6/stream = ExtResource("87_footstep__7_wav")
+stream_7/stream = ExtResource("88_footstep__8_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_footstep_wood"]
+playback_mode = 0
+random_pitch = 1.08
+random_volume_offset_db = 2
+streams_count = 6
+stream_0/stream = ExtResource("89_footstep_wood__1_wav")
+stream_1/stream = ExtResource("90_footstep_wood__2_wav")
+stream_2/stream = ExtResource("91_footstep_wood__3_wav")
+stream_3/stream = ExtResource("92_footstep_wood__4_wav")
+stream_4/stream = ExtResource("93_footstep_wood__5_wav")
+stream_5/stream = ExtResource("94_footstep_wood__6_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_glance"]
+playback_mode = 0
+random_pitch = 1.06
+random_volume_offset_db = 1
+streams_count = 6
+stream_0/stream = ExtResource("96_glance__1_wav")
+stream_1/stream = ExtResource("97_glance__2_wav")
+stream_2/stream = ExtResource("98_glance__3_wav")
+stream_3/stream = ExtResource("99_glance__4_wav")
+stream_4/stream = ExtResource("100_glance__5_wav")
+stream_5/stream = ExtResource("101_glance__6_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_guard_break"]
+playback_mode = 0
+random_pitch = 1.04
+random_volume_offset_db = 1
+streams_count = 6
+stream_0/stream = ExtResource("102_guard_break__1_wav")
+stream_1/stream = ExtResource("103_guard_break__2_wav")
+stream_2/stream = ExtResource("104_guard_break__3_wav")
+stream_3/stream = ExtResource("105_guard_break__4_wav")
+stream_4/stream = ExtResource("106_guard_break__5_wav")
+stream_5/stream = ExtResource("107_guard_break__6_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_hero_death"]
+playback_mode = 0
+random_pitch = 1
+random_volume_offset_db = 0
+streams_count = 2
+stream_0/stream = ExtResource("110_hero_death__1_wav")
+stream_1/stream = ExtResource("111_hero_death__2_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_hero_hurt"]
+playback_mode = 0
+random_pitch = 1.03
+random_volume_offset_db = 1
+streams_count = 6
+stream_0/stream = ExtResource("112_hero_hurt__1_wav")
+stream_1/stream = ExtResource("113_hero_hurt__2_wav")
+stream_2/stream = ExtResource("114_hero_hurt__3_wav")
+stream_3/stream = ExtResource("115_hero_hurt__4_wav")
+stream_4/stream = ExtResource("116_hero_hurt__5_wav")
+stream_5/stream = ExtResource("117_hero_hurt__6_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_jump"]
+playback_mode = 0
+random_pitch = 1.06
+random_volume_offset_db = 1
+streams_count = 6
+stream_0/stream = ExtResource("121_jump__1_wav")
+stream_1/stream = ExtResource("122_jump__2_wav")
+stream_2/stream = ExtResource("123_jump__3_wav")
+stream_3/stream = ExtResource("124_jump__4_wav")
+stream_4/stream = ExtResource("125_jump__5_wav")
+stream_5/stream = ExtResource("126_jump__6_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_kick_hit"]
+playback_mode = 0
+random_pitch = 1.05
+random_volume_offset_db = 1
+streams_count = 5
+stream_0/stream = ExtResource("127_kick_hit__1_wav")
+stream_1/stream = ExtResource("128_kick_hit__2_wav")
+stream_2/stream = ExtResource("129_kick_hit__3_wav")
+stream_3/stream = ExtResource("130_kick_hit__4_wav")
+stream_4/stream = ExtResource("131_kick_hit__5_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_land"]
+playback_mode = 0
+random_pitch = 1.05
+random_volume_offset_db = 1
+streams_count = 6
+stream_0/stream = ExtResource("133_land__1_wav")
+stream_1/stream = ExtResource("134_land__2_wav")
+stream_2/stream = ExtResource("135_land__3_wav")
+stream_3/stream = ExtResource("136_land__4_wav")
+stream_4/stream = ExtResource("137_land__5_wav")
+stream_5/stream = ExtResource("138_land__6_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_naft_burst"]
+playback_mode = 0
+random_pitch = 1.03
+random_volume_offset_db = 1
+streams_count = 2
+stream_0/stream = ExtResource("141_naft_burst__1_wav")
+stream_1/stream = ExtResource("142_naft_burst__2_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_parry"]
+playback_mode = 0
+random_pitch = 1.04
+random_volume_offset_db = 1
+streams_count = 8
+stream_0/stream = ExtResource("144_parry__1_wav")
+stream_1/stream = ExtResource("145_parry__2_wav")
+stream_2/stream = ExtResource("146_parry__3_wav")
+stream_3/stream = ExtResource("147_parry__4_wav")
+stream_4/stream = ExtResource("148_parry__5_wav")
+stream_5/stream = ExtResource("149_parry__6_wav")
+stream_6/stream = ExtResource("150_parry__7_wav")
+stream_7/stream = ExtResource("151_parry__8_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_pommel_crack"]
+playback_mode = 0
+random_pitch = 1.05
+random_volume_offset_db = 1
+streams_count = 4
+stream_0/stream = ExtResource("154_pommel_crack__1_wav")
+stream_1/stream = ExtResource("155_pommel_crack__2_wav")
+stream_2/stream = ExtResource("156_pommel_crack__3_wav")
+stream_3/stream = ExtResource("157_pommel_crack__4_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_pot_burst"]
+playback_mode = 0
+random_pitch = 1.04
+random_volume_offset_db = 1
+streams_count = 3
+stream_0/stream = ExtResource("158_pot_burst__1_wav")
+stream_1/stream = ExtResource("159_pot_burst__2_wav")
+stream_2/stream = ExtResource("160_pot_burst__3_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_roll"]
+playback_mode = 0
+random_pitch = 1.05
+random_volume_offset_db = 1
+streams_count = 4
+stream_0/stream = ExtResource("161_roll__1_wav")
+stream_1/stream = ExtResource("162_roll__2_wav")
+stream_2/stream = ExtResource("163_roll__3_wav")
+stream_3/stream = ExtResource("164_roll__4_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_sever"]
+playback_mode = 0
+random_pitch = 1.05
+random_volume_offset_db = 1
+streams_count = 6
+stream_0/stream = ExtResource("166_sever__1_wav")
+stream_1/stream = ExtResource("167_sever__2_wav")
+stream_2/stream = ExtResource("168_sever__3_wav")
+stream_3/stream = ExtResource("169_sever__4_wav")
+stream_4/stream = ExtResource("170_sever__5_wav")
+stream_5/stream = ExtResource("171_sever__6_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_shield_bash"]
+playback_mode = 0
+random_pitch = 1.05
+random_volume_offset_db = 1
+streams_count = 5
+stream_0/stream = ExtResource("172_shield_bash__1_wav")
+stream_1/stream = ExtResource("173_shield_bash__2_wav")
+stream_2/stream = ExtResource("174_shield_bash__3_wav")
+stream_3/stream = ExtResource("175_shield_bash__4_wav")
+stream_4/stream = ExtResource("176_shield_bash__5_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_shield_block"]
+playback_mode = 0
+random_pitch = 1.05
+random_volume_offset_db = 1
+streams_count = 8
+stream_0/stream = ExtResource("177_shield_block__1_wav")
+stream_1/stream = ExtResource("178_shield_block__2_wav")
+stream_2/stream = ExtResource("179_shield_block__3_wav")
+stream_3/stream = ExtResource("180_shield_block__4_wav")
+stream_4/stream = ExtResource("181_shield_block__5_wav")
+stream_5/stream = ExtResource("182_shield_block__6_wav")
+stream_6/stream = ExtResource("183_shield_block__7_wav")
+stream_7/stream = ExtResource("184_shield_block__8_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_siege_impact"]
+playback_mode = 0
+random_pitch = 1.02
+random_volume_offset_db = 0
+streams_count = 2
+stream_0/stream = ExtResource("185_siege_impact__1_wav")
+stream_1/stream = ExtResource("186_siege_impact__2_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_spear_thrust"]
+playback_mode = 0
+random_pitch = 1.05
+random_volume_offset_db = 1
+streams_count = 5
+stream_0/stream = ExtResource("187_spear_thrust__1_wav")
+stream_1/stream = ExtResource("188_spear_thrust__2_wav")
+stream_2/stream = ExtResource("189_spear_thrust__3_wav")
+stream_3/stream = ExtResource("190_spear_thrust__4_wav")
+stream_4/stream = ExtResource("191_spear_thrust__5_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_sword_heavy"]
+playback_mode = 0
+random_pitch = 1.05
+random_volume_offset_db = 1
+streams_count = 6
+stream_0/stream = ExtResource("193_sword_heavy__1_wav")
+stream_1/stream = ExtResource("194_sword_heavy__2_wav")
+stream_2/stream = ExtResource("195_sword_heavy__3_wav")
+stream_3/stream = ExtResource("196_sword_heavy__4_wav")
+stream_4/stream = ExtResource("197_sword_heavy__5_wav")
+stream_5/stream = ExtResource("198_sword_heavy__6_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_sword_hit"]
+playback_mode = 0
+random_pitch = 1.05
+random_volume_offset_db = 1.5
+streams_count = 8
+stream_0/stream = ExtResource("199_sword_hit__1_wav")
+stream_1/stream = ExtResource("200_sword_hit__2_wav")
+stream_2/stream = ExtResource("201_sword_hit__3_wav")
+stream_3/stream = ExtResource("202_sword_hit__4_wav")
+stream_4/stream = ExtResource("203_sword_hit__5_wav")
+stream_5/stream = ExtResource("204_sword_hit__6_wav")
+stream_6/stream = ExtResource("205_sword_hit__7_wav")
+stream_7/stream = ExtResource("206_sword_hit__8_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_sword_hit_heavy"]
+playback_mode = 0
+random_pitch = 1.05
+random_volume_offset_db = 1.5
+streams_count = 8
+stream_0/stream = ExtResource("207_sword_hit_heavy__1_wav")
+stream_1/stream = ExtResource("208_sword_hit_heavy__2_wav")
+stream_2/stream = ExtResource("209_sword_hit_heavy__3_wav")
+stream_3/stream = ExtResource("210_sword_hit_heavy__4_wav")
+stream_4/stream = ExtResource("211_sword_hit_heavy__5_wav")
+stream_5/stream = ExtResource("212_sword_hit_heavy__6_wav")
+stream_6/stream = ExtResource("213_sword_hit_heavy__7_wav")
+stream_7/stream = ExtResource("214_sword_hit_heavy__8_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_sword_swing"]
+playback_mode = 0
+random_pitch = 1.06
+random_volume_offset_db = 1
+streams_count = 8
+stream_0/stream = ExtResource("215_sword_swing__1_wav")
+stream_1/stream = ExtResource("216_sword_swing__2_wav")
+stream_2/stream = ExtResource("217_sword_swing__3_wav")
+stream_3/stream = ExtResource("218_sword_swing__4_wav")
+stream_4/stream = ExtResource("219_sword_swing__5_wav")
+stream_5/stream = ExtResource("220_sword_swing__6_wav")
+stream_6/stream = ExtResource("221_sword_swing__7_wav")
+stream_7/stream = ExtResource("222_sword_swing__8_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_sword_thrust"]
+playback_mode = 0
+random_pitch = 1.06
+random_volume_offset_db = 1
+streams_count = 6
+stream_0/stream = ExtResource("223_sword_thrust__1_wav")
+stream_1/stream = ExtResource("224_sword_thrust__2_wav")
+stream_2/stream = ExtResource("225_sword_thrust__3_wav")
+stream_3/stream = ExtResource("226_sword_thrust__4_wav")
+stream_4/stream = ExtResource("227_sword_thrust__5_wav")
+stream_5/stream = ExtResource("228_sword_thrust__6_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_war_cry"]
+playback_mode = 0
+random_pitch = 1
+random_volume_offset_db = 0
+streams_count = 2
+stream_0/stream = ExtResource("232_war_cry__1_wav")
+stream_1/stream = ExtResource("233_war_cry__2_wav")
+
+[sub_resource type="AudioStreamRandomizer" id="Takes_whirl"]
+playback_mode = 0
+random_pitch = 1.05
+random_volume_offset_db = 1
+streams_count = 4
+stream_0/stream = ExtResource("234_whirl__1_wav")
+stream_1/stream = ExtResource("235_whirl__2_wav")
+stream_2/stream = ExtResource("236_whirl__3_wav")
+stream_3/stream = ExtResource("237_whirl__4_wav")
 
 
 [node name="Main" type="Node"]
-script = ExtResource("84_main_gd")
+script = ExtResource("251_main_gd")
 
 [node name="Settings" type="Node" parent="."]
-script = ExtResource("85_game_settings_gd")
+script = ExtResource("252_game_settings_gd")
 
 [node name="Glyphs" type="Node" parent="."]
-script = ExtResource("86_input_glyphs_gd")
+script = ExtResource("253_input_glyphs_gd")
 
 [node name="World" type="Node2D" parent="."]
 
 [node name="Gore" type="Node2D" parent="."]
 z_index = 4
-script = ExtResource("87_gore_director_gd")
-frames = ExtResource("88_effect_frames_tres")
-drop = ExtResource("89_blood_drop_png")
+script = ExtResource("254_gore_director_gd")
+frames = ExtResource("255_effect_frames_tres")
+drop = ExtResource("256_blood_drop_png")
 
 [node name="Vfx" type="Node2D" parent="."]
 z_index = 5
-script = ExtResource("90_vfx_director_gd")
-frames = ExtResource("88_effect_frames_tres")
+script = ExtResource("257_vfx_director_gd")
+frames = ExtResource("255_effect_frames_tres")
 
 [node name="Camera" type="Camera2D" parent="."]
-script = ExtResource("91_game_camera_gd")
+script = ExtResource("258_game_camera_gd")
 
 [node name="Ash" type="CPUParticles2D" parent="Camera"]
 position = Vector2(0, -200)
@@ -148,7 +740,7 @@ amount = 46
 lifetime = 9.0
 preprocess = 9.0
 local_coords = false
-texture = ExtResource("92_ash_png")
+texture = ExtResource("259_ash_png")
 emission_shape = 3
 emission_rect_extents = Vector2(380, 8)
 direction = Vector2(0.25, 1)
@@ -164,7 +756,7 @@ amount = 18
 lifetime = 6.0
 preprocess = 6.0
 local_coords = false
-texture = ExtResource("93_ember_png")
+texture = ExtResource("260_ember_png")
 emission_shape = 3
 emission_rect_extents = Vector2(380, 8)
 direction = Vector2(0.2, -1)
@@ -184,50 +776,50 @@ offset_bottom = 360.0
 mouse_filter = 2
 
 [node name="Sounds" type="Node" parent="."]
-script = ExtResource("94_sound_director_gd")
-cues = Dictionary[StringName, AudioStream]({&"ambush_sting": ExtResource("1_ambush_sting_wav"), &"arrow_hit": ExtResource("2_arrow_hit_wav"), &"arrow_thunk": ExtResource("3_arrow_thunk_wav"), &"art_moment": ExtResource("4_art_moment_wav"), &"art_refused": ExtResource("5_art_refused_wav"), &"art_sting": ExtResource("6_art_sting_wav"), &"body_drop": ExtResource("7_body_drop_wav"), &"boss_fall": ExtResource("8_boss_fall_wav"), &"boss_roar": ExtResource("9_boss_roar_wav"), &"bow_release": ExtResource("10_bow_release_wav"), &"breath_glint": ExtResource("11_breath_glint_wav"), &"breath_in": ExtResource("12_breath_in_wav"), &"breath_out": ExtResource("13_breath_out_wav"), &"charge_hum": ExtResource("14_charge_hum_wav"), &"charge_level": ExtResource("15_charge_level_wav"), &"charge_release": ExtResource("16_charge_release_wav"), &"checkpoint_rest": ExtResource("17_checkpoint_rest_wav"), &"close_call": ExtResource("18_close_call_wav"), &"enemy_alert": ExtResource("19_enemy_alert_wav"), &"enemy_death": ExtResource("20_enemy_death_wav"), &"enemy_hurt": ExtResource("21_enemy_hurt_wav"), &"enemy_swing": ExtResource("22_enemy_swing_wav"), &"enemy_swing_heavy": ExtResource("23_enemy_swing_heavy_wav"), &"enemy_tell": ExtResource("24_enemy_tell_wav"), &"enemy_tell_break": ExtResource("25_enemy_tell_break_wav"), &"enemy_tell_dire": ExtResource("26_enemy_tell_dire_wav"), &"enemy_tell_low": ExtResource("27_enemy_tell_low_wav"), &"finisher": ExtResource("28_finisher_wav"), &"footstep": ExtResource("29_footstep_wav"), &"gate_open": ExtResource("30_gate_open_wav"), &"glance": ExtResource("31_glance_wav"), &"guard_break": ExtResource("32_guard_break_wav"), &"heal": ExtResource("33_heal_wav"), &"heartbeat": ExtResource("34_heartbeat_wav"), &"hero_death": ExtResource("35_hero_death_wav"), &"hero_hurt": ExtResource("36_hero_hurt_wav"), &"honour": ExtResource("37_honour_wav"), &"ignite": ExtResource("38_ignite_wav"), &"judgment_gong": ExtResource("39_judgment_gong_wav"), &"jump": ExtResource("40_jump_wav"), &"kick_hit": ExtResource("41_kick_hit_wav"), &"lamp_light": ExtResource("42_lamp_light_wav"), &"land": ExtResource("43_land_wav"), &"lesson": ExtResource("44_lesson_wav"), &"manuscript": ExtResource("45_manuscript_wav"), &"naft_burst": ExtResource("46_naft_burst_wav"), &"objective": ExtResource("47_objective_wav"), &"parry": ExtResource("48_parry_wav"), &"pierce_dash": ExtResource("49_pierce_dash_wav"), &"pierce_draw": ExtResource("50_pierce_draw_wav"), &"pommel_crack": ExtResource("51_pommel_crack_wav"), &"pot_burst": ExtResource("52_pot_burst_wav"), &"roll": ExtResource("53_roll_wav"), &"second_wind": ExtResource("54_second_wind_wav"), &"sever": ExtResource("55_sever_wav"), &"shield_bash": ExtResource("56_shield_bash_wav"), &"shield_block": ExtResource("57_shield_block_wav"), &"siege_impact": ExtResource("58_siege_impact_wav"), &"spear_thrust": ExtResource("59_spear_thrust_wav"), &"storm_wind": ExtResource("60_storm_wind_wav"), &"sword_heavy": ExtResource("61_sword_heavy_wav"), &"sword_hit": ExtResource("62_sword_hit_wav"), &"sword_hit_heavy": ExtResource("63_sword_hit_heavy_wav"), &"sword_swing": ExtResource("64_sword_swing_wav"), &"sword_thrust": ExtResource("65_sword_thrust_wav"), &"ui_back": ExtResource("66_ui_back_wav"), &"ui_move": ExtResource("67_ui_move_wav"), &"ui_select": ExtResource("68_ui_select_wav"), &"war_cry": ExtResource("69_war_cry_wav"), &"whirl": ExtResource("70_whirl_wav"), &"winded": ExtResource("71_winded_wav"), &"wounds_open": ExtResource("72_wounds_open_wav")})
-interface_cues = Array[StringName]([&"ui_move", &"ui_select", &"ui_back"])
+script = ExtResource("261_sound_director_gd")
+cues = Dictionary[StringName, AudioStream]({&"ambush_sting": ExtResource("1_ambush_sting_wav"), &"arrow_hit": SubResource("Takes_arrow_hit"), &"arrow_thunk": SubResource("Takes_arrow_thunk"), &"art_moment": ExtResource("12_art_moment_wav"), &"art_refused": ExtResource("13_art_refused_wav"), &"art_sting": ExtResource("14_art_sting_wav"), &"body_drop": SubResource("Takes_body_drop"), &"boss_fall": ExtResource("21_boss_fall_wav"), &"boss_roar": SubResource("Takes_boss_roar"), &"bow_release": SubResource("Takes_bow_release"), &"breath_glint": ExtResource("30_breath_glint_wav"), &"breath_in": ExtResource("31_breath_in_wav"), &"breath_out": ExtResource("32_breath_out_wav"), &"charge_hum": ExtResource("33_charge_hum_wav"), &"charge_level": ExtResource("34_charge_level_wav"), &"charge_release": SubResource("Takes_charge_release"), &"checkpoint_rest": ExtResource("39_checkpoint_rest_wav"), &"close_call": ExtResource("40_close_call_wav"), &"enemy_alert": SubResource("Takes_enemy_alert"), &"enemy_death": SubResource("Takes_enemy_death"), &"enemy_hurt": SubResource("Takes_enemy_hurt"), &"enemy_swing": SubResource("Takes_enemy_swing"), &"enemy_swing_heavy": SubResource("Takes_enemy_swing_heavy"), &"enemy_tell": ExtResource("76_enemy_tell_wav"), &"enemy_tell_break": ExtResource("77_enemy_tell_break_wav"), &"enemy_tell_dire": ExtResource("78_enemy_tell_dire_wav"), &"enemy_tell_low": ExtResource("79_enemy_tell_low_wav"), &"finisher": ExtResource("80_finisher_wav"), &"footstep": SubResource("Takes_footstep"), &"footstep_wood": SubResource("Takes_footstep_wood"), &"gate_open": ExtResource("95_gate_open_wav"), &"glance": SubResource("Takes_glance"), &"guard_break": SubResource("Takes_guard_break"), &"heal": ExtResource("108_heal_wav"), &"heartbeat": ExtResource("109_heartbeat_wav"), &"hero_death": SubResource("Takes_hero_death"), &"hero_hurt": SubResource("Takes_hero_hurt"), &"honour": ExtResource("118_honour_wav"), &"ignite": ExtResource("119_ignite_wav"), &"judgment_gong": ExtResource("120_judgment_gong_wav"), &"jump": SubResource("Takes_jump"), &"kick_hit": SubResource("Takes_kick_hit"), &"lamp_light": ExtResource("132_lamp_light_wav"), &"land": SubResource("Takes_land"), &"lesson": ExtResource("139_lesson_wav"), &"manuscript": ExtResource("140_manuscript_wav"), &"naft_burst": SubResource("Takes_naft_burst"), &"objective": ExtResource("143_objective_wav"), &"parry": SubResource("Takes_parry"), &"pierce_dash": ExtResource("152_pierce_dash_wav"), &"pierce_draw": ExtResource("153_pierce_draw_wav"), &"pommel_crack": SubResource("Takes_pommel_crack"), &"pot_burst": SubResource("Takes_pot_burst"), &"roll": SubResource("Takes_roll"), &"second_wind": ExtResource("165_second_wind_wav"), &"sever": SubResource("Takes_sever"), &"shield_bash": SubResource("Takes_shield_bash"), &"shield_block": SubResource("Takes_shield_block"), &"siege_impact": SubResource("Takes_siege_impact"), &"spear_thrust": SubResource("Takes_spear_thrust"), &"storm_wind": ExtResource("192_storm_wind_wav"), &"sword_heavy": SubResource("Takes_sword_heavy"), &"sword_hit": SubResource("Takes_sword_hit"), &"sword_hit_heavy": SubResource("Takes_sword_hit_heavy"), &"sword_swing": SubResource("Takes_sword_swing"), &"sword_thrust": SubResource("Takes_sword_thrust"), &"ui_back": ExtResource("229_ui_back_wav"), &"ui_move": ExtResource("230_ui_move_wav"), &"ui_select": ExtResource("231_ui_select_wav"), &"war_cry": SubResource("Takes_war_cry"), &"whirl": SubResource("Takes_whirl"), &"winded": ExtResource("238_winded_wav"), &"wounds_open": ExtResource("239_wounds_open_wav")})
+interface_cues = Array[StringName]([&"ui_move", &"ui_select", &"ui_back", &"lesson", &"objective", &"honour"])
 
 [node name="Music" type="Node" parent="."]
-script = ExtResource("95_music_director_gd")
-tracks = Dictionary[StringName, AudioStream]({&"boss": ExtResource("73_music_boss_wav"), &"combat": ExtResource("74_music_combat_wav"), &"ending": ExtResource("75_music_ending_wav"), &"gate": ExtResource("76_music_gate_wav"), &"market": ExtResource("77_music_market_wav"), &"scholars": ExtResource("78_music_scholars_wav"), &"streets": ExtResource("79_music_streets_wav"), &"title": ExtResource("80_music_title_wav")})
-beds = Dictionary[StringName, AudioStream]({&"fire_wind": ExtResource("81_amb_fire_wind_wav"), &"river": ExtResource("82_amb_river_wav"), &"wind": ExtResource("83_amb_wind_wav")})
+script = ExtResource("262_music_director_gd")
+tracks = Dictionary[StringName, AudioStream]({&"boss": ExtResource("240_music_boss_wav"), &"combat": ExtResource("241_music_combat_wav"), &"ending": ExtResource("242_music_ending_wav"), &"gate": ExtResource("243_music_gate_wav"), &"market": ExtResource("244_music_market_wav"), &"scholars": ExtResource("245_music_scholars_wav"), &"streets": ExtResource("246_music_streets_wav"), &"title": ExtResource("247_music_title_wav")})
+beds = Dictionary[StringName, AudioStream]({&"fire_wind": ExtResource("248_amb_fire_wind_wav"), &"river": ExtResource("249_amb_river_wav"), &"wind": ExtResource("250_amb_wind_wav")})
 
 [node name="HitStop" type="Node" parent="."]
-script = ExtResource("96_hit_stop_gd")
+script = ExtResource("263_hit_stop_gd")
 
-[node name="Hud" parent="." instance=ExtResource("97_hud_tscn")]
+[node name="Hud" parent="." instance=ExtResource("264_hud_tscn")]
 
-[node name="Dialogue" parent="." instance=ExtResource("98_dialogue_box_tscn")]
+[node name="Dialogue" parent="." instance=ExtResource("265_dialogue_box_tscn")]
 
 [node name="Menus" type="CanvasLayer" parent="."]
 layer = 20
 
-[node name="Title" parent="Menus" instance=ExtResource("99_title_screen_tscn")]
+[node name="Title" parent="Menus" instance=ExtResource("266_title_screen_tscn")]
 
-[node name="Pause" parent="Menus" instance=ExtResource("100_pause_menu_tscn")]
+[node name="Pause" parent="Menus" instance=ExtResource("267_pause_menu_tscn")]
 
-[node name="Settings" parent="Menus" instance=ExtResource("101_settings_screen_tscn")]
+[node name="Settings" parent="Menus" instance=ExtResource("268_settings_screen_tscn")]
 
-[node name="GameOver" parent="Menus" instance=ExtResource("102_game_over_tscn")]
+[node name="GameOver" parent="Menus" instance=ExtResource("269_game_over_tscn")]
 
-[node name="Complete" parent="Menus" instance=ExtResource("103_chapter_complete_tscn")]
+[node name="Complete" parent="Menus" instance=ExtResource("270_chapter_complete_tscn")]
 
-[node name="Reader" parent="Menus" instance=ExtResource("104_manuscript_reader_tscn")]
+[node name="Reader" parent="Menus" instance=ExtResource("271_manuscript_reader_tscn")]
 
-[node name="Card" parent="Menus" instance=ExtResource("105_story_card_tscn")]
+[node name="Card" parent="Menus" instance=ExtResource("272_story_card_tscn")]
 
-[node name="Lamp" parent="Menus" instance=ExtResource("106_lamp_menu_tscn")]
+[node name="Lamp" parent="Menus" instance=ExtResource("273_lamp_menu_tscn")]
 
-[node name="Techniques" parent="Menus" instance=ExtResource("107_techniques_screen_tscn")]
+[node name="Techniques" parent="Menus" instance=ExtResource("274_techniques_screen_tscn")]
 
-[node name="Guide" parent="Menus" instance=ExtResource("108_guide_screen_tscn")]
+[node name="Guide" parent="Menus" instance=ExtResource("275_guide_screen_tscn")]
 
-[node name="Journal" parent="Menus" instance=ExtResource("109_journal_screen_tscn")]
+[node name="Journal" parent="Menus" instance=ExtResource("276_journal_screen_tscn")]
 
-[node name="Codex" parent="Menus" instance=ExtResource("110_codex_screen_tscn")]
+[node name="Codex" parent="Menus" instance=ExtResource("277_codex_screen_tscn")]
 
-[node name="Lesson" parent="Menus" instance=ExtResource("111_lesson_screen_tscn")]
+[node name="Lesson" parent="Menus" instance=ExtResource("278_lesson_screen_tscn")]
 
 [node name="Fade" type="CanvasLayer" parent="."]
 layer = 30

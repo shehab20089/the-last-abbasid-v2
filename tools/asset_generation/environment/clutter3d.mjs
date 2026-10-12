@@ -335,30 +335,58 @@ export function well3d() {
 // --- The foreground ------------------------------------------------------------------------------------------
 
 /**
- * A heap in the near dark between the viewer and the street, passing low across the foot of the view: rubble, a
- * broken jar, a charred beam end jutting from it. Nearer than the fires and out of their light, it is all but black;
- * the firelight beyond catches only its top.
+ * A heap in the near dark between the viewer and the street, passing low across the foot of the view. Not a scatter
+ * of small bricks but what came down from a wall or a house: a few great pieces (dressed blocks, a slab, by variant a
+ * column's drum), the small rubble between them, a broken jar or a charred beam end jutting out. Nearer than the
+ * fires and out of their light, it stays dark; but its planes keep their light in measure (the faces turned up a dim,
+ * warm grey, the rest all but black) and the firelight beyond runs along its top over a few pixels, so it reads as a
+ * heap and not as a black shape with an orange line round it. Three variants, so the same heap does not pass twice
+ * running.
  */
-export function foregroundHeap() {
+export function foregroundHeap(variant = 0) {
   const s = scene();
-  const r = random(97);
-  const mound = (x) => Math.max(0, 30 * (1 - (x / 74) ** 2) * (0.75 + 0.25 * Math.sin(x * 0.09 + 1)));
-  for (let i = 0; i < 70; i++) {
-    const x = (r() - 0.5) * 140;
+  const r = random(97 + variant * 31);
+  const span = [74, 64, 82][variant % 3];
+  const tall = [30, 26, 34][variant % 3];
+  const mound = (x) => Math.max(0, tall * (1 - (x / span) ** 2) * (0.78 + 0.22 * Math.sin(x * 0.09 + 1 + variant)));
+  // The great pieces first, set into the heap: [x, depth, how high on the mound], size, turn, tilt, stuff.
+  const great = [
+    [[-span * 0.38, 1, 0.45], [24, 12, 12], -18 + variant * 9, 8, STONE],
+    [[span * 0.14, -2, 0.55], [20, 13, 11], 26 - variant * 7, -10, STONE],
+    [[span * 0.56, 2, 0.24], [34, 6, 15], 12, 34 - variant * 6, brick(variant)],
+  ];
+  for (const [[x, y, h], size, turn, tilt, stuff] of great) {
+    const block = roundedBox([0, 0, 0], size, { roundness: 0.12, rings: 4, segments: 8 });
+    s.add(translate(rotated(rotated(block, [0, 0, 1], turn), [0, 1, 0], tilt), [x, y, mound(x) * h + size[2] * 0.42]), stuff,
+      { group: `great${x}` });
+  }
+  if (variant === 1) {
+    // A column's drum, fallen on its side across the heap.
+    const drum = lathe([[0, 0], [6.5, 0], [7, 1], [7, 11], [6.5, 12], [0, 12]], { frame: at([0, 0, 0]), segments: 16 });
+    s.add(translate(rotated(drum, [0, 1, 0], 90), [-span * 0.05, 3, mound(0) * 0.55 + 1]), STONE, { group: "drum" });
+  }
+  // The small rubble between them.
+  for (let i = 0; i < 26; i++) {
+    const x = (r() - 0.5) * span * 1.9;
     const y = (r() - 0.5) * 16;
-    const z = mound(x) * (0.35 + r() * 0.65) + 1;
+    const z = mound(x) * (0.3 + r() * 0.6) + 1;
     const m = r() < 0.6
       ? roundedBox([0, 0, 0], [9, 4.5, 3.8], { roundness: 0.22, rings: 4, segments: 8 })
       : ellipsoid([0, 0, 0], [4 + r() * 2.5, 3 + r() * 2, 3 + r() * 2], { rings: 4, segments: 8 });
     s.add(translate(rotated(rotated(m, [0, 0, 1], r() * 180), [0, 1, 0], (r() - 0.5) * 60), [x, y, z]), r() < 0.6 ? brick(i) : STONE,
       { group: `h${i}` });
   }
-  const jar = lathe(jarProfile(30, 10).filter(([, z]) => z < 19).concat([[9.6, 19]]), { frame: at([34, -4, 8]), segments: 16, closeTop: false });
-  s.add(warp(jar, (p) => (p[2] > 26.5 ? [p[0], p[1], p[2] - hash(Math.round(p[0] * 2), Math.round(p[1] * 2), 3) * 6] : p)), clay(P.brick),
-    { group: "jar" });
-  s.add(translate(rotated(roundedBox([0, 0, 0], [46, 6, 6], { roundness: 0.2 }), [0, 1, 0], -28), [-30, 2, 22]), BURNT, { group: "beam" });
-  const c = render(s.parts, { width: 160, height: 48 });
-  // Into the dark, but for the firelight along its top.
+  if (variant !== 1) {
+    const jar = lathe(jarProfile(30, 10).filter(([, z]) => z < 19).concat([[9.6, 19]]),
+      { frame: at([variant === 0 ? 34 : -span * 0.72, -4, 8]), segments: 16, closeTop: false });
+    s.add(warp(jar, (p) => (p[2] > 26.5 ? [p[0], p[1], p[2] - hash(Math.round(p[0] * 2), Math.round(p[1] * 2), 3) * 6] : p)),
+      clay(P.brick), { group: "jar" });
+  }
+  if (variant !== 2) {
+    s.add(translate(rotated(roundedBox([0, 0, 0], [46, 6, 6], { roundness: 0.2 }), [0, 1, 0], variant === 0 ? -28 : 24),
+      [variant === 0 ? -30 : 26, 2, 22]), BURNT, { group: "beam" });
+  }
+  const c = render(s.parts, { width: Math.ceil(span * 2 + 14), height: 52 });
   for (let x = 0; x < c.width; x++) {
     let edge = 0;
     for (let y = 0; y < c.height; y++) {
@@ -367,9 +395,15 @@ export function foregroundHeap() {
         edge = 0;
         continue;
       }
-      const dark = [col[0] * 0.2, col[1] * 0.18, col[2] * 0.2, 255].map(Math.round);
-      const rim = edge === 0 ? 0.55 : edge === 1 ? 0.22 : 0;
-      c.set(x, y, rim ? [0, 1, 2].map((k) => Math.round(dark[k] + (P.fire[3][k] - dark[k]) * rim)).concat(255) : dark);
+      // Its own light held down: the planes the light found stay a dim grey, faintly warm, the rest near black.
+      const v = Math.max(col[0], col[1], col[2]) / 255;
+      const k = 0.14 + 0.62 * v * v;
+      const warmth = Math.min(0.4, v * 0.5) * 0.5;
+      let out = [0, 1, 2].map((i) => col[i] * k + ([58, 30, 20][i] - col[i] * k) * warmth);
+      // The firelight beyond runs along its top, fading into the planes beneath.
+      const rim = [0.42, 0.24, 0.1][edge] ?? 0;
+      if (rim) out = out.map((ch, i) => ch + (P.fire[2][i] - ch) * rim);
+      c.set(x, y, [...out.map(Math.round), 255]);
       edge += 1;
     }
   }
@@ -381,6 +415,7 @@ export function clutter3d() {
   return [
     ["jars", jars3d()], ["jars_broken", brokenJars3d()], ["sacks", sacks3d()], ["cart", cart3d()], ["rubble", rubble3d()],
     ["beam_charred", charredBeam3d()], ["book_pile", bookPile3d()], ["banner_fallen", fallenBanner3d()],
-    ["stone_ball", stoneBalls3d()], ["brazier", brazier3d()], ["well", well3d()], ["fg_rubble", foregroundHeap()],
+    ["stone_ball", stoneBalls3d()], ["brazier", brazier3d()], ["well", well3d()], ["fg_rubble", foregroundHeap(0)],
+    ["fg_rubble_b", foregroundHeap(1)], ["fg_rubble_c", foregroundHeap(2)],
   ];
 }

@@ -62,6 +62,8 @@ var play_log: PlayLog
 var presentation: CombatPresentation
 ## The boss fight's moments (app/boss_fight.gd), begun by a `boss` trigger.
 var boss_fight: BossFight
+## The level's staged scenes (app/staged_scenes.gd): the story told in the game's own figures.
+var scenes: StagedScenes
 ## How the player is taught (app/teaching.gd): lessons at the top, the cards that stop the game, the first
 ## warnings and meetings.
 var teaching: Teaching
@@ -114,6 +116,11 @@ func _ready() -> void:
 	add_child(boss_fight)
 	boss_fight.setup(self)
 	boss_fight.ended.connect(_refresh_story)
+	scenes = StagedScenes.new()
+	scenes.name = "Scenes"
+	add_child(scenes)
+	scenes.setup(self)
+	scenes.finished.connect(_on_scene_finished)
 	world.process_mode = Node.PROCESS_MODE_PAUSABLE
 	vfx.process_mode = Node.PROCESS_MODE_PAUSABLE
 	gore.process_mode = Node.PROCESS_MODE_PAUSABLE
@@ -162,6 +169,12 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	# F11, or Alt and Enter, switches between full screen and a window, anywhere (as Settings > Display does).
+	var key: InputEventKey = event as InputEventKey
+	if key != null and key.pressed and not key.echo and (key.keycode == KEY_F11 or (key.keycode == KEY_ENTER and key.alt_pressed)):
+		get_viewport().set_input_as_handled()
+		settings.set_fullscreen(not settings.fullscreen)
+		return
 	if event.is_action_pressed(&"pause") and state == State.PLAYING:
 		get_viewport().set_input_as_handled()
 		_pause()
@@ -423,6 +436,7 @@ func _setup_level(checkpoint: StringName) -> void:
 	_lay_lost_keepsakes()
 	_refresh_story()
 	boss_fight.clear()
+	scenes.clear()
 	camera.set_bounds(level.bounds)
 	camera.target = hero
 	camera.snap()
@@ -438,6 +452,7 @@ func _setup_level(checkpoint: StringName) -> void:
 	hud.set_honour(save.honour, false)
 	music.play_music(level.music)
 	music.play_ambience(level.ambience)
+	sounds.set_space(level.acoustics)
 	vfx.clear()
 	gore.clear()
 	gore.set_ground_layer(level.get_node_or_null(^"Props") as Node2D)
@@ -569,6 +584,11 @@ func _quit_to_title() -> void:
 	show_title()
 
 
+## Fades the screen to black (1) or back (0), in real time.
+func fade_to(alpha: float) -> void:
+	await _fade_to(alpha)
+
+
 func _fade_to(alpha: float) -> void:
 	var tween: Tween = create_tween()
 	# Fades run in real time, whatever a hit-stop or a slow fall is doing to the world.
@@ -627,7 +647,7 @@ func _on_captive_killed(captive: Captive) -> void:
 	_lay_keepsake(captive)
 	gore.cut_down(captive, captive, captive.gore_set, &"head", captive.facing(), captive.facing())
 	gore.bleed_out(captive, captive, captive.gore_set, captive.facing())
-	sounds.play(&"sever")
+	sounds.play_at(&"sever", captive.global_position + Vector2(0.0, -30.0))
 	hit_stop.trigger(0.08)
 	camera.shake(1.5)
 	if captive.captive_id != &"":
@@ -948,6 +968,11 @@ func _apply_growth() -> void:
 	hud.set_honour(save.honour, false)
 
 
+## A keepsake given in a staged scene (Hamid's seal): his, worn if a slot is free.
+func give_keepsake(id: StringName) -> void:
+	_give_keepsake(id)
+
+
 ## A keepsake given (by one he saved) or found: his, worn if a slot is free.
 func _give_keepsake(id: StringName) -> void:
 	_sync_progression()
@@ -1219,13 +1244,30 @@ func _on_trigger(trigger: StoryTrigger) -> void:
 			music.play_music(&"combat")
 			_refresh_story()
 		&"boss":
-			if not boss_fight.begin():
-				return
+			# The fight's own scene comes first (Hamid at the gate); its words and its lesson after it.
+			if boss_fight.can_begin():
+				boss_fight.begin(trigger.hint, trigger.speaker, trigger.line)
+			return
+		&"scene":
+			# Played on an earlier life: the soldiers it turned on him come again, until they have fallen.
+			if scenes.played(trigger.scene):
+				if trigger.group != &"" and save.has_flag(trigger.group) and not save.has_flag(StringName("%s_cleared" % trigger.group)):
+					level.wake_group(trigger.group)
+			else:
+				scenes.play(trigger.scene)
 		&"alarm":
 			level.alarm_group(trigger.group)
 	if trigger.hint != "":
 		teaching.hint(trigger.hint)
 	say(trigger.speaker, trigger.line)
+
+
+## A staged scene ended: what it changed shows (its flags, the objective), and is kept (not when it was broken off).
+func _on_scene_finished(_id: StringName) -> void:
+	if level == null or state == State.TITLE:
+		return
+	_save_game()
+	_refresh_story()
 
 
 func _on_group_cleared(group: StringName) -> void:
@@ -1264,7 +1306,7 @@ func _spawn_refugees() -> void:
 
 
 func _on_runner_fell(runner: FleeingCivilian) -> void:
-	sounds.play(&"arrow_hit")
+	sounds.play_at(&"arrow_hit", runner.global_position + Vector2(0.0, -40.0))
 	gore.spatter(runner.global_position + Vector2(-runner.direction * 6.0, -46.0), runner.direction, runner.global_position.y, 4)
 	gore.bleed_out(runner, runner, null, runner.direction)
 
@@ -1288,13 +1330,51 @@ func _on_exit() -> void:
 	save.resolve = hero.resolve
 	_save_game()
 	music.play_music(&"ending" if next == "" else &"")
-	await _real_delay(1.6)
+	# From the last gate, the people walk out past him first.
+	var hold: float = 1.6
+	if next == "":
+		hold = maxf(hold, _walk_out())
+	await _real_delay(hold)
 	await _fade_to(1.0)
 	hud.set_gameplay_visible(false)
 	_unload_level()
 	play_log.event("card", "%s begins" % (story if next != "" else &"ending"))
 	card.play(story if next != "" else &"ending", _card_lines(story if next != "" else &"ending"), heading)
 	fade.color.a = 0.0
+
+
+## The people walk out through the open gate past the hero, the ones he saved among them (Level.procession);
+## how long until the last of them is through.
+func _walk_out() -> float:
+	var gate: LevelExit = level.exit()
+	if gate == null or level.procession.is_empty():
+		return 0.0
+	hero.set_facing(-1.0)
+	var through: float = gate.global_position.x + 40.0
+	var from: float = hero.global_position.x - 200.0
+	var pace: float = 66.0
+	var count: int = 0
+	for entry: String in level.procession:
+		var parts: PackedStringArray = entry.split("|")
+		if parts.size() < 2 or (parts[0] != "" and not save.has_flag(StringName(parts[0]))):
+			continue
+		var frames: SpriteFrames = load("res://assets/npcs/%s/%s_frames.tres" % [parts[1], parts[1]]) as SpriteFrames
+		if frames == null or not frames.has_animation(&"walk"):
+			continue
+		var walker: Actor = Actor.new()
+		walker.name = "Walker%d" % count
+		walker.sprite_frames = frames
+		walker.rest = &"walk"
+		level.add_child(walker)
+		level.move_child(walker, level.enemies.get_index())
+		walker.global_position = Vector2(from - count * 30.0, level.street_y())
+		# Their own steps, a little quicker than a stroll: the gate is open.
+		walker.speed_scale = pace / 41.0
+		walker.walk_to(through, pace, &"walk", true)
+		count += 1
+	if count == 0:
+		return 0.0
+	return (through - (from - (count - 1) * 30.0)) / pace + 0.4
 
 
 func _show_complete() -> void:

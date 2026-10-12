@@ -1,7 +1,8 @@
 // Level 4, The Last Gate: first light along the southern wall. Past the people waiting by the wall
-// road and the Mongols' camp in a square, up the rampart and along its walk under the archers'
-// eyes, down through the wreck of the siege to the gate square, where Toqto Noyan, captain of a
-// thousand, holds the last gate. Even here they are killing: a man kneels under a sabre on the
+// road (Salim and Umm Ali among them, with Hamid's last words) and the Mongols' camp in a square, up the
+// rampart and along its walk under the archers' eyes, down through the wreck of the siege to the gate
+// square, where Toqto Noyan, captain of a thousand, holds the last gate with Hamid on his knees before
+// it, a burning barricade between them and Yusuf (docs/story_plan.md). Even here they are killing: a man kneels under a sabre on the
 // wall road; in the camp they talk round a brazier, sort plunder and stab at their prisoners; in
 // the siege wreck a woman waits for the stroke. The gate's defenders lie where they fell. Tiles
 // of 16 px; the street is the top of row STREET.
@@ -12,7 +13,7 @@ export const ROWS = 32;
 
 const ENEMIES = [
   // On the wall road, a man kneels under a sabre.
-  // The road's headsman waits a little longer: his clock starts just past Hamid and the Second Wind's lesson.
+  // The road's headsman waits a little longer: his clock starts just past Salim and the Second Wind's lesson.
   { kind: "swordsman", col: 36, face: 1, activity: "execute", victim: "road_captive", delay: 4.0, patrol: 0 },
   // The camp: talking round a brazier, sorting plunder, an archer on the wagon, stabbing at prisoners.
   { kind: "spearman", col: 51, face: 1, activity: "chat", patrol: 0 },
@@ -31,8 +32,8 @@ const ENEMIES = [
   { kind: "shieldbearer", col: 156, face: -1, patrol: 0 },
   { kind: "swordsman", col: 168, face: 1, activity: "execute", victim: "siege_captive", delay: 3.0, patrol: 0 },
   { kind: "axeman", col: 178, face: -1, patrol: 20 },
-  // The captain at his gate.
-  { kind: "captain", col: 222, face: -1, dormant: true, group: "captain" },
+  // The captain at his gate, over Hamid.
+  { kind: "captain", col: 226, face: -1, dormant: true, group: "captain" },
 ];
 
 export const LEVEL = {
@@ -41,15 +42,21 @@ export const LEVEL = {
   env: "res://assets/environments/gate",
   look: "dawn",
   // The far city, the river and the low sun are the concept painting's (docs/concept_art).
-  painting: { source: "docs/concept_art/06_The_Last_Gate.png", crop: [232, 300, 624, 234], scroll: 0.06 },
+  painting: { source: "docs/concept_art/06_The_Last_Gate.png", crop: [232, 300, 624, 234], scroll: 0.06,
+    // Over the camp's low wall the city burns right behind the fighters: its fires held down and its lower half softened
+    // and dimmed, the low sun and the smoke above kept.
+    quiet: { from: 0.36, light: 0.62, soft: 0.5, knee: 0.16, highlights: 0.5, dim: 0.9 } },
   tint: "Color(0.93, 0.89, 0.9, 1)",
   title: "LEVEL_LAST_GATE",
   music: "gate",
   ambience: "wind",
+  // The stone canyon under the city wall and its gate towers: a long, late echo.
+  acoustics: "walls",
   next: "",
   exitCard: "ending",
   exitTitle: "",
-  objectives: [["captain_cleared", "OBJ_OPEN_GATE", "exit"], ["", "OBJ_REACH_GATE", "exit"]],
+  objectives: [["captain_cleared", "OBJ_OPEN_GATE", "exit"], ["hamid_dead", "OBJ_FACE_TOQTO", "group:captain"],
+    ["", "OBJ_REACH_GATE", "exit"]],
   cols: COLS,
   rows: ROWS,
   start: [5, STREET],
@@ -120,8 +127,37 @@ export const LEVEL = {
   ],
   enemies: ENEMIES,
   npcs: [
-    // Hamid again, at the camp: his breath, the Second Wind.
-    { id: "hamid", kind: "guard", col: 14, face: 1, dialogue: "hamid", gives: "hamid_breath", teaches: "second_wind" },
+    // Salim and Umm Ali, together again, among the people on the wall road: Hamid's words, the Second Wind.
+    { id: "salim_gate", kind: "salim", col: 14, face: 1, dialogue: "salim_gate", gives: "hamid_breath", teaches: "second_wind" },
+    { id: "umm_ali", kind: "mother", col: 11.5, face: 1, dialogue: "umm_ali", anims: ["stand", "stand_talk"] },
+  ],
+  // Hamid on his knees before the last gate; once his scene has played he lies where he fell.
+  actors: [
+    { id: "hamid_gate", kind: "guard", col: 223.5, face: -1, rest: "kneel", dead: "hamid_dead" },
+  ],
+  // At the gate: Hamid's last words and Toqto's stroke across the fire, then the fight (BossFight); after it, Yusuf
+  // kneels by him, takes his seal and calls the people to the gate.
+  scenes: {
+    boss_prelude: [
+      "bars on", "act boss execute", "face hero right", "look 214 1.2", "wait 0.8",
+      "say SPEAKER_YUSUF COLUMN_YUSUF", "say SPEAKER_GUARD GATE_HAMID_1", "say SPEAKER_GUARD GATE_HAMID_2",
+      "say SPEAKER_TOQTO GATE_TOQTO_1", "say SPEAKER_TOQTO GATE_TOQTO_2",
+      "duck -16 3", "slow 0.45 0.6", "strike hamid_gate", "flag hamid_dead", "act boss idle", "wait 1.6",
+      "barrier off", "sound pot_burst", "shake 2", "look hero 0.6", "bars off",
+    ],
+    boss_after: [
+      "hold", "bars on", "fade out", "place 221", "face hero right", "act hero kneel", "fade in", "wait 1.2",
+      "say SPEAKER_YUSUF FAREWELL_1", "wait 0.6", "keepsake bronze_seal", "wait 1.4", "act hero idle",
+      "face hero left", "say SPEAKER_YUSUF YUSUF_AFTER_TOQTO", "bars off", "release",
+    ],
+  },
+  // Who walks out of the gate past him when it opens: Salim first, those he saved, the people of the road, and last
+  // Umm Ali with Ali in her arms.
+  procession: [
+    ["", "salim"], ["saved_gate_captive", "refugee_man"], ["saved_lanes_captive", "refugee_woman"],
+    ["saved_square_captive", "refugee_man"], ["saved_fountain_captive", "refugee_man"],
+    ["saved_river_captive", "refugee_woman"], ["saved_road_captive", "refugee_man"],
+    ["saved_siege_captive", "refugee_woman"], ["", "refugee_woman"], ["", "refugee_man"], ["", "mother"],
   ],
   // People waiting by the wall road for the gate to open; two kneel under a headsman's sabre.
   captives: [
@@ -131,7 +167,7 @@ export const LEVEL = {
     { id: "siege_captive", kind: "refugee_woman", col: 170, face: 1, run: -1, thanks: "SAVED_2" },
   ],
   triggers: [
-    // Walked past Hamid: his breath comes to him anyway, on the road.
+    // Walked past Salim: Hamid's breath comes to him anyway, on the road.
     { id: "lesson_breath", from: 24, to: 27, teaches: "second_wind" },
     { id: "hint_maceman", from: 112, to: 115, above: 80, height: 120, hint: "HINT_MACEMAN" },
     // Past the wall's archers, before the shield-bearer and the axeman: the heavy string's last blow (a master's
@@ -140,7 +176,9 @@ export const LEVEL = {
     { id: "boss", from: 196, to: 198, event: "boss", hint: "HINT_BOSS", speaker: "SPEAKER_TOQTO", line: "TOQTO_INTRO" },
   ],
   // The gate square: burning barricades close behind the hero, and the camera keeps to the square.
-  arena: { from: 191, to: 240, boss: ENEMIES.findIndex((e) => e.kind === "captain"), barriers: [192] },
+  arena: { from: 191, to: 240, boss: ENEMIES.findIndex((e) => e.kind === "captain"), barriers: [192],
+    // Fire across the square between Yusuf and the gate until Hamid's scene has played.
+    sceneBarriers: [210], sceneOpenFlag: "scene_boss_prelude" },
   exit: { name: "LastGate", col: 228, art: "last_gate", prompt: "PROMPT_OPEN_LAST_GATE",
     lockedPrompt: "PROMPT_LAST_GATE", lockedLine: "GATE_LOCKED_4", requires: "captain_cleared" },
   fires: [

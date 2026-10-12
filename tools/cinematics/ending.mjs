@@ -1,5 +1,5 @@
-// The chapter's end: the last gate opens at first light; what was lost; what was carried out, and Yusuf at
-// the back of the column. After a whole night of fire, the only daylight in the game.
+// The chapter's end: the last gate opens at first light; the Caliph's death and what was lost; what was carried
+// out, and Yusuf at the back of the column with Hamid's seal. After a whole night of fire, the only daylight in the game.
 import { FIRE, DAWN, DAWN_START, MEMORY } from "./grades.mjs";
 import { PAINTINGS } from "./paintings.mjs";
 import { BOOKS } from "./market_end.mjs";
@@ -22,8 +22,8 @@ export default {
       painting: "river",
       camera: [[0, [0, 440, 1200, 502]], [1, [140, 470, 1000, 418]]],
       grade: MEMORY,
-      lines: ["ENDING_2"],
-      lead: 1.0, tail: 1.0, minimum: 8, dissolve: 1.4,
+      lines: ["ENDING_CALIPH", "ENDING_2"],
+      lead: 1.0, tail: 1.0, minimum: 14, dissolve: 1.4,
       fire: 0.35, water: 0.6,
       ink: { rect: [0, 300, 1672, 641], sources: BOOKS, water: PAINTINGS.river.water },
       inkFrom: 1,

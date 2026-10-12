@@ -20,11 +20,16 @@ export const LEVEL = {
   env: "res://assets/environments/scholars",
   look: "predawn",
   // The far city and the Tigris are the gameplay mockup's (docs/concept_art), pixel-converted.
-  painting: { source: "docs/concept_art/10_Pixel_Art_Gameplay_Mockup.png", crop: [384, 112, 1000, 354], scroll: 0.06 },
+  painting: { source: "docs/concept_art/10_Pixel_Art_Gameplay_Mockup.png", crop: [384, 112, 1000, 354], scroll: 0.06,
+    // Across the river the burning city stands right behind the fighters on the river wall: its fires held down and its
+    // lower half softened and dimmed, so the fight on the wall is what the eye goes to.
+    quiet: { from: 0.4, light: 0.64, soft: 0.5, knee: 0.18, highlights: 0.55, dim: 0.92 } },
   tint: "Color(0.8, 0.82, 0.94, 1)",
   title: "LEVEL_SCHOLARS_QUARTER",
   music: "scholars",
   ambience: "river",
+  // The college's courtyards and halls, and the library's vaults.
+  acoustics: "court",
   next: "res://features/levels/last_gate/last_gate.tscn",
   exitCard: "scholars_end",
   exitTitle: "LEVEL_LAST_GATE",

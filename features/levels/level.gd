@@ -30,6 +30,8 @@ signal relic_found(relic: Relic)
 @export var bounds: Rect2 = Rect2(0, 0, 4800, 544)
 @export var music: StringName = &""
 @export var ambience: StringName = &""
+## The room its sounds ring in (SoundDirector.SPACES: street, alleys, court, walls).
+@export var acoustics: StringName = &"street"
 @export var next_level: String = ""
 ## The story card told when the hero leaves through the exit (a DialogueLibrary key) and the title
 ## it shows (a translation key: the next level's name).
@@ -49,11 +51,18 @@ signal relic_found(relic: Relic)
 @export var manuscript_ids: PackedStringArray = PackedStringArray()
 @export var relic_ids: PackedStringArray = PackedStringArray()
 @export var captive_ids: PackedStringArray = PackedStringArray()
+## The level's staged scenes (played by the session's StagedScenes): each a list of steps ("verb words...").
+@export var scenes: Dictionary[StringName, PackedStringArray] = {}
+## Who walks out of the way out when it opens at the end ("flag|kind": shown if the flag is set, or always if empty;
+## the kind is a townsperson's), in the order they come.
+@export var procession: PackedStringArray = PackedStringArray()
 
 ## The boss's arena, if this level has one.
 var arena: BossArena
 ## Captives and other townspeople who react to the story, if any.
 var people: Node2D
+## The figures of its staged scenes, if any.
+var actors: Node2D
 
 var _group_alive: Dictionary[StringName, int] = {}
 
@@ -66,6 +75,7 @@ var _group_alive: Dictionary[StringName, int] = {}
 func _ready() -> void:
 	arena = get_node_or_null(^"Arena") as BossArena
 	people = get_node_or_null(^"People") as Node2D
+	actors = get_node_or_null(^"Actors") as Node2D
 	for node: Node in interactables.get_children():
 		if node is Checkpoint:
 			(node as Checkpoint).rested.connect(_on_checkpoint_rested)
@@ -154,6 +164,17 @@ func npc(id: StringName) -> Npc:
 	return null
 
 
+## A figure of the level's staged scenes, or null.
+func actor(id: StringName) -> Actor:
+	if actors == null:
+		return null
+	for node: Node in actors.get_children():
+		var figure: Actor = node as Actor
+		if figure != null and figure.actor_id == id and not figure.is_queued_for_deletion():
+			return figure
+	return null
+
+
 ## The way out of the level, or null.
 func exit() -> LevelExit:
 	for node: Node in interactables.get_children():
@@ -185,6 +206,14 @@ func wake_group(group: StringName) -> void:
 			var brain: EnemyBrain = soldier.get_node_or_null(^"Brain") as EnemyBrain
 			if brain != null:
 				brain.wake(true)
+
+
+## Shows a hidden group's soldiers where they stand, still waiting (a scene shows them before they turn on him).
+func reveal_group(group: StringName) -> void:
+	for soldier: MongolSoldier in soldiers():
+		if soldier.get_meta(&"group", &"") == group and not soldier.dead and not soldier.visible:
+			soldier.visible = true
+			soldier.process_mode = Node.PROCESS_MODE_INHERIT
 
 
 ## Turns every soldier of a group to the hero, as a shout would (a captive cries out for help).
@@ -228,6 +257,14 @@ func apply_progress(lit: Array[StringName], taken: Array[StringName], flags: Arr
 		if group != &"" and StringName("%s_cleared" % group) in flags:
 			soldier.queue_free()
 			_group_alive.erase(group)
+	# What the staged scenes have done already: who lies dead, who is gone, which fire has burned down.
+	if actors != null:
+		for node: Node in actors.get_children():
+			var figure: Actor = node as Actor
+			if figure != null:
+				figure.apply_progress(flags)
+	if arena != null:
+		arena.apply_progress(flags)
 	# Captives already freed are long gone; one already saved from the sabre too, and one already
 	# beheaded lies where they fell. Either way their executioner has nothing left to do.
 	if people != null:

@@ -54,5 +54,27 @@
   "allRound": false,
   "wounds": null,
   "file": "salim_talk.png"
+ },
+ "walk": {
+  "name": "walk",
+  "frames": 8,
+  "width": 96,
+  "height": 128,
+  "fps": 9,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "allRound": false,
+  "wounds": null,
+  "file": "salim_walk.png"
  }
 }

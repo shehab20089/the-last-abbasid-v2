@@ -1,0 +1,214 @@
+{
+ "sword_swing": {
+  "takes": 8,
+  "pitch": 1.06,
+  "volume": 1
+ },
+ "sword_thrust": {
+  "takes": 6,
+  "pitch": 1.06,
+  "volume": 1
+ },
+ "sword_heavy": {
+  "takes": 6,
+  "pitch": 1.05,
+  "volume": 1
+ },
+ "enemy_swing": {
+  "takes": 8,
+  "pitch": 1.06,
+  "volume": 1
+ },
+ "enemy_swing_heavy": {
+  "takes": 6,
+  "pitch": 1.05,
+  "volume": 1
+ },
+ "spear_thrust": {
+  "takes": 5,
+  "pitch": 1.05,
+  "volume": 1
+ },
+ "whirl": {
+  "takes": 4,
+  "pitch": 1.05,
+  "volume": 1
+ },
+ "charge_release": {
+  "takes": 4,
+  "pitch": 1.04,
+  "volume": 1
+ },
+ "parry": {
+  "takes": 8,
+  "pitch": 1.04,
+  "volume": 1
+ },
+ "shield_block": {
+  "takes": 8,
+  "pitch": 1.05,
+  "volume": 1
+ },
+ "guard_break": {
+  "takes": 6,
+  "pitch": 1.04,
+  "volume": 1
+ },
+ "glance": {
+  "takes": 6,
+  "pitch": 1.06,
+  "volume": 1
+ },
+ "sword_hit": {
+  "takes": 8,
+  "pitch": 1.05,
+  "volume": 1.5
+ },
+ "sword_hit_heavy": {
+  "takes": 8,
+  "pitch": 1.05,
+  "volume": 1.5
+ },
+ "pommel_crack": {
+  "takes": 4,
+  "pitch": 1.05,
+  "volume": 1
+ },
+ "kick_hit": {
+  "takes": 5,
+  "pitch": 1.05,
+  "volume": 1
+ },
+ "shield_bash": {
+  "takes": 5,
+  "pitch": 1.05,
+  "volume": 1
+ },
+ "sever": {
+  "takes": 6,
+  "pitch": 1.05,
+  "volume": 1
+ },
+ "footstep": {
+  "takes": 8,
+  "pitch": 1.08,
+  "volume": 2
+ },
+ "footstep_wood": {
+  "takes": 6,
+  "pitch": 1.08,
+  "volume": 2
+ },
+ "jump": {
+  "takes": 6,
+  "pitch": 1.06,
+  "volume": 1
+ },
+ "land": {
+  "takes": 6,
+  "pitch": 1.05,
+  "volume": 1
+ },
+ "roll": {
+  "takes": 4,
+  "pitch": 1.05,
+  "volume": 1
+ },
+ "body_drop": {
+  "takes": 6,
+  "pitch": 1.06,
+  "volume": 1
+ },
+ "enemy_hurt": {
+  "takes": 8,
+  "pitch": 1.03,
+  "volume": 1,
+  "uneven": true
+ },
+ "enemy_death": {
+  "takes": 7,
+  "pitch": 1.03,
+  "volume": 1
+ },
+ "hero_hurt": {
+  "takes": 6,
+  "pitch": 1.03,
+  "volume": 1
+ },
+ "hero_death": {
+  "takes": 2,
+  "pitch": 1,
+  "volume": 0
+ },
+ "enemy_alert": {
+  "takes": 6,
+  "pitch": 1.03,
+  "volume": 1,
+  "uneven": true
+ },
+ "war_cry": {
+  "takes": 2,
+  "pitch": 1,
+  "volume": 0
+ },
+ "boss_roar": {
+  "takes": 3,
+  "pitch": 1,
+  "volume": 0
+ },
+ "boss_fall": {
+  "takes": 1,
+  "pitch": 1,
+  "volume": 0
+ },
+ "bow_release": {
+  "takes": 5,
+  "pitch": 1.04,
+  "volume": 1
+ },
+ "arrow_thunk": {
+  "takes": 5,
+  "pitch": 1.05,
+  "volume": 1
+ },
+ "arrow_hit": {
+  "takes": 5,
+  "pitch": 1.05,
+  "volume": 1
+ },
+ "pot_burst": {
+  "takes": 3,
+  "pitch": 1.04,
+  "volume": 1
+ },
+ "naft_burst": {
+  "takes": 2,
+  "pitch": 1.03,
+  "volume": 1
+ },
+ "gate_open": {
+  "takes": 1,
+  "pitch": 1,
+  "volume": 0
+ },
+ "siege_impact": {
+  "takes": 2,
+  "pitch": 1.02,
+  "volume": 0
+ },
+ "heal": {
+  "takes": 1,
+  "pitch": 1,
+  "volume": 0
+ },
+ "lamp_light": {
+  "takes": 1,
+  "pitch": 1,
+  "volume": 0
+ },
+ "manuscript": {
+  "takes": 1,
+  "pitch": 1,
+  "volume": 0
+ }
+}

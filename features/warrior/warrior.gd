@@ -366,7 +366,8 @@ func is_guarding() -> bool:
 
 
 func is_invulnerable() -> bool:
-	return (_invulnerable > 0.0 or _rolling_through() or state == State.FINISHER
+	# Held in a staged scene or the boss's moments, nothing touches him.
+	return (_invulnerable > 0.0 or _rolling_through() or state == State.FINISHER or state == State.CINEMATIC
 		or (state == State.ART and _art != null and _art.invulnerable))
 
 
@@ -572,6 +573,11 @@ func _try_air_action() -> bool:
 		input.consume(&"attack")
 		return _start_air_attack()
 	return false
+
+
+## Standing on boards (a plank or a gallery: a one-way floor) rather than stone, for the sound of his steps.
+func on_boards() -> bool:
+	return is_on_floor() and _on_one_way_floor()
 
 
 ## Standing on planks (a one-way floor): down and jump drop him through them.

@@ -6,8 +6,8 @@
 import { join } from "node:path";
 import { Canvas, P, archway, beam, brickWall, fbm, fillShape, hash2, mix, pick, plasterWall } from "./env_lib.mjs";
 import {
-  archRelief, balcony, banner, coping, crenels, door, hazeAt, levelGrade, scarWall, sill, soot, streetLights, tileBand,
-  toPalette,
+  arcadeBays, archRelief, balcony, banner, coping, crenels, door, greatScar, hazeAt, levelGrade, scarWall, sill, soot,
+  streetLights, tileBand, toPalette, wallCampaigns,
 } from "./backdrop.mjs";
 import { Relief, lightRelief } from "./relief.mjs";
 
@@ -124,22 +124,24 @@ function rubbleBlock(w, h, seed, ctx) {
 }
 
 /** A stretch of the city wall seen from the town side, its walk the way over: big courses, a coping of dressed stone
- * along the walk, blind arches, arrow loops, the siege's marks on it as on the rampart behind. */
+ * along the walk, its arches in bays between buttress piers (each as the siege left it, but no rubble spilt on the
+ * street before it), arrow loops over some of them, an old stretch on its plinth of great stones, a mended one in
+ * paler brick, a great scar where the engines struck. */
 function rampartBlock(w, h, seed, ctx) {
   const c = new Canvas(w, h);
   const relief = ctx.relief;
   brickWall(c, 0, 0, w, h, { base: 3, seed, light: 1, brickW: 10, soot: 0.5, sootFrom: "bottom", relief, joint: 0.4,
     calm: true });
+  wallCampaigns(c, relief, 0, w, 6, h, seed, [[0.0, 0.2, "old"], [0.62, 0.8, "pale"]]);
   scarWall(c, 0, w, 6, h, h - 6, seed, relief, ctx);
-  for (let ax = 30; ax < w - 30; ax += 80) {
-    archway(c, ax, h - 4, 40, Math.min(h - 30, 100), { ring: 3, ringTone: 4, interior: (x, y) =>
-      pick(P.brick, 2 + ((y >> 2) % 2 === 0 && (x >> 3) % 2 === 0 ? 1 : 0)) });
-    archRelief(relief, ax, h - 4, 40, Math.min(h - 30, 100), { ring: 3, ringOut: 1, recess: -6 });
-  }
-  for (let sx = 70; sx < w - 20; sx += 80) {
-    fillShape(c, sx, 24, sx + 1, 40, () => true, P.night[0]);
-    relief.rect(sx, 24, sx + 1, 40, -5);
-  }
+  greatScar(c, relief, Math.round(w * 0.46), Math.round(h * 0.3), 13, 6, seed + 9);
+  const arches = arcadeBays(c, relief, 0, w, h, seed, { archW: 40, archH: Math.min(h - 30, 100), pierW: 14, pierTop: 8,
+    foot: 4, rubble: false, plan: [["open"], ["blocked", "open"], ["shored"], ["open", "postern"], ["broken"]] });
+  arches.forEach((arch, i) => {
+    if (i % 2 === 1 || arch.kind === "broken") return;
+    fillShape(c, arch.cx, 22, arch.cx + 1, 36, () => true, P.night[0]);
+    relief.rect(arch.cx, 22, arch.cx + 1, 36, -5);
+  });
   // The walk's coping: dressed stone, lit along its top, a shadow under it.
   fillShape(c, 0, 0, w - 1, 5, () => true, (x, y) => pick(P.stone, y === 0 ? 5 : y === 5 ? 1 : 3 + (x % 24 === 0 ? -1 : 0)));
   relief.rect(0, 0, w - 1, 4, 3);

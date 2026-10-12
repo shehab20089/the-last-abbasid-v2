@@ -3,7 +3,9 @@ extends Node
 ## Freezes the action for a heartbeat when a blow lands, so it lands with weight, and slows it for a
 ## boss's fall or a finisher. Everything slows together (Engine.time_scale), so no timing rule
 ## changes; both are measured in unscaled frame time, so they last the same on any machine and in
-## fixed-step tests. A freeze inside slow time gives way to the slow time again.
+## fixed-step tests. A freeze inside slow time gives way to the slow time again. While the game is
+## paused (the pause menu, a lesson's card) both wait, what is left of them kept for when play goes on,
+## and the menus run at their own pace.
 
 const SLOW: float = 0.05
 
@@ -52,6 +54,10 @@ func _apply() -> void:
 
 func _process(delta: float) -> void:
 	if _left <= 0.0 and _slow_left <= 0.0:
+		return
+	# Paused: nothing is used up, and the menus are not slowed; the scale comes back with play.
+	if get_tree().paused:
+		Engine.time_scale = 1.0
 		return
 	var real: float = delta / maxf(Engine.time_scale, 0.001)
 	_left = maxf(_left - real, 0.0)

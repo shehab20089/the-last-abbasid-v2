@@ -1,12 +1,49 @@
-[gd_resource type="AudioBusLayout" format=3]
+[gd_resource type="AudioBusLayout" load_steps=6 format=3]
+
+[sub_resource type="AudioEffectHardLimiter" id="AudioEffectHardLimiter_master"]
+resource_name = "HardLimiter"
+ceiling_db = -0.5
+release = 0.12
+
+[sub_resource type="AudioEffectReverb" id="AudioEffectReverb_effects"]
+resource_name = "Reverb"
+predelay_msec = 28.0
+room_size = 0.42
+damping = 0.55
+spread = 0.8
+hipass = 0.2
+wet = 0.1
+
+[sub_resource type="AudioEffectCompressor" id="AudioEffectCompressor_music"]
+resource_name = "Compressor"
+threshold = -16.0
+ratio = 2.0
+attack_us = 10000.0
+release_ms = 500.0
+sidechain = &"Effects"
+
+[sub_resource type="AudioEffectAmplify" id="AudioEffectAmplify_music"]
+resource_name = "Amplify"
+
+[sub_resource type="AudioEffectCompressor" id="AudioEffectCompressor_ambience"]
+resource_name = "Compressor"
+threshold = -14.0
+ratio = 1.6
+attack_us = 10000.0
+release_ms = 700.0
+sidechain = &"Effects"
 
 [resource]
+bus/0/effect/0/effect = SubResource("AudioEffectHardLimiter_master")
+bus/0/effect/0/enabled = true
 bus/1/name = &"Effects"
 bus/1/solo = false
 bus/1/mute = false
 bus/1/bypass_fx = false
 bus/1/volume_db = 0.0
 bus/1/send = &"Master"
+bus/1/effect/0/effect = SubResource("AudioEffectReverb_effects")
+bus/1/effect/0/enabled = true
 bus/2/name = &"Interface"
 bus/2/solo = false
 bus/2/mute = false
@@ -19,9 +56,15 @@ bus/3/mute = false
 bus/3/bypass_fx = false
 bus/3/volume_db = -4.0
 bus/3/send = &"Master"
+bus/3/effect/0/effect = SubResource("AudioEffectCompressor_music")
+bus/3/effect/0/enabled = true
+bus/3/effect/1/effect = SubResource("AudioEffectAmplify_music")
+bus/3/effect/1/enabled = true
 bus/4/name = &"Ambience"
 bus/4/solo = false
 bus/4/mute = false
 bus/4/bypass_fx = false
 bus/4/volume_db = -2.0
 bus/4/send = &"Master"
+bus/4/effect/0/effect = SubResource("AudioEffectCompressor_ambience")
+bus/4/effect/0/enabled = true

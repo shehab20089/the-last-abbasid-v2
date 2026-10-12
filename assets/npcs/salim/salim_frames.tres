@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" path="res://assets/npcs/salim/salim_kneel.png" id="1_kneel"]
 [ext_resource type="Texture2D" path="res://assets/npcs/salim/salim_stand.png" id="2_stand"]
 [ext_resource type="Texture2D" path="res://assets/npcs/salim/salim_talk.png" id="3_talk"]
+[ext_resource type="Texture2D" path="res://assets/npcs/salim/salim_walk.png" id="4_walk"]
 
 [sub_resource type="AtlasTexture" id="kneel_0"]
 atlas = ExtResource("1_kneel")
@@ -59,6 +60,38 @@ region = Rect2(192, 0, 96, 128)
 [sub_resource type="AtlasTexture" id="talk_3"]
 atlas = ExtResource("3_talk")
 region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_0"]
+atlas = ExtResource("4_walk")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_1"]
+atlas = ExtResource("4_walk")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_2"]
+atlas = ExtResource("4_walk")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_3"]
+atlas = ExtResource("4_walk")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_4"]
+atlas = ExtResource("4_walk")
+region = Rect2(384, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_5"]
+atlas = ExtResource("4_walk")
+region = Rect2(480, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_6"]
+atlas = ExtResource("4_walk")
+region = Rect2(576, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_7"]
+atlas = ExtResource("4_walk")
+region = Rect2(672, 0, 96, 128)
 
 [resource]
 animations = [{
@@ -118,4 +151,33 @@ animations = [{
 "loop": true,
 "name": &"talk",
 "speed": 6.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("walk_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_3")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_4")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_5")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_6")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_7")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 9.0
 }]

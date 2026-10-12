@@ -5,3 +5,6 @@
 captures/
 # Exported builds
 build/
+
+# Raw sound libraries the kit is cut from (downloaded, not ours to commit; see assets/audio/kit/CREDITS.md)
+sources/

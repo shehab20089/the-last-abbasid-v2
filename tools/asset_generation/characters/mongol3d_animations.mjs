@@ -609,22 +609,25 @@ function burn() {
   ];
 }
 
-/** The stroke that takes a kneeling captive's head: higher still, then down through the neck. Strike on 2. */
-function behead() {
-  const raised = sr({ pelvis: [-0.6, 38.6], hips: { yaw: -8, pitch: 0 }, torso: { yaw: -16, pitch: -8, roll: 3 },
+/**
+ * The stroke that takes a kneeling captive's head: higher still, then down through the neck. Strike on 2. The
+ * swordsman's by default; `make` and `ready` pose it from another man's stance (the Captain's, at the last gate).
+ */
+function behead(make = sr, ready = SWORD_READY) {
+  const raised = make({ pelvis: [-0.6, 38.6], hips: { yaw: -8, pitch: 0 }, torso: { yaw: -16, pitch: -8, roll: 3 },
     head: { yaw: 6, pitch: 20 }, handN: [-6, -9, 72], sword: [214, 12], handF: [14, 4, 46], shield: [40, -30] });
-  const through = sr({ pelvis: [3.4, 34.8], hips: { yaw: 4, pitch: 14 }, torso: { yaw: 16, pitch: 24, roll: -2 },
+  const through = make({ pelvis: [3.4, 34.8], hips: { yaw: 4, pitch: 14 }, torso: { yaw: 16, pitch: 24, roll: -2 },
     head: { yaw: 2, pitch: 26 }, footF: [13, 4.8, 4.2], handN: [20, -9, 32], sword: [40, -8], handF: [6, 5, 40],
     shield: [30, -20] });
   return [
     raised,
     pose(raised, { handN: [-7, -9, 73], torso: { yaw: -18, pitch: -10 } }),
-    sr({ pelvis: [2, 36.2], hips: { yaw: -2, pitch: 8 }, torso: { yaw: 6, pitch: 12 }, head: { yaw: 4, pitch: 24 },
+    make({ pelvis: [2, 36.2], hips: { yaw: -2, pitch: 8 }, torso: { yaw: 6, pitch: 12 }, head: { yaw: 4, pitch: 24 },
       footF: [12, 4.8, LIFT], handN: [16, -9, 46], sword: [100, -4], handF: [10, 4, 44], shield: [34, -24] }),
     through,
     pose(through, { handN: [18, -8, 30], sword: [30, -10] }),
-    pose(blend(through, SWORD_READY, 0.5), { footF: through.footF }),
-    pose(SWORD_READY, { footF: through.footF, head: { yaw: 10, pitch: 6 } }),
+    pose(blend(through, ready, 0.5), { footF: through.footF }),
+    pose(ready, { footF: through.footF, head: { yaw: 10, pitch: 6 } }),
   ];
 }
 
@@ -643,9 +646,9 @@ function stabDown(ready, { up, down, sword, grip = [0, 0, 0] }) {
   ];
 }
 
-/** Over a captive kneeling before him, sabre raised to cut her down, shouting at her. */
-function menace() {
-  const over = sr({ pelvis: [0.6, 38.4], hips: { yaw: -6, pitch: 2 }, torso: { yaw: -12, pitch: -4, roll: 2 },
+/** Over a captive kneeling before him, sabre raised to cut her down, shouting at her (`make`: whose stance). */
+function menace(make = sr) {
+  const over = make({ pelvis: [0.6, 38.4], hips: { yaw: -6, pitch: 2 }, torso: { yaw: -12, pitch: -4, roll: 2 },
     head: { yaw: 6, pitch: 18 }, handN: [-4, -9, 70], sword: [204, 12], handF: [14, 4, 44], shield: [40, -30] });
   return [
     over,
@@ -1134,6 +1137,9 @@ export const CAPTAIN = {
   stagger: { size: WIDE, fps: 6, loop: false, poses: stagger(CAP_READY), durations: [0.7, 0.6, 1.4, 1.7, 1], motion: [-30, 0, 0] },
   death: { size: WIDE, fps: 8, loop: false, poses: death(CAP_READY), durations: [1, 1.2, 1.2, 0.8, 0.8, 0.7, 0.7, 0.6, 0.8, 1, 1.4, 2.4],
     motion: [-40, 0, 0], wind: [-10, 0, -6], limp: 0.9 },
+  // At the last gate: his sabre over Hamid kneeling before him, then the stroke (strike on 2, as a headsman's).
+  execute: { size: WIDE, fps: 5, loop: true, poses: menace(cr), durations: [2.4, 1, 1, 1.8] },
+  behead: { size: WIDE, fps: 10, loop: false, poses: behead(cr, CAP_READY), durations: [1.4, 1.2, 0.6, 1, 1.2, 1.2, 1.4] },
   // His end: beaten to his knee, then beheaded where he kneels.
   beaten: { size: WIDE, fps: 5, loop: true, poses: beaten(), durations: [1.4, 1, 1, 1.2] },
   executed: { size: WIDE, fps: 9, loop: false, poses: cutAway(kneelingBeheaded(), "head"),

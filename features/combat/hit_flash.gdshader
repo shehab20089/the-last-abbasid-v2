@@ -27,3 +27,27 @@ void fragment() {
 	c.a *= 1.0 - ghost * 0.55;
 	COLOR = c;
 }
+
+// How a fighter takes a light (a fire, a lamp, burning naphtha): by the stuff it falls on, so a crowd beside a fire
+// keeps its iron dark, its cloth its dye and its bronze its glint, instead of all going one orange. (Godot's own
+// light, which this replaces, is COLOR * LIGHT_COLOR * LIGHT_ENERGY: every colour pushed toward the light's.)
+void light() {
+	vec3 albedo = COLOR.rgb;
+	vec3 light_rgb = LIGHT_COLOR.rgb * LIGHT_ENERGY;
+	float light_lum = dot(light_rgb, vec3(0.3, 0.55, 0.15));
+	float hi = max(albedo.r, max(albedo.g, albedo.b));
+	float lo = min(albedo.r, min(albedo.g, albedo.b));
+	float sat = hi > 0.001 ? (hi - lo) / hi : 0.0;
+	float lum = dot(albedo, vec3(0.3, 0.55, 0.15));
+	// Dyed cloth is brightened in its own colour; iron, which has none, takes the light's warmth.
+	vec3 lit = mix(albedo * light_rgb, albedo * light_lum, 0.25 + sat * 0.65);
+	// The darkest masses take little (iron and deep shade stay dark), and what is already bright takes less than it
+	// would (no blown orange mass): the light falls mostly on the planes between.
+	lit *= smoothstep(0.06, 0.40, lum) * mix(1.0, 0.4, smoothstep(0.4, 0.85, hi)) * 0.8;
+	// A glint only on the brightest, least dyed pixels: polished iron, the edge of bronze.
+	lit += light_rgb * smoothstep(0.55, 0.80, hi) * (1.0 - sat * 0.7) * 0.12;
+	// A warning's flush and a blow's flash take the light in their own colour, not the fire's: by a fire an amber
+	// warning stays amber and a red one red (both would turn the same orange), and a struck body flashes white.
+	lit = mix(lit, flash_color.rgb * light_lum * 0.9, clamp(flash * 1.6, 0.0, 1.0));
+	LIGHT = vec4(lit, LIGHT_COLOR.a);
+}

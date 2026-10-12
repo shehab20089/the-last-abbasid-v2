@@ -34,5 +34,63 @@
   "allRound": false,
   "wounds": null,
   "file": "mother_talk.png"
+ },
+ "stand": {
+  "name": "stand",
+  "frames": 4,
+  "width": 96,
+  "height": 128,
+  "fps": 4,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null
+  ],
+  "allRound": false,
+  "wounds": null,
+  "file": "mother_stand.png"
+ },
+ "stand_talk": {
+  "name": "stand_talk",
+  "frames": 4,
+  "width": 96,
+  "height": 128,
+  "fps": 5,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null
+  ],
+  "allRound": false,
+  "wounds": null,
+  "file": "mother_stand_talk.png"
+ },
+ "walk": {
+  "name": "walk",
+  "frames": 8,
+  "width": 96,
+  "height": 128,
+  "fps": 9,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "allRound": false,
+  "wounds": null,
+  "file": "mother_walk.png"
  }
 }

@@ -25,10 +25,15 @@ export const LEVEL = {
   look: "night",
   // The far city is the concept painting's (docs/concept_art), pixel-converted.
   painting: { source: "docs/concept_art/03_The_Fallen_Market.png", crop: [430, 0, 960, 340], scroll: 0.06,
-    patches: [[282, 228, 368, 316]] },
+    patches: [[282, 228, 368, 316]],
+    // The glow behind the minarets is kept, a little cooler at its hottest; the city below it softened a touch behind
+    // the stalls and the fighters.
+    quiet: { from: 0.45, light: 0.8, soft: 0.35, knee: 0.22, highlights: 0.6, dim: 0.95 } },
   title: "LEVEL_FALLEN_MARKET",
   music: "market",
   ambience: "fire_wind",
+  // An open street of shops between two- and three-storey houses: a short, bright slap off the walls.
+  acoustics: "street",
   next: "res://features/levels/streets_of_ash/streets_of_ash.tscn",
   exitCard: "market_end",
   exitTitle: "LEVEL_STREETS_OF_ASH",

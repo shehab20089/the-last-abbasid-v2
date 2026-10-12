@@ -2,7 +2,7 @@
 // talking with the near hand, sitting wounded, crouching in hiding, kneeling bound as captives and
 // running from the fires; and how the soldiers kill them: beheaded where they knelt, shot in the
 // back as they ran. The dead of the streets (CORPSES) are drawn as props.
-import { blend, breathCycle, nudge, pose, runCycle } from "./pose3d.mjs";
+import { blend, breathCycle, nudge, pose, runCycle, walkCycle } from "./pose3d.mjs";
 import { toParent } from "../lib/space.mjs";
 
 const BODY = [96, 128];
@@ -123,11 +123,50 @@ function laboured(base, count = 6) {
   });
 }
 
+// --- Taken: roped and driven, made to kneel ---------------------------------------------------------
+
+/** Hands bound at the small of the back (the rope's knot), wherever the body goes. */
+const BOUND = { handN: (f) => toParent(f.pelvis, [-7, -3.2, 10]), handF: (f) => toParent(f.pelvis, [-7, 3.2, 10]),
+  elbowN: [-0.3, -1, -0.2], elbowF: [-0.3, 1, -0.2] };
+
+/** Driven along with his hands tied behind him: stooped, head low, the steps short. */
+const DRIVEN = pose(STAND, { ...BOUND, hips: { yaw: -10, pitch: 6 }, torso: { yaw: 0, pitch: 14 }, head: { yaw: 6, pitch: 14 } });
+
+/** A captive's walk: short, heavy steps; `limp` dips the body on the near leg's stride (a wounded leg). */
+function walkBound(base = DRIVEN, limp = 0) {
+  return walkCycle(base, (i) => ({
+    ...BOUND,
+    pelvis: [base.pelvis[0], base.pelvis[1] + [0, -0.7, 0.4, 0.9, 0, -0.7, 0.4, 0.9][i] - (i >= 4 && i <= 6 ? limp : 0)],
+    torso: { yaw: 0, pitch: (base.torso?.pitch ?? 0) + (i >= 4 && i <= 6 ? limp * 1.4 : 0), roll: i >= 4 && i <= 6 ? limp : 0 },
+  }), { stride: 0.7 });
+}
+
+/** Halted in the column, hands still bound, breathing hard, head low. */
+const standBound = (base = DRIVEN) => breathCycle(base, 4, (i, breath) => ({ torso: { pitch: breath * 2 } }));
+
+/** Stopped and turned, bound, head up, shouting across the street. */
+const SHOUT = pose(STAND, { ...BOUND, hips: { yaw: -16, pitch: 2 }, torso: { yaw: -12, pitch: -4 },
+  head: { yaw: 30, pitch: -16 } });
+const shout = () => breathCycle(SHOUT, 4, (i, breath) => ({ torso: { pitch: -4 + breath * 3 }, head: { pitch: -16 - breath * 4 } }));
+
 export const GUARD_ANIMATIONS = {
   sit: { size: BODY, fps: 6, loop: true, poses: laboured(SIT) },
   talk: { size: BODY, fps: 5, loop: true, poses: laboured(pose(SIT, { head: { yaw: 14, pitch: -6 }, torso: { pitch: 8 },
     handN: [12, -10, 24] }), 4).map((p, i) => pose(p, { handN: [12 + (i % 2), -10, 24 + (i % 2) * 2.5] })) },
+  // Taken in the Streets of Ash: driven along on his broken leg, then shouting to Yusuf across the street.
+  walk_bound: { size: BODY, fps: 7, loop: true, poses: walkBound(DRIVEN, 1.6), motion: [24, 0, 0] },
+  stand_bound: { size: BODY, fps: 4, loop: true, poses: standBound() },
+  shout: { size: BODY, fps: 5, loop: true, poses: shout() },
+  // At the last gate: on his knees before Toqto, then the stroke.
+  kneel: { size: BODY, fps: 4, loop: true, poses: kneel() },
 };
+
+/** Walking out of the city at last, unhurried: the arms easy at the sides. */
+const AT_EASE = pose(STAND, { hips: { yaw: -10, pitch: 4 }, torso: { yaw: 0, pitch: 6 }, head: { yaw: 8, pitch: 2 } });
+const walkOut = (base = AT_EASE) => walkCycle(base, (i, swing, bob) => ({
+  handN: [3 + swing * 4, -10, 37 + bob - Math.abs(swing) * 0.6],
+  handF: [4 - swing * 4, 9.5, 37 + bob - Math.abs(swing) * 0.6],
+}));
 
 // --- The mother sheltering her child -----------------------------------------------------------
 
@@ -143,9 +182,18 @@ const CROUCH = pose(STAND, {
   handF: [8, 4, 40],
 });
 
+/** Up on her feet with her son on her hip, her arms about him (the hands kept to him, wherever her chest goes). */
+const HOLDING = { handN: (f) => toParent(f.chest, [8.4, -5.2, -1.6]), handF: (f) => toParent(f.chest, [8.0, 4.0, -2.6]),
+  elbowN: [0.2, -1, -0.4], elbowF: [0.2, 1, -0.4] };
+const MOTHER_STAND = pose(STAND, { ...HOLDING, hips: { yaw: -10, pitch: 2 }, torso: { yaw: 0, pitch: 4 }, head: { yaw: 14, pitch: 4 } });
+
 export const MOTHER_ANIMATIONS = {
   crouch: { size: BODY, fps: 4, loop: true, poses: breathCycle(CROUCH, 4) },
   talk: { size: BODY, fps: 5, loop: true, poses: breathCycle(pose(CROUCH, { head: { yaw: 14, pitch: -4 }, torso: { pitch: 6 } }), 4) },
+  // At the last gate, with Salim: standing, then walking out with Ali in her arms.
+  stand: { size: BODY, fps: 4, loop: true, poses: breathCycle(MOTHER_STAND, 4, () => HOLDING) },
+  stand_talk: { size: BODY, fps: 5, loop: true, poses: breathCycle(pose(MOTHER_STAND, { head: { yaw: 18, pitch: -4 } }), 4, () => HOLDING) },
+  walk: { size: BODY, fps: 9, loop: true, poses: walkCycle(MOTHER_STAND, () => HOLDING), motion: [41, 0, 0] },
 };
 
 // --- Townspeople fleeing, or held captive ------------------------------------------------------
@@ -236,12 +284,21 @@ export const REFUGEE_MAN_ANIMATIONS = {
   run: { size: BODY, fps: 16, loop: true, poses: fleeMan(), motion: [150, 0, 0] },
   kneel: { size: BODY, fps: 4, loop: true, poses: kneel() },
   ...KILLED(KNEEL, fleeMan()[1]),
+  // Roped in Toqto's column through the Streets of Ash; walking out of the last gate.
+  walk_bound: { size: BODY, fps: 7, loop: true, poses: walkBound(), motion: [24, 0, 0] },
+  stand_bound: { size: BODY, fps: 4, loop: true, poses: standBound() },
+  walk: { size: BODY, fps: 9, loop: true, poses: walkOut(), motion: [41, 0, 0] },
 };
 export const REFUGEE_WOMAN_ANIMATIONS = {
   run: { size: BODY, fps: 16, loop: true, poses: fleeWoman(), motion: [150, 0, 0] },
   kneel: { size: BODY, fps: 4, loop: true, poses: kneel({ head: { yaw: 6, pitch: 26 } }) },
   ...KILLED(pose(KNEEL, { head: { yaw: 6, pitch: 26 } }), fleeWoman()[1]),
+  walk_bound: { size: BODY, fps: 7, loop: true, poses: walkBound(pose(DRIVEN, { head: { yaw: 6, pitch: 20 } })), motion: [24, 0, 0] },
+  stand_bound: { size: BODY, fps: 4, loop: true, poses: standBound(pose(DRIVEN, { head: { yaw: 6, pitch: 20 } })) },
+  walk: { size: BODY, fps: 9, loop: true, poses: walkOut(), motion: [41, 0, 0] },
 };
+// Hamid beheaded where he kneels before the last gate.
+GUARD_ANIMATIONS.executed = KILLED(KNEEL, KNEEL).executed;
 
 // --- Salim -------------------------------------------------------------------------------------
 
@@ -251,6 +308,8 @@ export const SALIM_ANIMATIONS = {
   kneel: { size: BODY, fps: 4, loop: true, poses: kneel({ head: { yaw: 6, pitch: 24 } }) },
   stand: { size: BODY, fps: 5, loop: true, poses: breathCycle(SALIM, 6) },
   talk: { size: BODY, fps: 6, loop: true, poses: talk(SALIM) },
+  walk: { size: BODY, fps: 9, loop: true, poses: walkOut(pose(AT_EASE, { torso: { pitch: 3 }, head: { yaw: 8, pitch: -2 } })),
+    motion: [41, 0, 0] },
 };
 
 // --- The keeper of the library --------------------------------------------------------------------
@@ -297,7 +356,7 @@ export const TOWNSFOLK_ANIMATIONS = {
 /** The head a beheading takes, drawn tumbling (build_characters.mjs makes each victim's gore set). */
 const HEAD_PIECE = { head: { pose: STAND, parts: [...HEAD.filter((n) => n !== "turbanTail"), "stumpNeck"],
   pivot: (f) => toParent(f.head, [0.4, 0, 5.4]), size: [32, 32] } };
-export const TOWNSFOLK_PIECES = { refugee_man: HEAD_PIECE, refugee_woman: HEAD_PIECE };
+export const TOWNSFOLK_PIECES = { refugee_man: HEAD_PIECE, refugee_woman: HEAD_PIECE, guard: HEAD_PIECE };
 
 // --- The dead of the streets ---------------------------------------------------------------------
 // Drawn as props (environment/props3d.mjs), with the blood beneath them.

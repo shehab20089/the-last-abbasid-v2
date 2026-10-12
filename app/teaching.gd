@@ -166,6 +166,11 @@ func _call_out(npc: Npc) -> void:
 		game.say(npc.display_name(), line)
 
 
+## Whether a soldier near the hero is in the fight (a staged scene waits for a quiet moment).
+func fighting() -> bool:
+	return _fighting()
+
+
 ## A soldier near the hero is in the fight.
 func _fighting() -> bool:
 	if game.hero == null or game.level == null:

@@ -35,7 +35,9 @@ export function blend(a, b, t) {
 export function nudge(p, d) {
   const r = (base, o = {}) => ({ yaw: (base?.yaw ?? 0) + (o.yaw ?? 0), pitch: (base?.pitch ?? 0) + (o.pitch ?? 0),
     roll: (base?.roll ?? 0) + (o.roll ?? 0) });
-  const v = (base, o) => (o ? base.map((x, i) => x + (o[i] ?? 0)) : base);
+  // A hand kept to a part of the body (a function of the frames: bound, holding a child) stays where that part goes.
+  const v = (base, o) => (typeof o === "function" ? o : !o || typeof base === "function" ? base
+    : base.map((x, i) => x + (o[i] ?? 0)));
   return {
     ...p,
     pelvis: v(p.pelvis, d.pelvis),

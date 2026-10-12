@@ -4,6 +4,9 @@
 [ext_resource type="Texture2D" path="res://assets/npcs/refugee_woman/refugee_woman_kneel.png" id="2_kneel"]
 [ext_resource type="Texture2D" path="res://assets/npcs/refugee_woman/refugee_woman_executed.png" id="3_executed"]
 [ext_resource type="Texture2D" path="res://assets/npcs/refugee_woman/refugee_woman_shot.png" id="4_shot"]
+[ext_resource type="Texture2D" path="res://assets/npcs/refugee_woman/refugee_woman_walk_bound.png" id="5_walk_bound"]
+[ext_resource type="Texture2D" path="res://assets/npcs/refugee_woman/refugee_woman_stand_bound.png" id="6_stand_bound"]
+[ext_resource type="Texture2D" path="res://assets/npcs/refugee_woman/refugee_woman_walk.png" id="7_walk"]
 
 [sub_resource type="AtlasTexture" id="run_0"]
 atlas = ExtResource("1_run")
@@ -105,6 +108,86 @@ region = Rect2(512, 0, 128, 128)
 atlas = ExtResource("4_shot")
 region = Rect2(640, 0, 128, 128)
 
+[sub_resource type="AtlasTexture" id="walk_bound_0"]
+atlas = ExtResource("5_walk_bound")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_bound_1"]
+atlas = ExtResource("5_walk_bound")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_bound_2"]
+atlas = ExtResource("5_walk_bound")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_bound_3"]
+atlas = ExtResource("5_walk_bound")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_bound_4"]
+atlas = ExtResource("5_walk_bound")
+region = Rect2(384, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_bound_5"]
+atlas = ExtResource("5_walk_bound")
+region = Rect2(480, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_bound_6"]
+atlas = ExtResource("5_walk_bound")
+region = Rect2(576, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_bound_7"]
+atlas = ExtResource("5_walk_bound")
+region = Rect2(672, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="stand_bound_0"]
+atlas = ExtResource("6_stand_bound")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="stand_bound_1"]
+atlas = ExtResource("6_stand_bound")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="stand_bound_2"]
+atlas = ExtResource("6_stand_bound")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="stand_bound_3"]
+atlas = ExtResource("6_stand_bound")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_0"]
+atlas = ExtResource("7_walk")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_1"]
+atlas = ExtResource("7_walk")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_2"]
+atlas = ExtResource("7_walk")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_3"]
+atlas = ExtResource("7_walk")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_4"]
+atlas = ExtResource("7_walk")
+region = Rect2(384, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_5"]
+atlas = ExtResource("7_walk")
+region = Rect2(480, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_6"]
+atlas = ExtResource("7_walk")
+region = Rect2(576, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_7"]
+atlas = ExtResource("7_walk")
+region = Rect2(672, 0, 96, 128)
+
 [resource]
 animations = [{
 "frames": [{
@@ -201,4 +284,79 @@ animations = [{
 "loop": false,
 "name": &"shot",
 "speed": 10.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("walk_bound_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_bound_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_bound_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_bound_3")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_bound_4")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_bound_5")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_bound_6")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_bound_7")
+}],
+"loop": true,
+"name": &"walk_bound",
+"speed": 7.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("stand_bound_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("stand_bound_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("stand_bound_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("stand_bound_3")
+}],
+"loop": true,
+"name": &"stand_bound",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("walk_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_3")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_4")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_5")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_6")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_7")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 9.0
 }]

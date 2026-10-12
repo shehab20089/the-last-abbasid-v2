@@ -2,6 +2,11 @@
 
 [ext_resource type="Texture2D" path="res://assets/npcs/guard/guard_sit.png" id="1_sit"]
 [ext_resource type="Texture2D" path="res://assets/npcs/guard/guard_talk.png" id="2_talk"]
+[ext_resource type="Texture2D" path="res://assets/npcs/guard/guard_walk_bound.png" id="3_walk_bound"]
+[ext_resource type="Texture2D" path="res://assets/npcs/guard/guard_stand_bound.png" id="4_stand_bound"]
+[ext_resource type="Texture2D" path="res://assets/npcs/guard/guard_shout.png" id="5_shout"]
+[ext_resource type="Texture2D" path="res://assets/npcs/guard/guard_kneel.png" id="6_kneel"]
+[ext_resource type="Texture2D" path="res://assets/npcs/guard/guard_executed.png" id="7_executed"]
 
 [sub_resource type="AtlasTexture" id="sit_0"]
 atlas = ExtResource("1_sit")
@@ -42,6 +47,114 @@ region = Rect2(192, 0, 96, 128)
 [sub_resource type="AtlasTexture" id="talk_3"]
 atlas = ExtResource("2_talk")
 region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_bound_0"]
+atlas = ExtResource("3_walk_bound")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_bound_1"]
+atlas = ExtResource("3_walk_bound")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_bound_2"]
+atlas = ExtResource("3_walk_bound")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_bound_3"]
+atlas = ExtResource("3_walk_bound")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_bound_4"]
+atlas = ExtResource("3_walk_bound")
+region = Rect2(384, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_bound_5"]
+atlas = ExtResource("3_walk_bound")
+region = Rect2(480, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_bound_6"]
+atlas = ExtResource("3_walk_bound")
+region = Rect2(576, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="walk_bound_7"]
+atlas = ExtResource("3_walk_bound")
+region = Rect2(672, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="stand_bound_0"]
+atlas = ExtResource("4_stand_bound")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="stand_bound_1"]
+atlas = ExtResource("4_stand_bound")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="stand_bound_2"]
+atlas = ExtResource("4_stand_bound")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="stand_bound_3"]
+atlas = ExtResource("4_stand_bound")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="shout_0"]
+atlas = ExtResource("5_shout")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="shout_1"]
+atlas = ExtResource("5_shout")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="shout_2"]
+atlas = ExtResource("5_shout")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="shout_3"]
+atlas = ExtResource("5_shout")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="kneel_0"]
+atlas = ExtResource("6_kneel")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="kneel_1"]
+atlas = ExtResource("6_kneel")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="kneel_2"]
+atlas = ExtResource("6_kneel")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="kneel_3"]
+atlas = ExtResource("6_kneel")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="executed_0"]
+atlas = ExtResource("7_executed")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="executed_1"]
+atlas = ExtResource("7_executed")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="executed_2"]
+atlas = ExtResource("7_executed")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="executed_3"]
+atlas = ExtResource("7_executed")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="executed_4"]
+atlas = ExtResource("7_executed")
+region = Rect2(512, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="executed_5"]
+atlas = ExtResource("7_executed")
+region = Rect2(640, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="executed_6"]
+atlas = ExtResource("7_executed")
+region = Rect2(768, 0, 128, 128)
 
 [resource]
 animations = [{
@@ -84,4 +197,110 @@ animations = [{
 "loop": true,
 "name": &"talk",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("walk_bound_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_bound_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_bound_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_bound_3")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_bound_4")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_bound_5")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_bound_6")
+}, {
+"duration": 1.00,
+"texture": SubResource("walk_bound_7")
+}],
+"loop": true,
+"name": &"walk_bound",
+"speed": 7.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("stand_bound_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("stand_bound_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("stand_bound_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("stand_bound_3")
+}],
+"loop": true,
+"name": &"stand_bound",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("shout_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("shout_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("shout_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("shout_3")
+}],
+"loop": true,
+"name": &"shout",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("kneel_0")
+}, {
+"duration": 1.00,
+"texture": SubResource("kneel_1")
+}, {
+"duration": 1.00,
+"texture": SubResource("kneel_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("kneel_3")
+}],
+"loop": true,
+"name": &"kneel",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.00,
+"texture": SubResource("executed_0")
+}, {
+"duration": 1.40,
+"texture": SubResource("executed_1")
+}, {
+"duration": 1.60,
+"texture": SubResource("executed_2")
+}, {
+"duration": 1.00,
+"texture": SubResource("executed_3")
+}, {
+"duration": 0.80,
+"texture": SubResource("executed_4")
+}, {
+"duration": 0.80,
+"texture": SubResource("executed_5")
+}, {
+"duration": 2.00,
+"texture": SubResource("executed_6")
+}],
+"loop": false,
+"name": &"executed",
+"speed": 9.0
 }]

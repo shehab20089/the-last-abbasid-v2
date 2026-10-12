@@ -1,12 +1,26 @@
 // Writes app/main.tscn: the session's node tree, with every generated sound wired to its cue and
-// every music track and ambience bed named. Rerun after adding sounds.
+// every music track and ambience bed named. A cue built of several takes (<cue>__1.wav, <cue>__2.wav ...)
+// becomes an AudioStreamRandomizer that never plays the same take twice running, its pitch and level spread
+// as build_sounds.mjs recorded in assets/audio/sfx/variation.json. Rerun after adding sounds.
 // Usage: node tools/write_main_scene.mjs
-import { readdirSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const sfx = readdirSync(join(ROOT, "assets", "audio", "sfx")).filter((f) => f.endsWith(".wav")).map((f) => f.slice(0, -4)).sort();
+const SFX = join(ROOT, "assets", "audio", "sfx");
+const files = readdirSync(SFX).filter((f) => f.endsWith(".wav")).map((f) => f.slice(0, -4)).sort();
+// Each cue and its takes, in order (name__1, name__2 ... or the one file name).
+const takesOf = new Map();
+for (const file of files) {
+  const cue = file.replace(/__\d+$/, "");
+  if (!takesOf.has(cue)) takesOf.set(cue, []);
+  takesOf.get(cue).push(file);
+}
+for (const list of takesOf.values()) list.sort((a, b) => Number(a.split("__")[1] ?? 0) - Number(b.split("__")[1] ?? 0));
+const sfx = [...takesOf.keys()];
+const variationFile = join(SFX, "variation.json");
+const variation = existsSync(variationFile) ? JSON.parse(readFileSync(variationFile, "utf8")) : {};
 const ext = [];
 const id = (path) => {
   let i = ext.findIndex((e) => e.path === path);
@@ -20,7 +34,21 @@ const id = (path) => {
 };
 const res = (p) => `res://${p}`;
 
-const cues = sfx.map((name) => `&"${name}": ${id(res(`assets/audio/sfx/${name}.wav`))}`).join(", ");
+const randomizers = [];
+const cues = sfx.map((name) => {
+  const list = takesOf.get(name);
+  if (list.length === 1) return `&"${name}": ${id(res(`assets/audio/sfx/${list[0]}.wav`))}`;
+  const spread = variation[name] ?? {};
+  const streams = list.map((file, i) => `stream_${i}/stream = ${id(res(`assets/audio/sfx/${file}.wav`))}`).join("\n");
+  randomizers.push(`
+[sub_resource type="AudioStreamRandomizer" id="Takes_${name}"]
+playback_mode = 0
+random_pitch = ${spread.pitch ?? 1.05}
+random_volume_offset_db = ${spread.volume ?? 1}
+streams_count = ${list.length}
+${streams}`);
+  return `&"${name}": SubResource("Takes_${name}")`;
+}).join(", ");
 // Every music_<name>.wav is the track <name>; every amb_<name>.wav the ambience bed <name>.
 const music = readdirSync(join(ROOT, "assets", "audio", "music")).filter((f) => f.endsWith(".wav")).sort();
 const named = (prefix) => music.filter((f) => f.startsWith(prefix))
@@ -98,7 +126,7 @@ mouse_filter = 2
 [node name="Sounds" type="Node" parent="."]
 script = ${id(res("shared/audio/sound_director.gd"))}
 cues = Dictionary[StringName, AudioStream]({${cues}})
-interface_cues = Array[StringName]([&"ui_move", &"ui_select", &"ui_back"])
+interface_cues = Array[StringName]([&"ui_move", &"ui_select", &"ui_back", &"lesson", &"objective", &"honour"])
 
 [node name="Music" type="Node" parent="."]
 script = ${id(res("shared/audio/music_director.gd"))}
@@ -155,7 +183,8 @@ const postShader = id(res("features/presentation/post_process.gdshader"));
 const subs = `
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_post"]
 shader = ${postShader}
+${randomizers.join("\n")}
 `;
 const text = ["[gd_scene format=3]", "", ...ext.map((e) => `[ext_resource type="${e.type}" path="${e.path}" id="${e.id}"]`), subs, nodes].join("\n");
 writeFileSync(join(ROOT, "app", "main.tscn"), text);
-console.log(`main.tscn: ${sfx.length} cues`);
+console.log(`main.tscn: ${sfx.length} cues (${randomizers.length} of several takes, ${files.length} takes)`);

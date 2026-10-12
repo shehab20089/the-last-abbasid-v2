@@ -150,16 +150,28 @@ func _key_name(action: StringName) -> String:
 	return "?"
 
 
-## A key's name as the player's keyboard prints it (the layout's, where the system can tell), shortened.
+## A key's name as the player's keyboard prints it (the layout's, where the system can tell), shortened. A layout
+## whose letter the caps cannot write (Arabic, Cyrillic, Greek...) names the key as a Latin keyboard prints it
+## (those keyboards print both): J, not ت.
 func _name_of(key: InputEventKey) -> String:
 	var code: Key = key.physical_keycode if key.physical_keycode != KEY_NONE else key.keycode
 	if key.physical_keycode != KEY_NONE and DisplayServer.get_name() != "headless":
 		var local: Key = DisplayServer.keyboard_get_label_from_physical(key.physical_keycode)
-		if local != KEY_NONE:
+		if local != KEY_NONE and writable(OS.get_keycode_string(local)):
 			code = local
 	var name: String = OS.get_keycode_string(code)
 	var short: String = SHORT_KEYS.get(name, name)
 	return short
+
+
+## Whether the caps' face has every letter of a key's name.
+static func writable(name: String) -> bool:
+	if name == "":
+		return false
+	for i: int in name.length():
+		if not KeyCaps.FONT.has_char(name.unicode_at(i)):
+			return false
+	return true
 
 
 ## A pad button's name on the family in use.

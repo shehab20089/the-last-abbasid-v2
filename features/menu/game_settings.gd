@@ -28,7 +28,8 @@ enum Prompts {LEARNING, ALWAYS, OFF}
 enum LessonMode {FULL, SHORT, OFF}
 
 var volumes: Dictionary[StringName, int] = {&"Master": 8, &"Music": 7, &"Effects": 8, &"Ambience": 7}
-var fullscreen: bool = false
+## The game starts full screen (the project's window mode) until the player chooses otherwise.
+var fullscreen: bool = true
 var window_scale: int = 0
 var vsync: bool = true
 var brightness: float = 1.0

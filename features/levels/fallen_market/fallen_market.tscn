@@ -68,6 +68,8 @@
 [ext_resource type="PackedScene" path="res://features/enemies/archer.tscn" id="66_archer_tscn"]
 [ext_resource type="Script" path="res://features/levels/story_trigger.gd" id="67_story_trigger_gd"]
 [ext_resource type="Texture2D" path="res://assets/environments/market/props/fg_rubble.png" id="68_fg_rubble_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/fg_rubble_b.png" id="69_fg_rubble_b_png"]
+[ext_resource type="Texture2D" path="res://assets/environments/market/props/fg_rubble_c.png" id="70_fg_rubble_c_png"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_1"]
 blend_mode = 1
@@ -280,6 +282,7 @@ title_key = "LEVEL_FALLEN_MARKET"
 bounds = Rect2(0, 0, 4800, 512)
 music = &"market"
 ambience = &"fire_wind"
+acoustics = &"street"
 next_level = "res://features/levels/streets_of_ash/streets_of_ash.tscn"
 exit_card = &"market_end"
 exit_title = "LEVEL_STREETS_OF_ASH"
@@ -1997,61 +2000,61 @@ scroll_scale = Vector2(1.25, 1)
 [node name="Rubble0" type="Sprite2D" parent="Foreground"]
 texture = ExtResource("68_fg_rubble_png")
 centered = false
-position = Vector2(120, 472)
+position = Vector2(120, 462)
 flip_h = false
 
 [node name="Rubble1" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("68_fg_rubble_png")
+texture = ExtResource("69_fg_rubble_b_png")
 centered = false
-position = Vector2(640, 472)
+position = Vector2(640, 462)
 flip_h = true
 
 [node name="Rubble2" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("68_fg_rubble_png")
+texture = ExtResource("70_fg_rubble_c_png")
 centered = false
-position = Vector2(1297, 472)
+position = Vector2(1297, 462)
 flip_h = false
 
 [node name="Rubble3" type="Sprite2D" parent="Foreground"]
 texture = ExtResource("68_fg_rubble_png")
 centered = false
-position = Vector2(1831, 472)
+position = Vector2(1831, 462)
 flip_h = true
 
 [node name="Rubble4" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("68_fg_rubble_png")
+texture = ExtResource("69_fg_rubble_b_png")
 centered = false
-position = Vector2(2502, 472)
+position = Vector2(2502, 462)
 flip_h = false
 
 [node name="Rubble5" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("68_fg_rubble_png")
+texture = ExtResource("70_fg_rubble_c_png")
 centered = false
-position = Vector2(3050, 472)
+position = Vector2(3050, 462)
 flip_h = true
 
 [node name="Rubble6" type="Sprite2D" parent="Foreground"]
 texture = ExtResource("68_fg_rubble_png")
 centered = false
-position = Vector2(3735, 472)
+position = Vector2(3735, 462)
 flip_h = false
 
 [node name="Rubble7" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("68_fg_rubble_png")
+texture = ExtResource("69_fg_rubble_b_png")
 centered = false
-position = Vector2(4297, 472)
+position = Vector2(4297, 462)
 flip_h = true
 
 [node name="Rubble8" type="Sprite2D" parent="Foreground"]
-texture = ExtResource("68_fg_rubble_png")
+texture = ExtResource("70_fg_rubble_c_png")
 centered = false
-position = Vector2(4996, 472)
+position = Vector2(4996, 462)
 flip_h = false
 
 [node name="Rubble9" type="Sprite2D" parent="Foreground"]
 texture = ExtResource("68_fg_rubble_png")
 centered = false
-position = Vector2(5572, 472)
+position = Vector2(5572, 462)
 flip_h = true
 
 [node name="Night" type="CanvasModulate" parent="."]

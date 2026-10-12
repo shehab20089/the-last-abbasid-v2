@@ -7,6 +7,7 @@ const SPEAKERS: Dictionary[StringName, String] = {
 	&"yusuf": "SPEAKER_YUSUF",
 	&"guard": "SPEAKER_GUARD",
 	&"mother": "SPEAKER_MOTHER",
+	&"umm_ali": "SPEAKER_UMM_ALI",
 	&"ibrahim": "SPEAKER_IBRAHIM",
 	&"refugee": "SPEAKER_REFUGEE",
 	&"salim": "SPEAKER_SALIM",
@@ -23,8 +24,8 @@ const DIALOGUES: Dictionary[StringName, Array] = {
 		["", "INTRO_1"], ["", "INTRO_2"], ["", "INTRO_3"], ["", "INTRO_4"],
 	],
 	&"guard": [
-		["guard", "GUARD_1"], ["yusuf", "GUARD_2"], ["guard", "GUARD_3"], ["guard", "GUARD_4"],
-		["yusuf", "GUARD_5"], ["guard", "GUARD_6"],
+		["guard", "GUARD_1"], ["yusuf", "GUARD_2"], ["guard", "GUARD_3"], ["yusuf", "GUARD_4"],
+		["guard", "GUARD_5"], ["yusuf", "GUARD_6"], ["guard", "GUARD_7"],
 	],
 	&"guard_after": [
 		["guard", "GUARD_AFTER_1"],
@@ -46,7 +47,7 @@ const DIALOGUES: Dictionary[StringName, Array] = {
 	],
 	&"ibrahim": [
 		["ibrahim", "IBRAHIM_1"], ["yusuf", "IBRAHIM_2"], ["ibrahim", "IBRAHIM_3"], ["ibrahim", "IBRAHIM_4"],
-		["yusuf", "IBRAHIM_5"], ["ibrahim", "IBRAHIM_6"], ["ibrahim", "IBRAHIM_7"],
+		["yusuf", "IBRAHIM_5"], ["ibrahim", "IBRAHIM_6"], ["yusuf", "IBRAHIM_7"], ["ibrahim", "IBRAHIM_8"],
 	],
 	&"ibrahim_waiting": [
 		["ibrahim", "IBRAHIM_WAITING_1"],
@@ -61,8 +62,8 @@ const DIALOGUES: Dictionary[StringName, Array] = {
 		["", "MARKET_END_1"], ["", "MARKET_END_2"], ["", "MARKET_END_3"],
 	],
 	&"salim": [
-		["salim", "SALIM_1"], ["yusuf", "SALIM_2"], ["salim", "SALIM_3"], ["salim", "SALIM_4"],
-		["yusuf", "SALIM_5"], ["salim", "SALIM_6"],
+		["salim", "SALIM_1"], ["yusuf", "SALIM_2"], ["salim", "SALIM_3"], ["yusuf", "SALIM_4"],
+		["salim", "SALIM_5"], ["salim", "SALIM_6"], ["yusuf", "SALIM_7"], ["salim", "SALIM_8"],
 	],
 	&"salim_waiting": [
 		["salim", "SALIM_WAITING_1"],
@@ -81,7 +82,7 @@ const DIALOGUES: Dictionary[StringName, Array] = {
 	],
 	&"librarian": [
 		["librarian", "LIBRARIAN_1"], ["yusuf", "LIBRARIAN_2"], ["librarian", "LIBRARIAN_3"],
-		["librarian", "LIBRARIAN_4"], ["yusuf", "LIBRARIAN_5"], ["librarian", "LIBRARIAN_6"],
+		["librarian", "LIBRARIAN_4"], ["librarian", "LIBRARIAN_5"], ["yusuf", "LIBRARIAN_6"], ["librarian", "LIBRARIAN_7"],
 	],
 	&"librarian_waiting": [
 		["librarian", "LIBRARIAN_WAITING_1"],
@@ -92,15 +93,19 @@ const DIALOGUES: Dictionary[StringName, Array] = {
 	&"scholars_end": [
 		["", "SCHOLARS_END_1"], ["", "SCHOLARS_END_2"],
 	],
-	&"hamid": [
-		["guard", "HAMID_1"], ["yusuf", "HAMID_2"], ["guard", "HAMID_3"], ["guard", "HAMID_4"], ["yusuf", "HAMID_5"],
-		["guard", "HAMID_6"],
+	# The Last Gate: Salim and his family together again among the people on the wall road, with Hamid's last words.
+	&"salim_gate": [
+		["salim", "SALIM_GATE_1"], ["umm_ali", "SALIM_GATE_2"], ["yusuf", "SALIM_GATE_3"], ["salim", "SALIM_GATE_4"],
+		["yusuf", "SALIM_GATE_5"], ["yusuf", "SALIM_GATE_6"], ["salim", "SALIM_GATE_7"],
 	],
-	&"hamid_after": [
-		["guard", "HAMID_AFTER_1"],
+	&"salim_gate_after": [
+		["salim", "SALIM_GATE_AFTER_1"],
+	],
+	&"umm_ali": [
+		["umm_ali", "UMM_ALI_1"],
 	],
 	&"ending": [
-		["", "ENDING_1"], ["", "ENDING_2"], ["", "ENDING_3"], ["", "ENDING_4"],
+		["", "ENDING_1"], ["", "ENDING_CALIPH"], ["", "ENDING_2"], ["", "ENDING_3"], ["", "ENDING_4"],
 	],
 }
 

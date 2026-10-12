@@ -1102,6 +1102,21 @@ const INTERACT = [
   blend(READY, ready({ pelvis: [1, 36.8], torso: { yaw: 8, pitch: 10 }, handF: [13, 3, 46], shield: [10, -10] }), 0.5),
 ];
 
+/**
+ * Down on one knee beside a fallen friend: the near knee on the stones, the far foot planted, both hands on the hilt
+ * with the point set to the ground, the shield at rest against the raised knee, his head bowed over them.
+ */
+const KNEEL_BY = ready({ pelvis: [-1.4, 23.6], hips: { yaw: -14, pitch: 4 }, torso: { yaw: -2, pitch: 16 },
+  head: { yaw: 12, pitch: 28 }, footN: [-15, -4.6, 3.2], toeN: -80, kneeN: [1, -0.1, -0.3], footF: [9, 4.8, 4.2], toeF: 0,
+  handN: [9, -9, 27], sword: [4, 6], handF: [10, 3, 31], shield: [26, -34] });
+function kneelBy() {
+  return Array.from({ length: 4 }, (_, i) => {
+    const breath = Math.sin((i / 4) * TAU);
+    return nudge(KNEEL_BY, { pelvis: [0, -breath * 0.3], torso: { pitch: breath * 1.2 }, head: { pitch: -breath * 0.8 },
+      handF: [0, 0, breath * 0.3] });
+  });
+}
+
 const HEAL_BASE = ready({ hips: { yaw: -16, pitch: 2 }, torso: { yaw: -4, pitch: 2 }, handF: [5, 4, 44], shield: [50, -14] });
 const HEAL = [
   pose(HEAL_BASE, { handN: [8, -9, 50], sword: [200, 30], flask: true }),
@@ -1543,6 +1558,8 @@ export const ANIMATIONS = {
     wind: [-14, 0, -6], limp: 0.9 },
   interact: { size: BODY, fps: 8, loop: false, poses: INTERACT, durations: [1, 1, 1.6, 1] },
   heal: { size: BODY, fps: 8, loop: false, poses: HEAL, durations: [1, 1, 1.4, 1.4, 1, 1] },
+  // By Hamid at the last gate, after the fight.
+  kneel: { size: BODY, fps: 3, loop: true, poses: kneelBy() },
   air_attack: { size: WIDE, fps: 20, loop: false, poses: airAttack(), durations: [1, 1.3, 0.8, 1, 1.4, 1.4],
     motion: [60, 0, 0] },
   plunge: { size: WIDE, fps: 16, loop: false, poses: PLUNGE, durations: [1, 1.2, 0.8], motion: [0, 0, 60] },

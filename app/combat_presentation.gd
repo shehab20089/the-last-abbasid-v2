@@ -5,7 +5,9 @@ extends Node
 ## glows (a cleave held back, the fury, a man open to a finisher); the copies fast movement leaves; an Art's moment
 ## (the world drained of colour about him); and the screen's edges darkening near death. It decides nothing: the session
 ## (AbbasidGame) owns it, binds each fighter to it, and keeps its own connections to the same signals for the story, the
-## hero's growth and the playtest log.
+## hero's growth and the playtest log. Each sound of the world is heard where it happens (SoundDirector.play_at: a
+## blow where it lands, a swing where the man swings, an archer's string off to the side he stands); the hero's own
+## breath, steps and heart are in both ears; the music bows out for a finisher, an Art and his death.
 
 ## The glow of the second wind's fury while it holds, the copies his blows leave in it, and the embers.
 const STEEL_GLOW: Color = Color(1.0, 0.8, 0.42)
@@ -48,6 +50,8 @@ const TELL_COLOURS: Array[Color] = [Color(1.0, 0.97, 0.9), Color(1.0, 0.68, 0.22
 const TELL_GLINTS: Array[StringName] = [&"glint", &"glint_low", &"glint_break", &"glint_dire"]
 const TELL_SOUNDS: Array[StringName] = [&"enemy_tell", &"enemy_tell_low", &"enemy_tell_break", &"enemy_tell_dire"]
 const TELL_FLUSH: Array[float] = [0.0, 0.28, 0.3, 0.36]
+## How far off (px) a warning is still heard from its side (it is never silent near enough to matter).
+const WARNING_REACH: float = 3000.0
 ## Seconds a blade stays wet after a kill (its trail runs dark red, then clears).
 const BLOODIED_TIME: float = 2.5
 ## Wounded below this share of his health, the screen's edges darken to blood in time with his heart (every
@@ -64,6 +68,7 @@ var vfx: VfxDirector
 var gore: GoreDirector
 var camera: GameCamera
 var sounds: SoundDirector
+var music: MusicDirector
 var hit_stop: HitStop
 var hud: Hud
 var settings: GameSettings
@@ -95,6 +100,7 @@ func setup(session: AbbasidGame) -> void:
 	gore = session.gore
 	camera = session.camera
 	sounds = session.sounds
+	music = session.music
 	hit_stop = session.hit_stop
 	hud = session.hud
 	settings = session.settings
@@ -133,7 +139,7 @@ func bind_hero(warrior: Warrior) -> void:
 	_bind_combatant(warrior)
 	warrior.died.connect(_on_hero_died)
 	warrior.jumped.connect(sounds.play.bind(&"jump", -6.0))
-	warrior.footstep.connect(sounds.play.bind(&"footstep", -12.0))
+	warrior.footstep.connect(_on_hero_footstep)
 	warrior.landed.connect(_on_hero_landed)
 	warrior.rolled.connect(_on_hero_rolled)
 	warrior.healed.connect(_on_hero_healed)
@@ -166,7 +172,7 @@ func bind_soldier(soldier: MongolSoldier) -> void:
 	if soldier.get_meta(&"activity", &"") == &"stab":
 		soldier.sprite.frame_changed.connect(_on_stab_frame.bind(soldier))
 	soldier.projectile_spawned.connect(_on_projectile)
-	soldier.surprised.connect(_on_soldier_surprised)
+	soldier.surprised.connect(_on_soldier_surprised.bind(soldier))
 	soldier.knocked_down.connect(_on_knocked_down.bind(soldier))
 	soldier.evaded.connect(_on_soldier_evaded.bind(soldier))
 	soldier.steeled.connect(_on_soldier_steeled.bind(soldier))
@@ -174,7 +180,7 @@ func bind_soldier(soldier: MongolSoldier) -> void:
 	soldier.sprite.frame_changed.connect(_on_soldier_frame.bind(soldier))
 	var brain: EnemyBrain = soldier.get_node_or_null(^"Brain") as EnemyBrain
 	if brain != null:
-		brain.alerted.connect(sounds.play.bind(&"enemy_alert", -5.0))
+		brain.alerted.connect(_on_alerted.bind(soldier))
 
 
 func _bind_combatant(combatant: Combatant) -> void:
@@ -201,20 +207,20 @@ func _on_struck(hit: HitData, outcome: HitData.Outcome, target: Combatant) -> vo
 			if hit.knockback >= 200.0:
 				# A blow that shoves him back raises dust where his heels drag.
 				vfx.play(&"dust", target.global_position, thrown_left, true)
-			sounds.play(hit.attack.hit_cue if hit.attack != null else &"arrow_hit")
-			sounds.play(&"hero_hurt" if target == hero else &"enemy_hurt", -3.0)
+			sounds.play_at(hit.attack.hit_cue if hit.attack != null else &"arrow_hit", hit.position)
+			sounds.play_at(&"hero_hurt" if target == hero else &"enemy_hurt", _middle_of(target), -3.0)
 			hit_stop.trigger(hit.hit_stop)
 			camera.shake(shake + (1.5 if target == hero else 0.0))
 			camera.kick(hit.direction, clampf(shake * 0.8, 1.0, 4.0))
 		HitData.Outcome.BLOCKED:
 			vfx.play(&"block_spark", guard_point, target.facing < 0.0)
-			sounds.play(&"shield_block")
+			sounds.play_at(&"shield_block", guard_point)
 			hit_stop.trigger(0.045)
 			camera.shake(1.0)
 		HitData.Outcome.PARRIED:
 			vfx.play(&"parry_flash", guard_point)
 			vfx.play(&"hit_spark", guard_point)
-			sounds.play(&"parry")
+			sounds.play_at(&"parry", guard_point)
 			hit_stop.trigger(0.14)
 			camera.shake(3.0)
 			# Time slows on his own parry only (a soldier beating his blade aside is no moment of his).
@@ -224,13 +230,13 @@ func _on_struck(hit: HitData, outcome: HitData.Outcome, target: Combatant) -> vo
 		HitData.Outcome.GUARD_BROKEN:
 			vfx.play(&"block_spark", guard_point, target.facing < 0.0)
 			vfx.play(&"hit_spark", guard_point)
-			sounds.play(&"guard_break")
+			sounds.play_at(&"guard_break", guard_point)
 			hit_stop.trigger(0.1)
 			camera.shake(3.0)
 
 
 func _on_swung(attack: AttackDefinition, combatant: Combatant) -> void:
-	sounds.play(attack.swing_cue, -2.0)
+	sounds.play_at(attack.swing_cue, _middle_of(combatant), -2.0)
 	if attack.flinch_radius > 0.0:
 		# A blow like a falling beam: grit thrown up both ways, and the street shakes.
 		vfx.play(&"dust", combatant.global_position + Vector2(combatant.facing * 30.0, 0.0), false, true)
@@ -251,7 +257,8 @@ func _on_telegraphed(attack: AttackDefinition, combatant: Combatant) -> void:
 		_warned[combatant.get_instance_id()] = attack
 		combatant.flash(TELL_FLUSH[tell] + 0.3, colour)
 	var cue: StringName = TELL_SOUNDS[tell] if sounds.has_cue(TELL_SOUNDS[tell]) else &"enemy_tell"
-	sounds.play(cue, _warning_volume(combatant))
+	# Heard from his side whatever the distance (it is a warning), softer as _warning_volume says.
+	sounds.play_at(cue, _middle_of(combatant), _warning_volume(combatant), WARNING_REACH, 0.0)
 
 
 ## A warned soldier's flush holds through his wind-up, until the blow lands or is broken off.
@@ -298,12 +305,18 @@ func _blade_tip(combatant: Combatant) -> Vector2:
 
 func _on_hero_died() -> void:
 	sounds.play(&"hero_death")
+	music.duck(-14.0, 2.5, 2.0)
 	gore.bleed_out(hero, hero.sprite, null, hero.facing)
+
+
+## His steps on stone, or on the boards of a gallery or a plank.
+func _on_hero_footstep() -> void:
+	sounds.play(&"footstep_wood" if hero.on_boards() else &"footstep", -12.0)
 
 
 func _on_hero_landed(speed: float) -> void:
 	if speed > 220.0:
-		sounds.play(&"land", -4.0)
+		sounds.play(&"footstep_wood" if hero.on_boards() else &"land", -2.0 if hero.on_boards() else -4.0)
 		vfx.play(&"dust", hero.global_position, false, true)
 
 
@@ -482,6 +495,7 @@ func _on_finisher_started(_target: Combatant, _finisher: FinisherDefinition) -> 
 	if hero.finisher_cinematic:
 		hud.cinematic_bars(true)
 		sounds.play(&"finisher")
+		music.duck(-9.0, 1.1, 1.2)
 		camera.shake(1.5)
 	else:
 		sounds.play(&"finisher", -10.0)
@@ -497,14 +511,14 @@ func _on_finisher_struck(target: Combatant, finisher: FinisherDefinition, frame:
 		hit_stop.slow(0.3, 0.7)
 	if cut != &"":
 		gore.cut_down(soldier, soldier.sprite, soldier.gore_set, cut, soldier.facing, hero.facing, 1.6 if full else 1.2)
-		sounds.play(&"sever")
+		sounds.play_at(&"sever", _middle_of(soldier))
 		hit_stop.trigger(0.11 if full else 0.07)
 		camera.shake(4.5 if full else 3.0)
 	else:
 		var middle: Vector2 = soldier.global_position + Vector2(0.0, -40.0)
 		var last: bool = frame == finisher.burst_frames[finisher.burst_frames.size() - 1]
 		gore.burst(soldier, soldier.sprite, soldier.gore_set, middle, hero.facing, last)
-		sounds.play(&"sever", -4.0)
+		sounds.play_at(&"sever", middle, -4.0)
 		hit_stop.trigger(0.08 if full else 0.05)
 		camera.shake(3.0 if full else 2.0)
 	if settings.gore:
@@ -533,6 +547,7 @@ func _on_art_started(art: ArtDefinition) -> void:
 	sounds.play(&"art_moment", -2.0)
 	if art.cue != &"":
 		sounds.play(art.cue, -1.0)
+	music.duck(-8.0, 0.7, 1.0)
 	hit_stop.trigger(0.14)
 	hit_stop.slow(0.4, 0.3)
 	_focus = 1.0
@@ -587,7 +602,7 @@ func _on_wounds_opened(targets: Array[Combatant]) -> void:
 
 ## Greek fire: the flask bursts in a fireball and the street goes up.
 func _on_naft_burst(at: Vector2, _outcome: int) -> void:
-	sounds.play(&"naft_burst", 0.0)
+	sounds.play_at(&"naft_burst", at, 0.0)
 	vfx.play(&"naft_burst", at + Vector2(0.0, 6.0), false, true)
 	vfx.play(&"dust", at, false, true)
 	vfx.play(&"dust", at, true, true)
@@ -628,7 +643,7 @@ func _on_art_refused(_art: ArtDefinition) -> void:
 ## A soldier falls: cut apart if the blow took something off him, and bleeding where he lies (a finisher has
 ## already cut him, frame by frame).
 func _on_soldier_died(soldier: MongolSoldier) -> void:
-	sounds.play(&"enemy_death", -2.0)
+	sounds.play_at(&"enemy_death", _middle_of(soldier), -2.0)
 	if soldier.in_finisher:
 		gore.bleed_out(soldier, soldier.sprite, soldier.gore_set, soldier.facing, soldier.severed)
 		return
@@ -640,7 +655,7 @@ func _on_soldier_died(soldier: MongolSoldier) -> void:
 		var blow: float = soldier.killing_hit.direction if soldier.killing_hit != null else -soldier.facing
 		var fury: float = 3.0 if soldier.profile.armoured_body else 1.0
 		gore.cut_down(soldier, soldier.sprite, soldier.gore_set, soldier.severed, soldier.facing, blow, fury)
-		sounds.play(&"sever", -1.0)
+		sounds.play_at(&"sever", _middle_of(soldier), -1.0)
 		hit_stop.trigger(0.09)
 	gore.bleed_out(soldier, soldier.sprite, soldier.gore_set, soldier.facing, soldier.severed)
 
@@ -654,19 +669,19 @@ func _on_stab_frame(soldier: MongolSoldier) -> void:
 		return
 	var at: Vector2 = soldier.global_position + Vector2(soldier.facing * 20.0, -5.0)
 	gore.spatter(at, soldier.facing, soldier.global_position.y, 1)
-	sounds.play(&"sever", -16.0)
+	sounds.play_at(&"sever", at, -16.0)
 
 
 ## A man set ablaze: the fire takes him, and burns on him as he runs.
 func _on_soldier_ignited(soldier: MongolSoldier) -> void:
-	sounds.play(&"ignite", -4.0)
+	sounds.play_at(&"ignite", _middle_of(soldier), -4.0)
 	vfx.follow(&"fire_medium", soldier, Vector2(0.0, -28.0), Color.WHITE, soldier.burn_left())
 
 
 ## A soldier leaps back out of reach: a scuff of dust where he sprang, and a pale copy left in the air.
 func _on_soldier_evaded(soldier: MongolSoldier) -> void:
 	vfx.play(&"dust", soldier.global_position, soldier.facing > 0.0, true)
-	sounds.play(&"jump", -4.0)
+	sounds.play_at(&"jump", soldier.global_position, -4.0)
 	vfx.echo(soldier.sprite, SOLDIER_ECHO, 0.26)
 
 
@@ -683,12 +698,12 @@ func _on_soldier_frame(soldier: MongolSoldier) -> void:
 ## warning's colour: he is not winding up, he will just not be stopped a moment).
 func _on_soldier_steeled(soldier: MongolSoldier) -> void:
 	soldier.flash(0.22, Color(0.72, 0.78, 0.86))
-	sounds.play(&"breath_in", -12.0)
+	sounds.play_at(&"breath_in", _middle_of(soldier), -12.0)
 
 
 ## A first strike on a soldier who never saw it coming: he dies before he can turn.
-func _on_soldier_surprised() -> void:
-	sounds.play(&"guard_break", -3.0)
+func _on_soldier_surprised(soldier: MongolSoldier) -> void:
+	sounds.play_at(&"guard_break", _middle_of(soldier), -3.0)
 	hit_stop.trigger(0.12)
 	camera.shake(2.4)
 
@@ -697,14 +712,14 @@ func _on_soldier_surprised() -> void:
 func _on_knocked_down(body: Combatant) -> void:
 	var behind: float = -body.facing * 14.0
 	vfx.play(&"dust", body.global_position + Vector2(behind, 0.0), body.facing > 0.0, true)
-	sounds.play(&"body_drop", -2.0)
+	sounds.play_at(&"body_drop", body.global_position, -2.0)
 	camera.shake(2.4 if body == hero else 1.8)
 
 
 func _on_projectile(projectile: Node2D) -> void:
 	var arrow: Arrow = projectile as Arrow
 	if arrow != null:
-		sounds.play(&"bow_release", -3.0)
+		sounds.play_at(&"bow_release", arrow.global_position, -3.0)
 		arrow.impacted.connect(_on_arrow_impacted)
 	var pot: FirePot = projectile as FirePot
 	if pot != null:
@@ -713,16 +728,26 @@ func _on_projectile(projectile: Node2D) -> void:
 
 ## A fire pot breaks: clay and naphtha, and the fire takes.
 func _on_pot_burst(at: Vector2, _outcome: int) -> void:
-	sounds.play(&"pot_burst", -2.0)
+	sounds.play_at(&"pot_burst", at, -2.0)
 	vfx.play(&"dust", at, false, true)
 	camera.shake(2.0)
 
 
 func _on_arrow_impacted(at: Vector2, outcome: int) -> void:
 	if outcome == -1:
-		sounds.play(&"arrow_thunk", -4.0)
+		sounds.play_at(&"arrow_thunk", at, -4.0)
 		vfx.play(&"dust", at, false, true)
 
 
-func _on_piece_landed(_at: Vector2) -> void:
-	sounds.play(&"body_drop", -8.0)
+func _on_piece_landed(at: Vector2) -> void:
+	sounds.play_at(&"body_drop", at, -8.0)
+
+
+## A soldier notices him: he shouts and draws, from where he stands.
+func _on_alerted(soldier: MongolSoldier) -> void:
+	sounds.play_at(&"enemy_alert", _middle_of(soldier), -5.0)
+
+
+## Where a fighter's body is, for the sounds that come from him (his chest's height).
+func _middle_of(combatant: Combatant) -> Vector2:
+	return combatant.global_position + Vector2(0.0, -40.0)

@@ -123,5 +123,67 @@
   "allRound": false,
   "wounds": null,
   "file": "refugee_woman_shot.png"
+ },
+ "walk_bound": {
+  "name": "walk_bound",
+  "frames": 8,
+  "width": 96,
+  "height": 128,
+  "fps": 7,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "allRound": false,
+  "wounds": null,
+  "file": "refugee_woman_walk_bound.png"
+ },
+ "stand_bound": {
+  "name": "stand_bound",
+  "frames": 4,
+  "width": 96,
+  "height": 128,
+  "fps": 4,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null
+  ],
+  "allRound": false,
+  "wounds": null,
+  "file": "refugee_woman_stand_bound.png"
+ },
+ "walk": {
+  "name": "walk",
+  "frames": 8,
+  "width": 96,
+  "height": 128,
+  "fps": 9,
+  "loop": true,
+  "durations": null,
+  "blades": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "allRound": false,
+  "wounds": null,
+  "file": "refugee_woman_walk.png"
  }
 }

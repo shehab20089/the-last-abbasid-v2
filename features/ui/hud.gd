@@ -14,6 +14,8 @@ const TRAIL_DELAY: float = 0.45
 const LOCATION_TIME: float = 4.0
 ## How tall the black bars of a finisher grow, and how fast.
 const BAR_HEIGHT: float = 26.0
+## A staged scene's bars: deep enough for its lines in the lower one, as the painted cinematics show theirs.
+const SCENE_BAR_HEIGHT: float = 46.0
 const BAR_SPEED: float = 140.0
 ## Where the counters sit under the bars, and how far down they move to make room for the resolve bar.
 const COUNTERS_Y: float = 30.0
@@ -58,8 +60,14 @@ var _prompt_target: Interactable
 var _prompt_suspended: bool = false
 var _finish_target: Combatant
 var _bars_on: bool = false
+var _bar_height: float = BAR_HEIGHT
+## A staged scene's line in the lower bar: who speaks (gold) and the words.
+var _scene_speaker: Label
+var _scene_words: Label
 var _bar_top: ColorRect
 var _bar_bottom: ColorRect
+## "Hold [interact] to skip" in the corner while a staged scene plays, brighter as it is held.
+var _scene_skip: KeyText
 ## Everything read during play, gathered under one node so the bars of a finisher can fade it.
 var _gameplay: Control
 var _knife_icon: TextureRect
@@ -236,6 +244,31 @@ func _ready() -> void:
 	_bar_bottom.anchor_top = 1.0
 	_bar_bottom.anchor_bottom = 1.0
 	_set_bars(0.0)
+	var line: VBoxContainer = VBoxContainer.new()
+	line.name = "SceneLine"
+	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	line.add_theme_constant_override(&"separation", 0)
+	line.alignment = BoxContainer.ALIGNMENT_CENTER
+	add_child(line)
+	line.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	line.offset_left = 60.0
+	line.offset_right = -60.0
+	line.offset_top = -SCENE_BAR_HEIGHT + 2.0
+	line.offset_bottom = -2.0
+	_scene_speaker = _scene_label(Color(0.95, 0.76, 0.42))
+	line.add_child(_scene_speaker)
+	_scene_words = _scene_label(Color(0.94, 0.9, 0.8))
+	_scene_words.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	line.add_child(_scene_words)
+	_scene_skip = KeyText.new()
+	_scene_skip.name = "SceneSkip"
+	add_child(_scene_skip)
+	_scene_skip.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	_scene_skip.offset_left = -150.0
+	_scene_skip.offset_top = 6.0
+	_scene_skip.offset_right = -8.0
+	_scene_skip.offset_bottom = 24.0
+	_scene_skip.visible = false
 
 
 func bind(warrior: Warrior) -> void:
@@ -388,9 +421,42 @@ func art_banner(display_name: String, arabic: String) -> void:
 	art_name.show_art(display_name, arabic)
 
 
-## The black bars of a finisher, sliding in or out.
-func cinematic_bars(on: bool) -> void:
+## The black bars of a finisher (or, deeper, of a staged scene), sliding in or out.
+func cinematic_bars(on: bool, height: float = BAR_HEIGHT) -> void:
 	_bars_on = on
+	if on:
+		_bar_height = height
+	else:
+		scene_line("", "")
+
+
+## A staged scene's line, in the lower bar at once (an empty line clears it).
+func scene_line(speaker: String, words: String) -> void:
+	_scene_speaker.text = speaker
+	_scene_speaker.visible = speaker != ""
+	_scene_words.text = words
+	_scene_words.visible = words != ""
+
+
+func _scene_label(color: Color) -> Label:
+	var label: Label = Label.new()
+	label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.add_theme_font_override(&"font", KeyText.FONT)
+	label.add_theme_font_size_override(&"font_size", 12)
+	label.add_theme_color_override(&"font_color", color)
+	label.visible = false
+	return label
+
+
+## The prompt to skip a staged scene: shown or not, and how far the button has been held (0 to 1).
+func scene_skip(on: bool, held: float) -> void:
+	if on and not _scene_skip.visible:
+		_scene_skip.glyphs = glyphs
+		_scene_skip.show_key("SCENE_HOLD_SKIP")
+	_scene_skip.visible = on
+	_scene_skip.modulate.a = 0.55 + 0.45 * clampf(held, 0.0, 1.0)
 
 
 func _set_bars(height: float) -> void:
@@ -474,10 +540,10 @@ func _process(delta: float) -> void:
 		winded = 0.45 + 0.35 * sin(Time.get_ticks_msec() * 0.016)
 	var red: float = maxf(_breath_flash, winded)
 	stamina_bar.modulate = (Color(1, 1, 1).lerp(Color(1.9, 0.45, 0.35), red)).lerp(Color(1.7, 1.6, 1.25), _breath_flare)
-	var bar: float = move_toward(_bar_top.offset_bottom, BAR_HEIGHT if _bars_on else 0.0, BAR_SPEED * real)
+	var bar: float = move_toward(_bar_top.offset_bottom, _bar_height if _bars_on else 0.0, BAR_SPEED * real)
 	if bar != _bar_top.offset_bottom:
 		_set_bars(bar)
-		_gameplay.modulate.a = 1.0 - bar / BAR_HEIGHT
+		_gameplay.modulate.a = 1.0 - minf(1.0, bar / BAR_HEIGHT)
 
 
 func _on_health_changed(current: float, maximum: float) -> void:

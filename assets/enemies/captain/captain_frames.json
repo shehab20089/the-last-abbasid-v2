@@ -1324,6 +1324,157 @@
   "wounds": null,
   "file": "captain_death.png"
  },
+ "execute": {
+  "name": "execute",
+  "frames": 4,
+  "width": 176,
+  "height": 128,
+  "fps": 5,
+  "loop": true,
+  "durations": [
+   2.4,
+   1,
+   1,
+   1.8
+  ],
+  "blades": [
+   {
+    "hilt": [
+     -7.2,
+     -84.6
+    ],
+    "tip": [
+     -25.5,
+     -113.6
+    ]
+   },
+   {
+    "hilt": [
+     -8.2,
+     -85.7
+    ],
+    "tip": [
+     -26.5,
+     -114.8
+    ]
+   },
+   {
+    "hilt": [
+     -7.7,
+     -85.1
+    ],
+    "tip": [
+     -26,
+     -114.2
+    ]
+   },
+   {
+    "hilt": [
+     -6.6,
+     -84
+    ],
+    "tip": [
+     -25,
+     -113.1
+    ]
+   }
+  ],
+  "allRound": false,
+  "wounds": null,
+  "file": "captain_execute.png"
+ },
+ "behead": {
+  "name": "behead",
+  "frames": 7,
+  "width": 176,
+  "height": 128,
+  "fps": 10,
+  "loop": false,
+  "durations": [
+   1.4,
+   1.2,
+   0.6,
+   1,
+   1.2,
+   1.2,
+   1.4
+  ],
+  "blades": [
+   {
+    "hilt": [
+     -10.1,
+     -86.9
+    ],
+    "tip": [
+     -32.8,
+     -112.7
+    ]
+   },
+   {
+    "hilt": [
+     -11.1,
+     -88.1
+    ],
+    "tip": [
+     -33.9,
+     -113.8
+    ]
+   },
+   {
+    "hilt": [
+     17.6,
+     -53.2
+    ],
+    "tip": [
+     48.6,
+     -59
+    ]
+   },
+   {
+    "hilt": [
+     20.3,
+     -33.5
+    ],
+    "tip": [
+     41.7,
+     -7.6
+    ]
+   },
+   {
+    "hilt": [
+     15.4,
+     -29.5
+    ],
+    "tip": [
+     35.8,
+     -1.9
+    ]
+   },
+   {
+    "hilt": [
+     12.4,
+     -42
+    ],
+    "tip": [
+     40.9,
+     -47.5
+    ]
+   },
+   {
+    "hilt": [
+     2.3,
+     -53.2
+    ],
+    "tip": [
+     9.1,
+     -82.1
+    ]
+   }
+  ],
+  "allRound": false,
+  "wounds": null,
+  "file": "captain_behead.png"
+ },
  "beaten": {
   "name": "beaten",
   "frames": 4,
